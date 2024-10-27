@@ -203,3 +203,54 @@
         font-size: 2.2rem;
     }
 }
+
+/* Existing styles remain unchanged */
+
+.categories {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center; /* Center text vertically */
+    height: 40px; /* Match this to .navbar-button height */
+    padding: 8px 16px;
+    color: #000;
+    border-radius: 15px;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+}
+
+.dropdown {
+    position: absolute; /* Position dropdown absolutely */
+    top: 100%; /* Position below the categories text */
+    right: 10px; /* Align with the left edge */
+    background-color: white; /* Background color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
+    z-index: 1; /* Ensure it appears above other content */
+    width: 150px; /* Set a fixed width for dropdown */
+    border-radius: 4px; /* Rounded corners */
+    display: flex; /* Flex display for dropdown items */
+    flex-direction: column; /* Stack items vertically */
+}
+
+.dropdown-item {
+    padding: 10px; /* Space inside each dropdown item */
+    color: black; /* Text color */
+    text-decoration: none; /* Remove underline */
+    display: block; /* Full width */
+    text-align: right;
+    font-size: 1rem;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0; /* Highlight on hover */
+}
+
+/* Ensure dropdown is hidden by default */
+.dropdown {
+    display: none; /* Hide dropdown initially */
+}
+
+/* Show dropdown on hover */
+.categories:hover .dropdown {
+    display: block; /* Show dropdown when hovering over categories */
+}

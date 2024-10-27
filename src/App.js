@@ -5,7 +5,11 @@ import {
 } from "react-router-dom";
 import Layout from './components/layout/Layout'
 
-const Homepage = lazy(() => import("./components/Homepage"))
+const Homepage = lazy(() => import("./components/homepage/Homepage"))
+const ItemPage = lazy(() => import("./components/item/Item"));
+const Login = lazy(() => import("./components/login/Login"));
+const Register = lazy(() => import("./components/register/Register"));
+
 
 const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
 
@@ -18,6 +22,35 @@ function App() {
           <Suspense fallback={<Loading message="Loading Home..." />}>
             <Layout>
               <Homepage />
+            </Layout>
+          </Suspense>
+        }
+      />
+      <Route path="/item"
+        element={
+          <Suspense fallback={<Loading message="Loading Item page..." />}>
+            <Layout>
+              <ItemPage />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/login"
+        element={
+          <Suspense fallback={<Loading message="Loading Login..." />}>
+            <Layout>
+              <Login />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/register"
+        element={
+          <Suspense fallback={<Loading message="Loading Register..." />}>
+            <Layout>
+              <Register />
             </Layout>
           </Suspense>
         }

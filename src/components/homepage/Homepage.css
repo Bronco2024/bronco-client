@@ -1,0 +1,87 @@
+/* HomePage.css */
+.carousel-container {
+    max-width: 1200px;
+    margin: 0 auto; /* Centering the carousel */
+    padding: 1rem;
+}
+
+.carousel-title {
+    text-align: right;
+    font-size: 2rem;
+    color: #333; /* Adjust color as needed */
+    margin-bottom: 1rem;
+}
+
+.carousel-item {
+    cursor: pointer;
+    padding: 10px;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .carousel-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-title {
+        font-size: 1.2rem;
+    }
+}
+
+.logo-container {
+    display: flex;
+    align-items: center; /* Vertically align items */
+    justify-content: center; /* Center items horizontally */
+    margin-bottom: 20px; /* Space below the logo */
+    flex-wrap: wrap; /* Allow items to wrap on small screens */
+}
+
+.logo-text {
+    font-size: 1.5em; /* Base font size */
+    margin: 0 10px; /* Space between the logo and text */
+}
+
+.logo-container img {
+    width: 10%; /* Responsive width */
+    max-width: 180px; /* Max width for larger screens */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .logo-text {
+        font-size: 1.2em; /* Smaller font size on small screens */
+    }
+
+    .logo-container img {
+        width: 15%; /* Slightly larger for smaller screens */
+        max-width: 150px; /* Max width for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-text {
+        font-size: 1em; /* Even smaller font size for very small screens */
+    }
+
+    .logo-container img {
+        width: 20%; /* Larger for very small screens */
+        max-width: 100px; /* Max width for very small screens */
+    }
+}
+
+.divider {
+    border: none; /* Remove default border */
+    height: 2px; /* Set height of the line */
+    background-color: #ffc107; /* Set color of the line */
+    margin: 20px 0; /* Space above and below the line */
+    width: 100%; /* Full width of the container */
+}
