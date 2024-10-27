@@ -1,0 +1,103 @@
+/* General styles */
+.footer-container {
+    background-color: #1b1b1b;
+    padding: 3rem 1rem;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    position: relative;
+}
+
+.footer-logo img {
+    max-width: 150px;
+    height: auto;
+}
+
+/* Content Styling */
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center the sections */
+    gap: 2rem;
+}
+
+.footer-section {
+    text-align: center;
+    /* Center the text */
+    max-width: 400px;
+}
+
+.footer-section h2 {
+    font-size: 1.8rem;
+    color: #ffcc00;
+}
+
+.about-us {
+    border-left: 4px solid #ffcc00;
+    padding-left: 1rem;
+}
+
+.about-us p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Footer credits */
+.credits {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center credits section */
+}
+
+.credits .credit-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.linkedin-link {
+    color: #ffcc00;
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+.linkedin-link:hover {
+    color: #fff;
+}
+
+.linkedin-icon {
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+/* Footer bottom */
+
+.copyright-text {
+    font-size: 1rem;
+    color: #aaa;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-section {
+        max-width: 100%;
+    }
+
+    .footer-section h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+
+    .footer-section h2 {
+        font-size: 1.4rem;
+    }
+}
