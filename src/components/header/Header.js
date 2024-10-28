@@ -3,10 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
+import { useAuth } from '../context/AuthProvider';
 
 const Header = () => {
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
+    const { currentUser, loading } = useAuth();
 
     const categories = [
         { path: '/horses', label: 'סוסים' },
@@ -24,7 +26,7 @@ const Header = () => {
     const toggleDropdown = () => {
         setShowDropdown(!showDropdown);
     };
-
+    console.log("from header ",currentUser)
     return (
         <nav className='navbar'>
             <div className='navbar-buttons'>
@@ -32,10 +34,20 @@ const Header = () => {
                     פרסום מודעה
                     <FontAwesomeIcon icon={faPlus} style={{ marginLeft: '8px' }} />
                 </button>
-                <button className='navbar-button' onClick={() => navigate('/login')}>
-                    התחברות
-                    <FontAwesomeIcon icon={faUser} style={{ marginLeft: '8px' }} />
-                </button>
+                
+                {loading ? (
+                    <span>Loading...</span>
+                ) : currentUser ? (
+                    <button className='navbar-button' onClick={() => navigate('/profile')}>
+                        פרופיל
+                        <FontAwesomeIcon icon={faUser} style={{ marginLeft: '8px' }} />
+                    </button>
+                ) : (
+                    <button className='navbar-button' onClick={() => navigate('/login')}>
+                        התחברות
+                        <FontAwesomeIcon icon={faUser} style={{ marginLeft: '8px' }} />
+                    </button>
+                )}
             </div>
 
             <div className='navbar-logo'>

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { auth } from '../../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -11,14 +13,21 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleRegisterRedirect = () => {
-        navigate('/register'); // Change this path based on your routing setup
+        navigate('/register');
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Here you can handle the API call with email and password
-        console.log('Email:', email);
-        console.log('Password:', password);
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            navigate('/'); 
+        } catch (error) {
+            const errorCode = error.code;
+            if (errorCode === "auth/invalid-credential") {
+                console.log("Wrong email or password");
+            }
+        }
     };
 
     return (
@@ -38,7 +47,6 @@ const Login = () => {
 
                 <label htmlFor="password">סיסמה</label>
                 <div className="password-container">
-
                     <input
                         type={showPassword ? 'text' : 'password'}
                         id="password"

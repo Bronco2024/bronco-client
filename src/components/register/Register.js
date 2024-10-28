@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Register.css'; // You can keep the same CSS file if the styles are applicable
+import './Register.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { auth } from '../../firebase';
+import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -15,29 +16,33 @@ const Register = () => {
     const [showVerifyPassword, setShowVerifyPassword] = useState(false);
 
     const handleLoginRedirect = () => {
-        navigate('/login'); // Change this path based on your routing setup
+        navigate('/login');
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Here you can handle the API call with email, password, and verifyPassword
-        console.log('Email:', email);
-        console.log('Password:', password);
-        console.log('Verify Password:', verifyPassword);
 
         if (password === verifyPassword) {
-            createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                console.log(user)
 
-            }).catch((error) => {
+                await setDoc(doc(db, "users", user.uid), {
+                    email: user.email
+                })
+
+                navigate('/');
+            } catch (error) {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.error(errorCode)
-                console.error(errorMessage)
-            });
+                if(errorCode === "auth/email-already-in-use"){
+                    console.log("Email taken")
+                }
+                console.error(errorCode);
+                console.error(errorMessage);
+            }
         } else {
-            console.log("passwords dont match")
+            console.log("Passwords don't match");
         }
     };
 
