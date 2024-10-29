@@ -1,31 +1,43 @@
-/* Profile.css */
-
 .profile-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Light background */
 }
 
-.profile-container h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
+.ads-container {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #ffffff; /* White background for ads */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    max-height: 800px; /* Set max height for scrolling */
+    overflow-y: auto; /* Enable scrolling */
 }
 
-.logout-button {
-    background-color: #ff4b5c;
+.ad-card1 {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 2px solid #ddd; /* Stronger border */
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.ad-card1:hover {
+    border-color: #ccc; /* Change border color on hover */
+}
+
+.subscribe-button-profile {
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #29b857; /* Blue background for buttons */
     color: white;
     border: none;
-    padding: 10px 20px;
-    font-size: 16px;
+    border-radius: 4px;
     cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    font-size: 1rem;
 }
 
-.logout-button:hover {
-    background-color: #ff6f7f;
+.subscribe-button-profile:hover {
+    background-color: #1e9845; /* Darker blue on hover */
 }

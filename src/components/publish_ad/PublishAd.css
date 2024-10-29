@@ -1,0 +1,125 @@
+.publish-ad-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.publish-ad-form {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.publish-ad-form label {
+    margin: 10px 0 5px;
+}
+
+.publish-ad-form input,
+.publish-ad-form textarea,
+.publish-ad-form select { /* Include select in the styles */
+    padding: 10px; /* Add padding for input fields */
+    border: 1px solid #ccc; /* Light gray border for inputs */
+    border-radius: 4px; /* Rounded corners */
+    text-align: right; /* Align text inside inputs to the right */
+    resize: none; /* Disable resizing for textarea */
+}
+
+.publish-ad-select-div{
+    margin-top: 20px;
+}
+
+.publish-button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.publish-button:hover {
+    background-color: #45a049;
+}
+.publish-ad-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.publish-ad-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.publish-ad-form label {
+    margin: 10px 0 5px;
+    text-align: right; /* Align labels to the right */
+}
+
+.publish-ad-form input,
+.publish-ad-form textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: right; /* Align text inside inputs to the right */
+    resize: none;
+}
+
+.publish-button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.publish-button:hover {
+    background-color: #45a049;
+}
+
+
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 80%;
+    max-width: 400px;
+}
+
+.close-button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    background-color: #45a049;
+}

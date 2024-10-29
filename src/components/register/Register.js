@@ -28,7 +28,10 @@ const Register = () => {
                 const user = userCredential.user;
 
                 await setDoc(doc(db, "users", user.uid), {
-                    email: user.email
+                    email: user.email,
+                    isSubscribed: false,
+                    subscriptionUntil: null,
+                    numberOfAds: 0
                 })
 
                 navigate('/');

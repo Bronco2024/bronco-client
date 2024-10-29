@@ -1,0 +1,89 @@
+.horses-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.horses-title {
+    align-self: center;
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.ads-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-end;
+}
+
+.ad-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px; /* Default width */
+    max-width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.ad-image {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.ad-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.ad-price {
+    font-size: 1em;
+    font-weight: bold;
+    color: #555;
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .ad-card {
+        width: 45%; /* Two cards per row on tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    .ad-card {
+        width: 100%; /* One card per row on mobile */
+    }
+    
+    .horses-title {
+        font-size: 1.5em; /* Smaller title on mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .ad-title {
+        font-size: 1em; /* Smaller text on very small screens */
+    }
+
+    .ad-price {
+        font-size: 0.9em;
+    }
+}

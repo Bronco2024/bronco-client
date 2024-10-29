@@ -1,38 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AliceCarousel from 'react-alice-carousel';
-import { faker } from '@faker-js/faker';
 import 'react-alice-carousel/lib/alice-carousel.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowCircleLeft, faArrowCircleRight } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import './Homepage.css';
+import { db } from '../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 const HomePage = () => {
     const navigate = useNavigate();
+    const [sponsors, setSponsors] = useState([]);
 
-    const items = Array.from({ length: 10 }, () => {
-        const imageUrl = faker.image.urlLoremFlickr({ width: 100, height: 150, category: 'horses' });
+    useEffect(() => {
+        const fetchSponsors = async () => {
+            try {
+                const goldCollectionRef = collection(db, 'sponsors');
+                const querySnapshot = await getDocs(goldCollectionRef);
 
-        return (
-            <div className="carousel-item" onClick={() => navigate('/item', { state: { imageUrl } })}>
-                <img src={imageUrl} alt="Fake" />
-            </div>
-        );
-    });
+                const fetchedSponsors = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
 
-    const responsive = {
+                setSponsors(fetchedSponsors);
+
+            } catch (error) {
+                console.error("Error fetching sponsors:", error);
+            }
+        };
+        fetchSponsors();
+    }, []);
+
+    const responsiveGoldSilver = {
+        0: { items: 1 },
+    };
+
+    const responsiveBronze = {
         0: { items: 1 },
         768: { items: 2 },
         1024: { items: 3 },
-        1200: { items: 4 },
     };
 
-    const renderNextButton = ({ isDisabled }) => {
-        return <FontAwesomeIcon icon={faArrowCircleRight} size='2x' />;
-    };
+    const renderItems = (sponsors, type) => {
+        const filteredSponsors = sponsors.filter(item => item.sponsor === type);
 
-    const renderPrevButton = ({ isDisabled }) => {
-        return <FontAwesomeIcon icon={faArrowCircleLeft} size='2x' />;
+        return filteredSponsors.map(item => (
+            <img
+                key={item.id}
+                src={item.photo}
+                alt="sponsor"
+                style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+            />
+        ));
     };
 
     return (
@@ -44,18 +62,57 @@ const HomePage = () => {
             </div>
             <hr className="divider" />
 
-            <h2 className="carousel-title">להיטים</h2>
-            <AliceCarousel
-                mouseTracking
-                items={items}
-                autoPlay
-                infinite
-                autoPlayInterval={2000}
-                responsive={responsive}
-                disableDotsControls
-                renderPrevButton={renderPrevButton}
-                renderNextButton={renderNextButton}
-            />
+            <div className='outer-sponsor-container'>
+                <div className='outer-sponsor-wrapper gold-sponsor'>
+                    <div className="title-container">GOLD SPONSOR</div>
+                    <AliceCarousel
+                        mouseTracking
+                        items={renderItems(sponsors, "gold")}
+                        autoPlay
+                        infinite
+                        autoPlayInterval={2000}
+                        responsive={responsiveGoldSilver}
+                        disableDotsControls
+                        disableButtonsControls
+                    />
+                </div>
+
+                <div className='sponsor-wrapper'>
+                    <div className='left-content'>
+                        <img src={require('../../assets/bronco.png')} alt="aa 1" />
+                        <img src={require('../../assets/bronco.png')} alt="aa 2" />
+                        <p>Some additional text or content</p>
+                    </div>
+
+                    <div className='silver-sponsor'>
+                        <div className="title-container">SILVER SPONSOR</div>
+                        <AliceCarousel
+                            mouseTracking
+                            items={renderItems(sponsors, "silver")}
+                            autoPlay
+                            infinite
+                            autoPlayInterval={2000}
+                            responsive={responsiveGoldSilver}
+                            disableDotsControls
+                            disableButtonsControls
+                        />
+                    </div>
+                </div>
+
+                <div className='bronze-sponsor-wrapper bronze-sponsor'>
+                    <div className="title-container">BRONZE SPONSOR</div>
+                    <AliceCarousel
+                        mouseTracking
+                        items={renderItems(sponsors, "bronze")}
+                        autoPlay
+                        infinite
+                        autoPlayInterval={2000}
+                        responsive={responsiveBronze}
+                        disableDotsControls
+                        disableButtonsControls
+                    />                    
+                </div>
+            </div>
         </div>
     );
 };

@@ -10,6 +10,10 @@ const ItemPage = lazy(() => import("./components/item/Item"));
 const Login = lazy(() => import("./components/login/Login"));
 const Register = lazy(() => import("./components/register/Register"));
 const Profile = lazy(() => import("./components/profile/Profile"));
+const PublishAd = lazy(() => import("./components/publish_ad/PublishAd"));
+const Subscribe = lazy(() => import("./components/subscribe/Subscribe"));
+const Horses = lazy(() => import("./components/horses/Horses"));
+const Test = lazy(() => import("./components/test/Test"));
 
 
 const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
@@ -62,6 +66,46 @@ function App() {
           <Suspense fallback={<Loading message="Loading Profile..." />}>
             <Layout>
               <Profile />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/publish_ad"
+        element={
+          <Suspense fallback={<Loading message="Loading Publish Ad..." />}>
+            <Layout>
+              <PublishAd />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/subscribe"
+        element={
+          <Suspense fallback={<Loading message="Loading Subscribe..." />}>
+            <Layout>
+              <Subscribe />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/horses"
+        element={
+          <Suspense fallback={<Loading message="Loading horses..." />}>
+            <Layout>
+              <Horses />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/test"
+        element={
+          <Suspense fallback={<Loading message="Loading horses..." />}>
+            <Layout>
+              <Test />
             </Layout>
           </Suspense>
         }

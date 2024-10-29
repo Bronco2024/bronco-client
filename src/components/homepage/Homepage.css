@@ -1,14 +1,14 @@
 /* HomePage.css */
 .carousel-container {
-    max-width: 1200px;
-    margin: 0 auto; /* Centering the carousel */
+    max-width: 100%;
+    margin: 0 auto;
     padding: 1rem;
 }
 
 .carousel-title {
     text-align: right;
     font-size: 2rem;
-    color: #333; /* Adjust color as needed */
+    color: #333;
     margin-bottom: 1rem;
 }
 
@@ -17,11 +17,8 @@
     padding: 10px;
 }
 
-.carousel-item img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
+
+
 
 /* Responsive Styles */
 @media (max-width: 768px) {
@@ -38,50 +35,146 @@
 
 .logo-container {
     display: flex;
-    align-items: center; /* Vertically align items */
-    justify-content: center; /* Center items horizontally */
-    margin-bottom: 20px; /* Space below the logo */
-    flex-wrap: wrap; /* Allow items to wrap on small screens */
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 .logo-text {
-    font-size: 1.5em; /* Base font size */
-    margin: 0 10px; /* Space between the logo and text */
+    font-size: 1.5em;
+    margin: 0 10px;
 }
 
 .logo-container img {
-    width: 10%; /* Responsive width */
-    max-width: 180px; /* Max width for larger screens */
-    height: auto; /* Maintain aspect ratio */
+    width: 10%;
+    max-width: 180px;
+    height: auto;
 }
 
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
     .logo-text {
-        font-size: 1.2em; /* Smaller font size on small screens */
+        font-size: 1.2em;
+        /* Smaller font size on small screens */
     }
 
     .logo-container img {
-        width: 15%; /* Slightly larger for smaller screens */
-        max-width: 150px; /* Max width for smaller screens */
+        width: 15%;
+        /* Slightly larger for smaller screens */
+        max-width: 150px;
+        /* Max width for smaller screens */
     }
 }
 
 @media (max-width: 480px) {
     .logo-text {
-        font-size: 1em; /* Even smaller font size for very small screens */
+        font-size: 1em;
+        /* Even smaller font size for very small screens */
     }
 
     .logo-container img {
-        width: 20%; /* Larger for very small screens */
-        max-width: 100px; /* Max width for very small screens */
+        width: 20%;
+        max-width: 100px;
     }
 }
 
 .divider {
-    border: none; /* Remove default border */
-    height: 2px; /* Set height of the line */
-    background-color: #ffc107; /* Set color of the line */
-    margin: 20px 0; /* Space above and below the line */
-    width: 100%; /* Full width of the container */
+    border: 2px solid #f04545;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.outer-sponsor-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 90%;
+    align-items: center;
+    margin: 5%;
+    gap: 30px;
+}
+
+.outer-sponsor-wrapper {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.title-container {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 15px;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1em;
+    white-space: nowrap;
+}
+
+.gold-sponsor {
+    border: 5px solid #FFD700;
+    position: relative;
+}
+
+.gold-sponsor .title-container {
+    background-color: #FFD700;
+}
+
+.sponsor-wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.left-content {
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.silver-sponsor {
+    border: 5px solid #C0C0C0;
+    width: 20%;
+    border-radius: 10px;
+    position: relative;
+    max-height: 1000px;
+    flex-shrink: 0;
+    margin-left: 20px;
+    padding: 10px;
+
+}
+
+.silver-sponsor .title-container {
+    background-color: #C0C0C0;
+}
+
+.bronze-sponsor-wrapper {
+    width: 90%;
+    padding: 15px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.bronze-sponsor {
+    border: 5px solid #cd7f32;
+    position: relative;
+    max-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bronze-sponsor .title-container {
+    background-color: #cd7f32;
+}
+
+.bronze-sponsor img {
+    width: 100%;            
+    max-height: 180px;      
+    object-fit: contain;   
 }

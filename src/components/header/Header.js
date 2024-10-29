@@ -1,14 +1,14 @@
 import './Header.css';
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faPlus, faSignOut } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthProvider';
 
 const Header = () => {
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
-    const { currentUser, loading } = useAuth();
+    const { currentUser, loading, logout } = useAuth();
 
     const categories = [
         { path: '/horses', label: 'סוסים' },
@@ -26,15 +26,39 @@ const Header = () => {
     const toggleDropdown = () => {
         setShowDropdown(!showDropdown);
     };
-    console.log("from header ",currentUser)
+
+    const handlePublishAd = () => {
+        if (currentUser === null) {
+            navigate('/login');
+        } else {
+            if(currentUser.isSubscribed && currentUser.numberOfAds > 0){
+                navigate('/publish_ad')
+            } else {
+                navigate('/subscribe')
+            }
+        }
+    }
+
+    const handleLogout = async () => {
+        await logout();
+        navigate('/');
+    };
+
     return (
         <nav className='navbar'>
             <div className='navbar-buttons'>
-                <button className='navbar-button'>
+                {currentUser && (
+                    <button className='navbar-button' style={{ backgroundColor: 'red' }} onClick={handleLogout}>
+                        התנתק
+                        <FontAwesomeIcon icon={faSignOut} style={{ marginLeft: '8px' }} />
+                    </button>
+                )}
+
+                <button className='navbar-button' onClick={handlePublishAd}>
                     פרסום מודעה
                     <FontAwesomeIcon icon={faPlus} style={{ marginLeft: '8px' }} />
                 </button>
-                
+
                 {loading ? (
                     <span>Loading...</span>
                 ) : currentUser ? (
