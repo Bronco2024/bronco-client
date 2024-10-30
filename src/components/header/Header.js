@@ -1,7 +1,7 @@
 import './Header.css';
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faPlus, faSignOut, faBars, faTimes } from '@fortawesome/free-solid-svg-icons'; // Import the close icon
+import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser } from '@fortawesome/free-solid-svg-icons'; // Import the close icon
 import { useState } from 'react';
 import { useAuth } from '../context/AuthProvider';
 
@@ -9,6 +9,7 @@ const Header = () => {
     const navigate = useNavigate();
     const { currentUser, loading, logout } = useAuth();
     const [showMenu, setShowMenu] = useState(false);
+    const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
     const categories = [
         { path: '/horses', label: 'סוסים' },
@@ -36,19 +37,18 @@ const Header = () => {
     };
 
     const handleLogout = async () => {
+        toggleProfileDropdown()
         await logout();
         navigate('/');
+    };
+
+    const toggleProfileDropdown = () => {
+        setShowProfileDropdown(!showProfileDropdown); // Toggle dropdown visibility
     };
 
     return (
         <nav className='navbar'>
             <div className='navbar-buttons'>
-                {currentUser && (
-                    <button className='navbar-button' style={{ backgroundColor: 'red' }} onClick={handleLogout}>
-                        התנתק
-                        <FontAwesomeIcon icon={faSignOut} style={{ marginLeft: '8px' }} />
-                    </button>
-                )}
                 <button className='publish-ad-button' onClick={handlePublishAd} >
                     פרסום מודעה
                     <FontAwesomeIcon icon={faPlus} style={{ marginLeft: '8px' }} />
@@ -56,10 +56,28 @@ const Header = () => {
                 {loading ? (
                     <span>Loading...</span>
                 ) : currentUser ? (
-                    <button className='navbar-button' onClick={() => navigate('/profile')}>
-                        פרופיל
-                        <FontAwesomeIcon icon={faUser} style={{ marginLeft: '8px' }} />
-                    </button>
+                    <div className='profile-dropdown-container'>
+                        <button className='navbar-button' onClick={toggleProfileDropdown}>
+                            פרופיל
+                            <FontAwesomeIcon icon={faUser} style={{ marginLeft: '8px' }} />
+                        </button>
+                        {showProfileDropdown && (
+                            <div className="profile-dropdown">
+                                <button className='dropdown-item' onClick={() => {
+                                    toggleProfileDropdown()
+                                    navigate('/profile')
+                                    }}>
+                                    אזור אישי
+                                    <FontAwesomeIcon icon={faHouseUser} style={{ marginLeft: '8px' }} />
+
+                                </button>
+                                <button className='dropdown-item' onClick={handleLogout}>
+                                    התנתק
+                                    <FontAwesomeIcon icon={faSignOut} style={{ marginLeft: '8px' }} />
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 ) : (
                     <button className='navbar-button' onClick={() => navigate('/login')}>
                         התחברות

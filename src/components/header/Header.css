@@ -53,6 +53,7 @@
     color: #000;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    text-decoration: none;
 }
 
 .navbar-button-category:hover {
@@ -102,8 +103,43 @@
     border-radius: 15px; 
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
+    
 }
 
 .publish-ad-button:hover {
     background-color: #fafafa; 
+}
+
+
+.profile-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 150px;
+    padding: 10px 0;
+    z-index: 1;
+}
+
+.dropdown-item {
+    background: none;
+    border: none;
+    color: black;
+    width: 100%;
+    text-align: right;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #efefef;
 }
