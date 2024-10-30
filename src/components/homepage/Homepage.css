@@ -131,11 +131,26 @@
     flex-shrink: 0;
     margin-left: 20px;
     padding: 10px;
-
 }
 
 .silver-sponsor .title-container {
     background-color: #C0C0C0;
+}
+@media (max-width: 768px) {
+    .sponsor-wrapper {
+        flex-direction: column;
+    }
+
+    .silver-sponsor {
+        margin-top: 15%;
+        width: 90%;
+        margin-left: 0; 
+    }
+    .silver-sponsor img {
+        object-fit: cover; 
+        max-height: 200px; 
+        width: 100%;
+    }
 }
 
 .bronze-sponsor-wrapper {
@@ -159,14 +174,14 @@
 }
 
 .bronze-sponsor img {
-    width: 100%;            
-    max-height: 180px;      
-    object-fit: contain;   
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
 }
 
 .left-content {
     position: relative;
-    padding-top: 50px; 
+    padding-top: 50px;
 }
 
 .ad-title-section {
@@ -181,9 +196,9 @@
 .ad-cards-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 30px; 
+    gap: 30px;
     justify-content: flex-end;
-    margin-top: 20px; 
+    margin-top: 20px;
 }
 
 .ad-card-homepage {
