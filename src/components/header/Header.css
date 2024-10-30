@@ -1,6 +1,4 @@
-/* Header.css */
-
-/* General styles */
+/* General Navbar styling */
 .navbar {
     background-color: #ffffff;
     height: 80px;
@@ -13,34 +11,26 @@
     z-index: 999;
     width: 100%;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Adds a subtle shadow */
-}
-
-.navbar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 100%;
-    max-width: 1500px;
 }
 
 .navbar-logo {
     color: #000000;
     cursor: pointer;
     display: flex;
-    margin-right: 10px
+    align-items: center; 
+    margin-right: 10px;
 }
 
 .navbar-buttons {
     display: flex;
     gap: 10px;
-    margin-left: 10px
+    margin-left: 10px;
 }
 
 .navbar-button {
     padding: 8px 16px;
     font-size: 1rem;
-    background-color: #ffdf00;
+    background-color: #ffffff;
     border: none;
     border-radius: 15px;
     color: #000;
@@ -49,208 +39,56 @@
 }
 
 .navbar-button:hover {
-    background-color: #ffc107;
+    background-color: #efefef;
+}
+
+.navbar-buttons-category {
+    display: flex;
+    gap: 10px;
+}
+
+.navbar-button-category {
+    padding: 10px;
+    font-size: 1rem;
+    color: #000;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-button-category:hover {
+    background-color: #f0f0f0;
+    border-radius: 5px;
 }
 
 .menu-icon {
-    display: none;
+    display: none; 
 }
 
-.nav-menu {
-    display: flex;
-    list-style: none;
-    text-align: center;
-    align-items: center;
-}
-
-.nav-item {
-    height: 80px;
-}
-
-.nav-links {
-    color: #fff;
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    height: 100%;
-    transition: all 0.3s ease-in-out;
-    /* Smooth transition */
-    position: relative;
-}
-
-.nav-links::after {
-    content: '';
-    position: absolute;
-    width: 0%;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background-color: #ffdf00;
-    /* Matching the cross color */
-    transition: width 0.3s ease-in-out;
-}
-
-.nav-links:hover::after {
-    width: 100%;
-}
-
-.nav-links:hover {
-    color: #ffdf00;
-    /* Golden text color on hover */
-}
-
-/* Responsive Styles */
-@media screen and (max-width: 1200px) {
-    .navbar {
-        padding: 0 15px;
-    }
-
-    .nav-links {
-        padding: 0.5rem 0.8rem;
-    }
-}
-
-@media screen and (max-width: 960px) {
-    .menu-icon {
-        display: block;
-        color: #fff;
-        font-size: 1.8rem;
-        cursor: pointer;
-    }
-
-    .nav-menu {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: auto;
+@media screen and (max-width: 768px) {
+    .navbar-buttons-category {
+        display: none;
+        flex-direction: column; 
         position: absolute;
-        top: 80px;
-        left: -100%;
-        opacity: 1;
-        transition: all 0.5s ease;
-        background: #242222;
+        top: 100%;
+        right: 0;
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         z-index: 1;
-        border-top: 2px solid #ffdf00;
-        /* Golden border on mobile menu */
-    }
-
-    .nav-menu.active {
-        left: 0;
-    }
-
-    .nav-links {
-        text-align: center;
-        padding: 2rem;
-        width: 100%;
-        display: table;
-    }
-
-    .menu-icon {
-        position: absolute;
-        top: 0;
-        right: 20px;
-        transform: translateY(50%);
-    }
-
-    .fa-times {
-        color: #fff;
-        font-size: 2rem;
-    }
-
-    .nav-links-mobile {
-        display: block;
-        text-align: center;
-        margin: 2rem auto;
+        width: 200px;
         border-radius: 4px;
-        width: 80%;
-        text-decoration: none;
+    }
+
+    .navbar-buttons-category.show {
+        display: flex; 
+        text-align: center;
+    }
+
+    .menu-icon {
+        display: block;
+        background: none;
+        border: none;
         font-size: 1.5rem;
-        background-color: transparent;
-        color: #fff;
-        padding: 14px 20px;
-        border: 1px solid #fff;
-        transition: all 0.3s ease-out;
+        cursor: pointer;
+        color: #000;
     }
-
-    .nav-links-mobile:hover {
-        background: #ffdf00;
-        color: #242424;
-    }
-}
-
-@media screen and (max-width: 600px) {
-
-    .nav-links {
-        font-size: 1.1rem;
-        padding: 1.5rem;
-    }
-
-    .menu-icon {
-        font-size: 2rem;
-    }
-}
-
-@media screen and (max-width: 400px) {
-    .nav-links {
-        font-size: 1rem;
-        padding: 1.5rem;
-    }
-}
-
-@media screen and (max-width: 350px) {
-    .menu-icon {
-        font-size: 2.2rem;
-    }
-}
-
-/* Existing styles remain unchanged */
-
-.categories {
-    position: relative;
-    cursor: pointer;
-    display: flex;
-    align-items: center; /* Center text vertically */
-    height: 40px; /* Match this to .navbar-button height */
-    padding: 8px 16px;
-    color: #000;
-    border-radius: 15px;
-    transition: background-color 0.3s ease;
-    font-size: 1rem;
-}
-
-.dropdown {
-    position: absolute; /* Position dropdown absolutely */
-    top: 100%; /* Position below the categories text */
-    right: 10px; /* Align with the left edge */
-    background-color: white; /* Background color */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
-    z-index: 1; /* Ensure it appears above other content */
-    width: 150px; /* Set a fixed width for dropdown */
-    border-radius: 4px; /* Rounded corners */
-    display: flex; /* Flex display for dropdown items */
-    flex-direction: column; /* Stack items vertically */
-}
-
-.dropdown-item {
-    padding: 10px; /* Space inside each dropdown item */
-    color: black; /* Text color */
-    text-decoration: none; /* Remove underline */
-    display: block; /* Full width */
-    text-align: right;
-    font-size: 1rem;
-}
-
-.dropdown-item:hover {
-    background-color: #f0f0f0; /* Highlight on hover */
-}
-
-/* Ensure dropdown is hidden by default */
-.dropdown {
-    display: none; /* Hide dropdown initially */
-}
-
-/* Show dropdown on hover */
-.categories:hover .dropdown {
-    display: block; /* Show dropdown when hovering over categories */
 }
