@@ -4,11 +4,14 @@ import 'react-alice-carousel/lib/alice-carousel.css';
 import { useNavigate } from 'react-router-dom';
 import './Homepage.css';
 import { db } from '../../firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+
+const NUMBER_OF_LATEST_ADS_TO_FETCH = 8;
 
 const HomePage = () => {
     const navigate = useNavigate();
     const [sponsors, setSponsors] = useState([]);
+    const [latestAds, setLatestAds] = useState([])
 
     useEffect(() => {
         const fetchSponsors = async () => {
@@ -27,7 +30,27 @@ const HomePage = () => {
                 console.error("Error fetching sponsors:", error);
             }
         };
+
+        const fetchLatestAds = async () => {
+            try {
+                const adsRef = collection(db, "ads");
+                const q = query(adsRef, orderBy("createdAt", "desc"), limit(NUMBER_OF_LATEST_ADS_TO_FETCH));
+                const querySnapshot = await getDocs(q);
+
+                const ads = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                setLatestAds(ads);
+
+            } catch (error) {
+                console.error("Error fetching sponsors:", error);
+            }
+        };
+
         fetchSponsors();
+        fetchLatestAds();
     }, []);
 
     const responsiveGoldSilver = {
@@ -79,10 +102,20 @@ const HomePage = () => {
 
                 <div className='sponsor-wrapper'>
                     <div className='left-content'>
-                        <img src={require('../../assets/bronco.png')} alt="aa 1" />
-                        <img src={require('../../assets/bronco.png')} alt="aa 2" />
-                        <p>Some additional text or content</p>
+                        <h2 className="ad-title-section">להיטים</h2>
+                        <div className="ad-cards-container">
+                            {latestAds.map(ad => (
+                                <div key={ad.id} className="ad-card-homepage">
+                                    {ad.photos && ad.photos[0] && (
+                                        <img src={ad.photos[0]} alt={ad.title} className="ad-image-homepage" />
+                                    )}
+                                    <h2 className="ad-title-homepage">{ad.title}</h2>
+                                    <p className="ad-price-homepage">₪{ad.price}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
+
 
                     <div className='silver-sponsor'>
                         <div className="title-container">SILVER SPONSOR</div>
@@ -110,7 +143,7 @@ const HomePage = () => {
                         responsive={responsiveBronze}
                         disableDotsControls
                         disableButtonsControls
-                    />                    
+                    />
                 </div>
             </div>
         </div>
