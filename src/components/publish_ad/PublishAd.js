@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './PublishAd.css';
 import { db, storage } from '../../firebase';
-import { addDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthProvider';
 import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 const PublishAd = () => {
     const navigate = useNavigate();
-
+    const [cities, setCities] = useState([]);
     const { currentUser, setCurrentUser } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
@@ -17,8 +17,9 @@ const PublishAd = () => {
         category: '',
         description: '',
         phoneNumber: '',
+        location: '',
         price: '',
-        photos: []
+        photos: [],
     });
 
     const categories = [
@@ -34,6 +35,44 @@ const PublishAd = () => {
         { path: 'shows-and-competitions', label: 'תצוגות ותחריות' },
     ];
 
+    const breeds = [
+        "ערבי מערוב קו ",
+        "ערבי מצרי",
+        "פריזן",
+        "קווטר",
+        "טורבדריד",
+        "סינגל פוט",
+        "טנסי",
+        "אנדלוסי",
+        "אפלוסה",
+        "מיזורי פוקס טרוטר",
+        "פיינט",
+        "פוני",
+        "פוני וולש",
+        "פוני שטלנד",
+        "אחר",
+    ]
+
+    useEffect(() => {
+        const FetchCities = async () => {
+            let data = {
+                resource_id: 'b7cf8f14-64a2-4b33-8d4b-edb286fdbd37',
+                limit: 1500//1273
+            };
+
+            let cities_arr = [];
+
+            await fetch(`https://data.gov.il/api/action/datastore_search?resource_id=${data.resource_id}&limit=${data.limit}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.result.records.map(item => cities_arr.push((item['שם_ישוב'].trim())));
+                })
+                .catch(error => console.error('Error:', error));
+            setCities(cities_arr);
+        }
+        FetchCities()
+    }, [])
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -48,12 +87,11 @@ const PublishAd = () => {
 
         try {
             const date = new Date();
-
-            const adId = uuidv4(); 
+            const adId = uuidv4();
 
             const photoURLs = await Promise.all(
                 formData.photos.map(async (photo, index) => {
-                    const photoRef = ref(storage, `ads/${adId}/${index}`); 
+                    const photoRef = ref(storage, `ads/${adId}/${index}`);
                     await uploadBytes(photoRef, photo);
                     return await getDownloadURL(photoRef);
                 })
@@ -67,12 +105,11 @@ const PublishAd = () => {
                 userId: currentUser.uid,
                 createdAt: new Date(),
                 availableUntil: date
-            })
+            });
 
-            
-            await updateDoc(doc(db, "users", currentUser.uid),{
+            await updateDoc(doc(db, "users", currentUser.uid), {
                 numberOfAds: currentUser.numberOfAds - 1
-            })
+            });
 
             setCurrentUser({
                 ...currentUser,
@@ -84,12 +121,13 @@ const PublishAd = () => {
                 category: '',
                 description: '',
                 phoneNumber: '',
+                location: '',
                 price: '',
-                photos: []
+                photos: [],
             });
+
             setShowModal(true);
 
-            
         } catch (error) {
             console.error("Error publishing ad:", error);
         }
@@ -98,6 +136,14 @@ const PublishAd = () => {
     const closeModal = () => {
         setShowModal(false);
         navigate('/');
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: type === 'checkbox' ? checked : value,
+        }));
     };
 
     return (
@@ -114,23 +160,81 @@ const PublishAd = () => {
                     required
                 />
 
-                <div className='publish-ad-select-div'>
-                    <select
-                        id="category"
-                        name="category"
-                        value={formData.category}
-                        onChange={handleChange}
-                        required
+                <label htmlFor="category"> קטגוריה</label>
+                <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                >
+                    <option value="">בחר קטגוריה</option>
+                    {categories.map((cat, index) => (
+                        <option key={index} value={cat.label}>
+                            {cat.label}
+                        </option>
+                    ))}
+                </select>
 
-                    >
-                        <option value="">בחר קטגוריה</option>
-                        {categories.map((cat, index) => (
-                            <option key={index} value={cat.label}>
-                                {cat.label}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                {formData.category === "סוסים" && (
+
+                    <div className="publish-ad-form">
+                        <label htmlFor="breed">גזע</label>
+                        <select
+                            id="breed"
+                            name="breed"
+                            value={formData.breed || ""}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">בחר גזע</option>
+                            {breeds.map((breed, index) => (
+                                <option key={index} value={breed}>
+                                    {breed}
+                                </option>
+                            ))}
+                        </select>
+
+                        <label htmlFor="gender">מין</label>
+                        <select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            <option value="">בחר מין</option>
+                            <option value="זכר">זכר</option>
+                            <option value="נקבה">נקבה</option>
+                        </select>
+
+                        <div className="publish-ad-form">
+
+                            <label htmlFor="age">גיל</label>
+                            <input
+                                type="number"
+                                id="age"
+                                name="age"
+                                value={formData.age || ''}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+
+                        <div style={{ marginTop: '3%', marginBottom: '1%' }}>
+                            <label htmlFor="hasCertificate">
+                                <input
+                                    type="checkbox"
+                                    id="hasCertificate"
+                                    name="hasCertificate"
+                                    checked={formData.hasCertificate || ''}
+                                    onChange={handleInputChange}
+                                />
+
+                                &nbsp; עם תעודה
+                            </label>
+                        </div>
+                    </div>
+                )}
 
                 <label htmlFor="description">תיאור</label>
                 <textarea
@@ -151,6 +255,21 @@ const PublishAd = () => {
                     onChange={handleChange}
                     required
                 />
+
+                <label htmlFor="location">אזור</label>
+                <select
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    required
+                >
+                    <option value="">בחר מיקום</option>
+                    {cities.map((city, index) => (
+                        <option key={index} value={city}>
+                            {city}
+                        </option>
+                    ))}
+                </select>
 
                 <label htmlFor="price">מחיר</label>
                 <input

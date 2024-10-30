@@ -76,6 +76,10 @@ const HomePage = () => {
         ));
     };
 
+    const handleClickOnItem = (ad) => {
+        navigate('/item', { state: { ad } })
+    }
+
     return (
         <div className="carousel-container">
             <div className="logo-container">
@@ -105,7 +109,7 @@ const HomePage = () => {
                         <h2 className="ad-title-section">להיטים</h2>
                         <div className="ad-cards-container">
                             {latestAds.map(ad => (
-                                <div key={ad.id} className="ad-card-homepage">
+                                <div key={ad.id} className="ad-card-homepage" onClick={() => handleClickOnItem(ad)}>
                                     {ad.photos && ad.photos[0] && (
                                         <img src={ad.photos[0]} alt={ad.title} className="ad-image-homepage" />
                                     )}

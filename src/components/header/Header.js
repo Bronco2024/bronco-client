@@ -19,7 +19,7 @@ const Header = () => {
         { path: '/breeders', label: 'מפרזילים' },
         { path: '/schools', label: 'בתי ספר' },
         { path: '/trips', label: 'טיולים' },
-        { path: '/products', label: 'תנויות' },
+        { path: '/shops', label: 'חנויות' },
         { path: '/shows-and-competitions', label: 'תצוגות ותחריות' },
     ];
 
@@ -49,7 +49,7 @@ const Header = () => {
                         <FontAwesomeIcon icon={faSignOut} style={{ marginLeft: '8px' }} />
                     </button>
                 )}
-                <button className='navbar-button' onClick={handlePublishAd}>
+                <button className='publish-ad-button' onClick={handlePublishAd} >
                     פרסום מודעה
                     <FontAwesomeIcon icon={faPlus} style={{ marginLeft: '8px' }} />
                 </button>

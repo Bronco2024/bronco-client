@@ -15,6 +15,14 @@
 
 .publish-ad-form label {
     margin: 10px 0 5px;
+    font-weight: bold;
+
+}
+
+.publish-ad-form select{
+    direction: rtl;
+    width: 30%;
+    align-self: flex-end;
 }
 
 .publish-ad-form input,
