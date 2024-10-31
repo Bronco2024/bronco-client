@@ -1,72 +1,169 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+    collection,
+    query,
+    orderBy,
+    limit,
+    startAfter,
+    getDocs,
+    getCountFromServer,
+    limitToLast,
+    endBefore,
+    where,
+} from "firebase/firestore";
 import { db } from '../../firebase';
-import { collection, where, query, getDocs } from 'firebase/firestore';
 import './Horses.css'
-import { useNavigate } from 'react-router-dom';
+
+const ADS_PER_PAGE = 3;
+
+const breeds = [
+    "ערבי מערוב קו ",
+    "ערבי מצרי",
+    "פריזן",
+    "קווטר",
+    "טורבדריד",
+    "סינגל פוט",
+    "טנסי",
+    "אנדלוסי",
+    "אפלוסה",
+    "מיזורי פוקס טרוטר",
+    "פיינט",
+    "פוני",
+    "פוני וולש",
+    "פוני שטלנד",
+    "אחר",
+]
 
 const Horses = () => {
-    const navigate = useNavigate();
-    const [ads, setAds] = useState([]);
-    const [filteredAds, setFilteredAds] = useState([]);
+    const [adList, setAdList] = useState([]);
+    const [totalAds, setTotalAds] = useState(0);
+    const [page, setPage] = useState(1);
+    const [afterThis, setAfterThis] = useState(null);
+    const [beforeThis, setBeforeThis] = useState(null);
     const [filters, setFilters] = useState({
-        gender: '',
-        minPrice: '',
-        maxPrice: '',
-        hasCertificate: '',
-        age: '',
-        location: ''
+        gender: "",
+        minPrice: "",
+        maxPrice: "",
+        hasCertificate: "",
+        age: "",
+        breed: "",
     });
 
+    const categoryFilter = "סוסים";
+
+    const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
+
+    const getTotalCount = useCallback(async () => {
+        const collectionRef = collection(db, "ads");
+        const q = query(
+            collectionRef,
+            where("category", "==", categoryFilter)
+        );
+
+        const aggregateQuerySnapshot = await getCountFromServer(q);
+        setTotalAds(aggregateQuerySnapshot.data().count);
+    }, [categoryFilter]);
+
+    const fetchAds = useCallback(async () => {
+        const collectionRef = collection(db, "ads");
+        const q = query(
+            collectionRef,
+            where("category", "==", categoryFilter),
+            orderBy("createdAt", "desc"),
+            limit(ADS_PER_PAGE)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setAdList(items);
+        setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
+    }, [categoryFilter]);
+
     useEffect(() => {
-        const fetchAds = async () => {
-            try {
-                const horsesCollectionRef = collection(db, 'ads');
-                const q = query(horsesCollectionRef, where("category", "==", 'סוסים'));
-                const querySnapshot = await getDocs(q);
-
-                const fetchedAds = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-
-                setAds(fetchedAds);
-                setFilteredAds(fetchedAds);
-
-            } catch (error) {
-                console.error("Error fetching horse ads:", error);
-            }
-        };
-
         fetchAds();
-    }, []);
+        getTotalCount();
+    }, [fetchAds, getTotalCount]);
+
+    const handleNextPage = async () => {
+        const collectionRef = collection(db, "ads");
+        const q = query(
+            collectionRef,
+            where("category", "==", categoryFilter),
+            orderBy("createdAt", "desc"),
+            startAfter(afterThis),
+            limit(ADS_PER_PAGE)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setAdList(items);
+        setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        setBeforeThis(querySnapshot.docs[0]);
+        setPage((prevPage) => prevPage + 1);
+    };
+
+    const handlePrevPage = async () => {
+        const collectionRef = collection(db, "ads");
+        const q = query(
+            collectionRef,
+            where("category", "==", categoryFilter),
+            orderBy("createdAt", "desc"),
+            limitToLast(ADS_PER_PAGE),
+            endBefore(beforeThis)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setAdList(items);
+        setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        setBeforeThis(querySnapshot.docs[0]);
+        setPage((prevPage) => prevPage - 1);
+    };
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
-
-        setFilters({
-            ...filters,
-            [name]: value
-        });
+        setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
     };
 
-    const applyFilters = () => {
-        const filtered = ads.filter(ad => {
-            let certificate = filters.hasCertificate === "yes" ? true : false;
-            return (
-                (filters.gender === '' || ad.gender === filters.gender) &&
-                (filters.hasCertificate === '' || ad.hasCertificate === certificate) &&
-                (filters.location === '' || ad.location === filters.location) &&
-                (filters.minPrice === '' || ad.price >= Number(filters.minPrice)) &&
-                (filters.maxPrice === '' || ad.price <= Number(filters.maxPrice)) &&
-                (filters.age === '' || ad.age === Number(filters.age))
-            );
-        });
-        setFilteredAds(filtered);
-    };
+    const applyFilters = async () => {
+        if(filters.age === "" && filters.breed === "" && filters.gender === "" && filters.hasCertificate === "" && filters.maxPrice === "" && filters.minPrice === "") {
+            fetchAds();
+            getTotalCount();
+            setPage(1);
+            return;
+        }
+        let certificate = filters.hasCertificate === "yes" ? true : false;
+        setPage(1);
 
-    const handleClickOnItem = (ad) => {
-        navigate('/item', { state: { ad } })
-    }
+        const collectionRef = collection(db, "ads");
+        const filterQueries = [
+            where("category", "==", categoryFilter),
+            ...(filters.gender ? [where("gender", "==", filters.gender)] : []),
+            ...(filters.minPrice ? [where("price", ">=", parseFloat(filters.minPrice))] : []),
+            ...(filters.maxPrice ? [where("price", "<=", parseFloat(filters.maxPrice))] : []),
+            ...(filters.hasCertificate ? [where("hasCertificate", "==", certificate)] : []),
+            ...(filters.age ? [where("age", "==", parseInt(filters.age))] : []),
+            ...(filters.breed ? [where("breed", "==", filters.breed)] : []),
+        ];
+
+        const totalCountQuery = query(collectionRef, ...filterQueries);
+        const totalCountSnapshot = await getCountFromServer(totalCountQuery);
+        setTotalAds(totalCountSnapshot.data().count);
+
+        const paginatedQuery = query(collectionRef, ...filterQueries, limit(ADS_PER_PAGE));
+        const querySnapshot = await getDocs(paginatedQuery);
+        const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+        setAdList(items);
+
+        if (querySnapshot.docs.length > 0) {
+            setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
+            setBeforeThis(querySnapshot.docs[0]);
+        } else {
+            setAfterThis(null);
+            setBeforeThis(null);
+        }
+    };
 
     return (
         <div className="horses-container">
@@ -104,23 +201,29 @@ const Horses = () => {
                     value={filters.age}
                     onChange={handleFilterChange}
                 />
-                <input
-                    type="text"
-                    name="location"
-                    placeholder="מיקום"
-                    value={filters.location}
+                <select
+                    id="breed"
+                    name="breed"
+                    value={filters.breed || ""}
                     onChange={handleFilterChange}
-                />
+                    required
+                >
+                    <option value="">גזע</option>
+                    {breeds.map((breed, index) => (
+                        <option key={index} value={breed}>
+                            {breed}
+                        </option>
+                    ))}
+                </select>
                 <button onClick={applyFilters}>חפש</button>
             </div>
 
-
             <div className="ads-wrapper">
-                {filteredAds.length === 0 ? (
+                {adList.length === 0 ? (
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
-                    filteredAds.map(ad => (
-                        <div key={ad.id} className="ad-card" onClick={() => handleClickOnItem(ad)}>
+                    adList.map(ad => (
+                        <div key={ad.id} className="ad-card">
                             {ad.photos && ad.photos[0] && (
                                 <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
                             )}
@@ -129,6 +232,14 @@ const Horses = () => {
                         </div>
                     ))
                 )}
+            </div>
+
+            <div className="pagination">
+                <button onClick={handlePrevPage} disabled={page === 1}>Previous</button>
+                <span>Page {page}</span>
+                <button onClick={handleNextPage} disabled={page === TOTAL_PAGES || adList.length === 0 || !afterThis}>
+                    Next
+                </button>
             </div>
         </div>
     );

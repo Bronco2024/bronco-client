@@ -75,7 +75,12 @@ const PublishAd = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        if (name === "price" || name === "age") {
+            setFormData({ ...formData, [name]: Number(value) });
+        }
+        else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const handleFileChange = (e) => {
@@ -84,6 +89,13 @@ const PublishAd = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (formData.category === "סוסים" && !Object.hasOwn(formData, 'hasCertificate')) {
+            setFormData({
+                ...formData,
+                hasCertificate: false
+            })
+        }
 
         try {
             const date = new Date();
@@ -215,7 +227,7 @@ const PublishAd = () => {
                                 id="age"
                                 name="age"
                                 value={formData.age || ''}
-                                onChange={handleInputChange}
+                                onChange={handleChange}
                                 required
                             />
                         </div>
@@ -226,7 +238,7 @@ const PublishAd = () => {
                                     type="checkbox"
                                     id="hasCertificate"
                                     name="hasCertificate"
-                                    checked={formData.hasCertificate || ''}
+                                    checked={formData.hasCertificate || false}
                                     onChange={handleInputChange}
                                 />
 
