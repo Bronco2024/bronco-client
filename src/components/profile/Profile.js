@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
-import { db } from '../../firebase'; // Make sure to import your db
+import { db } from '../../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import './Profile.css';
 
@@ -12,7 +12,7 @@ const Profile = () => {
 
     useEffect(() => {
         const fetchUserAds = async () => {
-            if (!currentUser) return; 
+            if (!currentUser) return;
 
             const adsCollection = collection(db, 'ads');
             const q = query(adsCollection, where("userId", "==", currentUser.uid));
@@ -20,8 +20,8 @@ const Profile = () => {
             try {
                 const querySnapshot = await getDocs(q);
                 const ads = querySnapshot.docs.map(doc => ({
-                    id: doc.id, // Use Firestore's generated ID
-                    ...doc.data() // Spread the ad data
+                    id: doc.id,
+                    ...doc.data()
                 }));
                 setUserAds(ads);
             } catch (error) {
@@ -33,7 +33,7 @@ const Profile = () => {
     }, [currentUser]);
 
     const numberOfAds = (currentUser) => {
-        if(currentUser?.numberOfAds > 1000){
+        if (currentUser?.numberOfAds > 1000) {
             return "ללא הגבלה";
         }
         return currentUser?.numberOfAds;
@@ -48,7 +48,7 @@ const Profile = () => {
     };
 
     return (
-        <div className="profile-container" style={{ textAlign: 'right' }}>
+        <div className="profile-container">
             <h1>ברוך הבא לאזור האישי</h1>
 
             {currentUser?.isSubscribed === false
@@ -63,9 +63,20 @@ const Profile = () => {
                 {userAds.length > 0 ? (
                     userAds.map(ad => (
                         <div key={ad.id} className="ad-card1">
-                            <h4>{ad.title}</h4>
-                            <p>{ad.description}</p>
-                            <small>תקף עד: {formatDate(ad?.availableUntil)}</small>
+                            {ad.photos && ad.photos[0] && (
+                                <img src={ad.photos[0]} alt={ad.title} className="ad-image-profile" />
+                            )}
+                            <div className="ad-details">
+                                <h4 className="ad-title-profile">{ad.title}</h4>
+                                <p>{ad.description}</p>
+                                <p className="ad-price-profile">₪{ad.price}</p>
+                                <small>תקף עד: {formatDate(ad?.availableUntil)}</small>
+                            </div>
+
+                            <div className='ad-crud'>
+                                <button className='ad-delete-button'>מחק</button>
+                                <button className='ad-update-button'>עדכן</button>
+                            </div>
                         </div>
                     ))
                 ) : (

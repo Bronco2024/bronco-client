@@ -224,6 +224,22 @@
     margin-bottom: 10px;
 }
 
+.ad-title-homepage {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.ad-price-homepage {
+    font-size: 1em;
+    font-weight: bold;
+    color: #555;
+    margin-top: 5px;
+    text-align: center;
+}
+
 @media (max-width: 1024px) {
     .ad-card-homepage {
         width: 45%;
@@ -235,3 +251,4 @@
         width: 100%;
     }
 }
+
