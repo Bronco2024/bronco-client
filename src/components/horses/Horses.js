@@ -14,8 +14,6 @@ import {
 import { db } from '../../firebase';
 import './Horses.css'
 
-const ADS_PER_PAGE = 3;
-
 const breeds = [
     "ערבי מערוב קו ",
     "ערבי מצרי",
@@ -33,6 +31,8 @@ const breeds = [
     "פוני שטלנד",
     "אחר",
 ]
+
+const ADS_PER_PAGE = 5;
 
 const Horses = () => {
     const [adList, setAdList] = useState([]);
@@ -52,6 +52,7 @@ const Horses = () => {
     const categoryFilter = "סוסים";
 
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
+
 
     const getTotalCount = useCallback(async () => {
         const collectionRef = collection(db, "ads");
@@ -126,7 +127,7 @@ const Horses = () => {
     };
 
     const applyFilters = async () => {
-        if(filters.age === "" && filters.breed === "" && filters.gender === "" && filters.hasCertificate === "" && filters.maxPrice === "" && filters.minPrice === "") {
+        if (filters.age === "" && filters.breed === "" && filters.gender === "" && filters.hasCertificate === "" && filters.maxPrice === "" && filters.minPrice === "") {
             fetchAds();
             getTotalCount();
             setPage(1);
@@ -235,10 +236,10 @@ const Horses = () => {
             </div>
 
             <div className="pagination">
-                <button onClick={handlePrevPage} disabled={page === 1}>Previous</button>
-                <span>Page {page}</span>
+                <button onClick={handlePrevPage} disabled={page === 1}>קודם</button>
+                <span>דף {page}</span>
                 <button onClick={handleNextPage} disabled={page === TOTAL_PAGES || adList.length === 0 || !afterThis}>
-                    Next
+                    הבא
                 </button>
             </div>
         </div>

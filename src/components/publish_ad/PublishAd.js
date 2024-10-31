@@ -51,7 +51,13 @@ const PublishAd = () => {
         "פוני וולש",
         "פוני שטלנד",
         "אחר",
-    ]
+    ];
+
+    const seeds_types = [
+        "ערבי מעורב קו",
+        "ערבי מצרי",
+        "אחר"
+    ];
 
     useEffect(() => {
         const FetchCities = async () => {
@@ -189,7 +195,6 @@ const PublishAd = () => {
                 </select>
 
                 {formData.category === "סוסים" && (
-
                     <div className="publish-ad-form">
                         <label htmlFor="breed">גזע</label>
                         <select
@@ -245,6 +250,26 @@ const PublishAd = () => {
                                 &nbsp; עם תעודה
                             </label>
                         </div>
+                    </div>
+                )}
+
+                {formData.category === "זרע" && (
+                    <div className="publish-ad-form">
+                        <label htmlFor="seeds_types">סוג זרע</label>
+                        <select
+                            id="seeds_types"
+                            name="seed_type"
+                            value={formData.seed_type || ""}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">בחר סוג זרע</option>
+                            {seeds_types.map((seed, index) => (
+                                <option key={index} value={seed}>
+                                    {seed}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 )}
 
