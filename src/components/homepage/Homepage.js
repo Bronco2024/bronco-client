@@ -109,7 +109,12 @@ const HomePage = () => {
                         <h2 className="ad-title-section">להיטים</h2>
                         <div className="ad-cards-container">
                             {latestAds.map(ad => (
-                                <div key={ad.id} className="ad-card-homepage" onClick={() => handleClickOnItem(ad)}>
+                                <div
+                                    key={ad.id}
+                                    className="ad-card-homepage"
+                                    style={{ borderColor: ad?.hasCertificate ? '#0064E0' : null, borderWidth: ad?.hasCertificate ? '2px' : null }}
+                                    onClick={() => handleClickOnItem(ad)}
+                                >
                                     {ad.photos && ad.photos[0] && (
                                         <img src={ad.photos[0]} alt={ad.title} className="ad-image-homepage" />
                                     )}

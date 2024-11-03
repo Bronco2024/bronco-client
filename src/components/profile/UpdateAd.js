@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import './PublishAd.css';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { doc, updateDoc, arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
 import { db, storage } from '../../firebase';
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
-import { useAuth } from '../context/AuthProvider';
-import { v4 as uuidv4 } from 'uuid';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { useNavigate } from 'react-router-dom';
-import Modal from '../utils/modal/Modal';
+import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
+import './UpdateAd.css'
 import { BREEDS, CATEGORIES, SEEDS_TYPES } from "../utils/constants/Constants";
+import { v4 as uuidv4 } from 'uuid';
+import Modal from "../utils/modal/Modal"
 
-const PublishAd = () => {
+const UpdateAd = () => {
     const navigate = useNavigate();
-    const [cities, setCities] = useState([]);
-    const { currentUser, setCurrentUser } = useAuth();
+    const location = useLocation();
+    const ad = location.state?.ad;
+    const [newPhotos, setNewPhotos] = useState({ photos: [] })
     const [showModal, setShowModal] = useState(false);
+
     const [formData, setFormData] = useState({
         title: '',
         category: '',
@@ -25,24 +26,10 @@ const PublishAd = () => {
     });
 
     useEffect(() => {
-        const FetchCities = async () => {
-            let data = {
-                resource_id: 'b7cf8f14-64a2-4b33-8d4b-edb286fdbd37',
-                limit: 1500//1273
-            };
-
-            let cities_arr = [];
-
-            await fetch(`https://data.gov.il/api/action/datastore_search?resource_id=${data.resource_id}&limit=${data.limit}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.result.records.map(item => cities_arr.push((item['שם_ישוב'].trim())));
-                })
-                .catch(error => console.error('Error:', error));
-            setCities(cities_arr);
+        if (ad) {
+            setFormData(ad)
         }
-        FetchCities()
-    }, [])
+    }, [ad])
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -55,69 +42,7 @@ const PublishAd = () => {
     };
 
     const handleFileChange = (e) => {
-        setFormData({ ...formData, photos: Array.from(e.target.files) });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (formData.category === "סוסים" && !Object.hasOwn(formData, 'hasCertificate')) {
-            setFormData((prevState) => {
-                return { ...prevState,  hasCertificate: false };
-              });
-        }
-
-        try {
-            const date = new Date();
-            const adId = uuidv4();
-
-            const photoURLs = await Promise.all(
-                formData.photos.map(async (photo) => {
-                    const photoRef = ref(storage, `ads/${adId}/${uuidv4()}`);
-                    await uploadBytes(photoRef, photo);
-                    return await getDownloadURL(photoRef);
-                })
-            );
-
-            date.setMonth(date.getMonth() + 1);
-
-            await setDoc(doc(db, "ads", adId), {
-                ...formData,
-                photos: photoURLs,
-                userId: currentUser.uid,
-                createdAt: new Date(),
-                availableUntil: date
-            });
-
-            await updateDoc(doc(db, "users", currentUser.uid), {
-                numberOfAds: currentUser.numberOfAds - 1
-            });
-
-            setCurrentUser({
-                ...currentUser,
-                numberOfAds: currentUser.numberOfAds - 1
-            });
-
-            setFormData({
-                title: '',
-                category: '',
-                description: '',
-                phoneNumber: '',
-                location: '',
-                price: '',
-                photos: [],
-            });
-
-            setShowModal(true);
-
-        } catch (error) {
-            console.error("Error publishing ad:", error);
-        }
-    };
-
-    const closeModal = () => {
-        setShowModal(false);
-        navigate('/');
+        setNewPhotos({ ...newPhotos, photos: Array.from(e.target.files) });
     };
 
     const handleInputChange = (e) => {
@@ -128,11 +53,90 @@ const PublishAd = () => {
         }));
     };
 
+    const handleDeletePhoto = async (photoUrl) => {
+        const storageRef = ref(storage, `ads/${ad.id}/${photoUrl.split('%2F')[2].split('?')[0]}`);
+
+        try {
+            await deleteObject(storageRef);
+
+            const adRef = doc(db, "ads", ad.id);
+            await updateDoc(adRef, {
+                photos: arrayRemove(photoUrl),
+            });
+
+            setFormData((prevData) => ({
+                ...prevData,
+                photos: prevData.photos.filter((url) => url !== photoUrl),
+            }));
+        } catch (error) {
+            console.error("Error deleting photo:", error);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        let dataToSubmit;
+        dataToSubmit = {...formData}
+
+        if(formData.category !== 'סוסים'){
+            delete dataToSubmit.gender;
+            delete dataToSubmit.age;
+            delete dataToSubmit.breed;
+            delete dataToSubmit.hasCertificate;
+        }
+
+        if(formData.category !== 'זרע'){
+            delete dataToSubmit.seed_type;
+        }
+
+        if (!ad?.id) {
+            console.error("Ad ID is missing.");
+            return;
+        }
+
+        const adRef = doc(db, "ads", ad.id);
+
+        try {
+            await setDoc(adRef, dataToSubmit);
+        } catch (error) {
+            console.error("Error updating ad:", error);
+        }
+
+        if (newPhotos.photos.length > 0) {
+            const photoURLs = await Promise.all(
+                newPhotos.photos.map(async (photo) => {
+                    const photoRef = ref(storage, `ads/${ad.id}/${uuidv4()}`);
+                    await uploadBytes(photoRef, photo);
+                    return await getDownloadURL(photoRef);
+                })
+            );
+
+            try {
+                await Promise.all(photoURLs.map(photoURL => {
+                    return updateDoc(adRef, {
+                        photos: arrayUnion(photoURL)
+                    });
+                }));
+                setNewPhotos({ photos: [] })
+
+            } catch (error) {
+                console.error("Error updating ad:", error);
+            }
+        }
+        setShowModal(true);
+    }
+
+    const closeModal = () => {
+        setShowModal(false);
+        navigate('/profile');
+    };
+
     return (
-        <div className="publish-ad-container" style={{ textAlign: 'right' }}>
-            <h1>פרסם מודעה</h1>
-            <form onSubmit={handleSubmit} className="publish-ad-form">
-                <label htmlFor="title">כותרת</label>
+        <div className='update-ad-container' style={{ textAlign: 'right' }}>
+            <h1>דף עדכון מודעה</h1>
+            <form className="update-ad-form" onSubmit={handleSubmit}>
+                <label htmlFor='title'>כותרת</label>
                 <input
                     type="text"
                     id="title"
@@ -141,6 +145,7 @@ const PublishAd = () => {
                     onChange={handleChange}
                     required
                 />
+
 
                 <label htmlFor="category"> קטגוריה</label>
                 <select
@@ -159,12 +164,12 @@ const PublishAd = () => {
                 </select>
 
                 {formData.category === "סוסים" && (
-                    <div className="publish-ad-form">
+                    <div className="update-ad-form">
                         <label htmlFor="breed">גזע</label>
                         <select
                             id="breed"
                             name="breed"
-                            value={formData.breed || ""}
+                            value={formData?.breed}
                             onChange={handleChange}
                             required
                         >
@@ -179,7 +184,7 @@ const PublishAd = () => {
                         <label htmlFor="gender">מין</label>
                         <select
                             name="gender"
-                            value={formData.gender}
+                            value={formData?.gender}
                             onChange={handleInputChange}
                             required
                         >
@@ -188,14 +193,14 @@ const PublishAd = () => {
                             <option value="נקבה">נקבה</option>
                         </select>
 
-                        <div className="publish-ad-form">
+                        <div className="update-ad-form">
 
                             <label htmlFor="age">גיל</label>
                             <input
                                 type="number"
                                 id="age"
                                 name="age"
-                                value={formData.age || ''}
+                                value={formData?.age}
                                 onChange={handleChange}
                                 required
                             />
@@ -207,7 +212,7 @@ const PublishAd = () => {
                                     type="checkbox"
                                     id="hasCertificate"
                                     name="hasCertificate"
-                                    checked={formData.hasCertificate || false}
+                                    checked={formData?.hasCertificate}
                                     onChange={handleInputChange}
                                 />
 
@@ -218,12 +223,12 @@ const PublishAd = () => {
                 )}
 
                 {formData.category === "זרע" && (
-                    <div className="publish-ad-form">
+                    <div className="update-ad-form">
                         <label htmlFor="seeds_types">סוג זרע</label>
                         <select
                             id="seeds_types"
                             name="seed_type"
-                            value={formData.seed_type || ""}
+                            value={formData?.seed_type}
                             onChange={handleChange}
                             required
                         >
@@ -241,7 +246,7 @@ const PublishAd = () => {
                 <textarea
                     id="description"
                     name="description"
-                    value={formData.description}
+                    value={formData?.description}
                     onChange={handleChange}
                     required
                     style={{ height: 100 }}
@@ -252,32 +257,17 @@ const PublishAd = () => {
                     type="tel"
                     id="phoneNumber"
                     name="phoneNumber"
-                    value={formData.phoneNumber}
+                    value={formData?.phoneNumber}
                     onChange={handleChange}
                     required
                 />
-
-                <label htmlFor="location">אזור</label>
-                <select
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    required
-                >
-                    <option value="">בחר מיקום</option>
-                    {cities.map((city, index) => (
-                        <option key={index} value={city}>
-                            {city}
-                        </option>
-                    ))}
-                </select>
 
                 <label htmlFor="price">מחיר</label>
                 <input
                     type="number"
                     id="price"
                     name="price"
-                    value={formData.price}
+                    value={formData?.price}
                     onChange={handleChange}
                     required
                 />
@@ -292,19 +282,34 @@ const PublishAd = () => {
                     onChange={handleFileChange}
                 />
 
-                <button type="submit" className="publish-button">פרסם מודעה</button>
+                <div className="current-photos">
+                    {formData.photos.length > 0 && (
+                        <div>
+                            <h3>תמונות קיימות</h3>
+                            {formData.photos.map((photoUrl, index) => (
+                                <div key={index} className="photo-item">
+                                    <img src={photoUrl} alt={`Ad photo ${index + 1}`} style={{ width: 100, height: 100 }} />
+                                    <button type="button" className='del-photo-button' onClick={() => handleDeletePhoto(photoUrl)}>מחק</button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <button type="submit" className="update-button">עדכן מודעה</button>
+
             </form>
 
-            <Modal isVisible={showModal} title="מודעה פורסמה" onClose={closeModal}>
-                <div className="modal-content-custom-publishad">
-                    <p>המודעה פורסמה בהצלחה!</p>
-                    <div className="modal-buttons-custom-publishad">
-                        <button className="close-button-publishad" onClick={closeModal}>סגור</button>
+            <Modal isVisible={showModal} title="עדכון מודעה" onClose={closeModal}>
+                <div className="modal-content-custom-updatead">
+                    <p>המודעה עודכנה בהצלחה!</p>
+                    <div className="modal-buttons-custom-updatead">
+                        <button className="close-button-updatead" onClick={closeModal}>סגור</button>
                     </div>
                 </div>
             </Modal>
         </div>
-    );
-};
+    )
+}
 
-export default PublishAd;
+export default UpdateAd;

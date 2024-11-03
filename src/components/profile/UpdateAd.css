@@ -1,4 +1,4 @@
-.publish-ad-container {
+.update-ad-container{
     max-width: 500px;
     margin: auto;
     padding: 20px;
@@ -7,26 +7,21 @@
     background-color: #f9f9f9;
 }
 
-.publish-ad-form {
+.update-ad-form{
     display: flex;
     flex-direction: column;
     text-align: right;
 }
 
-.publish-ad-form label {
+.update-ad-form label {
     margin: 10px 0 5px;
     font-weight: bold;
+    text-align: right;
 }
 
-.publish-ad-form select{
-    direction: rtl;
-    width: 30%;
-    align-self: flex-end;
-}
-
-.publish-ad-form input,
-.publish-ad-form textarea,
-.publish-ad-form select { /* Include select in the styles */
+.update-ad-form input,
+.update-ad-form textarea,
+.update-ad-form select { /* Include select in the styles */
     padding: 10px; /* Add padding for input fields */
     border: 1px solid #ccc; /* Light gray border for inputs */
     border-radius: 4px; /* Rounded corners */
@@ -34,11 +29,13 @@
     resize: none; /* Disable resizing for textarea */
 }
 
-.publish-ad-select-div{
-    margin-top: 20px;
+.update-ad-form select{
+    direction: rtl;
+    width: 30%;
+    align-self: flex-end;
 }
 
-.publish-button {
+.update-button {
     margin-top: 10px;
     padding: 10px;
     background-color: #4CAF50;
@@ -49,64 +46,55 @@
     font-size: 1rem;
 }
 
-.publish-button:hover {
+.update-button:hover {
     background-color: #45a049;
 }
 
-.publish-ad-container {
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+
+.current-photos {
+    margin-top: 20px;
+    direction: rtl;
 }
 
-.publish-ad-form {
+.photo-item {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.publish-ad-form label {
-    margin: 10px 0 5px;
-    text-align: right; /* Align labels to the right */
-}
-
-.publish-ad-form input,
-.publish-ad-form textarea {
-    padding: 10px;
+.photo-item img {
+    margin-right: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    text-align: right; /* Align text inside inputs to the right */
-    resize: none;
 }
 
-.publish-button {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
+.del-photo-button{
+    padding: 8px 16px;
+    font-size: 1rem;
     border-radius: 4px;
+    margin-right: 20px;
     cursor: pointer;
+    border: none;
+    background-color: #d9534f;
+    color: white;
 }
 
-.publish-button:hover {
-    background-color: #45a049;
+.del-photo-button:hover {
+    background-color: #db1811;
 }
 
-.modal-content-custom-publishad {
+.modal-content-custom-updatead {
     text-align: right;
 }
 
-.modal-buttons-custom-publishad {
+.modal-buttons-custom-updatead {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
 }
 
-.close-button-publishad {
+.close-button-updatead {
     padding: 8px 16px;
     font-size: 1rem;
     border-radius: 4px;
@@ -116,6 +104,6 @@
     color: black;
 }
 
-.close-button-publishad:hover{
+.close-button-updatead:hover{
     background-color: #ccc;
 }

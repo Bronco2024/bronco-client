@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import './Item.css'
+import { faPhoneAlt, fabadge } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const ItemPage = () => {
     const location = useLocation();
@@ -13,14 +15,14 @@ const ItemPage = () => {
     }
 
     const items = ad.photos?.map((photo, index) => (
-        <img key={index} src={photo} alt={`Ad Image ${index + 1}`} style={{ width: '100%', height: 'auto' }} />
+        <img key={index} src={photo} alt={`Ad Image ${index + 1}`} style={{ width: '100%', height: '300px' }} />
     ));
 
     return (
         <div className="item-detail-container">
-            <AliceCarousel 
-                mouseTracking 
-                items={items} 
+            <AliceCarousel
+                mouseTracking
+                items={items}
                 infinite
                 responsive={{ 0: { items: 1 }, 1024: { items: 1 } }}
             />
@@ -29,9 +31,26 @@ const ItemPage = () => {
 
             <p className="item-description">{ad.description}</p>
 
-            <p className="item-price">₪{ad.price}</p>
+            {ad.category === "סוסים" && (
+                <div>
+                    <p className="item-horse">גיל: {ad.age}</p>
+                    <p className="item-horse">גזע: {ad.breed}</p>
+                    <p className="item-horse">מין: {ad.gender}</p>
+                </div>
+            )}
+            <p className="item-location">מיקום: {ad.location}</p>
 
-            <p className="item-phone">טלפון: {ad.phoneNumber}</p>
+            <p className="item-price">₪{ad.price}</p>
+            <div className="item-phone-container">
+                <span className="item-phone">{ad.phoneNumber}</span>
+                <FontAwesomeIcon icon={faPhoneAlt} style={{ marginLeft: '8px' }} />
+            </div>
+            {ad.hasCertificate && (
+                <span className="verified-badge">
+                    <img src={require('../../assets/bitcoin-icons--verify-outline.png')} alt="Verified Badge" />
+                    <p>עם תעודה</p>
+                </span>
+            )}
         </div>
     );
 };

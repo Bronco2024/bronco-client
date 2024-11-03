@@ -11,30 +11,16 @@ import {
     endBefore,
     where,
 } from "firebase/firestore";
+import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import './Horses.css'
-
-const breeds = [
-    "ערבי מערוב קו ",
-    "ערבי מצרי",
-    "פריזן",
-    "קווטר",
-    "טורבדריד",
-    "סינגל פוט",
-    "טנסי",
-    "אנדלוסי",
-    "אפלוסה",
-    "מיזורי פוקס טרוטר",
-    "פיינט",
-    "פוני",
-    "פוני וולש",
-    "פוני שטלנד",
-    "אחר",
-]
+import { BREEDS } from "../utils/constants/Constants";
 
 const ADS_PER_PAGE = 5;
 
 const Horses = () => {
+    const navigate = useNavigate();
+
     const [adList, setAdList] = useState([]);
     const [totalAds, setTotalAds] = useState(0);
     const [page, setPage] = useState(1);
@@ -166,6 +152,10 @@ const Horses = () => {
         }
     };
 
+    const handleClickOnItem = (ad) => {
+        navigate('/item', { state: { ad } })
+    }
+
     return (
         <div className="horses-container">
             <h1 className="horses-title">סוסים</h1>
@@ -210,7 +200,7 @@ const Horses = () => {
                     required
                 >
                     <option value="">גזע</option>
-                    {breeds.map((breed, index) => (
+                    {BREEDS.map((breed, index) => (
                         <option key={index} value={breed}>
                             {breed}
                         </option>
@@ -224,7 +214,12 @@ const Horses = () => {
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
                     adList.map(ad => (
-                        <div key={ad.id} className="ad-card">
+                        <div
+                            key={ad.id}
+                            className="ad-card"
+                            style={{ borderColor: ad?.hasCertificate ? '#0064E0' : null, borderWidth: ad?.hasCertificate ? '2px' : null }}
+                            onClick={()=>handleClickOnItem(ad)}
+                        >
                             {ad.photos && ad.photos[0] && (
                                 <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
                             )}

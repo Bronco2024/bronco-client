@@ -1,5 +1,5 @@
 .item-detail-container {
-    max-width: 600px; 
+    max-width: 600px;
     margin: 20px auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -8,24 +8,99 @@
     text-align: right;
 }
 
-.item-title {
-    font-size: 1.5rem;
-    margin: 10px 0;
+.item-horse {
+    font-size: 1.3rem;
 }
 
-.item-description {
-    font-size: 1rem;
-    margin: 10px 0;
+.item-location {
+    font-size: 1.3rem;
 }
 
 .item-price {
-    font-size: 1.5rem;
-    color: green;
-    margin: 10px 0;
+    font-size: 1.3rem;
     font-weight: bold;
 }
 
-.item-phone {
-    font-size: 1.5rem;
-    margin: 10px 0;
+/* Phone container with circular border */
+.item-phone-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    height: 50px;
+    margin: 15px auto;
+    border-radius: 15px;
+    background-color: #4CAF50;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 5px;
+    transition: width 0.3s ease;
+}
+
+.verified-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.verified-badge img{
+    width: 70px;
+    height: 70px;
+    margin-left: 8px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .item-detail-container {
+        padding: 15px;
+        margin: 15px auto;
+    }
+    
+    .item-title {
+        font-size: 1.3rem;
+    }
+
+    .item-horse {
+        font-size: 1.2rem;
+    }
+    
+    .item-description {
+        font-size: 0.9rem;
+    }
+    
+    .item-price {
+        font-size: 1.2rem;
+    }
+    
+    .item-phone-container {
+        width: 200px; /* Adjust phone container size for medium screens */
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .item-detail-container {
+        padding: 10px;
+        margin: 10px;
+    }
+    
+    .item-title {
+        font-size: 1.1rem;
+    }
+    
+    .item-description {
+        font-size: 0.85rem;
+    }
+    
+    .item-price {
+        font-size: 1rem;
+    }
+    
+    .item-phone-container {
+        width: 180px; /* Adjust phone container size for small screens */
+        height: 45px;
+        font-size: 1rem;
+    }
 }

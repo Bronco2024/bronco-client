@@ -3,7 +3,9 @@ import {
   Route,
   Routes
 } from "react-router-dom";
+import ProtectedRoute from "./components/context/ProtectedRoute";
 import Layout from './components/layout/Layout'
+import NotFound from "./NotFound";
 
 const Homepage = lazy(() => import("./components/homepage/Homepage"))
 const ItemPage = lazy(() => import("./components/item/Item"));
@@ -14,7 +16,8 @@ const PublishAd = lazy(() => import("./components/publish_ad/PublishAd"));
 const Subscribe = lazy(() => import("./components/subscribe/Subscribe"));
 const Horses = lazy(() => import("./components/horses/Horses"));
 const Test = lazy(() => import("./components/test/Test"));
-
+const UpdateAd = lazy(() => import("./components/profile/UpdateAd"))
+const Admin = lazy(() => import("./components/admin/Admin"))
 
 const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
 
@@ -64,9 +67,11 @@ function App() {
       <Route path="/profile"
         element={
           <Suspense fallback={<Loading message="Loading Profile..." />}>
-            <Layout>
-              <Profile />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Profile />
+              </Layout>
+            </ProtectedRoute>
           </Suspense>
         }
       />
@@ -74,9 +79,11 @@ function App() {
       <Route path="/publish_ad"
         element={
           <Suspense fallback={<Loading message="Loading Publish Ad..." />}>
-            <Layout>
-              <PublishAd />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <PublishAd />
+              </Layout>
+            </ProtectedRoute>
           </Suspense>
         }
       />
@@ -84,9 +91,11 @@ function App() {
       <Route path="/subscribe"
         element={
           <Suspense fallback={<Loading message="Loading Subscribe..." />}>
-            <Layout>
-              <Subscribe />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <Subscribe />
+              </Layout>
+            </ProtectedRoute>
           </Suspense>
         }
       />
@@ -110,6 +119,40 @@ function App() {
           </Suspense>
         }
       />
+
+      <Route path="/update_ad"
+        element={
+          <Suspense fallback={<Loading message="Loading Update ad page..." />}>
+            <ProtectedRoute>
+              <Layout>
+                <UpdateAd />
+              </Layout>
+            </ProtectedRoute>
+          </Suspense>
+        }
+      />
+
+      <Route path="/admin"
+        element={
+          <Suspense fallback={<Loading message="Loading Admin page..." />}>
+            <ProtectedRoute adminOnly>
+              <Layout>
+                <Admin />
+              </Layout>
+            </ProtectedRoute>
+          </Suspense>
+        }
+      />
+
+      <Route
+        path="*"
+        element={
+          <Suspense fallback={<Loading message="Loading Not Found..." />}>
+            <NotFound />
+          </Suspense>
+        }
+      />
+
     </Routes>
   );
 }

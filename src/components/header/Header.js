@@ -1,28 +1,16 @@
 import './Header.css';
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser } from '@fortawesome/free-solid-svg-icons'; // Import the close icon
+import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthProvider';
+import { CATEGORIES } from '../utils/constants/Constants';
 
 const Header = () => {
     const navigate = useNavigate();
     const { currentUser, loading, logout } = useAuth();
     const [showMenu, setShowMenu] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-
-    const categories = [
-        { path: '/horses', label: 'סוסים' },
-        { path: '/seeds', label: 'זרע' },
-        { path: '/accessories', label: 'אביזרים' },
-        { path: '/boarding', label: 'פנסיון' },
-        { path: '/exhibitors', label: 'מציגים' },
-        { path: '/breeders', label: 'מפרזילים' },
-        { path: '/schools', label: 'בתי ספר' },
-        { path: '/trips', label: 'טיולים' },
-        { path: '/shops', label: 'חנויות' },
-        { path: '/shows-and-competitions', label: 'תצוגות ותחריות' },
-    ];
 
     const handlePublishAd = () => {
         if (currentUser === null) {
@@ -63,10 +51,21 @@ const Header = () => {
                         </button>
                         {showProfileDropdown && (
                             <div className="profile-dropdown">
+                                {currentUser?.isAdmin && (
+                                    <button className='dropdown-item'
+                                        onClick={() => {
+                                            toggleProfileDropdown()
+                                            navigate('/admin')
+                                        }}
+                                    >
+                                        ניהול אתר
+                                        <FontAwesomeIcon icon={faGear} style={{ marginLeft: '8px' }} />
+                                    </button>
+                                )}
                                 <button className='dropdown-item' onClick={() => {
                                     toggleProfileDropdown()
                                     navigate('/profile')
-                                    }}>
+                                }}>
                                     אזור אישי
                                     <FontAwesomeIcon icon={faHouseUser} style={{ marginLeft: '8px' }} />
 
@@ -92,7 +91,7 @@ const Header = () => {
                         {showMenu ? <FontAwesomeIcon icon={faTimes} /> : <FontAwesomeIcon icon={faBars} />}
                     </button>
                     <div className={`navbar-buttons-category ${showMenu ? "show" : ""}`}>
-                        {categories.map((category, index) => (
+                        {CATEGORIES.map((category, index) => (
                             <Link key={index} to={category.path} className='navbar-button-category' onClick={() => setShowMenu(false)}>
                                 {category.label}
                             </Link>

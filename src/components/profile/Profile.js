@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
-import { db } from '../../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db, storage } from '../../firebase';
+import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { ref, listAll, deleteObject } from 'firebase/storage';
 import './Profile.css';
+import Modal from '../utils/modal/Modal';
 
 const Profile = () => {
     const navigate = useNavigate();
     const { currentUser } = useAuth();
     const [userAds, setUserAds] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [adToDelete, setAdToDelete] = useState(null);
+    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
         const fetchUserAds = async () => {
@@ -30,7 +35,7 @@ const Profile = () => {
         };
 
         fetchUserAds();
-    }, [currentUser]);
+    }, [currentUser, refresh]);
 
     const numberOfAds = (currentUser) => {
         if (currentUser?.numberOfAds > 1000) {
@@ -45,6 +50,46 @@ const Profile = () => {
             return date.toLocaleDateString('he-IL');
         }
         return '';
+    };
+
+    const handleUpdateButton = (ad) => {
+        navigate('/update_ad', { state: { ad } })
+    }
+
+    const handleDeleteButton = (ad) => {
+        setIsModalVisible(true)
+        setAdToDelete(ad);
+    }
+
+    const closeModal = () => {
+        setIsModalVisible(false)
+        setAdToDelete(null);
+    };
+
+    const handleDeleteButtonModal = () => {
+        try {
+            deleteAdFromFirebase(adToDelete?.id)
+            setRefresh(prev => !prev);
+        } catch (err) {
+            console.log(err)
+        }
+        closeModal()
+    }
+
+    const deleteAdFromFirebase = async (adId) => {
+        try {
+            const adDocRef = doc(db, 'ads', adId);
+            await deleteDoc(adDocRef);
+
+            const imagesRef = ref(storage, `ads/${adId}`);
+
+            const listResult = await listAll(imagesRef);
+            const deletePromises = listResult.items.map((fileRef) => deleteObject(fileRef));
+
+            await Promise.all(deletePromises);
+        } catch (error) {
+            console.error("Error deleting ad:", error);
+        }
     };
 
     return (
@@ -74,8 +119,8 @@ const Profile = () => {
                             </div>
 
                             <div className='ad-crud'>
-                                <button className='ad-delete-button'>מחק</button>
-                                <button className='ad-update-button'>עדכן</button>
+                                <button className='ad-delete-button' onClick={() => handleDeleteButton(ad)}>מחק</button>
+                                <button className='ad-update-button' onClick={() => handleUpdateButton(ad)}>עדכן</button>
                             </div>
                         </div>
                     ))
@@ -83,6 +128,16 @@ const Profile = () => {
                     <p>לא נמצאו מודעות</p>
                 )}
             </div>
+
+            <Modal isVisible={isModalVisible} title="מחיקת מודעה" onClose={closeModal}>
+                <div className="modal-content-custom">
+                    <p>האם אתה בטוח שברצונך למחוק את מודעה זו?</p>
+                    <div className="modal-buttons-custom">
+                        <button className="cancel-button" onClick={closeModal}>ביטול</button>
+                        <button className="confirm-delete-button" onClick={handleDeleteButtonModal}>מחק</button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };
