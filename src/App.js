@@ -18,6 +18,9 @@ const Horses = lazy(() => import("./components/horses/Horses"));
 const Test = lazy(() => import("./components/test/Test"));
 const UpdateAd = lazy(() => import("./components/profile/UpdateAd"))
 const Admin = lazy(() => import("./components/admin/Admin"))
+const AddSponsor = lazy(() => import("./components/admin/AddSponsor"))
+const Seeds = lazy(() => import("./components/seeds/Seeds"))
+
 
 const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
 
@@ -110,6 +113,16 @@ function App() {
         }
       />
 
+      <Route path="/seeds"
+        element={
+          <Suspense fallback={<Loading message="Loading seeds..." />}>
+            <Layout>
+              <Seeds />
+            </Layout>
+          </Suspense>
+        }
+      />
+
       <Route path="/test"
         element={
           <Suspense fallback={<Loading message="Loading horses..." />}>
@@ -138,6 +151,18 @@ function App() {
             <ProtectedRoute adminOnly>
               <Layout>
                 <Admin />
+              </Layout>
+            </ProtectedRoute>
+          </Suspense>
+        }
+      />
+
+      <Route path="/add-sponsor"
+        element={
+          <Suspense fallback={<Loading message="Loading Add Sponsor page..." />}>
+            <ProtectedRoute adminOnly>
+              <Layout>
+                <AddSponsor />
               </Layout>
             </ProtectedRoute>
           </Suspense>
