@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './Homepage.css';
 import { db } from '../../firebase';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { FormatDateTimestampToDate } from '../utils/constants/Functions';
 
 const NUMBER_OF_LATEST_ADS_TO_FETCH = 8;
 
@@ -127,6 +128,7 @@ const HomePage = () => {
                                     )}
                                     <h2 className="ad-title-homepage">{ad.title}</h2>
                                     <p className="ad-price-homepage">₪{ad.price}</p>
+                                    <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                                 </div>
                             ))}
                         </div>

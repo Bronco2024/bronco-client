@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import './Accessories.css'
 import { ADS_PER_PAGE } from "../utils/constants/Constants";
+import { FormatDateTimestampToDate } from "../utils/constants/Functions";
 
 const Accessories = () => {
     const navigate = useNavigate();
@@ -117,6 +118,7 @@ const Accessories = () => {
                             )}
                             <h2 className="ad-title">{ad.title}</h2>
                             <p className="ad-price">₪{ad.price}</p>
+                            <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                         </div>
                     ))
                 )}

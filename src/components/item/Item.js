@@ -3,8 +3,9 @@ import { useLocation } from 'react-router-dom';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import './Item.css'
-import { faPhoneAlt, fabadge } from '@fortawesome/free-solid-svg-icons';
+import { faPhoneAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FormatDateTimestampToDate } from '../utils/constants/Functions';
 
 const ItemPage = () => {
     const location = useLocation();
@@ -15,7 +16,7 @@ const ItemPage = () => {
     }
 
     const items = ad.photos?.map((photo, index) => (
-        <img key={index} src={photo} alt={`Ad Image ${index + 1}`} style={{ width: '100%', height: '300px' }} />
+        <img key={index} src={photo} alt={`Ad ${index + 1}`} style={{ width: '100%', height: '300px' }} />
     ));
 
     return (
@@ -38,6 +39,11 @@ const ItemPage = () => {
                     <p className="item-horse">מין: {ad.gender}</p>
                 </div>
             )}
+            {ad.category === "זרע" && (
+                <div>
+                    <p className="item-horse">סוג זרע: {ad.seed_type} - {ad.semen_type}</p>
+                </div>
+            )}
             <p className="item-location">מיקום: {ad.location}</p>
 
             <p className="item-price">₪{ad.price}</p>
@@ -45,6 +51,8 @@ const ItemPage = () => {
                 <span className="item-phone">{ad.phoneNumber}</span>
                 <FontAwesomeIcon icon={faPhoneAlt} style={{ marginLeft: '8px' }} />
             </div>
+            <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+
             {ad.hasCertificate && (
                 <span className="verified-badge">
                     <img src={require('../../assets/bitcoin-icons--verify-outline.png')} alt="Verified Badge" />

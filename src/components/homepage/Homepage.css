@@ -136,6 +136,7 @@
 .silver-sponsor .title-container {
     background-color: #C0C0C0;
 }
+
 @media (max-width: 768px) {
     .sponsor-wrapper {
         flex-direction: column;
@@ -144,11 +145,12 @@
     .silver-sponsor {
         margin-top: 15%;
         width: 90%;
-        margin-left: 0; 
+        margin-left: 0;
     }
+
     .silver-sponsor img {
-        object-fit: cover; 
-        max-height: 200px; 
+        object-fit: cover;
+        max-height: 200px;
         width: 100%;
     }
 }
@@ -181,7 +183,7 @@
 
 .left-content {
     position: relative;
-    width: 100%; 
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -198,7 +200,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 30px;
-    justify-content: flex-end; 
+    justify-content: flex-end;
+    flex-direction: row-reverse;
 }
 
 .ad-card-homepage {
@@ -240,6 +243,12 @@
     text-align: center;
 }
 
+.ad-date-create{
+    text-align: center;
+    font-size: medium;
+    color: #7c7c7c;
+}
+
 @media (max-width: 1024px) {
     .ad-card-homepage {
         width: 45%;
@@ -251,4 +260,3 @@
         width: 100%;
     }
 }
-

@@ -26,7 +26,7 @@ const Breeders = lazy(() => import("./components/breeders/Breeders"))
 const Schools = lazy(() => import("./components/schools/Schools"))
 const Trips = lazy(() => import("./components/trips/Trips"))
 const Shops = lazy(() => import("./components/shops/Shops"))
-const Shows_And_Competitions = lazy(() => import("./components/shows_and_competitions/ShowsAndCompetitions"))
+const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competitions/ShowsAndCompetitions"))
 
 const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
 
@@ -203,7 +203,7 @@ function App() {
         element={
           <Suspense fallback={<Loading message="Loading shops..." />}>
             <Layout>
-              <Shows_And_Competitions />
+              <ShowsAndCompetitions />
             </Layout>
           </Suspense>
         }
