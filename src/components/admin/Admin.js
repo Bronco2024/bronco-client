@@ -74,7 +74,7 @@ const Admin = () => {
             <button
                 className="sponsor-add-button"
                 onClick={() => {
-                    navigate('/add-sponsor')
+                    navigate('/admin/add-sponsor')
                 }}>הוסף ספונסור</button>
 
             <div className="sponsors-container">

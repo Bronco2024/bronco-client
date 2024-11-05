@@ -53,7 +53,7 @@ const Profile = () => {
     };
 
     const handleUpdateButton = (ad) => {
-        navigate('/update_ad', { state: { ad } })
+        navigate('/profile/update_ad', { state: { ad } })
     }
 
     const handleDeleteButton = (ad) => {

@@ -133,7 +133,7 @@ function App() {
         }
       />
 
-      <Route path="/update_ad"
+      <Route path="/profile/update_ad"
         element={
           <Suspense fallback={<Loading message="Loading Update ad page..." />}>
             <ProtectedRoute>
@@ -157,7 +157,7 @@ function App() {
         }
       />
 
-      <Route path="/add-sponsor"
+      <Route path="/admin/add-sponsor"
         element={
           <Suspense fallback={<Loading message="Loading Add Sponsor page..." />}>
             <ProtectedRoute adminOnly>
