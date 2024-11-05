@@ -34,3 +34,8 @@ export const SEEDS_TYPES = [
     "ערבי מצרי",
     "אחר"
 ];
+
+export const SEMEN_TYPES = [
+    "זרע טרי",
+    "זרע קפוא"
+]

@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import './Admin.css'
 import { db, storage } from '../../firebase';
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
+import Modal from '../utils/modal/Modal';
+import { ref, deleteObject } from "firebase/storage";
 
 const Admin = () => {
     const navigate = useNavigate();
     const [sponsors, setSponsors] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [sponsorToDelete, setSponsorToDelete] = useState(null);
+    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
         const fetchSponsors = async () => {
@@ -27,8 +32,40 @@ const Admin = () => {
         };
 
         fetchSponsors()
-    }, [])
+    }, [refresh])
 
+    const deleteSponsorFromFirebase = async (sponsorId) => {
+        try {
+            const adDocRef = doc(db, 'sponsors', sponsorId);
+            await deleteDoc(adDocRef);
+
+            const imageRef = ref(storage, `sponsors/${sponsorId}`);
+
+            await deleteObject(imageRef);
+        } catch (error) {
+            console.error("Error deleting ad:", error);
+        }
+    };
+
+    const closeModal = () => {
+        setIsModalVisible(false)
+        setSponsorToDelete(null);
+    };
+
+    const handleDeleteButtonModal = () => {
+        try {
+            deleteSponsorFromFirebase(sponsorToDelete?.id)
+            setRefresh(prev => !prev);
+        } catch (err) {
+            console.log(err)
+        }
+        closeModal()
+    }
+
+    const handleDeleteButton = (sponsor) => {
+        setIsModalVisible(true)
+        setSponsorToDelete(sponsor);
+    }
 
     return (
         <div className="admin-container">
@@ -59,12 +96,12 @@ const Admin = () => {
                                 <img src={sponsor.photo} alt="pojk" className="sponsor-image" />
                             )}
                             <div className="sponsor-details">
-                                <h4>לינק</h4>
-                                <p style={{ direction: 'rtl' }}>סוג ספונסור: {sponsor.sponsor}</p>
+                                <h4 style={{ direction: 'rtl' }}>לינק:  <a href={sponsor.link} target="_blank" rel="noopener noreferrer">{sponsor.link}</a></h4>
+                                <p style={{ direction: 'rtl' }}>סוג ספונסור: <b>{sponsor.sponsor}</b></p>
                             </div>
 
                             <div className="sponsor-crud">
-                                <button className='sponsor-delete-button'>מחק</button>
+                                <button className='sponsor-delete-button' onClick={() => handleDeleteButton(sponsor)}>מחק</button>
                             </div>
                         </div>
                     ))
@@ -72,6 +109,16 @@ const Admin = () => {
                     <p>לא נמצאו ספונסירים</p>
                 )}
             </div>
+
+            <Modal isVisible={isModalVisible} title="מחיקת ספונסור" onClose={closeModal}>
+                <div className="modal-content-custom">
+                    <p>האם אתה בטוח שברצונך למחוק את ספונסור זה?</p>
+                    <div className="modal-buttons-custom">
+                        <button className="cancel-button" onClick={closeModal}>ביטול</button>
+                        <button className="confirm-delete-button" onClick={handleDeleteButtonModal}>מחק</button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     )
 }

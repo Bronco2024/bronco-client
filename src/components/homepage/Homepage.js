@@ -53,8 +53,13 @@ const HomePage = () => {
         fetchLatestAds();
     }, []);
 
-    const responsiveGoldSilver = {
+    const responsiveGold = {
         0: { items: 1 },
+    };
+
+    const responsiveSilver = {
+        0: { items: 2 },
+        768: { items: 1 },
     };
 
     const responsiveBronze = {
@@ -67,12 +72,14 @@ const HomePage = () => {
         const filteredSponsors = sponsors.filter(item => item.sponsor === type);
 
         return filteredSponsors.map(item => (
-            <img
-                key={item.id}
-                src={item.photo}
-                alt="sponsor"
-                style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-            />
+            <a href={item.link} target="_blank" rel="noopener noreferrer">
+                <img
+                    key={item.id}
+                    src={item.photo}
+                    alt="sponsor"
+                    style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                />
+            </a>
         ));
     };
 
@@ -98,7 +105,7 @@ const HomePage = () => {
                         autoPlay
                         infinite
                         autoPlayInterval={2000}
-                        responsive={responsiveGoldSilver}
+                        responsive={responsiveGold}
                         disableDotsControls
                         disableButtonsControls
                     />
@@ -134,7 +141,7 @@ const HomePage = () => {
                             autoPlay
                             infinite
                             autoPlayInterval={2000}
-                            responsive={responsiveGoldSilver}
+                            responsive={responsiveSilver}
                             disableDotsControls
                             disableButtonsControls
                         />

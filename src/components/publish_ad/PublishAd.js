@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../utils/modal/Modal';
-import { BREEDS, CATEGORIES, SEEDS_TYPES } from "../utils/constants/Constants";
+import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES } from "../utils/constants/Constants";
 
 const PublishAd = () => {
     const navigate = useNavigate();
@@ -63,8 +63,8 @@ const PublishAd = () => {
 
         if (formData.category === "סוסים" && !Object.hasOwn(formData, 'hasCertificate')) {
             setFormData((prevState) => {
-                return { ...prevState,  hasCertificate: false };
-              });
+                return { ...prevState, hasCertificate: false };
+            });
         }
 
         try {
@@ -218,22 +218,38 @@ const PublishAd = () => {
                 )}
 
                 {formData.category === "זרע" && (
-                    <div className="publish-ad-form">
+                    <div className="publish-ad-form" >
                         <label htmlFor="seeds_types">סוג זרע</label>
-                        <select
-                            id="seeds_types"
-                            name="seed_type"
-                            value={formData.seed_type || ""}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">בחר סוג זרע</option>
-                            {SEEDS_TYPES.map((seed, index) => (
-                                <option key={index} value={seed}>
-                                    {seed}
-                                </option>
-                            ))}
-                        </select>
+                        <div style={{ display:'flex', flexDirection: 'row', direction: 'rtl', gap:'10px' }}>
+                            <select
+                                id="seeds_types"
+                                name="seed_type"
+                                value={formData.seed_type || ""}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">בחר סוג זרע</option>
+                                {SEEDS_TYPES.map((seed, index) => (
+                                    <option key={index} value={seed}>
+                                        {seed}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <select
+                                id="semen_types"
+                                name="semen_type"
+                                value={formData.semen_type || ""}
+                                onChange={handleChange}
+                                required
+                            >
+                                {SEMEN_TYPES.map((semen, index) => (
+                                    <option key={index} value={semen}>
+                                        {semen}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 )}
 

@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import './Seeds.css'
-import { SEEDS_TYPES } from "../utils/constants/Constants";
+import { SEEDS_TYPES, SEMEN_TYPES } from "../utils/constants/Constants";
 
 const ADS_PER_PAGE = 5;
 
@@ -28,7 +28,8 @@ const Seeds = () => {
     const [filters, setFilters] = useState({
         minPrice: "",
         maxPrice: "",
-        seed_type: ""
+        seed_type: "",
+        semen_type: ""
     });
 
     const categoryFilter = "זרע";
@@ -108,7 +109,7 @@ const Seeds = () => {
     };
 
     const applyFilters = async () => {
-        if (filters.seed_type === "" && filters.maxPrice === "" && filters.minPrice === "") {
+        if (filters.seed_type === "" && filters.maxPrice === "" && filters.minPrice === "" && filters.semen_type === "") {
             fetchAds();
             getTotalCount();
             setPage(1);
@@ -122,6 +123,7 @@ const Seeds = () => {
             ...(filters.minPrice ? [where("price", ">=", parseFloat(filters.minPrice))] : []),
             ...(filters.maxPrice ? [where("price", "<=", parseFloat(filters.maxPrice))] : []),
             ...(filters.seed_type ? [where("seed_type", "==", filters.seed_type)] : []),
+            ...(filters.semen_type ? [where("semen_type", "==", filters.semen_type)] : []),
         ];
 
         const totalCountQuery = query(collectionRef, ...filterQueries);
@@ -161,6 +163,18 @@ const Seeds = () => {
                     {SEEDS_TYPES.map((seed, index) => (
                         <option key={index} value={seed}>
                             {seed}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    name="semen_type"
+                    value={filters.semen_type}
+                    onChange={handleFilterChange}
+                >
+                    <option value="">טרי/קפוא</option>
+                    {SEMEN_TYPES.map((semen, index) => (
+                        <option key={index} value={semen}>
+                            {semen}
                         </option>
                     ))}
                 </select>
