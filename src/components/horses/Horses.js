@@ -14,9 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import './Horses.css'
-import { BREEDS } from "../utils/constants/Constants";
-
-const ADS_PER_PAGE = 5;
+import { BREEDS, ADS_PER_PAGE } from "../utils/constants/Constants";
 
 const Horses = () => {
     const navigate = useNavigate();

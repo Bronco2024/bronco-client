@@ -39,3 +39,5 @@ export const SEMEN_TYPES = [
     "זרע טרי",
     "זרע קפוא"
 ]
+
+export const ADS_PER_PAGE = 5;

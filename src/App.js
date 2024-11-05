@@ -15,12 +15,18 @@ const Profile = lazy(() => import("./components/profile/Profile"));
 const PublishAd = lazy(() => import("./components/publish_ad/PublishAd"));
 const Subscribe = lazy(() => import("./components/subscribe/Subscribe"));
 const Horses = lazy(() => import("./components/horses/Horses"));
-const Test = lazy(() => import("./components/test/Test"));
 const UpdateAd = lazy(() => import("./components/profile/UpdateAd"))
 const Admin = lazy(() => import("./components/admin/Admin"))
 const AddSponsor = lazy(() => import("./components/admin/AddSponsor"))
 const Seeds = lazy(() => import("./components/seeds/Seeds"))
-
+const Accessories = lazy(() => import("./components/accessories/Accessories"))
+const Boarding = lazy(() => import("./components/boarding/Boarding"))
+const Exhibitors = lazy(() => import("./components/exhibitors/Exhibitor"))
+const Breeders = lazy(() => import("./components/breeders/Breeders"))
+const Schools = lazy(() => import("./components/schools/Schools"))
+const Trips = lazy(() => import("./components/trips/Trips"))
+const Shops = lazy(() => import("./components/shops/Shops"))
+const Shows_And_Competitions = lazy(() => import("./components/shows_and_competitions/ShowsAndCompetitions"))
 
 const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
 
@@ -123,11 +129,81 @@ function App() {
         }
       />
 
-      <Route path="/test"
+      <Route path="/accessories"
         element={
-          <Suspense fallback={<Loading message="Loading horses..." />}>
+          <Suspense fallback={<Loading message="Loading accessories..." />}>
             <Layout>
-              <Test />
+              <Accessories />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/boarding"
+        element={
+          <Suspense fallback={<Loading message="Loading boarding..." />}>
+            <Layout>
+              <Boarding />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/exhibitors"
+        element={
+          <Suspense fallback={<Loading message="Loading exhibitors..." />}>
+            <Layout>
+              <Exhibitors />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/breeders"
+        element={
+          <Suspense fallback={<Loading message="Loading breeders..." />}>
+            <Layout>
+              <Breeders />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/schools"
+        element={
+          <Suspense fallback={<Loading message="Loading schools..." />}>
+            <Layout>
+              <Schools />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/trips"
+        element={
+          <Suspense fallback={<Loading message="Loading trips..." />}>
+            <Layout>
+              <Trips />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/shops"
+        element={
+          <Suspense fallback={<Loading message="Loading shops..." />}>
+            <Layout>
+              <Shops />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/shows-and-competitions"
+        element={
+          <Suspense fallback={<Loading message="Loading shops..." />}>
+            <Layout>
+              <Shows_And_Competitions />
             </Layout>
           </Suspense>
         }
