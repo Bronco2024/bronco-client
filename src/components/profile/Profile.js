@@ -6,6 +6,7 @@ import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/fire
 import { ref, listAll, deleteObject } from 'firebase/storage';
 import './Profile.css';
 import Modal from '../utils/modal/Modal';
+import { IsDateNowGreaterThanAdDate } from '../utils/constants/Functions';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -92,6 +93,10 @@ const Profile = () => {
         }
     };
 
+    const handleRenewButton = (ad) => {
+        console.log(ad)
+    }
+
     return (
         <div className="profile-container">
             <h1>ברוך הבא לאזור האישי</h1>
@@ -121,6 +126,9 @@ const Profile = () => {
                             <div className='ad-crud'>
                                 <button className='ad-delete-button' onClick={() => handleDeleteButton(ad)}>מחק</button>
                                 <button className='ad-update-button' onClick={() => handleUpdateButton(ad)}>עדכן</button>
+                                {IsDateNowGreaterThanAdDate(ad?.availableUntil) && (
+                                    <button className='ad-renew-button' onClick={() => handleRenewButton(ad)}>חדש מודעה</button>
+                                )}
                             </div>
                         </div>
                     ))

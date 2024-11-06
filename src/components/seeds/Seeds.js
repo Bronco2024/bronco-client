@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import './Seeds.css'
 import { SEEDS_TYPES, SEMEN_TYPES, ADS_PER_PAGE } from "../utils/constants/Constants";
-import { FormatDateTimestampToDate } from "../utils/constants/Functions";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
 
 const Seeds = () => {
     const navigate = useNavigate();
@@ -199,18 +199,21 @@ const Seeds = () => {
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
                     adList.map(ad => (
-                        <div
-                            key={ad.id}
-                            className="ad-card"
-                            onClick={() => handleClickOnItem(ad)}
-                        >
-                            {ad.photos && ad.photos[0] && (
-                                <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
-                            )}
-                            <h2 className="ad-title">{ad.title}</h2>
-                            <p className="ad-price">₪{ad.price}</p>
-                            <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                        </div>
+                        !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
+                            <div
+                                key={ad.id}
+                                className="ad-card"
+                                onClick={() => handleClickOnItem(ad)}
+                            >
+                                {ad.photos && ad.photos[0] && (
+                                    <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
+                                )}
+                                <h2 className="ad-title">{ad.title}</h2>
+                                <p className="ad-price">₪{ad.price}</p>
+                                <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                            </div>
+                        )
+
                     ))
                 )}
             </div>

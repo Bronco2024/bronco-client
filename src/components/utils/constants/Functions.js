@@ -5,3 +5,13 @@ export const FormatDateTimestampToDate = (timestamp) => {
     }
     return '';
 };
+
+export const IsDateNowGreaterThanAdDate = (adAvailableUntil) => {
+    try {
+        const timeOfAd = adAvailableUntil.toDate();
+        const now = new Date();
+        return now.getTime() > timeOfAd.getTime()
+    } catch (error) {
+        console.error(error)
+    }
+}

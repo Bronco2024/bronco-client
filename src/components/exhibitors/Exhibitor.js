@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import './Exhibitor.css'
 import { ADS_PER_PAGE } from "../utils/constants/Constants";
-import { FormatDateTimestampToDate } from "../utils/constants/Functions";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
 
 const Exhibitor = () => {
     const navigate = useNavigate();
@@ -108,6 +108,7 @@ const Exhibitor = () => {
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
                     adList.map(ad => (
+                        !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
                         <div
                             key={ad.id}
                             className="ad-card"
@@ -121,7 +122,7 @@ const Exhibitor = () => {
                             <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
 
                         </div>
-                    ))
+                    )))
                 )}
             </div>
 

@@ -4,7 +4,7 @@ import 'react-alice-carousel/lib/alice-carousel.css';
 import { useNavigate } from 'react-router-dom';
 import './Homepage.css';
 import { db } from '../../firebase';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
 import { FormatDateTimestampToDate } from '../utils/constants/Functions';
 
 const NUMBER_OF_LATEST_ADS_TO_FETCH = 8;
@@ -35,7 +35,8 @@ const HomePage = () => {
         const fetchLatestAds = async () => {
             try {
                 const adsRef = collection(db, "ads");
-                const q = query(adsRef, orderBy("createdAt", "desc"), limit(NUMBER_OF_LATEST_ADS_TO_FETCH));
+                const filterQuery = where("availableUntil" , ">", new Date());
+                const q = query(adsRef, filterQuery, orderBy("createdAt", "desc"), limit(NUMBER_OF_LATEST_ADS_TO_FETCH));
                 const querySnapshot = await getDocs(q);
 
                 const ads = querySnapshot.docs.map((doc) => ({

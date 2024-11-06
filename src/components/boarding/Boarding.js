@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import './Boarding.css'
 import { ADS_PER_PAGE } from "../utils/constants/Constants";
-import { FormatDateTimestampToDate } from "../utils/constants/Functions";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
 
 const Boarding = () => {
     const navigate = useNavigate();
@@ -108,6 +108,7 @@ const Boarding = () => {
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
                     adList.map(ad => (
+                        !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
                         <div
                             key={ad.id}
                             className="ad-card"
@@ -120,7 +121,7 @@ const Boarding = () => {
                             <p className="ad-price">₪{ad.price}</p>
                             <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                         </div>
-                    ))
+                    )))
                 )}
             </div>
 
