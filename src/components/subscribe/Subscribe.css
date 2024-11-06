@@ -1,12 +1,13 @@
 .subscribe-container {
     padding: 20px;
-    background-color: #f8f9fa; /* Light background */
+    background-color: #f8f9fa; 
 }
 
 .subscription-cards {
     display: flex;
-    justify-content: space-between; /* Space between cards */
-    flex-wrap: wrap; /* Wrap to the next line if necessary */
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .subscription-card {
@@ -21,6 +22,7 @@
     background-color: #ffffff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     text-align: right;
+    min-width: 200px; 
 }
 
 .subscription-card h3, .subscription-card p {
@@ -44,11 +46,30 @@
     background-color: #0056b3;
 }
 
-
 .subscribe-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #0056b3;
 }
 
 .subscription-price{
     font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .subscription-card {
+        flex: 1 1 100%; 
+    }
+}
+
+@media (max-width: 576px) {
+    .subscribe-container {
+        padding: 10px;
+    }
+    
+    .subscription-card {
+        padding: 10px;
+    }
+
+    .subscribe-button {
+        font-size: 1.1rem;
+    }
 }

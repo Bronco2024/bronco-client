@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './PublishAd.css';
 import { db, storage } from '../../firebase';
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, increment } from 'firebase/firestore';
 import { useAuth } from '../context/AuthProvider';
 import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -90,7 +90,7 @@ const PublishAd = () => {
             });
 
             await updateDoc(doc(db, "users", currentUser.uid), {
-                numberOfAds: currentUser.numberOfAds - 1
+                numberOfAds: increment(-1)
             });
 
             setCurrentUser({

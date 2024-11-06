@@ -2,7 +2,7 @@ import React from 'react';
 import './Subscribe.css';
 import { useAuth } from '../context/AuthProvider';
 import { db } from '../../firebase';
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
 
 const Subscribe = () => {
     const { currentUser, setCurrentUser } = useAuth();
@@ -10,7 +10,7 @@ const Subscribe = () => {
     const subscriptions = [
         { id: 1, title: "פרסום אחד בלבד לחודש", description: "פרסום מודעה אחת למשך חודש", cost: 50 },
         { id: 2, title: "שתי פרסומים לחודש", description: "פרסום שתי מודעות כל אחת למשך חודש", cost: 90 },
-        { id: 3, title: "ארבעה פרסומים לחודש", description: "פרסום 4 מודעות כל אחת למשך חודש",  cost: 140 },
+        { id: 3, title: "ארבעה פרסומים לחודש", description: "פרסום 4 מודעות כל אחת למשך חודש", cost: 140 },
         { id: 4, title: "מנוי חודשי עד 10 פרסומים לחודש", description: "תשלום חודשי קבוע ובו אתה מקבל כל חודש עד 10 פרסומים", cost: 300 },
         { id: 5, title: "מנוי שנתי ללא הגבלה", description: "תשלום שנתי קבוע ובו אתה מפרסם ללא הגבלה", cost: 1500 },
     ];
@@ -20,46 +20,45 @@ const Subscribe = () => {
 
         switch (subscription.id) {
             case 1:
-                date.setMonth(date.getMonth() + 1);
-                await setDoc(doc(db, "users", currentUser.uid), {
+                await updateDoc(doc(db, "users", currentUser.uid), {
                     isSubscribed: true,
-                    subscriptionUntil: date,
-                    numberOfAds: 1
+                    typeOfSubscription: "single",
+                    numberOfAds: increment(1)
                 })
                 break;
 
             case 2:
-                date.setMonth(date.getMonth() + 1);
-                await setDoc(doc(db, "users", currentUser.uid), {
+                await updateDoc(doc(db, "users", currentUser.uid), {
                     isSubscribed: true,
-                    subscriptionUntil: date,
-                    numberOfAds: 2
+                    typeOfSubscription: "single",
+                    numberOfAds: increment(2)
                 })
                 break;
 
             case 3:
-                date.setMonth(date.getMonth() + 1);
-                await setDoc(doc(db, "users", currentUser.uid), {
+                await updateDoc(doc(db, "users", currentUser.uid), {
                     isSubscribed: true,
-                    subscriptionUntil: date,
-                    numberOfAds: 4
+                    typeOfSubscription: "single",
+                    numberOfAds: increment(4)
                 })
                 break;
 
             case 4:
                 date.setMonth(date.getMonth() + 1);
-                await setDoc(doc(db, "users", currentUser.uid), {
+                await updateDoc(doc(db, "users", currentUser.uid), {
                     isSubscribed: true,
-                    subscriptionUntil: date,
+                    typeOfSubscription: "monthly",
+                    subscribedUntil: date,
                     numberOfAds: 10
                 })
                 break;
 
             case 5:
                 date.setFullYear(date.getFullYear() + 1);
-                await setDoc(doc(db, "users", currentUser.uid), {
+                await updateDoc(doc(db, "users", currentUser.uid), {
                     isSubscribed: true,
-                    subscriptionUntil: date,
+                    typeOfSubscription: "yearly",
+                    subscribedUntil: date,
                     numberOfAds: Number.MAX_VALUE
                 })
                 break;
@@ -88,7 +87,6 @@ const Subscribe = () => {
                     </div>
                 ))}
             </div>
-
         </div>
     );
 };

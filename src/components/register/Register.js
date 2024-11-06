@@ -30,7 +30,8 @@ const Register = () => {
                 await setDoc(doc(db, "users", user.uid), {
                     email: user.email,
                     isSubscribed: false,
-                    subscriptionUntil: null,
+                    typeOfSubscription: null,
+                    subscribedUntil: null,
                     numberOfAds: 0
                 })
 
@@ -38,7 +39,7 @@ const Register = () => {
             } catch (error) {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                if(errorCode === "auth/email-already-in-use"){
+                if (errorCode === "auth/email-already-in-use") {
                     console.log("Email taken")
                 }
                 console.error(errorCode);

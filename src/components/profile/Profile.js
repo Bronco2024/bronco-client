@@ -2,22 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
 import { db, storage } from '../../firebase';
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, doc, updateDoc, increment, getDoc } from 'firebase/firestore';
 import { ref, listAll, deleteObject } from 'firebase/storage';
 import './Profile.css';
 import Modal from '../utils/modal/Modal';
-import { IsDateNowGreaterThanAdDate } from '../utils/constants/Functions';
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from '../utils/constants/Functions';
 
 const Profile = () => {
     const navigate = useNavigate();
-    const { currentUser } = useAuth();
+    const { currentUser, setCurrentUser } = useAuth();
     const [userAds, setUserAds] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalRenewVisible, setIsModalRenewVisible] = useState(false);
+    const [isModalCancelSubscriptionVisible, setIsModalCancelSubscriptionVisible] = useState(false);
+    const [adToRenew, setAdToRenew] = useState(null);
     const [adToDelete, setAdToDelete] = useState(null);
     const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
-        const fetchUserAds = async () => {
+        const FetchUserAds = async () => {
             if (!currentUser) return;
 
             const adsCollection = collection(db, 'ads');
@@ -35,7 +38,30 @@ const Profile = () => {
             }
         };
 
-        fetchUserAds();
+        const UpdateUserSubscription = async () => {
+            if (!currentUser) return;
+            const date = new Date();
+
+            if (IsDateNowGreaterThanAdDate(currentUser.subscribedUntil) && currentUser.typeOfSubscription === "monthly") {
+                date.setMonth(date.getMonth() + 1);
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    subscribedUntil: date,
+                    numberOfAds: 10
+                })
+                return;
+            }
+
+            if (IsDateNowGreaterThanAdDate(currentUser.subscribedUntil) && currentUser.typeOfSubscription === "yearly") {
+                date.setFullYear(date.getFullYear() + 1);
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    subscribedUntil: date,
+                    numberOfAds: Number.MAX_VALUE
+                })
+            }
+        }
+
+        FetchUserAds();
+        UpdateUserSubscription();
     }, [currentUser, refresh]);
 
     const numberOfAds = (currentUser) => {
@@ -67,6 +93,11 @@ const Profile = () => {
         setAdToDelete(null);
     };
 
+    const closeModalRenew = () => {
+        setIsModalRenewVisible(false)
+        setAdToRenew(null);
+    };
+
     const handleDeleteButtonModal = () => {
         try {
             deleteAdFromFirebase(adToDelete?.id)
@@ -93,20 +124,101 @@ const Profile = () => {
         }
     };
 
-    const handleRenewButton = (ad) => {
-        console.log(ad)
+    const handleRenewButtonModal = () => {
+        try {
+            RenewAdFirebase();
+            setRefresh(prev => !prev);
+        } catch (err) {
+            console.log(err)
+        }
+        closeModalRenew()
+    }
+
+    const handleRenewButton = async (ad) => {
+        if (!currentUser.isSubscribed || currentUser.numberOfAds <= 0) {
+            navigate('/subscribe');
+            return;
+        }
+
+        setIsModalRenewVisible(true);
+        setAdToRenew(ad);
+    }
+
+    const RenewAdFirebase = async () => {
+        await updateDoc(doc(db, "users", currentUser.uid), {
+            numberOfAds: increment(-1)
+        });
+
+        setCurrentUser({
+            ...currentUser,
+            numberOfAds: currentUser.numberOfAds - 1
+        });
+
+        const dateUntil = new Date()
+        dateUntil.setMonth(dateUntil.getMonth() + 1);
+
+        await updateDoc(doc(db, "ads", adToRenew.id), {
+            createdAt: new Date(),
+            availableUntil: dateUntil
+        })
+    }
+
+    const handleStopSubscription = async () => {
+        console.log("stopping subscription")
+        setIsModalCancelSubscriptionVisible(true);
+    }
+
+    const closeModalSubscription = () => {
+        setIsModalCancelSubscriptionVisible(false)
+    };
+
+    const handleStopSubscriptionModal = async () => {
+        try {
+            await updateDoc(doc(db, "users", currentUser.uid), {
+                isSubscribed: false,
+                typeOfSubscription: null,
+                subscribedUntil: null,
+                numberOfAds: 0
+            })
+
+            const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+            setCurrentUser({ uid: currentUser.uid, ...userDoc.data() });
+        } catch (error) {
+            console.error(error)
+        }
+        closeModalSubscription()
     }
 
     return (
         <div className="profile-container">
             <h1>ברוך הבא לאזור האישי</h1>
 
-            {currentUser?.isSubscribed === false
-                ? <p>לא רשום</p>
-                : <p>מספר מודעות שנותרו לך: {numberOfAds(currentUser)}</p>
+            {!currentUser?.isSubscribed &&
+                <p>לא רשום</p>
             }
 
-            <button onClick={() => navigate('/subscribe')} className="subscribe-button-profile">קניית מודעות</button>
+            {(currentUser?.typeOfSubscription === null || currentUser?.typeOfSubscription === "single") && (
+                <div>
+                    <p>מספר מודעות שנותרו לך: {numberOfAds(currentUser)}</p>
+                    <button onClick={() => navigate('/subscribe')} className="subscribe-button-profile">קניית מודעות</button>
+                </div>
+            )}
+
+            {currentUser?.typeOfSubscription === "monthly" && (
+                <div>
+                    <p>מספר מודעות שנותרו לך: {numberOfAds(currentUser)}</p>
+                    <p>מודעות מתחדשות בתאריך: {FormatDateTimestampToDate(currentUser.subscribedUntil)}</p>
+                    <button className="ad-delete-button" onClick={handleStopSubscription}>ביטול תכנית</button>
+                </div>
+            )}
+
+            {currentUser?.typeOfSubscription === "yearly" && (
+                <div>
+                    <p>מספר מודעות שנותרו לך: ללא הגבלה</p>
+                    <p>תשלום הבא בתאריך: {FormatDateTimestampToDate(currentUser.subscribedUntil)}</p>
+                    <button className="ad-delete-button" onClick={handleStopSubscription}>ביטול תכנית</button>
+                </div>
+            )}
 
             <div className="ads-container">
                 <h3>המודעות שלך</h3>
@@ -143,6 +255,27 @@ const Profile = () => {
                     <div className="modal-buttons-custom">
                         <button className="cancel-button" onClick={closeModal}>ביטול</button>
                         <button className="confirm-delete-button" onClick={handleDeleteButtonModal}>מחק</button>
+                    </div>
+                </div>
+            </Modal>
+
+
+            <Modal isVisible={isModalRenewVisible} title="חידוש מודעה" onClose={closeModalRenew}>
+                <div className="modal-content-custom">
+                    <p>האם אתה בטוח שברצונך לחדש את מודעה זו?</p>
+                    <div className="modal-buttons-custom">
+                        <button className="cancel-button" onClick={closeModalRenew}>ביטול</button>
+                        <button className="confirm-renew-button" onClick={handleRenewButtonModal}>חידוש</button>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal isVisible={isModalCancelSubscriptionVisible} title="ביטול תכנית" onClose={closeModalSubscription}>
+                <div className="modal-content-custom">
+                    <p>האם אתה בטוח שברצונך לבטל את התכנית?</p>
+                    <div className="modal-buttons-custom">
+                        <button className="cancel-button" onClick={closeModalSubscription}>לא</button>
+                        <button className="confirm-cancel-subscription-button" onClick={handleStopSubscriptionModal}>כן</button>
                     </div>
                 </div>
             </Modal>

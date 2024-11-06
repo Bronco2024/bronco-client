@@ -147,6 +147,20 @@
     background-color: #db1811;
 }
 
+.confirm-renew-button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    background-color: #6ba2e6;
+    color: white;
+}
+
+.confirm-renew-button:hover {
+    background-color: #4c5ff2;
+}
+
 .cancel-button {
     padding: 8px 16px;
     font-size: 1rem;
@@ -159,6 +173,20 @@
 
 .cancel-button:hover{
     background-color: #ccc;
+}
+
+.confirm-cancel-subscription-button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    background-color: #29b857;
+    color: white;
+}
+
+.confirm-cancel-subscription-button:hover{
+    background-color: #1e9845;
 }
 
 /* Media Queries for Responsiveness */
