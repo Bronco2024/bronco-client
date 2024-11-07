@@ -81,7 +81,7 @@ const Login = () => {
             </p>
 
             <p className="register-text">
-                <span onClick={handleForgotPassword} className="login-link">שכחתי סיסמה</span>
+                <span onClick={handleForgotPassword} className="register-link">שכחתי סיסמה</span>
             </p>
         </div>
     );
