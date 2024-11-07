@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
 import { db, storage } from '../../firebase';
-import { collection, query, where, getDocs, deleteDoc, doc, updateDoc, increment, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, doc, updateDoc, increment } from 'firebase/firestore';
 import { ref, listAll, deleteObject } from 'firebase/storage';
 import './Profile.css';
 import Modal from '../utils/modal/Modal';
@@ -14,7 +14,6 @@ const Profile = () => {
     const [userAds, setUserAds] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalRenewVisible, setIsModalRenewVisible] = useState(false);
-    const [isModalCancelSubscriptionVisible, setIsModalCancelSubscriptionVisible] = useState(false);
     const [adToRenew, setAdToRenew] = useState(null);
     const [adToDelete, setAdToDelete] = useState(null);
     const [refresh, setRefresh] = useState(false);
@@ -38,45 +37,14 @@ const Profile = () => {
             }
         };
 
-        const UpdateUserSubscription = async () => {
-            if (!currentUser) return;
-            const date = new Date();
-
-            if (IsDateNowGreaterThanAdDate(currentUser.subscribedUntil) && currentUser.typeOfSubscription === "monthly") {
-                date.setMonth(date.getMonth() + 1);
-                await updateDoc(doc(db, "users", currentUser.uid), {
-                    subscribedUntil: date,
-                    numberOfAds: 10
-                })
-                return;
-            }
-
-            if (IsDateNowGreaterThanAdDate(currentUser.subscribedUntil) && currentUser.typeOfSubscription === "yearly") {
-                date.setFullYear(date.getFullYear() + 1);
-                await updateDoc(doc(db, "users", currentUser.uid), {
-                    subscribedUntil: date,
-                    numberOfAds: Number.MAX_VALUE
-                })
-            }
-        }
-
         FetchUserAds();
-        UpdateUserSubscription();
     }, [currentUser, refresh]);
 
     const numberOfAds = (currentUser) => {
-        if (currentUser?.numberOfAds > 1000) {
+        if (currentUser?.subscribedUntil !== null) {
             return "ללא הגבלה";
         }
         return currentUser?.numberOfAds;
-    };
-
-    const formatDate = (timestamp) => {
-        if (timestamp && timestamp.seconds) {
-            const date = new Date(timestamp.seconds * 1000);
-            return date.toLocaleDateString('he-IL');
-        }
-        return '';
     };
 
     const handleUpdateButton = (ad) => {
@@ -163,62 +131,25 @@ const Profile = () => {
         })
     }
 
-    const handleStopSubscription = async () => {
-        console.log("stopping subscription")
-        setIsModalCancelSubscriptionVisible(true);
-    }
-
-    const closeModalSubscription = () => {
-        setIsModalCancelSubscriptionVisible(false)
-    };
-
-    const handleStopSubscriptionModal = async () => {
-        try {
-            await updateDoc(doc(db, "users", currentUser.uid), {
-                isSubscribed: false,
-                typeOfSubscription: null,
-                subscribedUntil: null,
-                numberOfAds: 0
-            })
-
-            const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-            setCurrentUser({ uid: currentUser.uid, ...userDoc.data() });
-        } catch (error) {
-            console.error(error)
-        }
-        closeModalSubscription()
-    }
-
     return (
         <div className="profile-container">
             <h1>ברוך הבא לאזור האישי</h1>
 
-            {!currentUser?.isSubscribed &&
-                <p>לא רשום</p>
-            }
+            <p>מספר מודעות שנותרו לך: {numberOfAds(currentUser)}</p>
 
-            {(currentUser?.typeOfSubscription === null || currentUser?.typeOfSubscription === "single") && (
-                <div>
-                    <p>מספר מודעות שנותרו לך: {numberOfAds(currentUser)}</p>
-                    <button onClick={() => navigate('/subscribe')} className="subscribe-button-profile">קניית מודעות</button>
-                </div>
+            {currentUser?.numberOfAds > 10000 && (
+                <p>תוקף מנוי עד: {FormatDateTimestampToDate(currentUser?.subscribedUntil)}</p>
             )}
 
-            {currentUser?.typeOfSubscription === "monthly" && (
-                <div>
-                    <p>מספר מודעות שנותרו לך: {numberOfAds(currentUser)}</p>
-                    <p>מודעות מתחדשות בתאריך: {FormatDateTimestampToDate(currentUser.subscribedUntil)}</p>
-                    <button className="ad-delete-button" onClick={handleStopSubscription}>ביטול תכנית</button>
-                </div>
+            {currentUser.subscribedUntil === null && (
+                <button
+                    onClick={() => navigate('/subscribe')}
+                    className="subscribe-button-profile"
+                >
+                    קניית מודעות
+                </button>
             )}
 
-            {currentUser?.typeOfSubscription === "yearly" && (
-                <div>
-                    <p>מספר מודעות שנותרו לך: ללא הגבלה</p>
-                    <p>תשלום הבא בתאריך: {FormatDateTimestampToDate(currentUser.subscribedUntil)}</p>
-                    <button className="ad-delete-button" onClick={handleStopSubscription}>ביטול תכנית</button>
-                </div>
-            )}
 
             <div className="ads-container">
                 <h3>המודעות שלך</h3>
@@ -232,7 +163,7 @@ const Profile = () => {
                                 <h4 className="ad-title-profile">{ad.title}</h4>
                                 <p>{ad.description}</p>
                                 <p className="ad-price-profile">₪{ad.price}</p>
-                                <small>תקף עד: {formatDate(ad?.availableUntil)}</small>
+                                <small>תקף עד: {FormatDateTimestampToDate(ad?.availableUntil)}</small>
                             </div>
 
                             <div className='ad-crud'>
@@ -270,15 +201,6 @@ const Profile = () => {
                 </div>
             </Modal>
 
-            <Modal isVisible={isModalCancelSubscriptionVisible} title="ביטול תכנית" onClose={closeModalSubscription}>
-                <div className="modal-content-custom">
-                    <p>האם אתה בטוח שברצונך לבטל את התכנית?</p>
-                    <div className="modal-buttons-custom">
-                        <button className="cancel-button" onClick={closeModalSubscription}>לא</button>
-                        <button className="confirm-cancel-subscription-button" onClick={handleStopSubscriptionModal}>כן</button>
-                    </div>
-                </div>
-            </Modal>
         </div>
     );
 };

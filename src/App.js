@@ -10,10 +10,12 @@ import NotFound from "./NotFound";
 const Homepage = lazy(() => import("./components/homepage/Homepage"))
 const ItemPage = lazy(() => import("./components/item/Item"));
 const Login = lazy(() => import("./components/login/Login"));
+const ForgotPassword = lazy(() => import("./components/login/ForgotPassword"));
 const Register = lazy(() => import("./components/register/Register"));
 const Profile = lazy(() => import("./components/profile/Profile"));
 const PublishAd = lazy(() => import("./components/publish_ad/PublishAd"));
 const Subscribe = lazy(() => import("./components/subscribe/Subscribe"));
+const Payment = lazy(() => import("./components/payment/Payment"));
 const Horses = lazy(() => import("./components/horses/Horses"));
 const UpdateAd = lazy(() => import("./components/profile/UpdateAd"))
 const Admin = lazy(() => import("./components/admin/Admin"))
@@ -63,6 +65,16 @@ function App() {
         }
       />
 
+      <Route path="/login/forgot-password"
+        element={
+          <Suspense fallback={<Loading message="Loading ForgotPassword..." />}>
+            <Layout>
+              <ForgotPassword />
+            </Layout>
+          </Suspense>
+        }
+      />
+
       <Route path="/register"
         element={
           <Suspense fallback={<Loading message="Loading Register..." />}>
@@ -103,6 +115,18 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <Subscribe />
+              </Layout>
+            </ProtectedRoute>
+          </Suspense>
+        }
+      />
+
+      <Route path="/subscribe/payment"
+        element={
+          <Suspense fallback={<Loading message="Loading Payment..." />}>
+            <ProtectedRoute>
+              <Layout>
+                <Payment />
               </Layout>
             </ProtectedRoute>
           </Suspense>

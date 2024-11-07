@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { doc, updateDoc, arrayRemove, arrayUnion, setDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'firebase/firestore';
 import { db, storage } from '../../firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
@@ -77,16 +77,20 @@ const UpdateAd = () => {
         e.preventDefault();
 
         let dataToSubmit;
-        dataToSubmit = {...formData}
+        dataToSubmit = {
+            ...formData,
+            createdAt: Timestamp.now(),
+            availableUntil: new Timestamp(formData.availableUntil.seconds, formData.availableUntil.nanoseconds)
+        }
 
-        if(formData.category !== 'סוסים'){
+        if (formData.category !== 'סוסים') {
             delete dataToSubmit.gender;
             delete dataToSubmit.age;
             delete dataToSubmit.breed;
             delete dataToSubmit.hasCertificate;
         }
 
-        if(formData.category !== 'זרע'){
+        if (formData.category !== 'זרע') {
             delete dataToSubmit.seed_type;
         }
 
@@ -288,7 +292,7 @@ const UpdateAd = () => {
                             <h3>תמונות קיימות</h3>
                             {formData.photos.map((photoUrl, index) => (
                                 <div key={index} className="photo-item">
-                                    <img src={photoUrl} alt={`Ad photo ${index + 1}`} style={{ width: 100, height: 100 }} />
+                                    <img src={photoUrl} alt={`Ad ${index + 1}`} style={{ width: 100, height: 100 }} />
                                     <button type="button" className='del-photo-button' onClick={() => handleDeletePhoto(photoUrl)}>מחק</button>
                                 </div>
                             ))}

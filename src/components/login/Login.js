@@ -11,21 +11,29 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
 
     const handleRegisterRedirect = () => {
         navigate('/register');
     };
 
+    const handleForgotPassword = () => {
+        navigate('/login/forgot-password')
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            navigate('/'); 
+            navigate('/');
         } catch (error) {
             const errorCode = error.code;
-            if (errorCode === "auth/invalid-credential") {
-                console.log("Wrong email or password");
+            if (errorCode === "auth/invalid-credential" || errorCode === "auth/user-not-found" || errorCode === "auth/wrong-password") {
+                setError("אימייל או סיסמה לא נכונים");
+            } else {
+                setError("שגיאה לא צפויה, נסה שוב");
             }
         }
     };
@@ -63,10 +71,17 @@ const Login = () => {
                         <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                     </span>
                 </div>
+
+                {error && <p className="error-message">{error}</p>}
+
                 <button type="submit" className="login-button" onClick={handleSubmit}>התחברות</button>
             </form>
             <p className="register-text">
                 אין לך חשבון? <span onClick={handleRegisterRedirect} className="register-link">להרשמה</span>
+            </p>
+
+            <p className="register-text">
+                <span onClick={handleForgotPassword} className="login-link">שכחתי סיסמה</span>
             </p>
         </div>
     );

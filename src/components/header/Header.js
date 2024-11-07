@@ -2,21 +2,38 @@ import './Header.css';
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser, faGear } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthProvider';
 import { CATEGORIES } from '../utils/constants/Constants';
+import { IsDateNowGreaterThanAdDate } from '../utils/constants/Functions';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 const Header = () => {
     const navigate = useNavigate();
-    const { currentUser, loading, logout } = useAuth();
+    const { currentUser, setCurrentUser, loading, logout } = useAuth();
     const [showMenu, setShowMenu] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+
+    useEffect(() => {
+        const CheckUserYearly = async () => {
+            if (currentUser?.subscribedUntil !== null && IsDateNowGreaterThanAdDate(currentUser?.subscribedUntil)) {
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    subscribedUntil: null,
+                    numberOfAds: 0
+                })
+                const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+                setCurrentUser({ uid: currentUser.uid, ...userDoc.data() });
+            }
+        }
+        CheckUserYearly()
+    }, [currentUser, setCurrentUser])
 
     const handlePublishAd = () => {
         if (currentUser === null) {
             navigate('/login');
         } else {
-            if (currentUser.isSubscribed && currentUser.numberOfAds > 0) {
+            if (currentUser.numberOfAds > 0) {
                 navigate('/publish_ad')
             } else {
                 navigate('/subscribe')
@@ -31,7 +48,7 @@ const Header = () => {
     };
 
     const toggleProfileDropdown = () => {
-        setShowProfileDropdown(!showProfileDropdown); // Toggle dropdown visibility
+        setShowProfileDropdown(!showProfileDropdown);
     };
 
     return (

@@ -14,6 +14,7 @@ const Register = () => {
     const [verifyPassword, setVerifyPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showVerifyPassword, setShowVerifyPassword] = useState(false);
+    const [error, setError] = useState('');
 
     const handleLoginRedirect = () => {
         navigate('/login');
@@ -21,6 +22,7 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
 
         if (password === verifyPassword) {
             try {
@@ -29,24 +31,22 @@ const Register = () => {
 
                 await setDoc(doc(db, "users", user.uid), {
                     email: user.email,
-                    isSubscribed: false,
-                    typeOfSubscription: null,
                     subscribedUntil: null,
-                    numberOfAds: 0
+                    numberOfAds: 1
                 })
 
                 navigate('/');
             } catch (error) {
                 const errorCode = error.code;
-                const errorMessage = error.message;
                 if (errorCode === "auth/email-already-in-use") {
-                    console.log("Email taken")
+                    setError("אימייל זה כבר רשום");
+
+                } else {
+                    setError("שגיאה לא צפויה, נסה שוב");
                 }
-                console.error(errorCode);
-                console.error(errorMessage);
             }
         } else {
-            console.log("Passwords don't match");
+            setError("סיסמאות לא זהות");
         }
     };
 
@@ -103,8 +103,11 @@ const Register = () => {
                     </span>
                 </div>
 
+                {error && <p className="error-message">{error}</p>}
+
                 <button type="submit" className="register-button">הרשמה</button>
             </form>
+
             <p className="register-text">
                 כבר יש לך חשבון? <span onClick={handleLoginRedirect} className="login-link">התחברות</span>
             </p>
