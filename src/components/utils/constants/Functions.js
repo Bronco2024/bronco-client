@@ -8,6 +8,7 @@ export const FormatDateTimestampToDate = (timestamp) => {
 
 export const IsDateNowGreaterThanAdDate = (adAvailableUntil) => {
     try {
+        if(!adAvailableUntil) return;
         const timeOfAd = adAvailableUntil.toDate();
         const now = new Date();
         return now.getTime() > timeOfAd.getTime()
