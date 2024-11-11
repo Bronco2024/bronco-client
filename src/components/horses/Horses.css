@@ -15,7 +15,7 @@
     color: #333;
 }
 
-.ads-wrapper {
+.ads-horses-wrapper {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -23,7 +23,7 @@
     flex-direction: row-reverse;
 }
 
-.ad-card {
+.ad-horse-card {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -38,11 +38,11 @@
     cursor: pointer;
 }
 
-.ad-card:hover {
+.ad-horse-card:hover {
     border-color: #ccc;
 }
 
-.ad-image {
+.ad-horse-image {
     width: 100%;
     height: 200px;
     max-height: 200px;
@@ -51,7 +51,7 @@
     margin-bottom: 10px;
 }
 
-.ad-title {
+.ad-horse-title {
     font-size: 1.2em;
     font-weight: bold;
     color: #333;
@@ -59,7 +59,7 @@
     text-align: center;
 }
 
-.ad-price {
+.ad-horse-price {
     font-size: 1em;
     font-weight: bold;
     color: #555;
@@ -69,14 +69,14 @@
 
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
-    .ad-card {
+    .ad-horse-card {
         width: 45%;
         /* Two cards per row on tablets */
     }
 }
 
 @media (max-width: 768px) {
-    .ad-card {
+    .ad-horse-card {
         width: 100%;
         /* One card per row on mobile */
     }
@@ -88,12 +88,12 @@
 }
 
 @media (max-width: 480px) {
-    .ad-title {
+    .ad-horse-title {
         font-size: 1em;
         /* Smaller text on very small screens */
     }
 
-    .ad-price {
+    .ad-horse-price {
         font-size: 0.9em;
     }
 }

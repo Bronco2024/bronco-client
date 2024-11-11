@@ -103,25 +103,28 @@ const Schools = () => {
         <div className="schools-container">
             <h1 className="schools-title">בתי ספר</h1>
 
-            <div className="ads-wrapper">
+            <div className="ads-school-wrapper">
                 {adList.length === 0 ? (
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
                     adList.map(ad => (
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                        <div
-                            key={ad.id}
-                            className="ad-card"
-                            onClick={() => handleClickOnItem(ad)}
-                        >
-                            {ad.photos && ad.photos[0] && (
-                                <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
-                            )}
-                            <h2 className="ad-title">{ad.title}</h2>
-                            <p className="ad-price">₪{ad.price}</p>
-                            <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                        </div>
-                    )))
+                            <div
+                                key={ad.id}
+                                className="ad-school-card"
+                                onClick={() => handleClickOnItem(ad)}
+                            >
+                                {ad.photos && ad.photos[0] && (
+                                    <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
+                                )}
+                                <div className="ad-school-details">
+                                    <h2 className="ad-school-title">{ad.title}</h2>
+                                    <p className="ad-school-price">{ad.description}</p>
+                                    <p className='ad-school-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                                </div>
+
+                            </div>
+                        )))
                 )}
             </div>
 

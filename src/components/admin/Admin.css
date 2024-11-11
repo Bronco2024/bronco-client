@@ -29,6 +29,19 @@
     overflow-y: auto;
 }
 
+.select-type{
+    direction: rtl;
+    width: 15%;
+    align-self: flex-end;
+    padding: 10px;
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+    text-align: right;
+    resize: none;
+    margin-bottom: 20px;
+    font-size: medium;
+}
+
 .sponsor-card {
     display: flex;
     flex-direction: row-reverse;
@@ -44,6 +57,7 @@
     height: 200px;
     object-fit: cover;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .sponsor-details {

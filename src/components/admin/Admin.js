@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import './Admin.css'
 import { db, storage } from '../../firebase';
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc, where, orderBy, query } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import Modal from '../utils/modal/Modal';
-import { ref, deleteObject } from "firebase/storage";
+import { ref, deleteObject, listAll } from "firebase/storage";
 
 const Admin = () => {
     const navigate = useNavigate();
     const [sponsors, setSponsors] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [adToDelete, setAdToDelete] = useState(null);
+    const [isModalDeleteAdVisible, setIsModalDeleteAdVisible] = useState(false);
     const [sponsorToDelete, setSponsorToDelete] = useState(null);
     const [refresh, setRefresh] = useState(false);
+    const [showAdsOrSponsors, setShowAdsOrSponsors] = useState("sponsors")
+    const [ads, setAds] = useState([])
 
     useEffect(() => {
         const fetchSponsors = async () => {
@@ -31,7 +35,27 @@ const Admin = () => {
             }
         };
 
+        const fetchAds = async () => {
+            try {
+                const adsRef = collection(db, "ads");
+                const filterQuery = where("availableUntil", ">", new Date());
+                const q = query(adsRef, filterQuery, orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                const ads = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                setAds(ads);
+
+            } catch (error) {
+                console.error("Error fetching sponsors:", error);
+            }
+        };
+
         fetchSponsors()
+        fetchAds()
     }, [refresh])
 
     const deleteSponsorFromFirebase = async (sponsorId) => {
@@ -47,9 +71,30 @@ const Admin = () => {
         }
     };
 
+    const deleteAdFromFirebase = async (adId) => {
+        try {
+            const adDocRef = doc(db, 'ads', adId);
+            await deleteDoc(adDocRef);
+
+            const imagesRef = ref(storage, `ads/${adId}`);
+
+            const listResult = await listAll(imagesRef);
+            const deletePromises = listResult.items.map((fileRef) => deleteObject(fileRef));
+
+            await Promise.all(deletePromises);
+        } catch (error) {
+            console.error("Error deleting ad:", error);
+        }
+    };
+
     const closeModal = () => {
         setIsModalVisible(false)
         setSponsorToDelete(null);
+    };
+
+    const closeModalDeleteAd = () => {
+        setIsModalDeleteAdVisible(false)
+        setAdToDelete(null);
     };
 
     const handleDeleteButtonModal = () => {
@@ -62,9 +107,28 @@ const Admin = () => {
         closeModal()
     }
 
+    const handleDeleteAdButtonModal = () => {
+        try {
+            deleteAdFromFirebase(adToDelete?.id)
+            setRefresh(prev => !prev);
+        } catch (err) {
+            console.log(err)
+        }
+        closeModalDeleteAd()
+    }
+
     const handleDeleteButton = (sponsor) => {
         setIsModalVisible(true)
         setSponsorToDelete(sponsor);
+    }
+
+    const handleDeleteAdButton = (ad) => {
+        setIsModalDeleteAdVisible(true)
+        setAdToDelete(ad);
+    }
+
+    const changeShowAdsOrSponsors = (e) => {
+        setShowAdsOrSponsors(e.target.value)
     }
 
     return (
@@ -78,35 +142,76 @@ const Admin = () => {
                 }}>הוסף ספונסור</button>
 
             <div className="sponsors-container">
-                <h3>ספונסירים</h3>
-                {sponsors.length > 0 ? (
-                    sponsors.map(sponsor => (
-                        <div
-                            key={sponsor.id}
-                            className="sponsor-card"
-                            style={{
-                                borderColor: sponsor.sponsor === "gold" ? "#FFD700"
-                                    : sponsor.sponsor === "silver" ? "#C0C0C0"
-                                        : "#cd7f32",
-                                borderWidth: '3px',
-                                borderRadius: '10px'
-                            }}
-                        >
-                            {sponsor.photo && (
-                                <img src={sponsor.photo} alt="pojk" className="sponsor-image" />
-                            )}
-                            <div className="sponsor-details">
-                                <h4 style={{ direction: 'rtl' }}>לינק:  <a href={sponsor.link} target="_blank" rel="noopener noreferrer">{sponsor.link}</a></h4>
-                                <p style={{ direction: 'rtl' }}>סוג ספונסור: <b>{sponsor.sponsor}</b></p>
-                            </div>
+                <select
+                    className="select-type"
+                    value={showAdsOrSponsors}
+                    onChange={changeShowAdsOrSponsors}
+                >
+                    <option value="sponsors">ספונסורים</option>
+                    <option value="ads">מודעות</option>
+                </select>
 
-                            <div className="sponsor-crud">
-                                <button className='sponsor-delete-button' onClick={() => handleDeleteButton(sponsor)}>מחק</button>
+                {showAdsOrSponsors === "sponsors" ? (
+                    sponsors.length > 0 ? (
+                        sponsors.map(sponsor => (
+                            <div
+                                key={sponsor.id}
+                                className="sponsor-card"
+                                style={{
+                                    borderColor: sponsor.sponsor === "gold" ? "#FFD700"
+                                        : sponsor.sponsor === "silver" ? "#C0C0C0"
+                                            : "#cd7f32",
+                                    borderWidth: '3px',
+                                    borderRadius: '10px'
+                                }}
+                            >
+                                {sponsor.photo && (
+                                    <img src={sponsor.photo} alt="pojk" className="sponsor-image" />
+                                )}
+                                <div className="sponsor-details">
+                                    <h4 style={{ direction: 'rtl' }}>לינק:  <a href={sponsor.link} target="_blank" rel="noopener noreferrer">{sponsor.link}</a></h4>
+                                    <p style={{ direction: 'rtl' }}>סוג ספונסור: <b>{sponsor.sponsor}</b></p>
+                                </div>
+
+                                <div className="sponsor-crud">
+                                    <button className='sponsor-delete-button' onClick={() => handleDeleteButton(sponsor)}>מחק</button>
+                                </div>
                             </div>
-                        </div>
-                    ))
+                        ))
+                    ) : (
+                        <p>לא נמצאו ספונסירים</p>
+                    )
                 ) : (
-                    <p>לא נמצאו ספונסירים</p>
+                    ads.length > 0 ? (
+                        ads.map(ad => (
+                            <div
+                                key={ad.id}
+                                className="sponsor-card"
+                            >
+                                {ad.photos && ad.photos[0] && (
+                                    <img src={ad.photos[0]} alt="pojk" className="sponsor-image" onClick={() => {
+                                        navigate('/item', { state: { ad } })
+                                    }} />
+                                )}
+                                {ad.photos.length === 0 && (
+                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="sponsor-image" onClick={() => {
+                                        navigate('/item', { state: { ad } })
+                                    }} />
+                                )}
+                                <div className="sponsor-details">
+                                    <h4 style={{ direction: 'rtl' }}>{ad.category}</h4>
+                                    <p style={{ direction: 'rtl' }}>{ad.description}</p>
+                                    <p style={{ direction: 'rtl' }}>₪{ad.price}</p>
+                                </div>
+
+                                <div className="sponsor-crud">
+                                    <button className='sponsor-delete-button' onClick={() => handleDeleteAdButton(ad)}>מחק</button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>לא נמצאו מודעות</p>
+                    )
                 )}
             </div>
 
@@ -116,6 +221,16 @@ const Admin = () => {
                     <div className="modal-buttons-custom">
                         <button className="cancel-button" onClick={closeModal}>ביטול</button>
                         <button className="confirm-delete-button" onClick={handleDeleteButtonModal}>מחק</button>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal isVisible={isModalDeleteAdVisible} title="מחיקת מודעה" onClose={closeModalDeleteAd}>
+                <div className="modal-content-custom">
+                    <p>האם אתה בטוח שברצונך למחוק את מודעה זה?</p>
+                    <div className="modal-buttons-custom">
+                        <button className="cancel-button" onClick={closeModalDeleteAd}>ביטול</button>
+                        <button className="confirm-delete-button" onClick={handleDeleteAdButtonModal}>מחק</button>
                     </div>
                 </div>
             </Modal>

@@ -20,6 +20,10 @@ export const CATEGORIES = [
     { path: '/horses', label: 'סוסים' },
     { path: '/seeds', label: 'זרע' },
     { path: '/accessories', label: 'אביזרים' },
+];
+
+export const EXTENDED_CATEGORIES = [
+    ...CATEGORIES,
     { path: '/boarding', label: 'פנסיון' },
     { path: '/exhibitors', label: 'מציגים' },
     { path: '/breeders', label: 'מפרזילים' },
@@ -27,7 +31,8 @@ export const CATEGORIES = [
     { path: '/trips', label: 'טיולים' },
     { path: '/shops', label: 'חנויות' },
     { path: '/shows-and-competitions', label: 'תצוגות ותחריות' },
-];
+    { path: '/our-products', label: 'מוצרים שלנו' },
+]
 
 export const SEEDS_TYPES = [
     "ערבי מעורב קו",
@@ -38,6 +43,16 @@ export const SEEDS_TYPES = [
 export const SEMEN_TYPES = [
     "זרע טרי",
     "זרע קפוא"
+]
+
+export const ACCESSORIES_TPYES = [
+    "קרון",
+    "תאים",
+    "עמדת בדיקה",
+    "מכונת אוכל אוטומטית",
+    "אוכפים",
+    "קסדות",
+    "אחר"
 ]
 
 export const ADS_PER_PAGE = 5;

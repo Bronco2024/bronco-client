@@ -28,7 +28,8 @@ const Seeds = () => {
         minPrice: "",
         maxPrice: "",
         seed_type: "",
-        semen_type: ""
+        semen_type: "",
+        hasCertificate: "",
     });
 
     const categoryFilter = "זרע";
@@ -108,7 +109,7 @@ const Seeds = () => {
     };
 
     const applyFilters = async () => {
-        if (filters.seed_type === "" && filters.maxPrice === "" && filters.minPrice === "" && filters.semen_type === "") {
+        if (filters.hasCertificate === "" && filters.seed_type === "" && filters.maxPrice === "" && filters.minPrice === "" && filters.semen_type === "") {
             fetchAds();
             getTotalCount();
             setPage(1);
@@ -132,8 +133,13 @@ const Seeds = () => {
         const paginatedQuery = query(collectionRef, ...filterQueries, limit(ADS_PER_PAGE));
         const querySnapshot = await getDocs(paginatedQuery);
         const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        
+        let certificate = filters.hasCertificate === "yes" ? true : false;
 
-        setAdList(items);
+        //filter in frontend by certificate
+        const activeItems = items.filter(item => item.hasCertificate === certificate);
+
+        setAdList(activeItems);
 
         if (querySnapshot.docs.length > 0) {
             setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
@@ -177,6 +183,11 @@ const Seeds = () => {
                         </option>
                     ))}
                 </select>
+                <select name="hasCertificate" value={filters.hasCertificate} onChange={handleFilterChange}>
+                    <option value="">תעודת הרבעה</option>
+                    <option value="yes">כן</option>
+                    <option value="no">לא</option>
+                </select>
                 <input
                     type="number"
                     name="minPrice"
@@ -194,7 +205,7 @@ const Seeds = () => {
                 <button onClick={applyFilters}>חפש</button>
             </div>
 
-            <div className="ads-wrapper">
+            <div className="ads-seeds-wrapper">
                 {adList.length === 0 ? (
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
@@ -202,15 +213,16 @@ const Seeds = () => {
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
                             <div
                                 key={ad.id}
-                                className="ad-card"
+                                className="ad-seeds-card"
+                                style={{ borderColor: ad?.hasCertificate ? '#0064E0' : null, borderWidth: ad?.hasCertificate ? '2px' : null }}
                                 onClick={() => handleClickOnItem(ad)}
                             >
                                 {ad.photos && ad.photos[0] && (
-                                    <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
+                                    <img src={ad.photos[0]} alt={ad.title} className="ad-seeds-image" />
                                 )}
-                                <h2 className="ad-title">{ad.title}</h2>
-                                <p className="ad-price">₪{ad.price}</p>
-                                <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                                <h2 className="ad-seeds-title">{ad.seed_type}</h2>
+                                <p className="ad-seeds-price">₪{ad.price}</p>
+                                <p className='ad-seeds-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                             </div>
                         )
 

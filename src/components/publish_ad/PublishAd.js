@@ -7,20 +7,21 @@ import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../utils/modal/Modal';
-import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES } from "../utils/constants/Constants";
+import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES } from "../utils/constants/Constants";
 
 const PublishAd = () => {
     const navigate = useNavigate();
     const [cities, setCities] = useState([]);
     const { currentUser, setCurrentUser } = useAuth();
     const [showModal, setShowModal] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
     const [formData, setFormData] = useState({
-        title: '',
+        contact: '',
         category: '',
         description: '',
         phoneNumber: '',
         location: '',
-        price: '',
         photos: [],
     });
 
@@ -60,8 +61,10 @@ const PublishAd = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setUploading(true);
 
-        if (formData.category === "סוסים" && !Object.hasOwn(formData, 'hasCertificate')) {
+        if ((formData.category === "סוסים" || formData.category === "זרע")
+            && !Object.hasOwn(formData, 'hasCertificate')) {
             setFormData((prevState) => {
                 return { ...prevState, hasCertificate: false };
             });
@@ -99,12 +102,10 @@ const PublishAd = () => {
             });
 
             setFormData({
-                title: '',
                 category: '',
                 description: '',
                 phoneNumber: '',
                 location: '',
-                price: '',
                 photos: [],
             });
 
@@ -112,7 +113,10 @@ const PublishAd = () => {
 
         } catch (error) {
             console.error("Error publishing ad:", error);
+        } finally {
+            setUploading(false);
         }
+
     };
 
     const closeModal = () => {
@@ -132,15 +136,6 @@ const PublishAd = () => {
         <div className="publish-ad-container" style={{ textAlign: 'right' }}>
             <h1>פרסם מודעה</h1>
             <form onSubmit={handleSubmit} className="publish-ad-form">
-                <label htmlFor="title">כותרת</label>
-                <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    required
-                />
 
                 <label htmlFor="category"> קטגוריה</label>
                 <select
@@ -151,12 +146,38 @@ const PublishAd = () => {
                     required
                 >
                     <option value="">בחר קטגוריה</option>
-                    {CATEGORIES.map((cat, index) => (
-                        <option key={index} value={cat.label}>
-                            {cat.label}
-                        </option>
-                    ))}
+                    {currentUser?.isAdmin ? (
+                        EXTENDED_CATEGORIES.map((cat, index) => (
+                            <option key={index} value={cat.label}>
+                                {cat.label}
+                            </option>
+                        ))
+                    ) : (
+                        CATEGORIES.map((cat, index) => (
+                            <option key={index} value={cat.label}>
+                                {cat.label}
+                            </option>
+                        ))
+                    )}
                 </select>
+
+
+                {((formData.category !== "") &&
+                    (formData.category !== "סוסים") &&
+                    (formData.category !== "זרע") &&
+                    (formData.category !== "אביזרים")) && (
+                        <div className='publish-ad-form'>
+                            <label htmlFor="title">כותרת</label>
+                            <input
+                                id="title"
+                                name="title"
+                                value={formData.price}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    )
+                }
 
                 {formData.category === "סוסים" && (
                     <div className="publish-ad-form">
@@ -220,7 +241,7 @@ const PublishAd = () => {
                 {formData.category === "זרע" && (
                     <div className="publish-ad-form" >
                         <label htmlFor="seeds_types">סוג זרע</label>
-                        <div style={{ display:'flex', flexDirection: 'row', direction: 'rtl', gap:'10px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'row', direction: 'rtl', gap: '10px' }}>
                             <select
                                 id="seeds_types"
                                 name="seed_type"
@@ -250,6 +271,40 @@ const PublishAd = () => {
                                 ))}
                             </select>
                         </div>
+
+                        <div style={{ marginTop: '3%', marginBottom: '1%' }}>
+                            <label htmlFor="hasCertificate">
+                                <input
+                                    type="checkbox"
+                                    id="hasCertificate"
+                                    name="hasCertificate"
+                                    checked={formData.hasCertificate || false}
+                                    onChange={handleInputChange}
+                                />
+
+                                &nbsp; עם תעודת הרבעה
+                            </label>
+                        </div>
+                    </div>
+                )}
+
+                {formData.category === "אביזרים" && (
+                    <div className="publish-ad-form" >
+                        <label htmlFor="accessories_type">סוג מוצר</label>
+                        <select
+                            id="accessory"
+                            name="accessory"
+                            value={formData.accessory || ""}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">בחר סוג מוצר</option>
+                            {ACCESSORIES_TPYES.map((accessory, index) => (
+                                <option key={index} value={accessory}>
+                                    {accessory}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                 )}
 
@@ -261,6 +316,15 @@ const PublishAd = () => {
                     onChange={handleChange}
                     required
                     style={{ height: 100 }}
+                />
+
+                <label htmlFor="phoneNumber">שם איש קשר</label>
+                <input
+                    id="contact"
+                    name="contact"
+                    value={formData.contact}
+                    onChange={handleChange}
+                    required
                 />
 
                 <label htmlFor="phoneNumber">מספר טלפון</label>
@@ -288,15 +352,22 @@ const PublishAd = () => {
                     ))}
                 </select>
 
-                <label htmlFor="price">מחיר</label>
-                <input
-                    type="number"
-                    id="price"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    required
-                />
+                {((formData.category === "סוסים") ||
+                    (formData.category === "זרע") ||
+                    (formData.category === "אביזרים")) && (
+                        <div className='publish-ad-form'>
+                            <label htmlFor="price">מחיר</label>
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                value={formData.price}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    )
+                }
 
                 <label htmlFor="photos">תמונות</label>
                 <input
@@ -308,7 +379,9 @@ const PublishAd = () => {
                     onChange={handleFileChange}
                 />
 
-                <button type="submit" className="publish-button">פרסם מודעה</button>
+                <button type="submit" className="publish-button" disabled={uploading}>
+                    {uploading ? "...מפרסם" : "פרסם מודעה"}
+                </button>
             </form>
 
             <Modal isVisible={showModal} title="מודעה פורסמה" onClose={closeModal}>

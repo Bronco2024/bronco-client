@@ -159,6 +159,9 @@ const Profile = () => {
                             {ad.photos && ad.photos[0] && (
                                 <img src={ad.photos[0]} alt={ad.title} className="ad-image-profile" />
                             )}
+                            {ad.photos.length === 0 && (
+                                <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-image-profile" />
+                            )}
                             <div className="ad-details">
                                 <h4 className="ad-title-profile">{ad.title}</h4>
                                 <p>{ad.description}</p>

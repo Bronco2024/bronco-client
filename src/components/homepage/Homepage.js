@@ -35,7 +35,7 @@ const HomePage = () => {
         const fetchLatestAds = async () => {
             try {
                 const adsRef = collection(db, "ads");
-                const filterQuery = where("availableUntil" , ">", new Date());
+                const filterQuery = where("availableUntil", ">", new Date());
                 const q = query(adsRef, filterQuery, orderBy("createdAt", "desc"), limit(NUMBER_OF_LATEST_ADS_TO_FETCH));
                 const querySnapshot = await getDocs(q);
 
@@ -125,10 +125,24 @@ const HomePage = () => {
                                     onClick={() => handleClickOnItem(ad)}
                                 >
                                     {ad.photos && ad.photos[0] && (
-                                        <img src={ad.photos[0]} alt={ad.title} className="ad-image-homepage" />
+                                        <img src={ad.photos[0]} alt={ad.category} className="ad-image-homepage" />
                                     )}
-                                    <h2 className="ad-title-homepage">{ad.title}</h2>
-                                    <p className="ad-price-homepage">₪{ad.price}</p>
+                                    {ad.photos.length === 0 && (
+                                        <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-image-homepage" />
+                                    )}
+                                    {ad.category === "סוסים" ? (
+                                            <h2 className="ad-title-homepage">{ad.breed}</h2>
+                                        ) : ad.category === "זרע" ? (
+                                                <h2 className="ad-title-homepage">{ad.seed_type}</h2>
+                                        ) :  ad.category === "אביזרים" ? (
+                                                <h2 className="ad-title-homepage">{ad.accessory}</h2>
+                                        ) : (
+                                            <h2 className="ad-title-homepage">{ad.title}</h2>
+                                    )}
+
+                                    {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים") && (
+                                        <p className="ad-price-homepage">₪{ad.price}</p>
+                                    )}
                                     <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                                 </div>
                             ))}

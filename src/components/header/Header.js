@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthProvider';
-import { CATEGORIES } from '../utils/constants/Constants';
+import { EXTENDED_CATEGORIES } from '../utils/constants/Constants';
 import { IsDateNowGreaterThanAdDate } from '../utils/constants/Functions';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
@@ -108,7 +108,7 @@ const Header = () => {
                         {showMenu ? <FontAwesomeIcon icon={faTimes} /> : <FontAwesomeIcon icon={faBars} />}
                     </button>
                     <div className={`navbar-buttons-category ${showMenu ? "show" : ""}`}>
-                        {CATEGORIES.map((category, index) => (
+                        {EXTENDED_CATEGORIES.map((category, index) => (
                             <Link key={index} to={category.path} className='navbar-button-category' onClick={() => setShowMenu(false)}>
                                 {category.label}
                             </Link>

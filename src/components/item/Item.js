@@ -47,8 +47,9 @@ const ItemPage = () => {
             <p className="item-location">מיקום: {ad.location}</p>
 
             <p className="item-price">₪{ad.price}</p>
+            <p style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', fontWeight:'bold'}}>איש קשר: {ad.contact}</p>
             <div className="item-phone-container">
-                <span className="item-phone">{ad.phoneNumber}</span>
+                <span>{ad.phoneNumber}</span>
                 <FontAwesomeIcon icon={faPhoneAlt} style={{ marginLeft: '8px' }} />
             </div>
             <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>

@@ -208,26 +208,29 @@ const Horses = () => {
                 <button onClick={applyFilters}>חפש</button>
             </div>
 
-            <div className="ads-wrapper">
+            <div className="ads-horses-wrapper">
                 {adList.length === 0 ? (
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
                     adList.map(ad => (
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                        <div
-                            key={ad.id}
-                            className="ad-card"
-                            style={{ borderColor: ad?.hasCertificate ? '#0064E0' : null, borderWidth: ad?.hasCertificate ? '2px' : null }}
-                            onClick={()=>handleClickOnItem(ad)}
-                        >
-                            {ad.photos && ad.photos[0] && (
-                                <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
-                            )}
-                            <h2 className="ad-title">{ad.title}</h2>
-                            <p className="ad-price">₪{ad.price}</p>
-                            <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                        </div>
-                    )))
+                            <div
+                                key={ad.id}
+                                className="ad-horse-card"
+                                style={{ borderColor: ad?.hasCertificate ? '#0064E0' : null, borderWidth: ad?.hasCertificate ? '2px' : null }}
+                                onClick={() => handleClickOnItem(ad)}
+                            >
+                                {(ad.photos && ad.photos[0]) && (
+                                    <img src={ad.photos[0]} alt={ad.breed} className="ad-horse-image" />
+                                )}
+                                {ad.photos.length === 0 && (
+                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-horse-image" />
+                                )}
+                                <h2 className="ad-horse-title">{ad.breed}</h2>
+                                <p className="ad-horse-price">₪{ad.price}</p>
+                                <p className='ad-horse-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                            </div>
+                        )))
                 )}
             </div>
 
