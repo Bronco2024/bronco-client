@@ -34,13 +34,15 @@
 }
 
 .pay-button {
+    width: 30%;
+    max-width: 200px;
     padding: 10px 20px;
     background-color: #28a745;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -49,7 +51,6 @@
 .pay-button:hover {
     background-color: #218838;
 }
-
 
 .modal-content-payment {
     text-align: right;
@@ -62,7 +63,7 @@
     margin-top: 20px;
 }
 
-.close-button-payment{
+.close-button-payment {
     padding: 8px 16px;
     font-size: 1rem;
     border-radius: 4px;
@@ -72,13 +73,61 @@
     color: black;
 }
 
-.close-button-payment:hover{
+.close-button-payment:hover {
     background-color: #ccc;
 }
 
+.contact-info-container {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
+.contact-payment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: right;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-payment-form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.contact-payment-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: right;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px;
+}
+
+/* Responsive styles */
 @media (max-width: 768px) {
-    .plan-details, .pay-button {
+    .plan-details, .contact-info-container {
         width: 90%;
     }
 
@@ -91,6 +140,33 @@
     }
 
     .pay-button {
+        width: 100%;
         font-size: 1.2rem;
+        padding: 12px 20px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .plan-details h2 {
+        font-size: 1.2rem;
+    }
+
+    .plan-details p {
+        font-size: 1rem;
+    }
+
+    .pay-button {
+        font-size: 1.2rem;
+        padding: 10px;
+    }
+    
+    .close-button-payment {
+        font-size: 0.9rem;
+        padding: 6px 12px;
     }
 }

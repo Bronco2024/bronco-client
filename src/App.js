@@ -29,6 +29,7 @@ const Schools = lazy(() => import("./components/schools/Schools"))
 const Trips = lazy(() => import("./components/trips/Trips"))
 const Shops = lazy(() => import("./components/shops/Shops"))
 const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competitions/ShowsAndCompetitions"))
+const ThankYou = lazy(() => import("./components/payment/ThankYou"))
 
 const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
 
@@ -127,6 +128,18 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <Payment />
+              </Layout>
+            </ProtectedRoute>
+          </Suspense>
+        }
+      />
+
+      <Route path="/subscribe/payment/thank-you"
+        element={
+          <Suspense fallback={<Loading message="Loading ThankYou..." />}>
+            <ProtectedRoute>
+              <Layout>
+                <ThankYou />
               </Layout>
             </ProtectedRoute>
           </Suspense>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
@@ -11,16 +11,21 @@ const ItemPage = () => {
     const location = useLocation();
     const ad = location.state?.ad;
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     if (!ad) {
         return <div>Loading...</div>;
     }
 
-    const items = ad.photos?.map((photo, index) => (
+    const items = ad.photos && ad.photos.length > 0 ? ad.photos?.map((photo, index) => (
         <img key={index} src={photo} alt={`Ad ${index + 1}`} style={{ width: '100%', height: '600px', objectFit: 'contain' }} />
-    ));
+    )) : [<img src={require("../../assets/no-image.jpg")} alt="empty" style={{ width: '100%', height: '600px', objectFit: 'contain' }} />];
 
     return (
         <div className="item-detail-container">
+
             <AliceCarousel
                 mouseTracking
                 items={items}
@@ -39,7 +44,7 @@ const ItemPage = () => {
                     <p className="item-horse">מין: {ad.gender}</p>
                 </div>
             )}
-            
+
             {ad.category === "זרע" && (
                 <div>
                     <p className="item-horse">סוג זרע: {ad.seed_type} - {ad.semen_type}</p>
