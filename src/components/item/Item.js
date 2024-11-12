@@ -16,7 +16,7 @@ const ItemPage = () => {
     }
 
     const items = ad.photos?.map((photo, index) => (
-        <img key={index} src={photo} alt={`Ad ${index + 1}`} style={{ width: '100%', height: '300px' }} />
+        <img key={index} src={photo} alt={`Ad ${index + 1}`} style={{ width: '100%', height: '600px', objectFit: 'contain' }} />
     ));
 
     return (
@@ -39,15 +39,20 @@ const ItemPage = () => {
                     <p className="item-horse">מין: {ad.gender}</p>
                 </div>
             )}
+            
             {ad.category === "זרע" && (
                 <div>
                     <p className="item-horse">סוג זרע: {ad.seed_type} - {ad.semen_type}</p>
                 </div>
             )}
+
             <p className="item-location">מיקום: {ad.location}</p>
 
-            <p className="item-price">₪{ad.price}</p>
-            <p style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', fontWeight:'bold'}}>איש קשר: {ad.contact}</p>
+            {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים") && (
+                <p className="item-price">₪{ad.price}</p>
+            )}
+
+            <p style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', fontWeight: 'bold' }}>איש קשר: {ad.contact}</p>
             <div className="item-phone-container">
                 <span>{ad.phoneNumber}</span>
                 <FontAwesomeIcon icon={faPhoneAlt} style={{ marginLeft: '8px' }} />

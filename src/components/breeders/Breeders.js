@@ -103,7 +103,7 @@ const Breeders = () => {
         <div className="breeders-container">
             <h1 className="breeders-title">מפרזילים</h1>
 
-            <div className="ads-wrapper">
+            <div className="ads-breeders-wrapper">
                 {adList.length === 0 ? (
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
@@ -111,15 +111,14 @@ const Breeders = () => {
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
                         <div
                             key={ad.id}
-                            className="ad-card"
+                            className="ad-breeders-card"
                             onClick={() => handleClickOnItem(ad)}
                         >
                             {ad.photos && ad.photos[0] && (
-                                <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
+                                <img src={ad.photos[0]} alt={ad.title} className="ad-breeders-image" />
                             )}
-                            <h2 className="ad-title">{ad.title}</h2>
-                            <p className="ad-price">₪{ad.price}</p>
-                            <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                            <h2 className="ad-breeders-title">{ad.title}</h2>
+                            <p className='ad-breeders-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                         </div>
                     )))
                 )}

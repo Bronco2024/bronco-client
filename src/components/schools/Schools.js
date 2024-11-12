@@ -101,9 +101,9 @@ const Schools = () => {
 
     return (
         <div className="schools-container">
-            <h1 className="schools-title">בתי ספר</h1>
-
             <div className="ads-school-wrapper">
+                <h1 className="schools-title">בתי ספר</h1>
+
                 {adList.length === 0 ? (
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
@@ -115,7 +115,7 @@ const Schools = () => {
                                 onClick={() => handleClickOnItem(ad)}
                             >
                                 {ad.photos && ad.photos[0] && (
-                                    <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
+                                    <img src={ad.photos[0]} alt={ad.title} className="ad-school-image" />
                                 )}
                                 <div className="ad-school-details">
                                     <h2 className="ad-school-title">{ad.title}</h2>
@@ -126,14 +126,14 @@ const Schools = () => {
                             </div>
                         )))
                 )}
-            </div>
 
-            <div className="pagination">
-                <button onClick={handlePrevPage} disabled={page === 1}>קודם</button>
-                <span>דף {page}</span>
-                <button onClick={handleNextPage} disabled={page === TOTAL_PAGES || adList.length === 0 || !afterThis}>
-                    הבא
-                </button>
+                <div className="pagination">
+                    <button onClick={handlePrevPage} disabled={page === 1}>קודם</button>
+                    <span>דף {page}</span>
+                    <button onClick={handleNextPage} disabled={page === TOTAL_PAGES || adList.length === 0 || !afterThis}>
+                        הבא
+                    </button>
+                </div>
             </div>
         </div>
     )

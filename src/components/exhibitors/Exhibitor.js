@@ -103,7 +103,7 @@ const Exhibitor = () => {
         <div className="exhibitor-container">
             <h1 className="exhibitor-title">מציגים</h1>
 
-            <div className="ads-wrapper">
+            <div className="ads-exhibitor-wrapper">
                 {adList.length === 0 ? (
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
@@ -111,15 +111,14 @@ const Exhibitor = () => {
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
                         <div
                             key={ad.id}
-                            className="ad-card"
+                            className="ad-exhibitor-card"
                             onClick={() => handleClickOnItem(ad)}
                         >
                             {ad.photos && ad.photos[0] && (
-                                <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
+                                <img src={ad.photos[0]} alt={ad.title} className="ad-exhibitor-image" />
                             )}
-                            <h2 className="ad-title">{ad.title}</h2>
-                            <p className="ad-price">₪{ad.price}</p>
-                            <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                            <h2 className="ad-exhibitor-title">{ad.title}</h2>
+                            <p className='ad-exhibitor-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
 
                         </div>
                     )))
