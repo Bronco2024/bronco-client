@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './PublishAd.css';
 import { db, storage } from '../../firebase';
 import { doc, setDoc, updateDoc, increment } from 'firebase/firestore';
@@ -11,7 +11,6 @@ import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCE
 
 const PublishAd = () => {
     const navigate = useNavigate();
-    const [cities, setCities] = useState([]);
     const { currentUser, setCurrentUser } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -25,26 +24,6 @@ const PublishAd = () => {
         district: '',
         photos: [],
     });
-
-    // useEffect(() => {
-    //     const FetchCities = async () => {
-    //         let data = {
-    //             resource_id: 'b7cf8f14-64a2-4b33-8d4b-edb286fdbd37',
-    //             limit: 1500//1273
-    //         };
-
-    //         let cities_arr = [];
-
-    //         await fetch(`https://data.gov.il/api/action/datastore_search?resource_id=${data.resource_id}&limit=${data.limit}`)
-    //             .then(response => response.json())
-    //             .then(data => {
-    //                 data.result.records.map(item => cities_arr.push((item['שם_ישוב'].trim())));
-    //             })
-    //             .catch(error => console.error('Error:', error));
-    //         setCities(cities_arr);
-    //     }
-    //     FetchCities()
-    // }, [])
 
     const handleChange = (e) => {
         const { name, value } = e.target;
