@@ -42,45 +42,45 @@ const Payment = () => {
     };
 
     const updateSubscrptionInFirebase = async () => {
-        // switch (plan.id) {
-        //     case 1:
-        //         await updateDoc(doc(db, "users", currentUser.uid), {
-        //             numberOfAds: increment(1)
-        //         })
-        //         break;
+        switch (plan.id) {
+            case 1:
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    numberOfAds: increment(1)
+                })
+                break;
 
-        //     case 2:
-        //         await updateDoc(doc(db, "users", currentUser.uid), {
-        //             numberOfAds: increment(2)
-        //         })
-        //         break;
+            case 2:
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    numberOfAds: increment(2)
+                })
+                break;
 
-        //     case 3:
-        //         await updateDoc(doc(db, "users", currentUser.uid), {
-        //             numberOfAds: increment(4)
-        //         })
-        //         break;
+            case 3:
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    numberOfAds: increment(4)
+                })
+                break;
 
-        //     case 4:
-        //         await updateDoc(doc(db, "users", currentUser.uid), {
-        //             numberOfAds: 10
-        //         })
-        //         break;
+            case 4:
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    numberOfAds: 10
+                })
+                break;
 
-        //     case 5:
-        //         const date = new Date();
-        //         date.setFullYear(date.getFullYear() + 1);
-        //         await updateDoc(doc(db, "users", currentUser.uid), {
-        //             subscribedUntil: date,
-        //             numberOfAds: Number.MAX_VALUE
-        //         })
-        //         break;
-        //     default:
-        //         break;
-        // }
-        // const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-        // setCurrentUser({ uid: currentUser.uid, ...userDoc.data() });
-        // setShowModal(true);
+            case 5:
+                const date = new Date();
+                date.setFullYear(date.getFullYear() + 1);
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    subscribedUntil: date,
+                    numberOfAds: Number.MAX_VALUE
+                })
+                break;
+            default:
+                break;
+        }
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        setCurrentUser({ uid: currentUser.uid, ...userDoc.data() });
+        setShowModal(true);
     };
 
 
@@ -88,6 +88,8 @@ const Payment = () => {
     const createPaymentGrowAPI = async () => {
         console.log(formData)
         console.log(plan)
+        updateSubscrptionInFirebase()
+        return;
 
         try{
             const response = await axios.post(`http://localhost:3456/payment/createPayment`, {

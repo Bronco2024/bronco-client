@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthProvider';
 import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'firebase/firestore';
 import { db, storage } from '../../firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
-import { BREEDS, CATEGORIES, SEEDS_TYPES } from "../utils/constants/Constants";
+import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES } from "../utils/constants/Constants";
 import { v4 as uuidv4 } from 'uuid';
 import Modal from "../utils/modal/Modal"
+import { DeletedAttributesAfterUpdateForm } from '../utils/constants/Functions';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { currentUser } = useAuth();
     const ad = location.state?.ad;
     const [newPhotos, setNewPhotos] = useState({ photos: [] })
     const [showModal, setShowModal] = useState(false);
@@ -75,29 +78,20 @@ const UpdateAd = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         let dataToSubmit;
+
+        if (!ad?.id) {
+            console.error("Ad ID is missing.");
+            return;
+        }
+
         dataToSubmit = {
             ...formData,
             createdAt: Timestamp.now(),
             availableUntil: new Timestamp(formData.availableUntil.seconds, formData.availableUntil.nanoseconds)
         }
 
-        if (formData.category !== 'סוסים') {
-            delete dataToSubmit.gender;
-            delete dataToSubmit.age;
-            delete dataToSubmit.breed;
-            delete dataToSubmit.hasCertificate;
-        }
-
-        if (formData.category !== 'זרע') {
-            delete dataToSubmit.seed_type;
-        }
-
-        if (!ad?.id) {
-            console.error("Ad ID is missing.");
-            return;
-        }
+        dataToSubmit = DeletedAttributesAfterUpdateForm(dataToSubmit);
 
         const adRef = doc(db, "ads", ad.id);
 
@@ -140,16 +134,23 @@ const UpdateAd = () => {
         <div className='update-ad-container' style={{ textAlign: 'right' }}>
             <h1>דף עדכון מודעה</h1>
             <form className="update-ad-form" onSubmit={handleSubmit}>
-                <label htmlFor='title'>כותרת</label>
-                <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    required
-                />
 
+                {((formData.category !== "") &&
+                    (formData.category !== "סוסים") &&
+                    (formData.category !== "זרע") &&
+                    (formData.category !== "אביזרים")) && (
+                        <div className='publish-ad-form'>
+                            <label htmlFor="title">כותרת</label>
+                            <input
+                                id="title"
+                                name="title"
+                                value={formData.title}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    )
+                }
 
                 <label htmlFor="category"> קטגוריה</label>
                 <select
@@ -160,11 +161,19 @@ const UpdateAd = () => {
                     required
                 >
                     <option value="">בחר קטגוריה</option>
-                    {CATEGORIES.map((cat, index) => (
-                        <option key={index} value={cat.label}>
-                            {cat.label}
-                        </option>
-                    ))}
+                    {currentUser?.isAdmin ? (
+                        EXTENDED_CATEGORIES.map((cat, index) => (
+                            <option key={index} value={cat.label}>
+                                {cat.label}
+                            </option>
+                        ))
+                    ) : (
+                        CATEGORIES.map((cat, index) => (
+                            <option key={index} value={cat.label}>
+                                {cat.label}
+                            </option>
+                        ))
+                    )}
                 </select>
 
                 {formData.category === "סוסים" && (
@@ -229,17 +238,68 @@ const UpdateAd = () => {
                 {formData.category === "זרע" && (
                     <div className="update-ad-form">
                         <label htmlFor="seeds_types">סוג זרע</label>
+                        <div style={{ display: 'flex', flexDirection: 'row', direction: 'rtl', gap: '10px' }}>
+
+                            <select
+                                id="seeds_types"
+                                name="seed_type"
+                                value={formData?.seed_type}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">בחר סוג זרע</option>
+                                {SEEDS_TYPES.map((seed, index) => (
+                                    <option key={index} value={seed}>
+                                        {seed}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <select
+                                id="semen_types"
+                                name="semen_type"
+                                value={formData.semen_type || ""}
+                                onChange={handleChange}
+                                required
+                            >
+                                {SEMEN_TYPES.map((semen, index) => (
+                                    <option key={index} value={semen}>
+                                        {semen}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div style={{ marginTop: '3%', marginBottom: '1%' }}>
+                            <label htmlFor="hasCertificate">
+                                <input
+                                    type="checkbox"
+                                    id="hasCertificate"
+                                    name="hasCertificate"
+                                    checked={formData.hasCertificate || false}
+                                    onChange={handleInputChange}
+                                />
+
+                                &nbsp; עם תעודת הרבעה
+                            </label>
+                        </div>
+                    </div>
+                )}
+
+                {formData.category === "אביזרים" && (
+                    <div className="publish-ad-form" >
+                        <label htmlFor="accessories_type">סוג מוצר</label>
                         <select
-                            id="seeds_types"
-                            name="seed_type"
-                            value={formData?.seed_type}
+                            id="accessory"
+                            name="accessory"
+                            value={formData.accessory || ""}
                             onChange={handleChange}
                             required
                         >
-                            <option value="">בחר סוג זרע</option>
-                            {SEEDS_TYPES.map((seed, index) => (
-                                <option key={index} value={seed}>
-                                    {seed}
+                            <option value="">בחר סוג מוצר</option>
+                            {ACCESSORIES_TPYES.map((accessory, index) => (
+                                <option key={index} value={accessory}>
+                                    {accessory}
                                 </option>
                             ))}
                         </select>
@@ -256,6 +316,15 @@ const UpdateAd = () => {
                     style={{ height: 100 }}
                 />
 
+                <label htmlFor="phoneNumber">שם איש קשר</label>
+                <input
+                    id="contact"
+                    name="contact"
+                    value={formData.contact}
+                    onChange={handleChange}
+                    required
+                />
+
                 <label htmlFor="phoneNumber">מספר טלפון</label>
                 <input
                     type="tel"
@@ -266,15 +335,22 @@ const UpdateAd = () => {
                     required
                 />
 
-                <label htmlFor="price">מחיר</label>
-                <input
-                    type="number"
-                    id="price"
-                    name="price"
-                    value={formData?.price}
-                    onChange={handleChange}
-                    required
-                />
+                {((formData.category === "סוסים") ||
+                    (formData.category === "זרע") ||
+                    (formData.category === "אביזרים")) && (
+                        <div className='publish-ad-form'>
+                            <label htmlFor="price">מחיר</label>
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                value={formData.price}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    )
+                }
 
                 <label htmlFor="photos">תמונות</label>
                 <input

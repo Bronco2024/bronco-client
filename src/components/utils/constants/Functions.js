@@ -8,11 +8,54 @@ export const FormatDateTimestampToDate = (timestamp) => {
 
 export const IsDateNowGreaterThanAdDate = (adAvailableUntil) => {
     try {
-        if(!adAvailableUntil) return;
+        if (!adAvailableUntil) return;
         const timeOfAd = adAvailableUntil.toDate();
         const now = new Date();
         return now.getTime() > timeOfAd.getTime()
     } catch (error) {
         console.error(error)
     }
+}
+
+export const DeletedAttributesAfterUpdateForm = (data) => {
+    let newData = data;
+    switch (data.category) {
+        case 'סוסים':
+            delete newData.title;
+            delete newData.seed_type;
+            delete newData.semen_type;
+            delete newData.accessory;
+            break;
+
+        case 'זרע':
+            delete newData.title;
+            delete newData.age;
+            delete newData.gender;
+            delete newData.accessory;
+            delete newData.breed;
+            break;
+
+        case 'אביזרים':
+            delete newData.title;
+            delete newData.age;
+            delete newData.gender;
+            delete newData.breed;
+            delete newData.seed_type;
+            delete newData.semen_type;
+            delete newData.hasCertificate;
+            break;
+
+        default:
+            delete newData.age;
+            delete newData.gender;
+            delete newData.breed;
+            delete newData.seed_type;
+            delete newData.semen_type;
+            delete newData.accessory;
+            delete newData.price;
+            delete newData.hasCertificate;
+            break;
+    }
+
+    return newData;
 }

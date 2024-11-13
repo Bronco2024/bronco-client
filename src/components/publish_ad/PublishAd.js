@@ -171,7 +171,7 @@ const PublishAd = () => {
                             <input
                                 id="title"
                                 name="title"
-                                value={formData.price}
+                                value={formData.title}
                                 onChange={handleChange}
                                 required
                             />
