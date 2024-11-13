@@ -109,18 +109,21 @@ const ShowsAndCompetitions = () => {
                 ) : (
                     adList.map(ad => (
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                        <div
-                            key={ad.id}
-                            className="ad-shows-card"
-                            onClick={() => handleClickOnItem(ad)}
-                        >
-                            {ad.photos && ad.photos[0] && (
-                                <img src={ad.photos[0]} alt={ad.title} className="ad-shows-image" />
-                            )}
-                            <h2 className="ad-shows-title">{ad.title}</h2>
-                            <p className='ad-shows-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                        </div>
-                    )))
+                            <div
+                                key={ad.id}
+                                className="ad-shows-card"
+                                onClick={() => handleClickOnItem(ad)}
+                            >
+                                {ad.photos && ad.photos[0] && (
+                                    <img src={ad.photos[0]} alt={ad.title} className="ad-shows-image" />
+                                )}
+                                {ad.photos.length === 0 && (
+                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-shows-image" />
+                                )}
+                                <h2 className="ad-shows-title">{ad.title}</h2>
+                                <p className='ad-shows-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                            </div>
+                        )))
                 )}
             </div>
 

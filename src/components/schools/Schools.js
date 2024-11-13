@@ -117,6 +117,9 @@ const Schools = () => {
                                 {ad.photos && ad.photos[0] && (
                                     <img src={ad.photos[0]} alt={ad.title} className="ad-school-image" />
                                 )}
+                                {ad.photos.length === 0 && (
+                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-school-image" />
+                                )}
                                 <div className="ad-school-details">
                                     <h2 className="ad-school-title">{ad.title}</h2>
                                     <p className="ad-school-price">{ad.description}</p>

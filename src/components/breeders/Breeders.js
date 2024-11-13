@@ -109,18 +109,21 @@ const Breeders = () => {
                 ) : (
                     adList.map(ad => (
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                        <div
-                            key={ad.id}
-                            className="ad-breeders-card"
-                            onClick={() => handleClickOnItem(ad)}
-                        >
-                            {ad.photos && ad.photos[0] && (
-                                <img src={ad.photos[0]} alt={ad.title} className="ad-breeders-image" />
-                            )}
-                            <h2 className="ad-breeders-title">{ad.title}</h2>
-                            <p className='ad-breeders-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                        </div>
-                    )))
+                            <div
+                                key={ad.id}
+                                className="ad-breeders-card"
+                                onClick={() => handleClickOnItem(ad)}
+                            >
+                                {ad.photos && ad.photos[0] && (
+                                    <img src={ad.photos[0]} alt={ad.title} className="ad-breeders-image" />
+                                )}
+                                {ad.photos.length === 0 && (
+                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-breeders-image" />
+                                )}
+                                <h2 className="ad-breeders-title">{ad.title}</h2>
+                                <p className='ad-breeders-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                            </div>
+                        )))
                 )}
             </div>
 

@@ -15,7 +15,7 @@
     color: #333;
 }
 
-.ads-wrapper {
+.ads-accessory-wrapper {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -23,7 +23,7 @@
     flex-direction: row-reverse;
 }
 
-.ad-card {
+.ad-accessory-card {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -38,11 +38,11 @@
     cursor: pointer;
 }
 
-.ad-card:hover {
+.ad-accessory-card:hover {
     border-color: #ccc;
 }
 
-.ad-image {
+.ad-accessory-image {
     width: 100%;
     height: 200px;
     max-height: 200px;
@@ -51,7 +51,7 @@
     margin-bottom: 10px;
 }
 
-.ad-title {
+.ad-accessory-title {
     font-size: 1.2em;
     font-weight: bold;
     color: #333;
@@ -59,7 +59,7 @@
     text-align: center;
 }
 
-.ad-price {
+.ad-accessory-price {
     font-size: 1em;
     font-weight: bold;
     color: #555;
@@ -67,7 +67,7 @@
     text-align: center;
 }
 
-.ad-date-create{
+.ad-accessory-date-create{
     text-align: center;
     font-size: medium;
     color: #7c7c7c;
@@ -75,33 +75,70 @@
 
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
-    .ad-card {
+    .ad-accessory-card {
         width: 45%;
         /* Two cards per row on tablets */
     }
 }
 
 @media (max-width: 768px) {
-    .ad-card {
+    .ad-accessory-card {
         width: 100%;
         /* One card per row on mobile */
     }
 
-    .horses-title {
+    .accessory-title {
         font-size: 1.5em;
         /* Smaller title on mobile */
     }
 }
 
 @media (max-width: 480px) {
-    .ad-title {
+    .ad-accessory-title {
         font-size: 1em;
         /* Smaller text on very small screens */
     }
 
-    .ad-price {
+    .ad-accessory-price {
         font-size: 0.9em;
     }
+}
+
+
+.filters-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-self: center;
+    gap: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    direction: rtl;
+    justify-content: flex-start;
+}
+
+.filters-box select,
+.filters-box input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.filters-box button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.filters-box button:hover {
+    background-color: #45a049;
 }
 
 .pagination {

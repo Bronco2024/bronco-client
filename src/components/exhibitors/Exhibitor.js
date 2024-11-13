@@ -109,19 +109,22 @@ const Exhibitor = () => {
                 ) : (
                     adList.map(ad => (
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                        <div
-                            key={ad.id}
-                            className="ad-exhibitor-card"
-                            onClick={() => handleClickOnItem(ad)}
-                        >
-                            {ad.photos && ad.photos[0] && (
-                                <img src={ad.photos[0]} alt={ad.title} className="ad-exhibitor-image" />
-                            )}
-                            <h2 className="ad-exhibitor-title">{ad.title}</h2>
-                            <p className='ad-exhibitor-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                            <div
+                                key={ad.id}
+                                className="ad-exhibitor-card"
+                                onClick={() => handleClickOnItem(ad)}
+                            >
+                                {ad.photos && ad.photos[0] && (
+                                    <img src={ad.photos[0]} alt={ad.title} className="ad-exhibitor-image" />
+                                )}
+                                {ad.photos.length === 0 && (
+                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-exhibitor-image" />
+                                )}
+                                <h2 className="ad-exhibitor-title">{ad.title}</h2>
+                                <p className='ad-exhibitor-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
 
-                        </div>
-                    )))
+                            </div>
+                        )))
                 )}
             </div>
 

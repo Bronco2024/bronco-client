@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import './Shops.css'
 import { ADS_PER_PAGE } from "../utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate} from "../utils/constants/Functions";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
 
 const Shops = () => {
     const navigate = useNavigate();
@@ -109,18 +109,21 @@ const Shops = () => {
                 ) : (
                     adList.map(ad => (
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                        <div
-                            key={ad.id}
-                            className="ad-shops-card"
-                            onClick={() => handleClickOnItem(ad)}
-                        >
-                            {ad.photos && ad.photos[0] && (
-                                <img src={ad.photos[0]} alt={ad.title} className="ad-shops-image" />
-                            )}
-                            <h2 className="ad-shops-title">{ad.title}</h2>
-                            <p className='ad-shops-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                        </div>
-                    )))
+                            <div
+                                key={ad.id}
+                                className="ad-shops-card"
+                                onClick={() => handleClickOnItem(ad)}
+                            >
+                                {ad.photos && ad.photos[0] && (
+                                    <img src={ad.photos[0]} alt={ad.title} className="ad-shops-image" />
+                                )}
+                                {ad.photos.length === 0 && (
+                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-shops-image" />
+                                )}
+                                <h2 className="ad-shops-title">{ad.title}</h2>
+                                <p className='ad-shops-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                            </div>
+                        )))
                 )}
             </div>
 

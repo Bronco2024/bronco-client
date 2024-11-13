@@ -126,7 +126,7 @@ const Seeds = () => {
         }
         setPage(1);
 
-        let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no"? false:"";
+        let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no" ? false : "";
 
         const collectionRef = collection(db, "ads");
         const filterQueries = [
@@ -261,6 +261,9 @@ const Seeds = () => {
                             >
                                 {ad.photos && ad.photos[0] && (
                                     <img src={ad.photos[0]} alt={ad.title} className="ad-seeds-image" />
+                                )}
+                                {ad.photos.length === 0 && (
+                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-seeds-image" />
                                 )}
                                 <h2 className="ad-seeds-title">{ad.seed_type}</h2>
                                 <p className="ad-seeds-price">₪{ad.price}</p>

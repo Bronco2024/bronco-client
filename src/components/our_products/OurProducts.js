@@ -17,7 +17,7 @@ import './OurProducts.css'
 import { ADS_PER_PAGE } from "../utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
 
-const OurProducts = () =>{
+const OurProducts = () => {
     const navigate = useNavigate();
     const [adList, setAdList] = useState([]);
     const [totalAds, setTotalAds] = useState(0);
@@ -109,18 +109,21 @@ const OurProducts = () =>{
                 ) : (
                     adList.map(ad => (
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                        <div
-                            key={ad.id}
-                            className="ad-products-card"
-                            onClick={() => handleClickOnItem(ad)}
-                        >
-                            {ad.photos && ad.photos[0] && (
-                                <img src={ad.photos[0]} alt={ad.title} className="ad-products-image" />
-                            )}
-                            <h2 className="ad-products-title">{ad.title}</h2>
-                            <p className='ad-products-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                        </div>
-                    )))
+                            <div
+                                key={ad.id}
+                                className="ad-products-card"
+                                onClick={() => handleClickOnItem(ad)}
+                            >
+                                {ad.photos && ad.photos[0] && (
+                                    <img src={ad.photos[0]} alt={ad.title} className="ad-products-image" />
+                                )}
+                                {ad.photos.length === 0 && (
+                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-horse-image" />
+                                )}
+                                <h2 className="ad-products-title">{ad.title}</h2>
+                                <p className='ad-products-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                            </div>
+                        )))
                 )}
             </div>
 
