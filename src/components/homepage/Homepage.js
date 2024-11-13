@@ -72,6 +72,10 @@ const HomePage = () => {
 
     const renderItems = (sponsors, type) => {
         const filteredSponsors = sponsors.filter(item => item.sponsor === type);
+        const imageFit = {
+            width: "100%",
+            height: type === "gold" ? "200px" : "100%"
+        };
 
         return filteredSponsors.map(item => (
             <a href={item.link} target="_blank" rel="noopener noreferrer">
@@ -79,7 +83,7 @@ const HomePage = () => {
                     key={item.id}
                     src={item.photo}
                     alt="sponsor"
-                    style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                    style={{ width: imageFit.width, height: imageFit.height, objectFit: 'cover' }}
                 />
             </a>
         ));
