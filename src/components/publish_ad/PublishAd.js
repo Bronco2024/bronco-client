@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../utils/modal/Modal';
-import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES } from "../utils/constants/Constants";
+import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "../utils/constants/Constants";
 
 const PublishAd = () => {
     const navigate = useNavigate();
@@ -22,28 +22,29 @@ const PublishAd = () => {
         description: '',
         phoneNumber: '',
         location: '',
+        district: '',
         photos: [],
     });
 
-    useEffect(() => {
-        const FetchCities = async () => {
-            let data = {
-                resource_id: 'b7cf8f14-64a2-4b33-8d4b-edb286fdbd37',
-                limit: 1500//1273
-            };
+    // useEffect(() => {
+    //     const FetchCities = async () => {
+    //         let data = {
+    //             resource_id: 'b7cf8f14-64a2-4b33-8d4b-edb286fdbd37',
+    //             limit: 1500//1273
+    //         };
 
-            let cities_arr = [];
+    //         let cities_arr = [];
 
-            await fetch(`https://data.gov.il/api/action/datastore_search?resource_id=${data.resource_id}&limit=${data.limit}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.result.records.map(item => cities_arr.push((item['שם_ישוב'].trim())));
-                })
-                .catch(error => console.error('Error:', error));
-            setCities(cities_arr);
-        }
-        FetchCities()
-    }, [])
+    //         await fetch(`https://data.gov.il/api/action/datastore_search?resource_id=${data.resource_id}&limit=${data.limit}`)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 data.result.records.map(item => cities_arr.push((item['שם_ישוב'].trim())));
+    //             })
+    //             .catch(error => console.error('Error:', error));
+    //         setCities(cities_arr);
+    //     }
+    //     FetchCities()
+    // }, [])
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -130,6 +131,15 @@ const PublishAd = () => {
             ...prevData,
             [name]: type === 'checkbox' ? checked : value,
         }));
+    };
+
+    const handleDistrictChange = (e) => {
+        const district = e.target.value;
+        setFormData({
+            ...formData,
+            district: district,
+            location: ""
+        });
     };
 
     return (
@@ -337,20 +347,41 @@ const PublishAd = () => {
                     required
                 />
 
-                <label htmlFor="location">אזור</label>
-                <select
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    required
-                >
-                    <option value="">בחר מיקום</option>
-                    {cities.map((city, index) => (
-                        <option key={index} value={city}>
-                            {city}
-                        </option>
-                    ))}
-                </select>
+
+                <label htmlFor="district">אזור</label>
+                <div style={{ display: 'flex', flexDirection: 'row', direction: 'rtl', gap: '10px' }}>
+                    <select
+                        name="district"
+                        value={formData.district}
+                        onChange={handleDistrictChange}
+                        required
+                    >
+                        <option value="">בחר אזור</option>
+                        {Object.keys(DISTRICTS).map((districtKey) => (
+                            <option key={districtKey} value={districtKey}>
+                                {DISTRICT_NAMES[districtKey]}
+                            </option>
+                        ))}
+                    </select>
+
+                    {formData.district && (
+                        <>
+                            <select
+                                name="location"
+                                value={formData.location}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">בחר מיקום</option>
+                                {DISTRICTS[formData.district].map((city, index) => (
+                                    <option key={index} value={city}>
+                                        {city}
+                                    </option>
+                                ))}
+                            </select>
+                        </>
+                    )}
+                </div>
 
                 {((formData.category === "סוסים") ||
                     (formData.category === "זרע") ||

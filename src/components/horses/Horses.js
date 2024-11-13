@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import './Horses.css'
-import { BREEDS, ADS_PER_PAGE } from "../utils/constants/Constants";
+import { BREEDS, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES } from "../utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
 
 const Horses = () => {
@@ -32,6 +32,8 @@ const Horses = () => {
         hasCertificate: "",
         age: "",
         breed: "",
+        district: "",
+        location: ""
     });
 
     const categoryFilter = "סוסים";
@@ -112,15 +114,23 @@ const Horses = () => {
     };
 
     const applyFilters = async () => {
-        if (filters.age === "" && filters.breed === "" && filters.gender === "" && filters.hasCertificate === "" && filters.maxPrice === "" && filters.minPrice === "") {
+        if (filters.age === "" &&
+            filters.breed === "" &&
+            filters.gender === "" &&
+            filters.hasCertificate === "" &&
+            filters.district === "" &&
+            filters.location === "" &&
+            filters.maxPrice === "" &&
+            filters.minPrice === "") {
             fetchAds();
             getTotalCount();
             setPage(1);
             return;
         }
-        let certificate = filters.hasCertificate === "yes" ? true : false;
-        setPage(1);
 
+        let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no"? false:"";
+        setPage(1);
+        
         const collectionRef = collection(db, "ads");
         const filterQueries = [
             where("category", "==", categoryFilter),
@@ -130,6 +140,8 @@ const Horses = () => {
             ...(filters.hasCertificate ? [where("hasCertificate", "==", certificate)] : []),
             ...(filters.age ? [where("age", "==", parseInt(filters.age))] : []),
             ...(filters.breed ? [where("breed", "==", filters.breed)] : []),
+            ...(filters.district ? [where("district", "==", filters.district)] : []),
+            ...(filters.location ? [where("location", "==", filters.location)] : []),
         ];
 
         const totalCountQuery = query(collectionRef, ...filterQueries);
@@ -160,37 +172,6 @@ const Horses = () => {
             <h1 className="horses-title">סוסים</h1>
 
             <div className="filters-box">
-                <select name="gender" value={filters.gender} onChange={handleFilterChange}>
-                    <option value="">מין</option>
-                    <option value="זכר">זכר</option>
-                    <option value="נקבה">נקבה</option>
-                </select>
-                <input
-                    type="number"
-                    name="minPrice"
-                    placeholder="מחיר מינימלי"
-                    value={filters.minPrice}
-                    onChange={handleFilterChange}
-                />
-                <input
-                    type="number"
-                    name="maxPrice"
-                    placeholder="מחיר מקסימלי"
-                    value={filters.maxPrice}
-                    onChange={handleFilterChange}
-                />
-                <select name="hasCertificate" value={filters.hasCertificate} onChange={handleFilterChange}>
-                    <option value="">תעודה</option>
-                    <option value="yes">כן</option>
-                    <option value="no">לא</option>
-                </select>
-                <input
-                    type="number"
-                    name="age"
-                    placeholder="גיל"
-                    value={filters.age}
-                    onChange={handleFilterChange}
-                />
                 <select
                     id="breed"
                     name="breed"
@@ -205,6 +186,70 @@ const Horses = () => {
                         </option>
                     ))}
                 </select>
+
+                <select name="gender" value={filters.gender} onChange={handleFilterChange}>
+                    <option value="">מין</option>
+                    <option value="זכר">זכר</option>
+                    <option value="נקבה">נקבה</option>
+                </select>
+
+                <select name="hasCertificate" value={filters.hasCertificate} onChange={handleFilterChange}>
+                    <option value="">תעודה</option>
+                    <option value="yes">כן</option>
+                    <option value="no">לא</option>
+                </select>
+
+                <select
+                    name="district"
+                    value={filters.district}
+                    onChange={handleFilterChange}
+                >
+                    <option value="">בחר אזור</option>
+                    {Object.keys(DISTRICTS).map((districtKey) => (
+                        <option key={districtKey} value={districtKey}>
+                            {DISTRICT_NAMES[districtKey]}
+                        </option>
+                    ))}
+                </select>
+
+                {filters.district && (
+                    <>
+                        <select
+                            name="location"
+                            value={filters.location}
+                            onChange={handleFilterChange}
+                        >
+                            <option value="">בחר מיקום</option>
+                            {DISTRICTS[filters.district].map((city, index) => (
+                                <option key={index} value={city}>
+                                    {city}
+                                </option>
+                            ))}
+                        </select>
+                    </>
+                )}
+                <input
+                    type="number"
+                    name="age"
+                    placeholder="גיל"
+                    value={filters.age}
+                    onChange={handleFilterChange}
+                />
+                <input
+                    type="number"
+                    name="minPrice"
+                    placeholder="מחיר מינימלי"
+                    value={filters.minPrice}
+                    onChange={handleFilterChange}
+                />
+                <input
+                    type="number"
+                    name="maxPrice"
+                    placeholder="מחיר מקסימלי"
+                    value={filters.maxPrice}
+                    onChange={handleFilterChange}
+                />
+
                 <button onClick={applyFilters}>חפש</button>
             </div>
 

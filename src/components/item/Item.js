@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import './Item.css'
-import { faPhoneAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPhoneAlt, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FormatDateTimestampToDate } from '../utils/constants/Functions';
 
@@ -33,28 +33,38 @@ const ItemPage = () => {
                 responsive={{ 0: { items: 1 }, 1024: { items: 1 } }}
             />
 
+            <div className="item-location-container">
+                <span>{ad.location}</span>
+                <FontAwesomeIcon icon={faLocationDot} style={{ marginLeft: '8px' }} />
+            </div>
+
             <h1 className="item-title">{ad.title}</h1>
 
             <p className="item-description">{ad.description}</p>
 
-            {ad.category === "סוסים" && (
-                <div>
-                    <p className="item-horse">גיל: {ad.age}</p>
-                    <p className="item-horse">גזע: {ad.breed}</p>
-                    <p className="item-horse">מין: {ad.gender}</p>
-                </div>
-            )}
-
-            {ad.category === "זרע" && (
-                <div>
-                    <p className="item-horse">סוג זרע: {ad.seed_type} - {ad.semen_type}</p>
-                </div>
-            )}
-
-            <p className="item-location">מיקום: {ad.location}</p>
-
             {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים") && (
-                <p className="item-price">₪{ad.price}</p>
+                <>
+                    <div className='horizontal-line ' />
+
+                    <div className='more-info'>
+                        <h2>פרטים נוספים</h2>
+                        {ad.category === "סוסים" && (
+                            <div>
+                                <p className="item-horse">גיל: {ad.age}</p>
+                                <p className="item-horse">גזע: {ad.breed}</p>
+                                <p className="item-horse">מין: {ad.gender}</p>
+                            </div>
+                        )}
+
+                        {ad.category === "זרע" && (
+                            <div>
+                                <p className="item-horse">סוג זרע: {ad.seed_type} - {ad.semen_type}</p>
+                            </div>
+                        )}
+                        <p className="item-price">₪{ad.price}</p>
+                    </div>
+                    <div className='horizontal-line ' />
+                </>
             )}
 
             <p style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', fontWeight: 'bold' }}>איש קשר: {ad.contact}</p>

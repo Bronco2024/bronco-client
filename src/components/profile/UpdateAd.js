@@ -5,7 +5,7 @@ import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'fire
 import { db, storage } from '../../firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
-import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES } from "../utils/constants/Constants";
+import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "../utils/constants/Constants";
 import { v4 as uuidv4 } from 'uuid';
 import Modal from "../utils/modal/Modal"
 import { DeletedAttributesAfterUpdateForm } from '../utils/constants/Functions';
@@ -23,6 +23,7 @@ const UpdateAd = () => {
         category: '',
         description: '',
         phoneNumber: '',
+        district: '',
         location: '',
         price: '',
         photos: [],
@@ -287,7 +288,7 @@ const UpdateAd = () => {
                 )}
 
                 {formData.category === "אביזרים" && (
-                    <div className="publish-ad-form" >
+                    <div className="update-ad-form" >
                         <label htmlFor="accessories_type">סוג מוצר</label>
                         <select
                             id="accessory"
@@ -335,10 +336,45 @@ const UpdateAd = () => {
                     required
                 />
 
+                <label htmlFor="district">אזור</label>
+                <div style={{ display: 'flex', flexDirection: 'row', direction: 'rtl', gap: '10px' }}>
+                    <select
+                        name="district"
+                        value={formData.district}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">בחר אזור</option>
+                        {Object.keys(DISTRICTS).map((districtKey) => (
+                            <option key={districtKey} value={districtKey}>
+                                {DISTRICT_NAMES[districtKey]}
+                            </option>
+                        ))}
+                    </select>
+
+                    {formData.district && (
+                        <>
+                            <select
+                                name="location"
+                                value={formData.location}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">בחר מיקום</option>
+                                {DISTRICTS[formData.district].map((city, index) => (
+                                    <option key={index} value={city}>
+                                        {city}
+                                    </option>
+                                ))}
+                            </select>
+                        </>
+                    )}
+                </div>
+
                 {((formData.category === "סוסים") ||
                     (formData.category === "זרע") ||
                     (formData.category === "אביזרים")) && (
-                        <div className='publish-ad-form'>
+                        <div className='update-ad-form'>
                             <label htmlFor="price">מחיר</label>
                             <input
                                 type="number"

@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import './Seeds.css'
-import { SEEDS_TYPES, SEMEN_TYPES, ADS_PER_PAGE } from "../utils/constants/Constants";
+import { SEEDS_TYPES, SEMEN_TYPES, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES } from "../utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
 
 const Seeds = () => {
@@ -30,6 +30,8 @@ const Seeds = () => {
         seed_type: "",
         semen_type: "",
         hasCertificate: "",
+        district: "",
+        location: ""
     });
 
     const categoryFilter = "זרע";
@@ -109,13 +111,22 @@ const Seeds = () => {
     };
 
     const applyFilters = async () => {
-        if (filters.hasCertificate === "" && filters.seed_type === "" && filters.maxPrice === "" && filters.minPrice === "" && filters.semen_type === "") {
+        if (filters.hasCertificate === "" &&
+            filters.seed_type === "" &&
+            filters.maxPrice === "" &&
+            filters.minPrice === "" &&
+            filters.semen_type === "" &&
+            filters.district === "" &&
+            filters.location === ""
+        ) {
             fetchAds();
             getTotalCount();
             setPage(1);
             return;
         }
         setPage(1);
+
+        let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no"? false:"";
 
         const collectionRef = collection(db, "ads");
         const filterQueries = [
@@ -124,6 +135,9 @@ const Seeds = () => {
             ...(filters.maxPrice ? [where("price", "<=", parseFloat(filters.maxPrice))] : []),
             ...(filters.seed_type ? [where("seed_type", "==", filters.seed_type)] : []),
             ...(filters.semen_type ? [where("semen_type", "==", filters.semen_type)] : []),
+            ...(filters.district ? [where("district", "==", filters.district)] : []),
+            ...(filters.location ? [where("location", "==", filters.location)] : []),
+            ...(filters.hasCertificate ? [where("hasCertificate", "==", certificate)] : []),
         ];
 
         const totalCountQuery = query(collectionRef, ...filterQueries);
@@ -133,13 +147,8 @@ const Seeds = () => {
         const paginatedQuery = query(collectionRef, ...filterQueries, limit(ADS_PER_PAGE));
         const querySnapshot = await getDocs(paginatedQuery);
         const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        
-        let certificate = filters.hasCertificate === "yes" ? true : false;
 
-        //filter in frontend by certificate
-        const activeItems = items.filter(item => item.hasCertificate === certificate);
-
-        setAdList(activeItems);
+        setAdList(items);
 
         if (querySnapshot.docs.length > 0) {
             setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
@@ -183,11 +192,44 @@ const Seeds = () => {
                         </option>
                     ))}
                 </select>
+
+
                 <select name="hasCertificate" value={filters.hasCertificate} onChange={handleFilterChange}>
                     <option value="">תעודת הרבעה</option>
                     <option value="yes">כן</option>
                     <option value="no">לא</option>
                 </select>
+
+                <select
+                    name="district"
+                    value={filters.district}
+                    onChange={handleFilterChange}
+                >
+                    <option value="">בחר אזור</option>
+                    {Object.keys(DISTRICTS).map((districtKey) => (
+                        <option key={districtKey} value={districtKey}>
+                            {DISTRICT_NAMES[districtKey]}
+                        </option>
+                    ))}
+                </select>
+
+                {filters.district && (
+                    <>
+                        <select
+                            name="location"
+                            value={filters.location}
+                            onChange={handleFilterChange}
+                        >
+                            <option value="">בחר מיקום</option>
+                            {DISTRICTS[filters.district].map((city, index) => (
+                                <option key={index} value={city}>
+                                    {city}
+                                </option>
+                            ))}
+                        </select>
+                    </>
+                )}
+
                 <input
                     type="number"
                     name="minPrice"
