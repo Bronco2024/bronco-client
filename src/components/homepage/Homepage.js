@@ -96,9 +96,7 @@ const HomePage = () => {
     return (
         <div className="carousel-container">
             <div className="logo-container">
-                <span className="logo-text">BRONCO</span>
                 <img src={require('../../assets/bronco.png')} style={{ width: '250px', height: 'auto' }} alt="Bronco Logo" />
-                <span className="logo-text">ESTD 2024</span>
             </div>
             <hr className="divider" />
 

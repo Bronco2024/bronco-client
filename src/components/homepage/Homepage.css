@@ -38,11 +38,6 @@
     flex-wrap: wrap;
 }
 
-.logo-text {
-    font-size: 1.5em;
-    margin: 0 10px;
-}
-
 .logo-container img {
     width: 10%;
     max-width: 180px;
@@ -50,10 +45,6 @@
 }
 
 @media (max-width: 768px) {
-    .logo-text {
-        font-size: 1.2em;
-    }
-
     .logo-container img {
         width: 15%;
         max-width: 150px;
@@ -61,10 +52,6 @@
 }
 
 @media (max-width: 480px) {
-    .logo-text {
-        font-size: 1em;
-    }
-
     .logo-container img {
         width: 20%;
         max-width: 100px;
@@ -107,13 +94,13 @@
 }
 
 .gold-sponsor {
-    border: 5px solid #FFD700;
+    border: 5px solid #f1bf2a;
     position: relative;
     
 }
 
 .gold-sponsor .title-container {
-    background-color: #FFD700;
+    background-color: #f1bf2a;
 }
 
 .sponsor-wrapper {
