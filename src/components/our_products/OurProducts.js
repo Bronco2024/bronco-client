@@ -132,6 +132,7 @@ const OurProducts = () => {
                                 )}
                                 <h2 className="ad-products-title">{ad.title}</h2>
                                 <p className='ad-products-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                                <p className="ad-products-price">₪{ad.price}</p>
 
                                 {cart.some(item => item.id === ad.id) ? (
                                     <div className="quantity-controls">
@@ -165,8 +166,8 @@ const OurProducts = () => {
                                             dispatch(removeItem(ad.id));
                                         }}
                                     >
-                                        מחק
                                         <FontAwesomeIcon icon={faTrash} className="remove-icon" />
+                                        הסר
                                     </button>
                                 </div>
                                 
