@@ -142,7 +142,7 @@ const HomePage = () => {
                                             <h2 className="ad-title-homepage">{ad.title}</h2>
                                     )}
 
-                                    {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים") && (
+                                    {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים" || ad.category === "מוצרים שלנו") && (
                                         <p className="ad-price-homepage">₪{ad.price}</p>
                                     )}
                                     <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>

@@ -42,7 +42,7 @@ const ItemPage = () => {
 
             <p className="item-description">{ad.description}</p>
 
-            {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים") && (
+            {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים" || ad.category === "מוצרים שלנו") && (
                 <>
                     <div className='horizontal-line ' />
 
