@@ -31,6 +31,7 @@ const Shops = lazy(() => import("./components/shops/Shops"))
 const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competitions/ShowsAndCompetitions"))
 const OurProducts = lazy(() => import("./components/our_products/OurProducts"))
 const ThankYou = lazy(() => import("./components/payment/ThankYou"))
+const Cart = lazy(() => import("./components/cart/Cart"));
 
 const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
 
@@ -253,6 +254,18 @@ function App() {
             <Layout>
               <OurProducts />
             </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/cart"
+        element={
+          <Suspense fallback={<Loading message="Loading cart page..." />}>
+            <ProtectedRoute>
+              <Layout>
+                <Cart />
+              </Layout>
+            </ProtectedRoute>
           </Suspense>
         }
       />

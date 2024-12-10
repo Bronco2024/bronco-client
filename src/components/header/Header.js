@@ -1,7 +1,7 @@
 import './Header.css';
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser, faGear, faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthProvider';
 import { EXTENDED_CATEGORIES } from '../utils/constants/Constants';
@@ -87,6 +87,16 @@ const Header = () => {
                                     <FontAwesomeIcon icon={faHouseUser} style={{ marginLeft: '8px' }} />
 
                                 </button>
+
+                                <button className='dropdown-item' onClick={() => {
+                                    toggleProfileDropdown()
+                                    navigate('/cart')
+                                }}>
+                                    עגלה
+                                    <FontAwesomeIcon icon={faCartShopping} style={{ marginLeft: '8px' }} />
+
+                                </button>
+
                                 <button className='dropdown-item' onClick={handleLogout}>
                                     התנתק
                                     <FontAwesomeIcon icon={faSignOut} style={{ marginLeft: '8px' }} />

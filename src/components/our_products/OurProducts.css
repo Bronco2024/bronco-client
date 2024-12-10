@@ -71,30 +71,96 @@
     color: #7c7c7c;
 }
 
+
+.quantity-btns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.add-to-cart-button,
+.quantity-btn {
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.delete-btn {
+    background-color: #d9534f;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+.delete-btn:hover{
+    background-color: #db1811;
+}
+
+.add-to-cart-button:hover,
+.quantity-btn:hover {
+    background-color: #e0b300;
+}
+
+/* Icon Styling */
+.add-to-cart-icon,
+.minus-icon,
+.plus-icon,
+.remove-icon {
+    font-size: 1.2rem;
+}
+
+/* Quantity Controls */
+.quantity-controls {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    gap: 1rem; 
+}
+
+.quantity-count {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1b1b1b;
+}
+
+
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
     .ad-products-card {
         width: 70%;
-        /* Two cards per row on tablets */
     }
 }
 
 @media (max-width: 768px) {
     .ad-products-card {
         width: 80%;
-        /* One card per row on mobile */
     }
 
     .products-title {
         font-size: 1.5em;
-        /* Smaller title on mobile */
     }
 }
 
 @media (max-width: 480px) {
     .ad-products-title {
         font-size: 1em;
-        /* Smaller text on very small screens */
     }
 
     .ad-products-price {
