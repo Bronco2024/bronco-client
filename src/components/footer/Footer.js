@@ -16,25 +16,27 @@ const Footer = () => {
                     <img src={require('../../assets/bronco.png')} alt="Bronco Estd 2024" />
                 </div>
 
-                <div className="footer-bottom">
-                    <p className="copyright-text">
-                        © Bronco כל הזכויות שמורות ל
-                    </p>
-                </div>
 
                 <div className="footer-section credits">
-                    <h2>Credit</h2>
+                    <h2>קרדיט</h2>
                     <div className="credit-item">
                         <a href="http://linkedin.com/in/haythamt95" target="_blank" rel="noopener noreferrer" className="linkedin-link">
-                            <FontAwesomeIcon icon={faLinkedin}  className="linkedin-icon"/>
+                            <FontAwesomeIcon icon={faLinkedin} className="linkedin-icon" />
                             Haytham Taweel
                         </a>
                     </div>
                 </div>
-
             </div>
+
+            <div className="footer-bottom">
+                <p className="copyright-text">
+                    © Bronco כל הזכויות שמורות ל
+                </p>
+            </div>
+
+
         </div>
-    )
-}
+    );
+};
 
 export default Footer;

@@ -1,41 +1,33 @@
-/* General styles */
+/* General Styles */
 .footer-container {
     background-color: #1b1b1b;
-    padding: 3rem 1rem;
+    padding: 2rem 1rem;
     color: #fff;
     font-family: 'Arial', sans-serif;
-    text-align: center;
-    position: relative;
 }
 
-.footer-logo img {
-    max-width: 150px;
-    height: auto;
-}
-
-/* Content Styling */
 .footer-content {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    direction: rtl;
     align-items: center;
-    /* Center the sections */
+    text-align: center;
+    flex-wrap: wrap; 
     gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .footer-section {
+    flex: 1;
+    max-width: 300px;
     text-align: center;
-    /* Center the text */
-    max-width: 400px;
 }
 
 .footer-section h2 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     color: #ffcc00;
-}
-
-.about-us {
-    border-left: 4px solid #ffcc00;
-    padding-left: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .about-us p {
@@ -43,24 +35,26 @@
     line-height: 1.6;
 }
 
-/* Footer credits */
-.credits {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* Center credits section */
+.footer-logo img {
+    max-width: 120px;
+    height: auto;
+    margin: 0 auto;
 }
 
 .credits .credit-item {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 0.5rem;
 }
 
 .linkedin-link {
     color: #ffcc00;
     text-decoration: none;
     font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .linkedin-link:hover {
@@ -69,12 +63,12 @@
 
 .linkedin-icon {
     font-size: 1.5rem;
-    margin-right: 10px;
 }
 
-/* Footer bottom */
-
-.copyright-text {
+/* Footer Bottom */
+.footer-bottom {
+    margin-top: 2rem;
+    text-align: center;
     font-size: 1rem;
     color: #aaa;
 }
@@ -84,20 +78,10 @@
     .footer-content {
         flex-direction: column;
         text-align: center;
+        gap: 1.5rem;
     }
 
     .footer-section {
         max-width: 100%;
-    }
-
-    .footer-section h2 {
-        font-size: 1.5rem;
-    }
-}
-
-@media screen and (max-width: 480px) {
-
-    .footer-section h2 {
-        font-size: 1.4rem;
     }
 }
