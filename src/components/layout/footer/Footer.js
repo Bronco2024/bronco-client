@@ -13,7 +13,7 @@ const Footer = () => {
                 </div>
 
                 <div className="footer-logo">
-                    <img src={require('../../assets/bronco.png')} alt="Bronco Estd 2024" />
+                    <img src={require('../../../assets/bronco.png')} alt="Bronco Estd 2024" />
                 </div>
 
 
