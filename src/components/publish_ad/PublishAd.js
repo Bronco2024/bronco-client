@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import './PublishAd.css';
-import { db, storage } from '../../firebase';
+import { db, storage } from '@/firebase';
 import { doc, setDoc, updateDoc, increment } from 'firebase/firestore';
-import { useAuth } from '../context/AuthProvider';
+import { useAuth } from '@components/context/AuthProvider';
 import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
-import Modal from '../utils/modal/Modal';
-import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "../utils/constants/Constants";
+import Modal from '@components/utils/modal/Modal';
+import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
 
 const PublishAd = () => {
     const navigate = useNavigate();

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AddSponsor.css'
-import { db, storage } from '../../firebase';
+import { db, storage } from '@/firebase';
 import { v4 as uuidv4 } from 'uuid';
 import { doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import Modal from '../utils/modal/Modal';
+import Modal from '@components/utils/modal/Modal';
 
 const AddSponsor = () => {
     const navigate = useNavigate();

@@ -12,10 +12,10 @@ import {
     where,
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase';
+import { db } from '@/firebase';
 import './Seeds.css'
-import { SEEDS_TYPES, SEMEN_TYPES, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES } from "../utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
+import { SEEDS_TYPES, SEMEN_TYPES, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 
 const Seeds = () => {
     const navigate = useNavigate();
@@ -263,7 +263,7 @@ const Seeds = () => {
                                     <img src={ad.photos[0]} alt={ad.title} className="ad-seeds-image" />
                                 )}
                                 {ad.photos.length === 0 && (
-                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-seeds-image" />
+                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-seeds-image" />
                                 )}
                                 <h2 className="ad-seeds-title">{ad.seed_type}</h2>
                                 <p className="ad-seeds-price">₪{ad.price}</p>

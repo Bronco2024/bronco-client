@@ -12,10 +12,10 @@ import {
     where,
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase';
+import { db } from '@/firebase';
 import './Boarding.css'
-import { ADS_PER_PAGE } from "../utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
+import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 
 const Boarding = () => {
     const navigate = useNavigate();
@@ -118,7 +118,7 @@ const Boarding = () => {
                                     <img src={ad.photos[0]} alt={ad.title} className="ad-boarding-image" />
                                 )}
                                 {ad.photos.length === 0 && (
-                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-boarding-image" />
+                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-boarding-image" />
                                 )}
                                 <h2 className="ad-boarding-title">{ad.title}</h2>
                                 <p className='ad-boarding-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>

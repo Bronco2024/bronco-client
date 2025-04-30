@@ -3,9 +3,9 @@ import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import { useNavigate } from 'react-router-dom';
 import './Homepage.css';
-import { db } from '../../firebase';
+import { db } from '@/firebase';
 import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
-import { FormatDateTimestampToDate } from '../utils/constants/Functions';
+import { FormatDateTimestampToDate } from '@components/utils/constants/Functions';
 
 const NUMBER_OF_LATEST_ADS_TO_FETCH = 8;
 
@@ -96,7 +96,7 @@ const HomePage = () => {
     return (
         <div className="carousel-container">
             <div className="logo-container">
-                <img src={require('../../assets/bronco.png')} style={{ width: '250px', height: 'auto' }} alt="Bronco Logo" />
+                <img src={require('@/assets/bronco.png')} style={{ width: '250px', height: 'auto' }} alt="Bronco Logo" />
             </div>
             <hr className="divider" />
 
@@ -130,7 +130,7 @@ const HomePage = () => {
                                         <img src={ad.photos[0]} alt={ad.category} className="ad-image-homepage" />
                                     )}
                                     {ad.photos.length === 0 && (
-                                        <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-image-homepage" />
+                                        <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-image-homepage" />
                                     )}
                                     {ad.category === "סוסים" ? (
                                             <h2 className="ad-title-homepage">{ad.breed}</h2>

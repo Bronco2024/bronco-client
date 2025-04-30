@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthProvider';
+import { useAuth } from '@components/context/AuthProvider';
 import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'firebase/firestore';
-import { db, storage } from '../../firebase';
+import { db, storage } from '@/firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
-import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "../utils/constants/Constants";
+import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
 import { v4 as uuidv4 } from 'uuid';
-import Modal from "../utils/modal/Modal"
-import { DeletedAttributesAfterUpdateForm } from '../utils/constants/Functions';
+import Modal from "@components/utils/modal/Modal"
+import { DeletedAttributesAfterUpdateForm } from '@components/utils/constants/Functions';
 
 const UpdateAd = () => {
     const navigate = useNavigate();

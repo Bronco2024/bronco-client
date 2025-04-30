@@ -12,10 +12,10 @@ import {
     where,
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase';
+import { db } from '@/firebase';
 import './Schools.css'
-import { ADS_PER_PAGE } from "../utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
+import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 
 const Schools = () => {
     const navigate = useNavigate();
@@ -118,7 +118,7 @@ const Schools = () => {
                                     <img src={ad.photos[0]} alt={ad.title} className="ad-school-image" />
                                 )}
                                 {ad.photos.length === 0 && (
-                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-school-image" />
+                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-school-image" />
                                 )}
                                 <div className="ad-school-details">
                                     <h2 className="ad-school-title">{ad.title}</h2>
