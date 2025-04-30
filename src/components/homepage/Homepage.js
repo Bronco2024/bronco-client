@@ -6,6 +6,9 @@ import './Homepage.css';
 import { db } from '@/firebase';
 import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
 import { FormatDateTimestampToDate } from '@components/utils/constants/Functions';
+import { CARDS } from '@components/utils/constants/Constants';
+import SlidingCard from './SlidingCard';
+import ApplicationLink from './ApplicationLink';
 
 const NUMBER_OF_LATEST_ADS_TO_FETCH = 8;
 
@@ -133,13 +136,13 @@ const HomePage = () => {
                                         <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-image-homepage" />
                                     )}
                                     {ad.category === "סוסים" ? (
-                                            <h2 className="ad-title-homepage">{ad.breed}</h2>
-                                        ) : ad.category === "זרע" ? (
-                                                <h2 className="ad-title-homepage">{ad.seed_type}</h2>
-                                        ) :  ad.category === "אביזרים" ? (
-                                                <h2 className="ad-title-homepage">{ad.accessory}</h2>
-                                        ) : (
-                                            <h2 className="ad-title-homepage">{ad.title}</h2>
+                                        <h2 className="ad-title-homepage">{ad.breed}</h2>
+                                    ) : ad.category === "זרע" ? (
+                                        <h2 className="ad-title-homepage">{ad.seed_type}</h2>
+                                    ) : ad.category === "אביזרים" ? (
+                                        <h2 className="ad-title-homepage">{ad.accessory}</h2>
+                                    ) : (
+                                        <h2 className="ad-title-homepage">{ad.title}</h2>
                                     )}
 
                                     {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים" || ad.category === "מוצרים שלנו") && (
@@ -181,6 +184,14 @@ const HomePage = () => {
                     />
                 </div>
             </div>
+
+            <div className="slider-container">
+                {CARDS.map((card, index) => (
+                    <SlidingCard key={index} title={card.title} text={card.text} />
+                ))}
+            </div>
+
+            <ApplicationLink />
         </div>
     );
 };

@@ -6,6 +6,7 @@ import {
 import ProtectedRoute from "./components/context/ProtectedRoute";
 import Layout from './components/layout/Layout'
 import NotFound from "./NotFound";
+import './App.css'
 
 const Homepage = lazy(() => import("./components/homepage/Homepage"))
 const ItemPage = lazy(() => import("./components/item/Item"));
