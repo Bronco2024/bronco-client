@@ -28,6 +28,7 @@ export const EXTENDED_CATEGORIES = [
     { path: '/exhibitors', label: 'מציגים' },
     { path: '/breeders', label: 'מפרזילים' },
     { path: '/schools', label: 'בתי ספר' },
+    { path: '/veterinarians', label: 'וטרינרים' },
     { path: '/trips', label: 'טיולים' },
     { path: '/shops', label: 'חנויות' },
     { path: '/shows-and-competitions', label: 'תצוגות ותחריות' },

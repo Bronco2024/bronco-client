@@ -23,6 +23,7 @@ const AddSponsor = lazy(() => import("./components/admin/AddSponsor"))
 const Seeds = lazy(() => import("./components/seeds/Seeds"))
 const Accessories = lazy(() => import("./components/accessories/Accessories"))
 const Boarding = lazy(() => import("./components/boarding/Boarding"))
+const Veterinarian = lazy(() => import("./components/veterinarians/Veterinarian"))
 const Exhibitors = lazy(() => import("./components/exhibitors/Exhibitor"))
 const Breeders = lazy(() => import("./components/breeders/Breeders"))
 const Schools = lazy(() => import("./components/schools/Schools"))
@@ -202,6 +203,16 @@ function App() {
           <Suspense fallback={<Loading message="Loading breeders..." />}>
             <Layout>
               <Breeders />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/veterinarians"
+        element={
+          <Suspense fallback={<Loading message="Loading veterinarian..." />}>
+            <Layout>
+              <Veterinarian />
             </Layout>
           </Suspense>
         }
