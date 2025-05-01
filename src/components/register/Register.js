@@ -15,9 +15,14 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showVerifyPassword, setShowVerifyPassword] = useState(false);
     const [error, setError] = useState('');
+    const [agreed, setAgreed] = useState(false);
 
     const handleLoginRedirect = () => {
         navigate('/login');
+    };
+
+    const handleCheckboxChange = (e) => {
+        setAgreed(e.target.checked);
     };
 
     const handleSubmit = async (e) => {
@@ -103,9 +108,25 @@ const Register = () => {
                     </span>
                 </div>
 
+                <div className='checkbox-container'>
+                    <label>
+                        <input type="checkbox" id="agreement" name="agreement" checked={agreed} onChange={handleCheckboxChange} />
+                        {' '}קראתי את{' '}
+                        <a
+                            href="/terms-and-conditions.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: 'blue', textDecoration: 'underline' }}
+                        >
+                        תנאי הימוש
+                        </a>
+                        {' '}ואני מסכים{' '}
+                    </label>
+                </div>
+
                 {error && <p className="error-message">{error}</p>}
 
-                <button type="submit" className="register-button">הרשמה</button>
+                <button type="submit" className="register-button" disabled={!agreed}>הרשמה</button>
             </form>
 
             <p className="register-text">
