@@ -364,7 +364,8 @@ const PublishAd = () => {
 
                 {((formData.category === "סוסים") ||
                     (formData.category === "זרע") ||
-                    (formData.category === "אביזרים")) && (
+                    (formData.category === "אביזרים") ||
+                    (formData.category === "מוצרים שלנו")) && (
                         <div className='publish-ad-form'>
                             <label htmlFor="price">מחיר</label>
                             <input

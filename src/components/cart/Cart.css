@@ -1,0 +1,140 @@
+/* Container Styling */
+.cart-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    direction: rtl;
+}
+
+.cart-container h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* Empty Cart Message */
+.cart-empty {
+    text-align: center;
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Summary Section */
+.cart-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.cart-summary p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.clear-cart-btn {
+    padding: 0.5rem 1rem;
+    background-color: #e63946;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.clear-cart-btn:hover {
+    background-color: #d62839;
+}
+
+/* Cart Items */
+.cart-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.item-info p {
+    margin: 0.2rem 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Image Styling */
+.item-images {
+    display: flex;
+    gap: 10px;
+}
+
+.item-image {
+    width: 150px; /* Adjust width of image */
+    height: 150px; /* Adjust height of image */
+    object-fit: cover;
+    border-radius: 5px; /* Optional: rounded corners */
+}
+
+/* Remove Button */
+.remove-item-btn {
+    padding: 0.5rem 1rem;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.remove-item-btn:hover {
+    background-color: #e63946;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .cart-summary {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .cart-item {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .remove-item-btn {
+        width: 100%;
+    }
+
+    .item-images {
+        flex-direction: column;
+        align-items: center;
+    }
+}

@@ -12,10 +12,14 @@ import {
     where,
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
-import { db } from '@/firebase';
+import { db } from '../../firebase';
 import './OurProducts.css'
-import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import { ADS_PER_PAGE } from "../utils/constants/Constants";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem, removeItem, increaseQuantity, decreaseQuantity } from "../redux/cartSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faMinus, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const OurProducts = () => {
     const navigate = useNavigate();
@@ -24,6 +28,8 @@ const OurProducts = () => {
     const [page, setPage] = useState(1);
     const [afterThis, setAfterThis] = useState(null);
     const [beforeThis, setBeforeThis] = useState(null);
+    const dispatch = useDispatch();
+    const cart = useSelector((state) => state.cart.items);
 
     const categoryFilter = "מוצרים שלנו";
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
@@ -96,8 +102,12 @@ const OurProducts = () => {
     };
 
     const handleClickOnItem = (ad) => {
-        navigate('/item', { state: { ad } })
-    }
+        navigate('/item', { state: { ad } });
+    };
+
+    const handleAddToCart = (product) => {
+        dispatch(addItem(product));
+    };
 
     return (
         <div className="products-container">
@@ -122,8 +132,60 @@ const OurProducts = () => {
                                 )}
                                 <h2 className="ad-products-title">{ad.title}</h2>
                                 <p className='ad-products-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                                <p className="ad-products-price">₪{ad.price}</p>
+
+                                {cart.some(item => item.id === ad.id) ? (
+                                    <div className="quantity-controls">
+                                    <div className="quantity-btns">
+                                        <button
+                                            className="quantity-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                dispatch(decreaseQuantity(ad.id));
+                                            }}
+                                        >
+                                            <FontAwesomeIcon icon={faMinus} className="minus-icon" />
+                                        </button>
+                                        <span className="quantity-count">
+                                            {cart.find(item => item.id === ad.id)?.quantity}
+                                        </span>
+                                        <button
+                                            className="quantity-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                dispatch(increaseQuantity(ad.id));
+                                            }}
+                                        >
+                                            <FontAwesomeIcon icon={faPlus} className="plus-icon" />
+                                        </button>
+                                    </div>
+                                    <button
+                                        className="delete-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            dispatch(removeItem(ad.id));
+                                        }}
+                                    >
+                                        <FontAwesomeIcon icon={faTrash} className="remove-icon" />
+                                        הסר
+                                    </button>
+                                </div>
+                                
+                                ) : (
+                                    <button
+                                        className="add-to-cart-button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleAddToCart(ad);
+                                        }}
+                                    >
+                                        <FontAwesomeIcon icon={faPlus} className="add-to-cart-icon" />
+                                        הוסף לעגלה
+                                    </button>
+                                )}
                             </div>
-                        )))
+                        )
+                    ))
                 )}
             </div>
 
@@ -135,7 +197,7 @@ const OurProducts = () => {
                 </button>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default OurProducts;

@@ -103,7 +103,7 @@ const Profile = () => {
     }
 
     const handleRenewButton = async (ad) => {
-        if (!currentUser.isSubscribed || currentUser.numberOfAds <= 0) {
+        if (currentUser.numberOfAds <= 0) {
             navigate('/subscribe');
             return;
         }
