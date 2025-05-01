@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
-import './OurProducts.css';
+import './OurProducts.css'
 import { ADS_PER_PAGE } from "../utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
 import { useDispatch, useSelector } from "react-redux";
@@ -128,7 +128,7 @@ const OurProducts = () => {
                                     <img src={ad.photos[0]} alt={ad.title} className="ad-products-image" />
                                 )}
                                 {ad.photos.length === 0 && (
-                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-products-image" />
+                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-horse-image" />
                                 )}
                                 <h2 className="ad-products-title">{ad.title}</h2>
                                 <p className='ad-products-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>

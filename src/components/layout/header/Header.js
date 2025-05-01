@@ -3,11 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser, faGear, faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthProvider';
-import { EXTENDED_CATEGORIES } from '../utils/constants/Constants';
-import { IsDateNowGreaterThanAdDate } from '../utils/constants/Functions';
+import { useAuth } from '@components/context/AuthProvider';
+import { EXTENDED_CATEGORIES } from '@components/utils/constants/Constants';
+import { IsDateNowGreaterThanAdDate } from '@components/utils/constants/Functions';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '@/firebase';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -126,7 +126,7 @@ const Header = () => {
                     </div>
                 </div>
                 <Link to='/'>
-                    <img src={require('../../assets/bronco.png')} style={{ width: '50px', height: 'auto' }} alt="Bronco Logo" />
+                    <img src={require('@/assets/bronco.png')} style={{ width: '50px', height: 'auto' }} alt="Bronco Logo" />
                 </Link>
             </div>
         </nav>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthProvider';
-import { db, storage } from '../../firebase';
+import { useAuth } from '@components/context/AuthProvider';
+import { db, storage } from '@/firebase';
 import { collection, query, where, getDocs, deleteDoc, doc, updateDoc, increment } from 'firebase/firestore';
 import { ref, listAll, deleteObject } from 'firebase/storage';
 import './Profile.css';
-import Modal from '../utils/modal/Modal';
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from '../utils/constants/Functions';
+import Modal from '@components/utils/modal/Modal';
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from '@components/utils/constants/Functions';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -160,7 +160,7 @@ const Profile = () => {
                                 <img src={ad.photos[0]} alt={ad.title} className="ad-image-profile" />
                             )}
                             {ad.photos.length === 0 && (
-                                <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-image-profile" />
+                                <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-image-profile" />
                             )}
                             <div className="ad-details">
                                 <h4 className="ad-title-profile">{ad.title}</h4>

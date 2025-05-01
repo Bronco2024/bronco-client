@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import './Admin.css'
-import { db, storage } from '../../firebase';
+import { db, storage } from '@/firebase';
 import { collection, getDocs, deleteDoc, doc, where, orderBy, query } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
-import Modal from '../utils/modal/Modal';
+import Modal from '@components/utils/modal/Modal';
 import { ref, deleteObject, listAll } from "firebase/storage";
 
 const Admin = () => {
@@ -194,7 +194,7 @@ const Admin = () => {
                                     }} />
                                 )}
                                 {ad.photos.length === 0 && (
-                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="sponsor-image" onClick={() => {
+                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="sponsor-image" onClick={() => {
                                         navigate('/item', { state: { ad } })
                                     }} />
                                 )}

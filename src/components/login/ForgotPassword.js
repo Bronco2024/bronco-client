@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../../firebase';
+import { auth } from '@/firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import './ForgotPassword.css'
-import Modal from '../utils/modal/Modal';
+import Modal from '@components/utils/modal/Modal';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();

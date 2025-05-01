@@ -12,10 +12,10 @@ import {
     where,
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase';
+import { db } from '@/firebase';
 import './Accessories.css'
-import { ADS_PER_PAGE, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "../utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
+import { ADS_PER_PAGE, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 
 const Accessories = () => {
     const navigate = useNavigate();
@@ -238,7 +238,7 @@ const Accessories = () => {
                                     <img src={ad.photos[0]} alt={ad.title} className="ad-accessory-image" />
                                 )}
                                 {ad.photos.length === 0 && (
-                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-accessory-image" />
+                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-accessory-image" />
                                 )}
                                 <h2 className="ad-accessory-title">{ad.category}</h2>
                                 <p className="ad-accessory-price">₪{ad.price}</p>

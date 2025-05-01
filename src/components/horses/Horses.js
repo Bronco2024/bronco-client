@@ -12,10 +12,10 @@ import {
     where,
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase';
+import { db } from '@/firebase';
 import './Horses.css'
-import { BREEDS, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES } from "../utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
+import { BREEDS, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 
 const Horses = () => {
     const navigate = useNavigate();
@@ -269,7 +269,7 @@ const Horses = () => {
                                     <img src={ad.photos[0]} alt={ad.breed} className="ad-horse-image" />
                                 )}
                                 {ad.photos.length === 0 && (
-                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-horse-image" />
+                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-horse-image" />
                                 )}
                                 <h2 className="ad-horse-title">{ad.breed}</h2>
                                 <p className="ad-horse-price">₪{ad.price}</p>

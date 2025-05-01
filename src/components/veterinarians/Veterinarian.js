@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
-import './Boarding.css'
+import './Veterinarian.css'
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 
@@ -25,7 +25,7 @@ const Boarding = () => {
     const [afterThis, setAfterThis] = useState(null);
     const [beforeThis, setBeforeThis] = useState(null);
 
-    const categoryFilter = "פנסיון";
+    const categoryFilter = "וטרינר";
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
 
     const getTotalCount = useCallback(async () => {
@@ -100,10 +100,10 @@ const Boarding = () => {
     }
 
     return (
-        <div className="boarding-container">
-            <h1 className="boarding-title">פנסיון</h1>
+        <div className="veterinarian-container">
+            <h1 className="veterinarian-title">וטרינר</h1>
 
-            <div className="ads-boarding-wrapper">
+            <div className="ads-veterinarian-wrapper">
                 {adList.length === 0 ? (
                     <p>לא נמצאו מודעות בקטיגוריה זו</p>
                 ) : (
@@ -111,17 +111,17 @@ const Boarding = () => {
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
                             <div
                                 key={ad.id}
-                                className="ad-boarding-card"
+                                className="ad-veterinarian-card"
                                 onClick={() => handleClickOnItem(ad)}
                             >
                                 {ad.photos && ad.photos[0] && (
-                                    <img src={ad.photos[0]} alt={ad.title} className="ad-boarding-image" />
+                                    <img src={ad.photos[0]} alt={ad.title} className="ad-veterinarian-image" />
                                 )}
                                 {ad.photos.length === 0 && (
-                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-boarding-image" />
+                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-veterinarian-image" />
                                 )}
-                                <h2 className="ad-boarding-title">{ad.title}</h2>
-                                <p className='ad-boarding-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                                <h2 className="ad-veterinarian-title">{ad.title}</h2>
+                                <p className='ad-veterinarian-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                             </div>
                         )))
                 )}

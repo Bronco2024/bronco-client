@@ -5,7 +5,7 @@ import 'react-alice-carousel/lib/alice-carousel.css';
 import './Item.css'
 import { faPhoneAlt, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FormatDateTimestampToDate } from '../utils/constants/Functions';
+import { FormatDateTimestampToDate } from '@components/utils/constants/Functions';
 
 const ItemPage = () => {
     const location = useLocation();
@@ -21,7 +21,7 @@ const ItemPage = () => {
 
     const items = ad.photos && ad.photos.length > 0 ? ad.photos?.map((photo, index) => (
         <img key={index} src={photo} alt={`Ad ${index + 1}`} style={{ width: '100%', height: '600px', objectFit: 'contain' }} />
-    )) : [<img src={require("../../assets/no-image.jpg")} alt="empty" style={{ width: '100%', height: '600px', objectFit: 'contain' }} />];
+    )) : [<img src={require("@/assets/no-image.jpg")} alt="empty" style={{ width: '100%', height: '600px', objectFit: 'contain' }} />];
 
     return (
         <div className="item-detail-container">
@@ -42,7 +42,7 @@ const ItemPage = () => {
 
             <p className="item-description">{ad.description}</p>
 
-            {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים") && (
+            {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים" || ad.category === "מוצרים שלנו") && (
                 <>
                     <div className='horizontal-line ' />
 
@@ -76,7 +76,7 @@ const ItemPage = () => {
 
             {ad.hasCertificate && (
                 <span className="verified-badge">
-                    <img src={require('../../assets/bitcoin-icons--verify-outline.png')} alt="Verified Badge" />
+                    <img src={require('@/assets/bitcoin-icons--verify-outline.png')} alt="Verified Badge" />
                     <p>עם תעודה</p>
                 </span>
             )}

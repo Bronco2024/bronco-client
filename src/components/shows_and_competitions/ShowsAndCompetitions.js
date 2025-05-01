@@ -12,10 +12,10 @@ import {
     where,
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase';
+import { db } from '@/firebase';
 import './ShowsAndCompetitions.css'
-import { ADS_PER_PAGE } from "../utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "../utils/constants/Functions";
+import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
+import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 
 const ShowsAndCompetitions = () => {
     const navigate = useNavigate();
@@ -118,7 +118,7 @@ const ShowsAndCompetitions = () => {
                                     <img src={ad.photos[0]} alt={ad.title} className="ad-shows-image" />
                                 )}
                                 {ad.photos.length === 0 && (
-                                    <img src={require('../../assets/no-image.jpg')} alt={ad.category} className="ad-shows-image" />
+                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-shows-image" />
                                 )}
                                 <h2 className="ad-shows-title">{ad.title}</h2>
                                 <p className='ad-shows-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
