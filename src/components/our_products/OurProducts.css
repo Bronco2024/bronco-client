@@ -1,4 +1,7 @@
 .products-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     text-align: center;
     padding: 20px;
     background-color: #f9f9f9;
@@ -14,16 +17,16 @@
 
 .ads-products-wrapper {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex-direction: row-reverse;
     gap: 20px;
-    overflow-y: auto;
-    max-height: 800px;
+    
 }
 
 .ad-products-card {
-    width: 80%; 
-    max-width: 1000px;
+    width: 200px; 
+    max-width: 100%;
     padding: 15px;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -42,8 +45,8 @@
 
 .ad-products-image {
     width: 100%;
-    height: 600px;
-    max-height: 600px;
+    height: 200px;
+    max-height: 200px;
     object-fit: contain;
     border-radius: 10px;
     margin-bottom: 10px;
