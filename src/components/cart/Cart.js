@@ -2,11 +2,17 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeItem, clearCart } from '@/redux/cartSlice';
 import './Cart.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCreditCard } from '@fortawesome/free-solid-svg-icons';
 
 const Cart = () => {
   const { items, totalQuantity, totalPrice } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
-  
+
+  const handleSubmitCart = () => {
+    //server call to payment api
+  }
+
   return (
     <div className="cart-container">
       <h2>עגלה מוצרים</h2>
@@ -53,6 +59,13 @@ const Cart = () => {
           </ul>
         </>
       )}
+
+      <div className="button-container">
+        <button className="pay-button" type='submit' onClick={handleSubmitCart}>
+          <FontAwesomeIcon icon={faCreditCard} style={{ marginLeft: "8px" }} />
+          תשלום
+        </button>
+      </div>
     </div>
   );
 };
