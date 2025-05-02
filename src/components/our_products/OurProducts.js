@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addItem, removeItem, increaseQuantity, decreaseQuantity } from "@/redux/cartSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "@components/context/AuthProvider";
 
 const OurProducts = () => {
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ const OurProducts = () => {
     const [beforeThis, setBeforeThis] = useState(null);
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart.items);
+    const { currentUser } = useAuth();
 
     const categoryFilter = "מוצרים שלנו";
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
@@ -106,6 +108,10 @@ const OurProducts = () => {
     };
 
     const handleAddToCart = (product) => {
+        if(!currentUser){
+            navigate('/login')
+            return;
+        }
         dispatch(addItem(product));
     };
 
