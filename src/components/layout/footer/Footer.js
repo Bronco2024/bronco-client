@@ -1,6 +1,5 @@
 import './Footer.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLinkedin } from '@fortawesome/free-brands-svg-icons';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
@@ -8,22 +7,27 @@ const Footer = () => {
             <div className="footer-content">
 
                 <div className="footer-section about-us">
-                    <h2>עלינו</h2>
-                    <p>אנו חברה שעוסקת בסוסים וכל הציוד הנלווה אליו משנת 1990</p>
+                    <h2>תכירו אותנו</h2>
+                    <div className="about-links">
+                        <Link to="/about-us" className="about-link">אודותינו</Link>
+                        <Link to="/regulations" className="about-link">תקנון</Link>
+                        <Link to="/privacy-policy" className="about-link">מדיניות פרטיות</Link>
+                    </div>
                 </div>
 
                 <div className="footer-logo">
                     <img src={require('@/assets/bronco.png')} alt="Bronco Estd 2024" />
                 </div>
 
-
-                <div className="footer-section credits">
-                    <h2>קרדיט</h2>
-                    <div className="credit-item">
-                        <a href="http://linkedin.com/in/haythamt95" target="_blank" rel="noopener noreferrer" className="linkedin-link">
-                            <FontAwesomeIcon icon={faLinkedin} className="linkedin-icon" />
-                            Haytham Taweel
-                        </a>
+                <div className="footer-section contact">
+                    <h2>צור קשר</h2>
+                    <div className="contact-item">
+                        <a
+                            className="contact-link"
+                            href='mailto:bronco.estd2024@gmail.com'>bronco.estd2024@gmail.com</a>
+                        <a href='tel:0500000000'
+                            className="contact-link"
+                        >0500000000</a>
                     </div>
                 </div>
             </div>

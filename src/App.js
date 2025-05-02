@@ -34,6 +34,9 @@ const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competiti
 const OurProducts = lazy(() => import("./components/our_products/OurProducts"))
 const ThankYou = lazy(() => import("./components/payment/ThankYou"))
 const Cart = lazy(() => import("./components/cart/Cart"));
+const AboutUs = lazy(() => import("./components/layout/footer/about-links/AboutUs"));
+const Regulations = lazy(() => import("./components/layout/footer/about-links/Regulations"));
+const PrivacyPolicy = lazy(() => import("./components/layout/footer/about-links/PrivacyPolicy"));
 
 const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
 
@@ -317,6 +320,37 @@ function App() {
           </Suspense>
         }
       />
+
+      <Route path="/about-us"
+        element={
+          <Suspense fallback={<Loading message="Loading About Us..." />}>
+            <Layout>
+              <AboutUs />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/regulations"
+        element={
+          <Suspense fallback={<Loading message="Loading Regulations..." />}>
+            <Layout>
+              <Regulations />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/privacy-policy"
+        element={
+          <Suspense fallback={<Loading message="Loading Privacy Policy..." />}>
+            <Layout>
+              <PrivacyPolicy />
+            </Layout>
+          </Suspense>
+        }
+      />
+
 
       <Route
         path="*"

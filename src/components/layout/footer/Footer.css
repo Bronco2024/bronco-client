@@ -30,9 +30,24 @@
     margin-bottom: 0.5rem;
 }
 
-.about-us p {
+.about-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+.about-link {
     font-size: 1rem;
-    line-height: 1.6;
+    display: flex;
+    color: #ffcc00;
+    text-decoration: underline;
+    transition: color 0.3s;
+}
+
+.about-link:hover {
+    color: #fff;
 }
 
 .footer-logo img {
@@ -41,28 +56,27 @@
     margin: 0 auto;
 }
 
-.credits .credit-item {
+.contact .contact-item {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
 }
 
-.linkedin-link {
-    color: #ffcc00;
+.contact-link {
+    color: #1083f6;
     text-decoration: none;
     font-size: 1.2rem;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
+    text-decoration: underline;
 }
 
-.linkedin-link:hover {
+.contact-link:hover {
     color: #fff;
-}
-
-.linkedin-icon {
-    font-size: 1.5rem;
 }
 
 /* Footer Bottom */
