@@ -120,7 +120,7 @@ const HomePage = () => {
 
                 <div className='sponsor-wrapper'>
                     <div className='left-content'>
-                        <h2 className="ad-title-section">להיטים</h2>
+                        <h2 className="ad-title-section">פורסמו לאחרונה</h2>
                         <div className="ad-cards-container">
                             {latestAds.map(ad => (
                                 <div
