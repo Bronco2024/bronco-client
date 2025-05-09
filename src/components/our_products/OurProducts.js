@@ -21,6 +21,7 @@ import { addItem, removeItem, increaseQuantity, decreaseQuantity } from "@/redux
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@components/context/AuthProvider";
+import { updateUserCart } from "@/helpers/firebase-helpers";
 
 const OurProducts = () => {
     const navigate = useNavigate();
@@ -107,13 +108,37 @@ const OurProducts = () => {
         navigate('/item', { state: { ad } });
     };
 
-    const handleAddToCart = (product) => {
-        if(!currentUser){
+    const handleAddToCart = async (product) => {
+        if (!currentUser) {
             navigate('/login')
             return;
         }
         dispatch(addItem(product));
+        const newCart = [...cart, { ...product, quantity: 1 }];
+        await updateUserCart(currentUser.uid, newCart);
     };
+
+    const handleDecreaseQuantity = async (ad) => {
+        dispatch(decreaseQuantity(ad.id));
+        const updatedCart = cart
+            .map(item => item.id === ad.id ? { ...item, quantity: item.quantity - 1 } : item)
+            .filter(item => item.quantity > 0);
+        await updateUserCart(currentUser.uid, updatedCart);
+    }
+
+    const handleIncreaseQuantity = async (ad) => {
+        dispatch(increaseQuantity(ad.id));
+        const updatedCart = cart.map(item =>
+            item.id === ad.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+        await updateUserCart(currentUser.uid, updatedCart);
+    }
+
+    const handleRemoveItem = async (ad) => {
+        dispatch(removeItem(ad.id));
+        const updatedCart = cart.filter(item => item.id !== ad.id);
+        await updateUserCart(currentUser.uid, updatedCart);
+    }
 
     return (
         <div className="products-container">
@@ -142,41 +167,41 @@ const OurProducts = () => {
 
                                 {cart.some(item => item.id === ad.id) ? (
                                     <div className="quantity-controls">
-                                    <div className="quantity-btns">
+                                        <div className="quantity-btns">
+                                            <button
+                                                className="quantity-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDecreaseQuantity(ad)
+                                                }}
+                                            >
+                                                <FontAwesomeIcon icon={faMinus} className="minus-icon" />
+                                            </button>
+                                            <span className="quantity-count">
+                                                {cart.find(item => item.id === ad.id)?.quantity}
+                                            </span>
+                                            <button
+                                                className="quantity-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleIncreaseQuantity(ad)
+                                                }}
+                                            >
+                                                <FontAwesomeIcon icon={faPlus} className="plus-icon" />
+                                            </button>
+                                        </div>
                                         <button
-                                            className="quantity-btn"
+                                            className="delete-btn"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                dispatch(decreaseQuantity(ad.id));
+                                                handleRemoveItem(ad)
                                             }}
                                         >
-                                            <FontAwesomeIcon icon={faMinus} className="minus-icon" />
-                                        </button>
-                                        <span className="quantity-count">
-                                            {cart.find(item => item.id === ad.id)?.quantity}
-                                        </span>
-                                        <button
-                                            className="quantity-btn"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                dispatch(increaseQuantity(ad.id));
-                                            }}
-                                        >
-                                            <FontAwesomeIcon icon={faPlus} className="plus-icon" />
+                                            <FontAwesomeIcon icon={faTrash} className="remove-icon" />
+                                            הסר
                                         </button>
                                     </div>
-                                    <button
-                                        className="delete-btn"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            dispatch(removeItem(ad.id));
-                                        }}
-                                    >
-                                        <FontAwesomeIcon icon={faTrash} className="remove-icon" />
-                                        הסר
-                                    </button>
-                                </div>
-                                
+
                                 ) : (
                                     <button
                                         className="add-to-cart-button"

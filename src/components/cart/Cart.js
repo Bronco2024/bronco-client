@@ -1,13 +1,41 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeItem, clearCart } from '@/redux/cartSlice';
-import './Cart.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCreditCard } from '@fortawesome/free-solid-svg-icons';
+import { db } from '@/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
+import { useAuth } from "@components/context/AuthProvider";
+import './Cart.css';
 
 const Cart = () => {
   const { items, totalQuantity, totalPrice } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const { currentUser } = useAuth();
+
+  const handleRemoveItem = async (itemId) => {
+    if (!currentUser) return;
+
+    const userDocRef = doc(db, 'users', currentUser.uid);
+    const updatedItems = items.filter(item => item.id !== itemId);
+
+    await updateDoc(userDocRef, {
+      cart: updatedItems
+    });
+
+    dispatch(removeItem(itemId));
+  };
+
+  const handleClearCart = async () => {
+    if (!currentUser) return;
+
+    const userDocRef = doc(db, 'users', currentUser.uid);
+    await updateDoc(userDocRef, {
+      cart: []
+    });
+
+    dispatch(clearCart());
+  };
 
   const handleSubmitCart = () => {
     //server call to payment api
@@ -27,7 +55,7 @@ const Cart = () => {
             <p>
               <strong>סכום כולל:</strong> ₪{totalPrice}
             </p>
-            <button className="clear-cart-btn" onClick={() => dispatch(clearCart())}>
+            <button className="clear-cart-btn" onClick={handleClearCart}>
               נקה את העגלה
             </button>
           </div>
@@ -50,7 +78,7 @@ const Cart = () => {
                 </div>
                 <button
                   className="remove-item-btn"
-                  onClick={() => dispatch(removeItem(item.id))}
+                  onClick={() => handleRemoveItem(item.id)}
                 >
                   הסר
                 </button>
