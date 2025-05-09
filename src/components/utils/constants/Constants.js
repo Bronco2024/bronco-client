@@ -120,3 +120,56 @@ export const CARDS = [
         text: "השתמש בכלים המובנים שלנו כדי ליצור קשר בצורה בטוחה ומהירה עם המוכרים והספקים"
     },
 ]
+
+export const ABOUTUS_FEATURES = [
+    {
+        title: "סוסים למכירה",
+        subtitle: "תוכלו לפרסם את הסוס שלכם או למצוא את הסוס שמתאים לכם בדיוק",
+        icon: require('@/assets/aboutus/horse.png')
+    },
+    {
+        title: "זרע איכותי",
+        subtitle: "לגידול מקצועי ומתקדם",
+        icon: require('@/assets/aboutus/sperm.png')
+    },
+    {
+        title: "אבזרים וציוד",
+        subtitle: "לרכיבה, טיפול, הובלה ואחזקה",
+        icon: require('@/assets/aboutus/tool-box.png')
+    },
+    {
+        title: "וטרינרים מומלצים",
+        subtitle: "שירותים רפואיים מקצועיים לסוסים",
+        icon: require('@/assets/aboutus/veterinarian.png')
+    },
+    {
+        title: "מציגים וספקים",
+        subtitle: "מכל תחומי עולם הסוסים",
+        icon: require('@/assets/aboutus/supplier.png')
+    },
+    {
+        title: "מפרזילים מקצועיים",
+        subtitle: "לאיזון וטיפוח הסוס",
+        icon: require('@/assets/aboutus/horseshoe.png')
+    },
+    {
+        title: "בתי ספר לרכיבה",
+        subtitle: "לכל הרמות, בכל הארץ",
+        icon: require('@/assets/aboutus/horse-rider.png')
+    },
+    {
+        title: "טיולי רכיבה",
+        subtitle: "חוויות שטח עם סוסים בטבע",
+        icon: require('@/assets/aboutus/trip.png')
+    },
+    {
+        title: "תצוגות ותחרויות",
+        subtitle: "להתעדכן, להשתתף ולהתרגש",
+        icon: require('@/assets/aboutus/competition.png')
+    },
+    {
+        title: "מוצרים שלנו",
+        subtitle: "קו מוצרים ייחודי ואיכותי מבית Bronco",
+        icon: require('@/assets/aboutus/products.png')
+    }
+];

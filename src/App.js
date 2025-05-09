@@ -34,7 +34,7 @@ const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competiti
 const OurProducts = lazy(() => import("./components/our_products/OurProducts"))
 const ThankYou = lazy(() => import("./components/payment/ThankYou"))
 const Cart = lazy(() => import("./components/cart/Cart"));
-const AboutUs = lazy(() => import("./components/layout/footer/about-links/AboutUs"));
+const AboutUs = lazy(() => import("./components/layout/footer/about-links/aboutus/AboutUs"));
 const Regulations = lazy(() => import("./components/layout/footer/about-links/Regulations"));
 const PrivacyPolicy = lazy(() => import("./components/layout/footer/about-links/PrivacyPolicy"));
 

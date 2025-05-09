@@ -1,0 +1,159 @@
+.about-section {
+    padding: 50px;
+    display: flex;
+    justify-content: center;
+    direction: rtl;
+}
+
+.about-content {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 1320px;
+    position: relative;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+    overflow: hidden;
+}
+
+.about-image-container {
+    position: relative;
+    width: 48%;
+}
+
+.main-image {
+    width: 100%;
+    height: auto;
+    max-height: 900px;
+    object-fit: cover;
+    display: block;
+}
+
+.decorative-dots {
+    position: absolute;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.red-dots {
+    bottom: -40px;
+    left: 5%;
+    width: 80%;
+    height: 300px;
+}
+
+.about-text-container {
+    width: 48%;
+    z-index: 1;
+}
+
+.about-heading {
+    font-size: 2rem;
+    line-height: 40px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.about-description {
+    font-size: 1.2rem;
+    line-height: 26px;
+    margin-bottom: 20px;
+}
+
+.feature-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    width: 48%;
+    padding: 10px 0;
+}
+
+.feature-icon-container {
+    padding: 20px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+.feature-icon {
+    width: 31px;
+    height: 31px;
+}
+
+.feature-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.feature-subtitle {
+    font-size: 14px;
+    line-height: 22px;
+    color: #999;
+}
+
+.feature-extra-text {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    max-width: 800px;
+}
+
+@media (max-width: 992px) {
+    .about-image-container,
+    .about-text-container {
+        width: 80%;
+    }
+
+    .about-image-container {
+        margin-bottom: 30px;
+    }
+
+    .main-image {
+        max-height: 1000px;
+    }
+
+    .feature-item {
+        width: 100%;
+    }
+
+    .about-heading {
+        font-size: 30px;
+    }
+
+    .about-description {
+        font-size: 16px;
+    }
+
+    .about-button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-image {
+        max-height: 600px;
+    }
+
+    .about-heading {
+        font-size: 24px;
+    }
+
+    .feature-title {
+        font-size: 16px;
+    }
+
+    .feature-subtitle {
+        font-size: 13px;
+    }
+
+    .feature-icon-container {
+        padding: 15px;
+    }
+}
