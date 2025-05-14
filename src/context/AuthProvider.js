@@ -19,7 +19,18 @@ export const AuthProvider = ({ children }) => {
                 if (userDoc.exists()) {
                     setCurrentUser({ uid: user.uid, ...userDoc.data() });
 
-                    const cart = userDoc.data().cart || [];
+                    const rawCart = userDoc.data().cart || [];
+
+                    // Convert Firestore Timestamps to ISO strings or Date objects
+                    // This is for Redux Toolkit expects actions and state to be serializable.
+                    // Firebase's Timestamp object (like availableUntil: Timestamp) is not serializable by default,
+                    // so Redux warns you.
+                    const cart = rawCart.map(item => ({
+                        ...item,
+                        availableUntil: item.availableUntil?.toDate?.() || null,
+                        createdAt: item.createdAt?.toDate?.() || null,
+                      }));
+
                     dispatch(loadCart(cart));
                 } else {
                     setCurrentUser({ uid: user.uid });
