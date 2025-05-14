@@ -11,6 +11,7 @@ const AboutUs = () => {
                         className="main-image"
                         src={require('@/assets/aboutus/aboutus-horse.png')}
                         alt="Main visual"
+                        loading='lazy'
                     />
                 </div>
 
@@ -28,6 +29,7 @@ const AboutUs = () => {
                                         className="feature-icon"
                                         src={feature.icon}
                                         alt="Feature icon"
+                                        loading='lazy'
                                     />
                                 </div>
                                 <div className="feature-text">

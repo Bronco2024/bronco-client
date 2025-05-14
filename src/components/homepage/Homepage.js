@@ -87,6 +87,7 @@ const HomePage = () => {
                     src={item.photo}
                     alt="sponsor"
                     style={{ width: imageFit.width, height: imageFit.height, objectFit: 'cover' }}
+                    loading='lazy'
                 />
             </a>
         ));
@@ -99,7 +100,12 @@ const HomePage = () => {
     return (
         <div className="carousel-container">
             <div className="logo-container">
-                <img src={require('@/assets/bronco.png')} style={{ width: '250px', height: 'auto' }} alt="Bronco Logo" />
+                <img
+                    src={require('@/assets/bronco.png')}
+                    style={{ width: '250px', height: 'auto' }}
+                    alt="Bronco Logo"
+                    loading='lazy'
+                />
             </div>
             <hr className="divider" />
 
@@ -130,10 +136,19 @@ const HomePage = () => {
                                     onClick={() => handleClickOnItem(ad)}
                                 >
                                     {ad.photos && ad.photos[0] && (
-                                        <img src={ad.photos[0]} alt={ad.category} className="ad-image-homepage" />
+                                        <img
+                                            src={ad.photos[0]}
+                                            alt={ad.category}
+                                            className="ad-image-homepage"
+                                            loading='lazy'
+                                        />
                                     )}
                                     {ad.photos.length === 0 && (
-                                        <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-image-homepage" />
+                                        <img
+                                            src={require('@/assets/no-image.jpg')}
+                                            alt={ad.category}
+                                            className="ad-image-homepage"
+                                        />
                                     )}
                                     {ad.category === "סוסים" ? (
                                         <h2 className="ad-title-homepage">{ad.breed}</h2>

@@ -15,6 +15,34 @@
     color: #333;
 }
 
+.ads-per-page-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+    font-size: 16px;
+    direction: rtl;
+}
+
+.ads-per-page-selector label {
+    font-weight: bold;
+}
+
+.ads-per-page-selector select {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.ads-per-page-selector select:focus {
+    border-color: #888;
+    outline: none;
+}
+
 .ads-products-wrapper {
     display: flex;
     flex-wrap: wrap;

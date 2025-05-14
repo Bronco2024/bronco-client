@@ -16,7 +16,7 @@ const ApplicationLink = () => {
           rel="noopener noreferrer"
           className="android-link"
         >
-          <img src={androidLogo} alt="Android" />
+          <img src={androidLogo} alt="Android" loading='lazy'/>
         </a>
         <a
           href="https://apps.apple.com"
@@ -24,7 +24,7 @@ const ApplicationLink = () => {
           rel="noopener noreferrer"
           className="ios-link"
         >
-          <img src={iosLogo} alt="iOS" />
+          <img src={iosLogo} alt="iOS" loading='lazy'/>
         </a>
       </div>
     </div>
