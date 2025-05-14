@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser, faGear, faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
-import { useAuth } from '@components/context/AuthProvider';
+import { useAuth } from '@/context/AuthProvider';
 import { EXTENDED_CATEGORIES } from '@components/utils/constants/Constants';
 import { IsDateNowGreaterThanAdDate } from '@components/utils/constants/Functions';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';

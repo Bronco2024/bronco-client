@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './PublishAd.css';
 import { db, storage } from '@/firebase';
 import { doc, setDoc, updateDoc, increment } from 'firebase/firestore';
-import { useAuth } from '@components/context/AuthProvider';
+import { useAuth } from '@/context/AuthProvider';
 import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
@@ -365,7 +365,7 @@ const PublishAd = () => {
                 {((formData.category === "סוסים") ||
                     (formData.category === "זרע") ||
                     (formData.category === "אביזרים") ||
-                    (formData.category === "מוצרים שלנו")) && (
+                    (formData.category === "חנות")) && (
                         <div className='publish-ad-form'>
                             <label htmlFor="price">מחיר</label>
                             <input

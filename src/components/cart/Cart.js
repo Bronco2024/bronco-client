@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCreditCard } from '@fortawesome/free-solid-svg-icons';
 import { db } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
-import { useAuth } from "@components/context/AuthProvider";
+import { useAuth } from "@/context/AuthProvider";
 import './Cart.css';
 
 const Cart = () => {

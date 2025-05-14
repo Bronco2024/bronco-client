@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '@components/context/AuthProvider';
+import { useAuth } from '@/context/AuthProvider';
 import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'firebase/firestore';
 import { db, storage } from '@/firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';

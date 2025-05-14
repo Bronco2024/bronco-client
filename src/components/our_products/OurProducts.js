@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addItem, removeItem, increaseQuantity, decreaseQuantity } from "@/redux/cartSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "@components/context/AuthProvider";
+import { useAuth } from "@/context/AuthProvider";
 import { updateUserCart } from "@/helpers/firebase-helpers";
 
 const OurProducts = () => {
@@ -34,7 +34,7 @@ const OurProducts = () => {
     const cart = useSelector((state) => state.cart.items);
     const { currentUser } = useAuth();
 
-    const categoryFilter = "מוצרים שלנו";
+    const categoryFilter = "חנות";
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
 
     const getTotalCount = useCallback(async () => {
@@ -142,7 +142,7 @@ const OurProducts = () => {
 
     return (
         <div className="products-container">
-            <h1 className="products-title">מוצרים שלנו</h1>
+            <h1 className="products-title">חנות</h1>
 
             <div className="ads-products-wrapper">
                 {adList.length === 0 ? (

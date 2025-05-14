@@ -3,7 +3,7 @@ import {
   Route,
   Routes
 } from "react-router-dom";
-import ProtectedRoute from "./components/context/ProtectedRoute";
+import ProtectedRoute from "@/context/ProtectedRoute";
 import Layout from './components/layout/Layout'
 import NotFound from "./NotFound";
 import './App.css'
@@ -29,7 +29,7 @@ const Exhibitors = lazy(() => import("./components/exhibitors/Exhibitor"))
 const Breeders = lazy(() => import("./components/breeders/Breeders"))
 const Schools = lazy(() => import("./components/schools/Schools"))
 const Trips = lazy(() => import("./components/trips/Trips"))
-const Shops = lazy(() => import("./components/shops/Shops"))
+// const Shops = lazy(() => import("./components/shops/Shops"))
 const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competitions/ShowsAndCompetitions"))
 const OurProducts = lazy(() => import("./components/our_products/OurProducts"))
 const ThankYou = lazy(() => import("./components/payment/ThankYou"))
@@ -243,7 +243,7 @@ function App() {
         }
       />
 
-      <Route path="/shops"
+      {/* <Route path="/shops"
         element={
           <Suspense fallback={<Loading message="Loading shops..." />}>
             <Layout>
@@ -251,7 +251,7 @@ function App() {
             </Layout>
           </Suspense>
         }
-      />
+      /> */}
 
       <Route path="/shows-and-competitions"
         element={

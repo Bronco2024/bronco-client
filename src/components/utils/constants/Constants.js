@@ -25,14 +25,14 @@ export const CATEGORIES = [
 export const EXTENDED_CATEGORIES = [
     ...CATEGORIES,
     { path: '/boarding', label: 'פנסיון' },
+    { path: '/veterinarians', label: 'וטרינרים' },
     { path: '/exhibitors', label: 'מציגים' },
     { path: '/breeders', label: 'מפרזילים' },
     { path: '/schools', label: 'בתי ספר' },
-    { path: '/veterinarians', label: 'וטרינרים' },
     { path: '/trips', label: 'טיולים' },
-    { path: '/shops', label: 'חנויות' },
+    // { path: '/shops', label: 'חנויות' },
     { path: '/shows-and-competitions', label: 'תצוגות ותחריות' },
-    { path: '/our-products', label: 'מוצרים שלנו' },
+    { path: '/our-products', label: 'חנות' },
 ]
 
 export const SEEDS_TYPES = [
@@ -108,8 +108,8 @@ export const CARDS = [
         text: "הישאר מעודכן על תחרויות סוסים ואירועים קרובים. הצג את כישוריך או תמוך במועדפים שלך"
     },
     {
-        title: "חניות וציוד",
-        text: "גלו חנויות רפואה ואביזרים לרכיבה, ציוד סוסים וכל דבר אחר — הכל במקום אחד"
+        title: "חנויות וציוד",
+        text: "גלו חנויות ואביזרים לרכיבה, ציוד סוסים וכל דבר אחר — הכל במקום אחד"
     },
     {
         title: "וטרינרים וסיוע רפואי",
@@ -168,7 +168,7 @@ export const ABOUTUS_FEATURES = [
         icon: require('@/assets/aboutus/competition.png')
     },
     {
-        title: "מוצרים שלנו",
+        title: "חנות",
         subtitle: "קו מוצרים ייחודי ואיכותי מבית Bronco",
         icon: require('@/assets/aboutus/products.png')
     }

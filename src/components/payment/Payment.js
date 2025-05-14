@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { faCreditCard } from '@fortawesome/free-solid-svg-icons';
 import { db } from '@/firebase';
 import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
-import { useAuth } from '@components/context/AuthProvider';
+import { useAuth } from '@/context/AuthProvider';
 import Modal from '@components/utils/modal/Modal';
 import axios from 'axios';
 
