@@ -80,7 +80,7 @@ export const DISTRICT_NAMES = {
     south: "דרום"
 };
 
-export const ADS_PER_PAGE = 5;
+export const ADS_PER_PAGE = 25;
 
 export const CARDS = [
     {

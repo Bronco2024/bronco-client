@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
 import './OurProducts.css'
-//import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
+import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem, removeItem, increaseQuantity, decreaseQuantity } from "@/redux/cartSlice";
@@ -33,7 +33,7 @@ const OurProducts = () => {
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart.items);
     const { currentUser } = useAuth();
-    const [ADS_PER_PAGE, setAdsPerPage] = useState(3);
+    //const [ADS_PER_PAGE, setAdsPerPage] = useState(3);
 
     const categoryFilter = "חנות";
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
@@ -145,7 +145,7 @@ const OurProducts = () => {
         <div className="products-container">
             <h1 className="products-title">חנות</h1>
 
-            <div className="ads-per-page-selector">
+            {/* <div className="ads-per-page-selector">
                 <label htmlFor="adsPerPage">מודעות לעמוד:</label>
                 <select
                     id="adsPerPage"
@@ -161,7 +161,7 @@ const OurProducts = () => {
                     <option value={9}>9</option>
                     <option value={12}>12</option>
                 </select>
-            </div>
+            </div> */}
 
 
             <div className="ads-products-wrapper">
