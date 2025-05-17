@@ -1,14 +1,14 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeItem, clearCart } from '@/redux/cartSlice';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCreditCard } from '@fortawesome/free-solid-svg-icons';
 import { db } from '@/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from "@/context/AuthProvider";
 import './Cart.css';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
+  const navigate = useNavigate();
   const { items, totalQuantity, totalPrice } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const { currentUser } = useAuth();
@@ -38,7 +38,7 @@ const Cart = () => {
   };
 
   const handleSubmitCart = () => {
-    //server call to payment api
+    navigate('/cart/payment-form', { state: { items: items, totalQuantity: totalQuantity, totalPrice: totalPrice } })
   }
 
   return (
@@ -88,12 +88,14 @@ const Cart = () => {
         </>
       )}
 
-      <div className="button-container">
-        <button className="pay-button" type='submit' onClick={handleSubmitCart}>
-          <FontAwesomeIcon icon={faCreditCard} style={{ marginLeft: "8px" }} />
-          תשלום
-        </button>
-      </div>
+      {items.length > 0 && (
+        <div className="button-container">
+          <button className="pay-button" type='submit' onClick={handleSubmitCart}>
+            המשך
+          </button>
+        </div>
+      )}
+
     </div>
   );
 };

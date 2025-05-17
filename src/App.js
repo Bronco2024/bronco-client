@@ -34,9 +34,13 @@ const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competiti
 const OurProducts = lazy(() => import("./components/our_products/OurProducts"))
 const ThankYou = lazy(() => import("./components/payment/ThankYou"))
 const Cart = lazy(() => import("./components/cart/Cart"));
+const PaymentForm = lazy(() => import("./components/cart/PaymentForm"));
 const AboutUs = lazy(() => import("./components/layout/footer/about-links/aboutus/AboutUs"));
 const Regulations = lazy(() => import("./components/layout/footer/about-links/Regulations"));
 const PrivacyPolicy = lazy(() => import("./components/layout/footer/about-links/PrivacyPolicy"));
+const MyPurchases = lazy(() => import("./components/my_purchases/MyPurchases"))
+const PurchaseDetails = lazy(() => import("./components/my_purchases/PurchaseDetails"))
+const AllPurchases = lazy(() => import("./components/admin/AllPurchases"))
 
 const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
 
@@ -285,6 +289,18 @@ function App() {
         }
       />
 
+      <Route path="/cart/payment-form"
+        element={
+          <Suspense fallback={<Loading message="Loading payment form..." />}>
+            <ProtectedRoute>
+              <Layout>
+                <PaymentForm />
+              </Layout>
+            </ProtectedRoute>
+          </Suspense>
+        }
+      />
+
       <Route path="/profile/update_ad"
         element={
           <Suspense fallback={<Loading message="Loading Update ad page..." />}>
@@ -303,6 +319,18 @@ function App() {
             <ProtectedRoute adminOnly>
               <Layout>
                 <Admin />
+              </Layout>
+            </ProtectedRoute>
+          </Suspense>
+        }
+      />
+
+      <Route path="/admin/all-purchases"
+        element={
+          <Suspense fallback={<Loading message="Loading all purchases page..." />}>
+            <ProtectedRoute adminOnly>
+              <Layout>
+                <AllPurchases />
               </Layout>
             </ProtectedRoute>
           </Suspense>
@@ -341,6 +369,26 @@ function App() {
         }
       />
 
+      <Route path="/my-purchases"
+        element={
+          <Suspense fallback={<Loading message="Loading my-purchases page..." />}>
+            <Layout>
+              <MyPurchases />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route path="/purchase/:id"
+        element={
+          <Suspense fallback={<Loading message="Loading purchase details page..." />}>
+            <Layout>
+              <PurchaseDetails />
+            </Layout>
+          </Suspense>
+        }
+      />
+
       <Route path="/privacy-policy"
         element={
           <Suspense fallback={<Loading message="Loading Privacy Policy..." />}>
@@ -350,7 +398,6 @@ function App() {
           </Suspense>
         }
       />
-
 
       <Route
         path="*"

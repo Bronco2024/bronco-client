@@ -1,7 +1,7 @@
 import './Header.css';
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser, faGear, faCartShopping } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser, faGear, faCartShopping, faReceipt } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { EXTENDED_CATEGORIES } from '@components/utils/constants/Constants';
@@ -88,14 +88,34 @@ const Header = () => {
 
                                 </button>
 
-                                <button className='dropdown-item' onClick={() => {
-                                    toggleProfileDropdown()
-                                    navigate('/cart')
-                                }}>
-                                    עגלה
-                                    <FontAwesomeIcon icon={faCartShopping} style={{ marginLeft: '8px' }} />
+                                {!currentUser?.isAdmin && (
+                                    <>
+                                        <button className='dropdown-item' onClick={() => {
+                                            toggleProfileDropdown()
+                                            navigate('/cart')
+                                        }}>
+                                            עגלה
+                                            <FontAwesomeIcon icon={faCartShopping} style={{ marginLeft: '8px' }} />
+                                        </button>
+                                        <button className='dropdown-item' onClick={() => {
+                                            toggleProfileDropdown()
+                                            navigate('/my-purchases')
+                                        }}>
+                                            רכישות
+                                            <FontAwesomeIcon icon={faReceipt} style={{ marginLeft: '8px' }} />
+                                        </button>
+                                    </>
+                                )}
 
-                                </button>
+                                {currentUser?.isAdmin && (
+                                    <button className='dropdown-item' onClick={() => {
+                                        toggleProfileDropdown()
+                                        navigate('/admin/all-purchases')
+                                    }}>
+                                        ניהול רכישות
+                                        <FontAwesomeIcon icon={faReceipt} style={{ marginLeft: '8px' }} />
+                                    </button>
+                                )}
 
                                 <button className='dropdown-item' onClick={handleLogout}>
                                     התנתק

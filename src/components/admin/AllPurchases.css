@@ -1,0 +1,59 @@
+/* AllPurchases.css */
+
+.all-purchases-page {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    direction: rtl;
+}
+
+.all-purchases-page h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 2rem;
+    margin-bottom: 24px;
+    justify-content: center;
+}
+
+.all-purchase-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.all-purchase-item {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 1.1rem;
+}
+
+.all-purchase-item:hover {
+    background-color: #f9f9f9;
+}
+
+@media (max-width: 600px) {
+    .all-purchase-item {
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 1rem;
+        padding: 14px 16px;
+    }
+
+    .all-purchases-page h2 {
+        font-size: 1.5rem;
+    }
+}

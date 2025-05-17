@@ -1,0 +1,229 @@
+/* ===== MyPurchases styles ===== */
+
+.purchases-page {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    direction: rtl;
+}
+
+.purchases-page h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 2rem;
+    margin-bottom: 24px;
+    justify-content: center;
+}
+
+.purchase-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.purchase-item {  border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 12px;
+    font-size: 1.1rem;
+}
+
+.purchase-item div {
+    flex: 1 1 30%;
+    min-width: 140px;
+}
+
+.purchase-item:hover {
+    background-color: #f0f8ff;
+}
+
+/* ===== PurchaseDetails styles ===== */
+
+.purchase-details {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    direction: rtl;
+    margin-bottom: 80px;
+}
+
+.purchase-details h2 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.purchase-details p {
+    font-size: 1.2rem;
+    margin: 6px 0;
+    text-align: center;
+}
+
+.purchase-details h3 {
+    margin-top: 30px;
+    font-size: 1.6rem;
+    border-bottom: 2px solid #0077cc;
+    padding-bottom: 8px;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+.purchase-details select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-right: 8px;
+}
+
+.purchase-details select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+}
+
+/* Item card grid */
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.item-card {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+
+.item-image {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.item-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 5px;
+}
+
+.item-title {
+    font-weight: bold;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 600px) {
+    .purchases-page,
+    .purchase-details {
+      overflow-x: hidden;
+      max-width: 100vw;
+      box-sizing: border-box;
+      padding: 10px;
+    }
+  
+    .purchases-page h2,
+    .purchase-details h2,
+    .purchase-details h3,
+    .purchase-details p {
+      font-size: 1.2rem;
+      text-align: center;
+      word-break: break-word;
+    }
+  
+    .purchase-item {
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  
+    .purchase-item div {
+      flex: 1 1 100%;
+      min-width: auto;
+      word-break: break-word;
+    }
+  
+    .purchase-details ul {
+      padding: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  
+    .purchase-details ul li {
+      font-size: 1rem;
+      padding: 10px;
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+  
+    .item-image {
+      height: 160px;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  
+    .items-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+  
+    .item-card {
+      padding: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  
+    .item-info {
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .item-image {
+        width: 100%;        
+        max-width: 100%;    
+        height: 160px;      
+        object-fit: contain;
+        border-radius: 8px;
+        margin-bottom: 8px; 
+        display: block;     
+      }
+  }
+  
