@@ -10,6 +10,7 @@ import { FormatDateTimestampToDate } from '@components/utils/constants/Functions
 const ItemPage = () => {
     const location = useLocation();
     const ad = location.state?.ad;
+    const items = [];
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -19,9 +20,45 @@ const ItemPage = () => {
         return <div>Loading...</div>;
     }
 
-    const items = ad.photos && ad.photos.length > 0 ? ad.photos?.map((photo, index) => (
-        <img key={index} src={photo} alt={`Ad ${index + 1}`} style={{ width: '100%', height: '600px', objectFit: 'contain' }} />
-    )) : [<img src={require("@/assets/no-image.jpg")} alt="empty" style={{ width: '100%', height: '600px', objectFit: 'contain' }} />];
+    // const items = ad.photos && ad.photos.length > 0 ? ad.photos?.map((photo, index) => (
+    //     <img key={index} src={photo} alt={`Ad ${index + 1}`} style={{ width: '100%', height: '600px', objectFit: 'contain' }} />
+    // )) : [<img src={require("@/assets/no-image.jpg")} alt="empty" style={{ width: '100%', height: '600px', objectFit: 'contain' }} />];
+
+    if (ad.video) {
+        items.push(
+            <video
+                key="video"
+                controls
+                style={{ width: '100%', height: '600px', objectFit: 'contain' }}
+            >
+                <source src={ad.video} type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+        );
+    }
+
+    if (ad.photos && ad.photos.length > 0) {
+        ad.photos.forEach((photo, index) => {
+            items.push(
+                <img
+                    key={`photo-${index}`}
+                    src={photo}
+                    alt={`Ad ${index + 1}`}
+                    style={{ width: '100%', height: '600px', objectFit: 'contain' }}
+                />
+            );
+        });
+    }
+
+    if (items.length === 0) {
+        items.push(
+            <img
+                src={require("@/assets/no-image.jpg")}
+                alt="empty"
+                style={{ width: '100%', height: '600px', objectFit: 'contain' }}
+            />
+        );
+    }
 
     return (
         <div className="item-detail-container">

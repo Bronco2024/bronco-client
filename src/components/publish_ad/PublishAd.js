@@ -23,6 +23,7 @@ const PublishAd = () => {
         location: '',
         district: '',
         photos: [],
+        video: null
     });
 
     const handleChange = (e) => {
@@ -62,11 +63,19 @@ const PublishAd = () => {
                 })
             );
 
+            let videoURL = null;
+            if (formData.video) {
+                const videoRef = ref(storage, `ads/${adId}/video.mp4`);
+                await uploadBytes(videoRef, formData.video);
+                videoURL = await getDownloadURL(videoRef);
+            }
+
             date.setMonth(date.getMonth() + 1);
 
             await setDoc(doc(db, "ads", adId), {
                 ...formData,
                 photos: photoURLs,
+                video: videoURL || null,
                 userId: currentUser.uid,
                 createdAt: new Date(),
                 availableUntil: date
@@ -87,6 +96,7 @@ const PublishAd = () => {
                 phoneNumber: '',
                 location: '',
                 photos: [],
+                video: null
             });
 
             setShowModal(true);
@@ -379,6 +389,17 @@ const PublishAd = () => {
                         </div>
                     )
                 }
+
+                {(formData.category === "סוסים") && (
+                    <div className='publish-ad-form'>
+                        <label htmlFor="video">סרטון</label>
+                        <input
+                            type="file"
+                            accept="video/*"
+                            onChange={(e) => setFormData({ ...formData, video: e.target.files[0] })}
+                        />
+                    </div>
+                )}
 
                 <label htmlFor="photos">תמונות</label>
                 <input
