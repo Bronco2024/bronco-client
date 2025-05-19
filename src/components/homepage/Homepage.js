@@ -77,7 +77,7 @@ const HomePage = () => {
         const filteredSponsors = sponsors.filter(item => item.sponsor === type);
         const imageFit = {
             width: "100%",
-            height: type === "gold" ? "200px" : "100%"
+            height: type === "gold" ? '250px' : "100%"
         };
 
         return filteredSponsors.map(item => (
@@ -86,7 +86,7 @@ const HomePage = () => {
                     key={item.id}
                     src={item.photo}
                     alt="sponsor"
-                    style={{ width: imageFit.width, height: imageFit.height, objectFit: 'cover' }}
+                    style={{ width: imageFit.width, height: imageFit.height, objectFit: 'fill' }}
                     loading='lazy'
                 />
             </a>
@@ -96,6 +96,7 @@ const HomePage = () => {
     const handleClickOnItem = (ad) => {
         navigate('/item', { state: { ad } })
     }
+    const text = "🔥 הירשם עכשיו וקבל פרסום ראשון במתנה 🔥";
 
     return (
         <div className="carousel-container">
@@ -107,7 +108,15 @@ const HomePage = () => {
                     loading='lazy'
                 />
             </div>
-            <hr className="divider" />
+
+            <div className="marquee-wrapper">
+                <div className="marquee" onClick={()=>{
+                    navigate('/register')
+                }}>
+                    <span>{text}</span>
+                    <span>{text}</span>
+                </div>
+            </div>
 
             <div className='outer-sponsor-container'>
                 <div className='outer-sponsor-wrapper gold-sponsor'>
