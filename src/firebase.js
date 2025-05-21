@@ -29,3 +29,29 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 export { app, auth, db, storage};
+
+
+/**
+ * firebase storage rules
+ * 
+ * rules_version = '2';
+
+        service firebase.storage {
+        match /b/{bucket}/o {
+            match /sponsors {
+            allow read: if true;
+            allow write: if firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
+            }
+            
+            match /{adsCollection} {
+            allow read: if true;
+            allow write: if request.auth != null && 
+                    adsCollection.matches("^ads-.*") &&
+                    firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.numberOfAds > 0;
+            }
+            
+        }
+        }
+ * 
+ * 
+ */
