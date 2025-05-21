@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import Modal from '@components/utils/modal/Modal';
-import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES, ADS_PATH_MAP } from "@components/utils/constants/Constants";
 
 const PublishAd = () => {
     const navigate = useNavigate();
@@ -54,10 +54,11 @@ const PublishAd = () => {
         try {
             const date = new Date();
             const adId = uuidv4();
+            const adPath = ADS_PATH_MAP.get(formData.category);
 
             const photoURLs = await Promise.all(
                 formData.photos.map(async (photo) => {
-                    const photoRef = ref(storage, `ads/${adId}/${uuidv4()}`);
+                    const photoRef = ref(storage, `${adPath}/${adId}/${uuidv4()}`);
                     await uploadBytes(photoRef, photo);
                     return await getDownloadURL(photoRef);
                 })
@@ -65,14 +66,14 @@ const PublishAd = () => {
 
             let videoURL = null;
             if (formData.video) {
-                const videoRef = ref(storage, `ads/${adId}/video.mp4`);
+                const videoRef = ref(storage, `${adPath}/${adId}/video.mp4`);
                 await uploadBytes(videoRef, formData.video);
                 videoURL = await getDownloadURL(videoRef);
             }
 
             date.setMonth(date.getMonth() + 1);
 
-            await setDoc(doc(db, "ads", adId), {
+            await setDoc(doc(db, adPath, adId), {
                 ...formData,
                 photos: photoURLs,
                 video: videoURL || null,

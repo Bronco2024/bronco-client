@@ -173,3 +173,17 @@ export const ABOUTUS_FEATURES = [
         icon: require('@/assets/aboutus/products.png')
     }
 ];
+
+export const ADS_PATH_MAP = new Map([
+    ["סוסים", "ads-horses"],
+    ["זרע", "ads-seeds"],
+    ["אביזרים", "ads-accessories"],
+    ["פנסיון", "ads-boarding"],
+    ["וטרינרים", "ads-veterinarians"],
+    ["מציגים", "ads-exhibitors"],
+    ["מפרזילים", "ads-breeders"],
+    ["בתי ספר", "ads-schools"],
+    ["טיולים", "ads-trips"],
+    ["תצוגות ותחריות", "ads-shows-and-competitions"],
+    ["חנות", "ads-shop"]
+])

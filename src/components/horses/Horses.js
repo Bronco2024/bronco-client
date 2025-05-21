@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
 import './Horses.css'
-import { BREEDS, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { BREEDS, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES, ADS_PATH_MAP } from "@components/utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 
 const Horses = () => {
@@ -37,12 +37,13 @@ const Horses = () => {
     });
 
     const categoryFilter = "סוסים";
+    const adPath = ADS_PATH_MAP.get(categoryFilter);
 
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
 
 
     const getTotalCount = useCallback(async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter)
@@ -50,10 +51,10 @@ const Horses = () => {
 
         const aggregateQuerySnapshot = await getCountFromServer(q);
         setTotalAds(aggregateQuerySnapshot.data().count);
-    }, [categoryFilter]);
+    }, [categoryFilter, adPath]);
 
     const fetchAds = useCallback(async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter),
@@ -65,7 +66,7 @@ const Horses = () => {
         const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
-    }, [categoryFilter]);
+    }, [categoryFilter, adPath]);
 
     useEffect(() => {
         fetchAds();
@@ -73,7 +74,7 @@ const Horses = () => {
     }, [fetchAds, getTotalCount]);
 
     const handleNextPage = async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter),
@@ -91,7 +92,7 @@ const Horses = () => {
     };
 
     const handlePrevPage = async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter),
@@ -131,7 +132,7 @@ const Horses = () => {
         let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no"? false:"";
         setPage(1);
         
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const filterQueries = [
             where("category", "==", categoryFilter),
             ...(filters.gender ? [where("gender", "==", filters.gender)] : []),
