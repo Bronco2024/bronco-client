@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
 import './Seeds.css'
-import { SEEDS_TYPES, SEMEN_TYPES, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { SEEDS_TYPES, SEMEN_TYPES, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES, ADS_PATH_MAP } from "@components/utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 
 const Seeds = () => {
@@ -35,11 +35,12 @@ const Seeds = () => {
     });
 
     const categoryFilter = "זרע";
+    const adPath = ADS_PATH_MAP.get(categoryFilter);
 
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
 
     const getTotalCount = useCallback(async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter)
@@ -47,10 +48,10 @@ const Seeds = () => {
 
         const aggregateQuerySnapshot = await getCountFromServer(q);
         setTotalAds(aggregateQuerySnapshot.data().count);
-    }, [categoryFilter]);
+    }, [categoryFilter, adPath]);
 
     const fetchAds = useCallback(async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter),
@@ -62,7 +63,7 @@ const Seeds = () => {
         const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
-    }, [categoryFilter]);
+    }, [categoryFilter, adPath]);
 
     useEffect(() => {
         fetchAds();
@@ -70,7 +71,7 @@ const Seeds = () => {
     }, [fetchAds, getTotalCount]);
 
     const handleNextPage = async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter),
@@ -88,7 +89,7 @@ const Seeds = () => {
     };
 
     const handlePrevPage = async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter),
@@ -128,7 +129,7 @@ const Seeds = () => {
 
         let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no" ? false : "";
 
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const filterQueries = [
             where("category", "==", categoryFilter),
             ...(filters.minPrice ? [where("price", ">=", parseFloat(filters.minPrice))] : []),
@@ -159,6 +160,18 @@ const Seeds = () => {
         }
     };
 
+    const resetFilters = () => {
+        setFilters({
+            minPrice: "",
+            maxPrice: "",
+            seed_type: "",
+            semen_type: "",
+            hasCertificate: "",
+            district: "",
+            location: ""
+        });
+    }
+
     const handleClickOnItem = (ad) => {
         navigate('/item', { state: { ad } })
     }
@@ -167,7 +180,7 @@ const Seeds = () => {
         <div className="seeds-container">
             <h1 className="seeds-title">זרעים</h1>
 
-            <div className="filters-box">
+            <div className="seeds-filters-box">
                 <select
                     name="seed_type"
                     value={filters.seed_type}
@@ -244,7 +257,9 @@ const Seeds = () => {
                     value={filters.maxPrice}
                     onChange={handleFilterChange}
                 />
-                <button onClick={applyFilters}>חפש</button>
+
+                <button className="apply-filters" onClick={applyFilters}>חפש</button>
+                <button className="reset-filters" onClick={resetFilters}>איפוס</button>
             </div>
 
             <div className="ads-seeds-wrapper">
