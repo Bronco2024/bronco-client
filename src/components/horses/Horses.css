@@ -121,20 +121,30 @@
     font-size: 1rem;
 }
 
-.filters-box button {
+.filters-box {
     padding: 10px 15px;
-    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
-}
 
-.filters-box button:hover {
-    background-color: #45a049;
-}
+    .apply-filters {
+        background-color: #4CAF50;
+    }
 
+    .apply-filters:hover {
+        background-color: #45a049;
+    }
+
+    .reset-filters {
+        background-color: #ff6b6b;
+    }
+
+    .reset-filters:hover {
+        background-color: #e63946;
+    }
+}
 
 .pagination {
     display: flex;

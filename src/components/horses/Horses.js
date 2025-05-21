@@ -129,9 +129,9 @@ const Horses = () => {
             return;
         }
 
-        let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no"? false:"";
+        let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no" ? false : "";
         setPage(1);
-        
+
         const collectionRef = collection(db, adPath);
         const filterQueries = [
             where("category", "==", categoryFilter),
@@ -163,6 +163,19 @@ const Horses = () => {
             setBeforeThis(null);
         }
     };
+
+    const resetFilters = () => {
+        setFilters({
+            gender: "",
+            minPrice: "",
+            maxPrice: "",
+            hasCertificate: "",
+            age: "",
+            breed: "",
+            district: "",
+            location: ""
+        });
+    }
 
     const handleClickOnItem = (ad) => {
         navigate('/item', { state: { ad } })
@@ -251,7 +264,8 @@ const Horses = () => {
                     onChange={handleFilterChange}
                 />
 
-                <button onClick={applyFilters}>חפש</button>
+                <button className="apply-filters" onClick={applyFilters}>חפש</button>
+                <button className="reset-filters" onClick={resetFilters}>איפוס</button>
             </div>
 
             <div className="ads-horses-wrapper">
