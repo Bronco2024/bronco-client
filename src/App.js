@@ -112,7 +112,7 @@ function App() {
       <Route path="/publish_ad"
         element={
           <Suspense fallback={<Loading message="Loading Publish Ad..." />}>
-            <ProtectedRoute>
+            <ProtectedRoute condition={(user) => user.numberOfAds > 0}>
               <Layout>
                 <PublishAd />
               </Layout>
@@ -372,9 +372,11 @@ function App() {
       <Route path="/my-purchases"
         element={
           <Suspense fallback={<Loading message="Loading my-purchases page..." />}>
-            <Layout>
-              <MyPurchases />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <MyPurchases />
+              </Layout>
+            </ProtectedRoute>
           </Suspense>
         }
       />
@@ -382,9 +384,11 @@ function App() {
       <Route path="/purchase/:id"
         element={
           <Suspense fallback={<Loading message="Loading purchase details page..." />}>
-            <Layout>
-              <PurchaseDetails />
-            </Layout>
+            <ProtectedRoute>
+              <Layout>
+                <PurchaseDetails />
+              </Layout>
+            </ProtectedRoute>
           </Suspense>
         }
       />

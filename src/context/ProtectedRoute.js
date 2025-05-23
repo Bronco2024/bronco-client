@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider'; 
 
-const ProtectedRoute = ({ children, adminOnly }) => {
+const ProtectedRoute = ({ children, adminOnly, condition }) => {
     const { currentUser, loading } = useAuth();
 
     if (loading) {
@@ -15,6 +15,10 @@ const ProtectedRoute = ({ children, adminOnly }) => {
 
     if (adminOnly && !currentUser.isAdmin) {
         return <Navigate to="/" replace />;
+    }
+
+    if (condition && !condition(currentUser)) {
+        return <Navigate to="/subscribe" replace />;
     }
 
     return children;

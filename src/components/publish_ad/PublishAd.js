@@ -54,11 +54,14 @@ const PublishAd = () => {
         try {
             const date = new Date();
             const adId = uuidv4();
+            const metadata = {
+                adId: adId
+            };
 
             const photoURLs = await Promise.all(
                 formData.photos.map(async (photo) => {
                     const photoRef = ref(storage, `ads/${adId}/${uuidv4()}`);
-                    await uploadBytes(photoRef, photo);
+                    await uploadBytes(photoRef, photo, metadata);
                     return await getDownloadURL(photoRef);
                 })
             );
@@ -66,7 +69,7 @@ const PublishAd = () => {
             let videoURL = null;
             if (formData.video) {
                 const videoRef = ref(storage, `ads/${adId}/video.mp4`);
-                await uploadBytes(videoRef, formData.video);
+                await uploadBytes(videoRef, formData.video, metadata);
                 videoURL = await getDownloadURL(videoRef);
             }
 
