@@ -73,7 +73,7 @@
     animation: marquee-scroll 5s linear infinite;
 }
 
-.marquee:hover{
+.marquee:hover {
     cursor: pointer;
 }
 
@@ -90,6 +90,23 @@
     0% {
         transform: translateX(3%);
     }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@media (max-width: 768px) {
+    .marquee {
+        animation: marquee-scroll-mobile 5s linear infinite;
+    }
+}
+
+@keyframes marquee-scroll-mobile {
+    0% {
+        transform: translateX(7%);
+    }
+
     100% {
         transform: translateX(-100%);
     }
