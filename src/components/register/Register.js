@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { auth, db } from '@/firebase';
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { auth } from '@/firebase';
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import Modal from '@components/utils/modal/Modal';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -16,6 +16,7 @@ const Register = () => {
     const [showVerifyPassword, setShowVerifyPassword] = useState(false);
     const [error, setError] = useState('');
     const [agreed, setAgreed] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     const handleLoginRedirect = () => {
         navigate('/login');
@@ -31,16 +32,20 @@ const Register = () => {
 
         if (password === verifyPassword) {
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                await setDoc(doc(db, "users", user.uid), {
-                    email: user.email,
-                    subscribedUntil: null,
-                    numberOfAds: 1
+                await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+                    const user = userCredential.user;
+                    sendEmailVerification(user).then(() => {
+                        setShowModal(true);
+                    })
                 })
 
-                navigate('/');
+                // await setDoc(doc(db, "users", user.uid), {
+                //     email: user.email,
+                //     subscribedUntil: null,
+                //     numberOfAds: 1
+                // })
+
+                // navigate('/');
             } catch (error) {
                 const errorCode = error.code;
                 if (errorCode === "auth/email-already-in-use") {
@@ -53,6 +58,11 @@ const Register = () => {
         } else {
             setError("סיסמאות לא זהות");
         }
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        navigate('/login');
     };
 
     return (
@@ -118,7 +128,7 @@ const Register = () => {
                             rel="noopener noreferrer"
                             style={{ color: 'blue', textDecoration: 'underline' }}
                         >
-                        תנאי הימוש
+                            תנאי הימוש
                         </a>
                         {' '}ואני מסכים{' '}
                     </label>
@@ -132,6 +142,15 @@ const Register = () => {
             <p className="register-text">
                 כבר יש לך חשבון? <span onClick={handleLoginRedirect} className="login-link">התחברות</span>
             </p>
+
+            <Modal isVisible={showModal} title="מודעה פורסמה" onClose={closeModal}>
+                <div className="modal-content-custom-register">
+                    <p>מייל נשלח אליך לצורך אימות</p>
+                    <div className="modal-buttons-custom-register">
+                        <button className="close-button-register" onClick={closeModal}>סגור</button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };

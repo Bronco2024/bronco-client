@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '@/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { clearCart, loadCart } from '@/redux/cartSlice';
 import { useDispatch } from 'react-redux';
 
@@ -33,7 +33,11 @@ export const AuthProvider = ({ children }) => {
 
                     dispatch(loadCart(cart));
                 } else {
-                    setCurrentUser({ uid: user.uid });
+                    await setDoc(doc(db, "users", user.uid), {
+                        email: user.email,
+                        subscribedUntil: null,
+                        numberOfAds: 1
+                    });
                 }
             } else {
                 setCurrentUser(null);

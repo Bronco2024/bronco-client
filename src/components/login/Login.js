@@ -4,7 +4,7 @@ import './Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '@/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -27,6 +27,13 @@ const Login = () => {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
+
+            if (!auth.currentUser.emailVerified) {
+                await signOut(auth); // Sign the user out immediately
+                setError("נא לאמת את כתובת האימייל שלך לפני ההתחברות");
+                return;
+            }
+
             navigate('/');
         } catch (error) {
             const errorCode = error.code;
