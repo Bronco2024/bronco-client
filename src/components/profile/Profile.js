@@ -135,6 +135,8 @@ const Profile = () => {
         <div className="profile-container">
             <h1>ברוך הבא לאזור האישי</h1>
 
+            <p style={{direction: 'rtl'}}>מייל: <b>{currentUser.email}</b></p>
+
             <p>מספר מודעות שנותרו לך: {numberOfAds(currentUser)}</p>
 
             {currentUser?.numberOfAds > 10000 && (

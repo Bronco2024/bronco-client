@@ -140,7 +140,7 @@ const UpdateAd = () => {
                     (formData.category !== "סוסים") &&
                     (formData.category !== "זרע") &&
                     (formData.category !== "אביזרים")) && (
-                        <div className='publish-ad-form'>
+                        <div className='update-ad-form'>
                             <label htmlFor="title">כותרת</label>
                             <input
                                 id="title"

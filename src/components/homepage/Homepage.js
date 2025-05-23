@@ -110,7 +110,7 @@ const HomePage = () => {
             </div>
 
             <div className="marquee-wrapper">
-                <div className="marquee" onClick={()=>{
+                <div className="marquee" onClick={() => {
                     navigate('/register')
                 }}>
                     <span>{text}</span>
@@ -173,6 +173,12 @@ const HomePage = () => {
                                         <p className="ad-price-homepage">₪{ad.price}</p>
                                     )}
                                     <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+
+                                    {ad.hasCertificate && (
+                                        <span className="homepage-verified-badge">
+                                            <img src={require('@/assets/bitcoin-icons--verify-outline.png')} alt="Verified Badge" />
+                                        </span>
+                                    )}
                                 </div>
                             ))}
                         </div>
