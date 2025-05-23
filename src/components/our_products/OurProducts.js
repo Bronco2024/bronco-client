@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
 import './OurProducts.css'
-import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
+import { ADS_PER_PAGE, ADS_PATH_MAP } from "@components/utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem, removeItem, increaseQuantity, decreaseQuantity } from "@/redux/cartSlice";
@@ -36,10 +36,11 @@ const OurProducts = () => {
     //const [ADS_PER_PAGE, setAdsPerPage] = useState(3);
 
     const categoryFilter = "חנות";
+    const adPath = ADS_PATH_MAP.get(categoryFilter);
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
 
     const getTotalCount = useCallback(async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter)
@@ -50,7 +51,7 @@ const OurProducts = () => {
     }, [categoryFilter]);
 
     const fetchAds = useCallback(async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter),
@@ -70,7 +71,7 @@ const OurProducts = () => {
     }, [fetchAds, getTotalCount, ADS_PER_PAGE]);
 
     const handleNextPage = async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter),
@@ -88,7 +89,7 @@ const OurProducts = () => {
     };
 
     const handlePrevPage = async () => {
-        const collectionRef = collection(db, "ads");
+        const collectionRef = collection(db, adPath);
         const q = query(
             collectionRef,
             where("category", "==", categoryFilter),

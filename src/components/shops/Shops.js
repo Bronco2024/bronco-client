@@ -1,3 +1,9 @@
+
+/**
+ * THIS PAGE IS CURRENTLY CLOSED AND UNUSED
+ * 
+ * 
+ */
 import React, { useState, useEffect, useCallback } from "react";
 import {
     collection,
