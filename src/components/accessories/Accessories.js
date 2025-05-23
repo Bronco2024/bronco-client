@@ -260,11 +260,11 @@ const Accessories = () => {
             </div>
 
             <div className="pagination">
-                <button onClick={handlePrevPage} disabled={page === 1}>קודם</button>
-                <span>דף {page}</span>
                 <button onClick={handleNextPage} disabled={page === TOTAL_PAGES || adList.length === 0 || !afterThis}>
                     הבא
                 </button>
+                <span>דף {page}</span>
+                <button onClick={handlePrevPage} disabled={page === 1}>קודם</button>
             </div>
         </div>
     )

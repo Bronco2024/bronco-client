@@ -49,11 +49,11 @@
     justify-content: flex-start;
     flex-direction: row-reverse;
     gap: 20px;
-    
+
 }
 
 .ad-products-card {
-    width: 200px; 
+    width: 200px;
     max-width: 100%;
     padding: 15px;
     border: 1px solid #ddd;
@@ -96,7 +96,7 @@
     text-align: center;
 }
 
-.ad-products-date-create{
+.ad-products-date-create {
     text-align: center;
     font-size: medium;
     color: #7c7c7c;
@@ -140,7 +140,8 @@
     gap: 0.5rem;
     transition: background-color 0.3s ease;
 }
-.delete-btn:hover{
+
+.delete-btn:hover {
     background-color: #db1811;
 }
 
@@ -160,9 +161,9 @@
 /* Quantity Controls */
 .quantity-controls {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
-    gap: 1rem; 
+    gap: 1rem;
 }
 
 .quantity-count {
@@ -174,12 +175,20 @@
 
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
+    .ads-products-wrapper {
+        justify-content: center;
+    }
+
     .ad-products-card {
         width: 70%;
     }
 }
 
 @media (max-width: 768px) {
+    .ads-products-wrapper {
+        justify-content: center;
+    }
+
     .ad-products-card {
         width: 80%;
     }
@@ -190,6 +199,10 @@
 }
 
 @media (max-width: 480px) {
+    .ads-products-wrapper {
+        justify-content: center;
+    }
+
     .ad-products-title {
         font-size: 1em;
     }

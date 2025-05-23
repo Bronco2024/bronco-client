@@ -106,8 +106,10 @@ const ItemPage = () => {
 
             <p style={{ display: 'flex', justifyContent: 'center', alignContent: 'center', fontWeight: 'bold' }}>איש קשר: {ad.contact}</p>
             <div className="item-phone-container">
-                <span>{ad.phoneNumber}</span>
-                <FontAwesomeIcon icon={faPhoneAlt} style={{ marginLeft: '8px' }} />
+                <a href={`tel:${ad.phoneNumber}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <span>{ad.phoneNumber}</span>
+                    <FontAwesomeIcon icon={faPhoneAlt} style={{ marginLeft: '8px' }} />
+                </a>
             </div>
             <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
 

@@ -19,7 +19,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    justify-content: flex-end;
+    justify-content: flex-start;
     flex-direction: row-reverse;
 }
 
@@ -87,7 +87,7 @@
         /* One card per row on mobile */
     }
 
-    .horses-title {
+    .ad-seeds-title {
         font-size: 1.5em;
         /* Smaller title on mobile */
     }
