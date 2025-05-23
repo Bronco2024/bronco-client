@@ -13,9 +13,9 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
-import './Horses.css'
 import { BREEDS, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import './Horses.css'
 
 const Horses = () => {
     const navigate = useNavigate();
@@ -128,9 +128,9 @@ const Horses = () => {
             return;
         }
 
-        let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no"? false:"";
+        let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no" ? false : "";
         setPage(1);
-        
+
         const collectionRef = collection(db, "ads");
         const filterQueries = [
             where("category", "==", categoryFilter),
@@ -163,6 +163,19 @@ const Horses = () => {
         }
     };
 
+    const resetFilters = () => {
+        setFilters({
+            gender: "",
+            minPrice: "",
+            maxPrice: "",
+            hasCertificate: "",
+            age: "",
+            breed: "",
+            district: "",
+            location: ""
+        });
+    }
+
     const handleClickOnItem = (ad) => {
         navigate('/item', { state: { ad } })
     }
@@ -171,7 +184,7 @@ const Horses = () => {
         <div className="horses-container">
             <h1 className="horses-title">סוסים</h1>
 
-            <div className="filters-box">
+            <div className="horses-filters-box">
                 <select
                     id="breed"
                     name="breed"
@@ -250,7 +263,8 @@ const Horses = () => {
                     onChange={handleFilterChange}
                 />
 
-                <button onClick={applyFilters}>חפש</button>
+                <button className="apply-filters" onClick={applyFilters}>חפש</button>
+                <button className="reset-filters" onClick={resetFilters}>איפוס</button>
             </div>
 
             <div className="ads-horses-wrapper">

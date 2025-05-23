@@ -105,7 +105,7 @@
 }
 
 
-.filters-box {
+.seeds-filters-box {
     display: flex;
     flex-wrap: wrap;
     align-self: center;
@@ -119,17 +119,16 @@
     justify-content: flex-start;
 }
 
-.filters-box select,
-.filters-box input {
+.seeds-filters-box select,
+.seeds-filters-box input {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
 }
 
-.filters-box button {
+.seeds-filters-box button {
     padding: 10px 15px;
-    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
@@ -137,8 +136,20 @@
     font-size: 1rem;
 }
 
-.filters-box button:hover {
+.seeds-filters-box .apply-filters {
+    background-color: #4CAF50;
+}
+
+.seeds-filters-box .apply-filters:hover {
     background-color: #45a049;
+}
+
+.seeds-filters-box .reset-filters {
+    background-color: #ff6b6b;
+}
+
+.seeds-filters-box .reset-filters:hover {
+    background-color: #e63946;
 }
 
 

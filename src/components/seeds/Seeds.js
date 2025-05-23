@@ -159,6 +159,18 @@ const Seeds = () => {
         }
     };
 
+    const resetFilters = () => {
+        setFilters({
+            minPrice: "",
+            maxPrice: "",
+            seed_type: "",
+            semen_type: "",
+            hasCertificate: "",
+            district: "",
+            location: ""
+        });
+    }
+
     const handleClickOnItem = (ad) => {
         navigate('/item', { state: { ad } })
     }
@@ -167,7 +179,7 @@ const Seeds = () => {
         <div className="seeds-container">
             <h1 className="seeds-title">זרעים</h1>
 
-            <div className="filters-box">
+            <div className="seeds-filters-box">
                 <select
                     name="seed_type"
                     value={filters.seed_type}
@@ -244,7 +256,9 @@ const Seeds = () => {
                     value={filters.maxPrice}
                     onChange={handleFilterChange}
                 />
-                <button onClick={applyFilters}>חפש</button>
+                
+                <button className="apply-filters" onClick={applyFilters}>חפש</button>
+                <button className="reset-filters" onClick={resetFilters}>איפוס</button>
             </div>
 
             <div className="ads-seeds-wrapper">

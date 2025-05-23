@@ -99,7 +99,7 @@
 }
 
 
-.filters-box {
+.horses-filters-box {
     display: flex;
     flex-wrap: wrap;
     align-self: center;
@@ -113,17 +113,16 @@
     justify-content: flex-start;
 }
 
-.filters-box select,
-.filters-box input {
+.horses-filters-box select,
+.horses-filters-box input {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
 }
 
-.filters-box button {
+.horses-filters-box button{
     padding: 10px 15px;
-    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
@@ -131,10 +130,21 @@
     font-size: 1rem;
 }
 
-.filters-box button:hover {
+.horses-filters-box .apply-filters {
+    background-color: #4CAF50;
+}
+
+.horses-filters-box .apply-filters:hover {
     background-color: #45a049;
 }
 
+.horses-filters-box .reset-filters {
+    background-color: #ff6b6b;
+}
+
+.horses-filters-box .reset-filters:hover {
+    background-color: #e63946;
+}
 
 .pagination {
     display: flex;

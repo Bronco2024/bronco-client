@@ -151,6 +151,16 @@ const Accessories = () => {
         }
     };
 
+    const resetFilters = () => {
+        setFilters({
+            accessory: "",
+            minPrice: "",
+            maxPrice: "",
+            district: "",
+            location: ""
+        });
+    }
+
     const handleClickOnItem = (ad) => {
         navigate('/item', { state: { ad } })
     }
@@ -159,7 +169,7 @@ const Accessories = () => {
         <div className="accessories-container">
             <h1 className="accessories-title">אביזרים</h1>
 
-            <div className="filters-box">
+            <div className="accessories-filters-box">
                 <select
                     id="accessory"
                     name="accessory"
@@ -220,7 +230,8 @@ const Accessories = () => {
                     onChange={handleFilterChange}
                 />
 
-                <button onClick={applyFilters}>חפש</button>
+                <button className="apply-filters" onClick={applyFilters}>חפש</button>
+                <button className="reset-filters" onClick={resetFilters}>איפוס</button>
             </div>
 
             <div className="ads-accessory-wrapper">

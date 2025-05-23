@@ -105,7 +105,7 @@
 }
 
 
-.filters-box {
+.accessories-filters-box {
     display: flex;
     flex-wrap: wrap;
     align-self: center;
@@ -119,17 +119,16 @@
     justify-content: flex-start;
 }
 
-.filters-box select,
-.filters-box input {
+.accessories-filters-box select,
+.accessories-filters-box input {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
 }
 
-.filters-box button {
+.accessories-filters-box button {
     padding: 10px 15px;
-    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
@@ -137,8 +136,20 @@
     font-size: 1rem;
 }
 
-.filters-box button:hover {
+.accessories-filters-box .apply-filters {
+    background-color: #4CAF50;
+}
+
+.accessories-filters-box .apply-filters:hover {
     background-color: #45a049;
+}
+
+.accessories-filters-box .reset-filters {
+    background-color: #ff6b6b;
+}
+
+.accessories-filters-box .reset-filters:hover {
+    background-color: #e63946;
 }
 
 .pagination {
