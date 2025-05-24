@@ -335,8 +335,12 @@ const PublishAd = () => {
                     id="phoneNumber"
                     name="phoneNumber"
                     value={formData.phoneNumber}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                        const numericValue = e.target.value.replace(/\D/g, '');
+                        handleChange({ target: { name: 'phoneNumber', value: numericValue } });
+                    }}
                     required
+                    maxLength={10}
                 />
 
 
@@ -386,7 +390,10 @@ const PublishAd = () => {
                                 id="price"
                                 name="price"
                                 value={formData.price}
-                                onChange={handleChange}
+                                onChange={(e) => {
+                                    const numericValue = e.target.value.replace(/\D/g, '');
+                                    handleChange({ target: { name: 'price', value: numericValue } });
+                                }}
                                 required
                             />
                         </div>

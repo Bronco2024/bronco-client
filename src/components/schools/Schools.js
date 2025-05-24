@@ -16,6 +16,7 @@ import { db } from '@/firebase';
 import './Schools.css'
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import Paganation from "@components/utils/paganation/Paganation";
 
 const Schools = () => {
     const navigate = useNavigate();
@@ -130,13 +131,14 @@ const Schools = () => {
                         )))
                 )}
 
-                <div className="pagination">
-                    <button onClick={handleNextPage} disabled={page === TOTAL_PAGES || adList.length === 0 || !afterThis}>
-                        הבא
-                    </button>
-                    <span>דף {page}</span>
-                    <button onClick={handlePrevPage} disabled={page === 1}>קודם</button>
-                </div>
+                <Paganation
+                    handleNextPage={handleNextPage}
+                    handlePrevPage={handlePrevPage}
+                    page={page}
+                    adList={adList}
+                    afterThis={afterThis}
+                    TOTAL_PAGES={TOTAL_PAGES}
+                />
             </div>
         </div>
     )

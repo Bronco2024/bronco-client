@@ -14,8 +14,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
 import './Accessories.css'
-import { ADS_PER_PAGE, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import AccessoriesFilters from "@components/utils/filters/AccessoriesFilters";
+import Paganation from "@components/utils/paganation/Paganation";
 
 const Accessories = () => {
     const navigate = useNavigate();
@@ -169,70 +171,12 @@ const Accessories = () => {
         <div className="accessories-container">
             <h1 className="accessories-title">אביזרים</h1>
 
-            <div className="accessories-filters-box">
-                <select
-                    id="accessory"
-                    name="accessory"
-                    value={filters.accessory || ""}
-                    onChange={handleFilterChange}
-                    required
-                >
-                    <option value="">בחר סוג מוצר</option>
-                    {ACCESSORIES_TPYES.map((accessory, index) => (
-                        <option key={index} value={accessory}>
-                            {accessory}
-                        </option>
-                    ))}
-                </select>
-
-                <select
-                    name="district"
-                    value={filters.district}
-                    onChange={handleFilterChange}
-                >
-                    <option value="">בחר אזור</option>
-                    {Object.keys(DISTRICTS).map((districtKey) => (
-                        <option key={districtKey} value={districtKey}>
-                            {DISTRICT_NAMES[districtKey]}
-                        </option>
-                    ))}
-                </select>
-
-                {filters.district && (
-                    <>
-                        <select
-                            name="location"
-                            value={filters.location}
-                            onChange={handleFilterChange}
-                        >
-                            <option value="">בחר מיקום</option>
-                            {DISTRICTS[filters.district].map((city, index) => (
-                                <option key={index} value={city}>
-                                    {city}
-                                </option>
-                            ))}
-                        </select>
-                    </>
-                )}
-
-                <input
-                    type="number"
-                    name="minPrice"
-                    placeholder="מחיר מינימלי"
-                    value={filters.minPrice}
-                    onChange={handleFilterChange}
-                />
-                <input
-                    type="number"
-                    name="maxPrice"
-                    placeholder="מחיר מקסימלי"
-                    value={filters.maxPrice}
-                    onChange={handleFilterChange}
-                />
-
-                <button className="apply-filters" onClick={applyFilters}>חפש</button>
-                <button className="reset-filters" onClick={resetFilters}>איפוס</button>
-            </div>
+            <AccessoriesFilters
+                filters={filters}
+                handleFilterChange={handleFilterChange}
+                applyFilters={applyFilters}
+                resetFilters={resetFilters}
+            />
 
             <div className="ads-accessory-wrapper">
                 {adList.length === 0 ? (
@@ -259,13 +203,14 @@ const Accessories = () => {
                 )}
             </div>
 
-            <div className="pagination">
-                <button onClick={handleNextPage} disabled={page === TOTAL_PAGES || adList.length === 0 || !afterThis}>
-                    הבא
-                </button>
-                <span>דף {page}</span>
-                <button onClick={handlePrevPage} disabled={page === 1}>קודם</button>
-            </div>
+            <Paganation
+                handleNextPage={handleNextPage}
+                handlePrevPage={handlePrevPage}
+                page={page}
+                adList={adList}
+                afterThis={afterThis}
+                TOTAL_PAGES={TOTAL_PAGES}
+            />
         </div>
     )
 }

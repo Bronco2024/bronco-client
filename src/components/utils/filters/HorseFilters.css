@@ -1,0 +1,188 @@
+.toggle-filters-btn {
+    width: 100%;
+    font-size: 1.2rem;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 20px;
+    background-color: rgb(238, 238, 238);
+    color: black;
+    margin-bottom: 2%;
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+    .horses-filters-box.desktop-only {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+        border-radius: 16px;
+        background-color: #fff;
+        direction: rtl;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        justify-content: flex-start;
+        align-self: center;
+    }
+
+    .horses-filters-box.desktop-only select,
+    .horses-filters-box.desktop-only input {
+        padding: 10px 14px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        background-color: #fff;
+        transition: all 0.2s ease;
+    }
+
+    .horses-filters-box.desktop-only select:focus,
+    .horses-filters-box.desktop-only input:focus {
+        border-color: #00796b;
+        box-shadow: 0 0 3px rgba(0, 121, 107, 0.3);
+        outline: none;
+    }
+
+    .horses-filters-box.desktop-only button {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .horses-filters-box.desktop-only .apply-filters {
+        background-color: #4CAF50;
+        color: #fff;
+    }
+
+    .horses-filters-box.desktop-only .apply-filters:hover {
+        background-color: #45a049;
+    }
+
+    .horses-filters-box.desktop-only .reset-filters {
+        background-color: #e53935;
+        color: #fff;
+    }
+
+    .horses-filters-box.desktop-only .reset-filters:hover {
+        background-color: #c62828;
+    }
+
+    .horses-filters-box.desktop-only select[name="breed"],
+    .horses-filters-box.desktop-only select[name="gender"],
+    .horses-filters-box.desktop-only select[name="district"],
+    .horses-filters-box.desktop-only select[name="location"],
+    .horses-filters-box.desktop-only select[name="hasCertificate"],
+    .horses-filters-box.desktop-only input[name="age"],
+    .horses-filters-box.desktop-only input[name="minPrice"],
+    .horses-filters-box.desktop-only input[name="maxPrice"] {
+        padding: 4px 8px;
+        min-width: 80px;
+        border-radius: 6px;
+    }
+
+    .horses-filters-box.desktop-only input[name="age"] {
+        min-width: 20px;
+    }
+
+    .desktop-only {
+        display: block;
+    }
+
+    .mobile-only {
+        display: none;
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .horses-filters-box.mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 20px;
+        margin-bottom: 24px;
+        border-radius: 16px;
+        background-color: #fff;
+        direction: rtl;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        justify-content: flex-start;
+    }
+
+    .horses-filters-box.mobile select,
+    .horses-filters-box.mobile input {
+        padding: 10px 14px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        background-color: #fff;
+        transition: all 0.2s ease;
+    }
+
+    .horses-filters-box.mobile select:focus,
+    .horses-filters-box.mobile input:focus {
+        border-color: #00796b;
+        box-shadow: 0 0 3px rgba(0, 121, 107, 0.3);
+        outline: none;
+    }
+
+    .horses-filters-box.mobile button {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .horses-filters-box.mobile .apply-filters {
+        background-color: #4CAF50;
+        color: #fff;
+    }
+
+    .horses-filters-box.mobile .apply-filters:hover {
+        background-color: #45a049;
+    }
+
+    .horses-filters-box.mobile .reset-filters {
+        background-color: #e53935;
+        color: #fff;
+    }
+
+    .horses-filters-box.mobile .reset-filters:hover {
+        background-color: #c62828;
+    }
+
+    .mobile-filter-row {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mobile-final-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: space-between;
+    }
+
+    .mobile-final-row input,
+    .mobile-final-row button {
+        flex: 1;
+        min-width: 80px;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+
+    .mobile-only {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

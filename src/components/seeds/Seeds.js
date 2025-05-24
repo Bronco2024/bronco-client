@@ -14,8 +14,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
 import './Seeds.css'
-import { SEEDS_TYPES, SEMEN_TYPES, ADS_PER_PAGE, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import SeedsFilters from "@components/utils/filters/SeedsFilters";
+import Paganation from "@components/utils/paganation/Paganation";
 
 const Seeds = () => {
     const navigate = useNavigate();
@@ -179,87 +181,12 @@ const Seeds = () => {
         <div className="seeds-container">
             <h1 className="seeds-title">זרעים</h1>
 
-            <div className="seeds-filters-box">
-                <select
-                    name="seed_type"
-                    value={filters.seed_type}
-                    onChange={handleFilterChange}
-                >
-                    <option value="">סוג זרע</option>
-                    {SEEDS_TYPES.map((seed, index) => (
-                        <option key={index} value={seed}>
-                            {seed}
-                        </option>
-                    ))}
-                </select>
-                <select
-                    name="semen_type"
-                    value={filters.semen_type}
-                    onChange={handleFilterChange}
-                >
-                    <option value="">טרי/קפוא</option>
-                    {SEMEN_TYPES.map((semen, index) => (
-                        <option key={index} value={semen}>
-                            {semen}
-                        </option>
-                    ))}
-                </select>
-
-
-                <select name="hasCertificate" value={filters.hasCertificate} onChange={handleFilterChange}>
-                    <option value="">תעודת הרבעה</option>
-                    <option value="yes">כן</option>
-                    <option value="no">לא</option>
-                </select>
-
-                <select
-                    name="district"
-                    value={filters.district}
-                    onChange={handleFilterChange}
-                >
-                    <option value="">בחר אזור</option>
-                    {Object.keys(DISTRICTS).map((districtKey) => (
-                        <option key={districtKey} value={districtKey}>
-                            {DISTRICT_NAMES[districtKey]}
-                        </option>
-                    ))}
-                </select>
-
-                {filters.district && (
-                    <>
-                        <select
-                            name="location"
-                            value={filters.location}
-                            onChange={handleFilterChange}
-                        >
-                            <option value="">בחר מיקום</option>
-                            {DISTRICTS[filters.district].map((city, index) => (
-                                <option key={index} value={city}>
-                                    {city}
-                                </option>
-                            ))}
-                        </select>
-                    </>
-                )}
-
-                <input
-                    type="number"
-                    name="minPrice"
-                    placeholder="מחיר מינימלי"
-                    value={filters.minPrice}
-                    onChange={handleFilterChange}
-                />
-                <input
-                    type="number"
-                    name="maxPrice"
-                    placeholder="מחיר מקסימלי"
-                    value={filters.maxPrice}
-                    onChange={handleFilterChange}
-                />
-
-                <button className="apply-filters" onClick={applyFilters}>חפש</button>
-                <button className="reset-filters" onClick={resetFilters}>איפוס</button>
-            </div>
+            <SeedsFilters
+                filters={filters}
+                handleFilterChange={handleFilterChange}
+                applyFilters={applyFilters}
+                resetFilters={resetFilters}
+            />
 
             <div className="ads-seeds-wrapper">
                 {adList.length === 0 ? (
@@ -289,13 +216,14 @@ const Seeds = () => {
                 )}
             </div>
 
-            <div className="pagination">
-                <button onClick={handleNextPage} disabled={page === TOTAL_PAGES || adList.length === 0 || !afterThis}>
-                    הבא
-                </button>
-                <span>דף {page}</span>
-                <button onClick={handlePrevPage} disabled={page === 1}>קודם</button>
-            </div>
+            <Paganation
+                handleNextPage={handleNextPage}
+                handlePrevPage={handlePrevPage}
+                page={page}
+                adList={adList}
+                afterThis={afterThis}
+                TOTAL_PAGES={TOTAL_PAGES}
+            />
         </div>
     )
 }

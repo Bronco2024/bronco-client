@@ -49,11 +49,12 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
 }
 
 .register-button:hover {
-    background-color: #ffdf00;
+    background-color: #e0b300;
 }
 
 .register-text {

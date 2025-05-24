@@ -28,6 +28,10 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if(!agreed){
+            setError('אנא אשר את תנאי השימוש לפני ההרשמה');
+            return;
+        }
         setError('');
 
         if (password === verifyPassword) {
@@ -136,7 +140,7 @@ const Register = () => {
 
                 {error && <p className="error-message">{error}</p>}
 
-                <button type="submit" className="register-button" disabled={!agreed}>הרשמה</button>
+                <button type="submit" className="register-button">הרשמה</button>
             </form>
 
             <p className="register-text">

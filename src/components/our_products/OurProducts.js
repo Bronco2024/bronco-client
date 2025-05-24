@@ -22,6 +22,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@/context/AuthProvider";
 import { updateUserCart } from "@/helpers/firebase-helpers";
+import Paganation from "@components/utils/paganation/Paganation";
 
 const OurProducts = () => {
     const navigate = useNavigate();
@@ -62,12 +63,12 @@ const OurProducts = () => {
         const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
-    }, [categoryFilter, ADS_PER_PAGE]);
+    }, [categoryFilter]);
 
     useEffect(() => {
         fetchAds();
         getTotalCount();
-    }, [fetchAds, getTotalCount, ADS_PER_PAGE]);
+    }, [fetchAds, getTotalCount]);
 
     const handleNextPage = async () => {
         const collectionRef = collection(db, "ads");
@@ -240,13 +241,14 @@ const OurProducts = () => {
                 )}
             </div>
 
-            <div className="pagination">
-                <button onClick={handleNextPage} disabled={page === TOTAL_PAGES || adList.length === 0 || !afterThis}>
-                    הבא
-                </button>
-                <span>דף {page}</span>
-                <button onClick={handlePrevPage} disabled={page === 1}>קודם</button>
-            </div>
+            <Paganation
+                handleNextPage={handleNextPage}
+                handlePrevPage={handlePrevPage}
+                page={page}
+                adList={adList}
+                afterThis={afterThis}
+                TOTAL_PAGES={TOTAL_PAGES}
+            />
         </div>
     );
 };
