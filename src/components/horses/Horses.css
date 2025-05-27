@@ -3,7 +3,6 @@
     flex-direction: column;
     justify-content: flex-end;
     text-align: center;
-    padding: 20px;
     background-color: #fff;
 }
 
@@ -19,7 +18,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    justify-content: flex-start;
+    justify-content: center;
     flex-direction: row-reverse;
 }
 
@@ -95,5 +94,52 @@
 
     .ad-horse-price {
         font-size: 0.9em;
+    }
+}
+
+.image-filter-container {
+    position: relative;
+    margin-bottom: 0;
+}
+
+.image-section {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    display: none;
+    /* Hidden by default (mobile) */
+}
+
+.filter-desktop {
+    display: none;
+}
+
+.filter-mobile {
+    display: block;
+    padding: 10px;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+    .image-filter-container {
+        margin-bottom: 7%;
+    }
+
+    .image-section {
+        display: block;
+    }
+
+    .filter-desktop {
+        display: block;
+        position: absolute;
+        bottom: -90px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+        width: 90%;
+    }
+
+    .filter-mobile {
+        display: none;
     }
 }

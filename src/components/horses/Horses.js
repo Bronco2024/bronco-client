@@ -184,15 +184,33 @@ const Horses = () => {
 
     return (
         <div className="horses-container">
-            <h1 className="horses-title">סוסים</h1>
 
+            <div className="image-filter-container">
+                <div
+                    className="image-section"
+                    style={{
+                        backgroundImage: `url(${require('@/assets/horse-arabian2.jpg')})`,
+                    }}
+                />
 
-            <HorseFilters
-                filters={filters}
-                handleFilterChange={handleFilterChange}
-                applyFilters={applyFilters}
-                resetFilters={resetFilters}
-            />
+                <div className="filter-desktop">
+                    <HorseFilters
+                        filters={filters}
+                        handleFilterChange={handleFilterChange}
+                        applyFilters={applyFilters}
+                        resetFilters={resetFilters}
+                    />
+                </div>
+
+                <div className="filter-mobile">
+                    <HorseFilters
+                        filters={filters}
+                        handleFilterChange={handleFilterChange}
+                        applyFilters={applyFilters}
+                        resetFilters={resetFilters}
+                    />
+                </div>
+            </div>
 
             <div className="ads-horses-wrapper">
                 {adList.length === 0 ? (
@@ -220,14 +238,16 @@ const Horses = () => {
                 )}
             </div>
 
-            <Paganation
-                handleNextPage={handleNextPage}
-                handlePrevPage={handlePrevPage}
-                page={page}
-                adList={adList}
-                afterThis={afterThis}
-                TOTAL_PAGES={TOTAL_PAGES}
-            />
+            <div style={{ marginBottom: '2%' }}>
+                <Paganation
+                    handleNextPage={handleNextPage}
+                    handlePrevPage={handlePrevPage}
+                    page={page}
+                    adList={adList}
+                    afterThis={afterThis}
+                    TOTAL_PAGES={TOTAL_PAGES}
+                />
+            </div>
         </div>
     );
 };

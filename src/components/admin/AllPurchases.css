@@ -45,6 +45,19 @@
     background-color: #f9f9f9;
 }
 
+.select-type{
+    direction: rtl;
+    min-width: 80px;
+    align-self: flex-end;
+    padding: 4px 8px;
+    border: 1px solid #ccc; 
+    border-radius: 6px;
+    text-align: right;
+    resize: none;
+    margin-bottom: 20px;
+    font-size: medium;
+}
+
 @media (max-width: 600px) {
     .all-purchase-item {
         flex-direction: column;

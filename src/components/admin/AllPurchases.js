@@ -9,6 +9,7 @@ import './AllPurchases.css'; // reuse same styles
 
 const AllPurchases = () => {
     const [purchases, setPurchases] = useState([]);
+    const [sortDirection, setSortDirection] = useState('desc'); //oldest first
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -16,8 +17,8 @@ const AllPurchases = () => {
             try {
                 const q = query(
                     collection(db, 'purchases'),
-                    orderBy('purchasedAt', 'asc') // oldest first
-                  );
+                    orderBy('purchasedAt', sortDirection) // oldest first
+                );
                 const snapshot = await getDocs(q);
                 const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setPurchases(data);
@@ -27,7 +28,7 @@ const AllPurchases = () => {
         };
 
         fetchAllPurchases();
-    }, []);
+    }, [sortDirection]);
 
     const handleClick = (purchase) => {
         navigate(`/purchase/${purchase.id}`, { state: { purchase } });
@@ -60,17 +61,28 @@ const AllPurchases = () => {
                     לא נמצאו רכישות להצגה
                 </p>
             ) : (
-                <ul className="all-purchase-list">
-                    {purchases.map((purchase) => (
-                        <li key={purchase.id} onClick={() => handleClick(purchase)} className="all-purchase-item">
-                            <div>תאריך: {purchasedAtDate(purchase.purchasedAt)?.toLocaleDateString('en-GB')}</div>
-                            <div>סכום כולל: ₪{purchase.totalPrice}</div>
-                            <div>פריטים: {purchase.totalQuantity}</div>
-                            <div>סטטוס: {extractStatus(purchase.status)}</div>
-                            <div>משתמש: {purchase.contactDetails.firstName + ' ' + purchase.contactDetails.lastName}</div>
-                        </li>
-                    ))}
-                </ul>
+                <div>
+                    <select
+                        className="select-type"
+                        value={sortDirection}
+                        onChange={(e) => setSortDirection(e.target.value)}
+
+                    >
+                        <option value="desc">הישנות ביותר</option>
+                        <option value="asc">החדשות ביותר</option>
+                    </select>
+                    <ul className="all-purchase-list">
+                        {purchases.map((purchase) => (
+                            <li key={purchase.id} onClick={() => handleClick(purchase)} className="all-purchase-item">
+                                <div>תאריך: {purchasedAtDate(purchase.purchasedAt)?.toLocaleDateString('en-GB')}</div>
+                                <div>סכום כולל: ₪{purchase.totalPrice}</div>
+                                <div>פריטים: {purchase.totalQuantity}</div>
+                                <div>סטטוס: {extractStatus(purchase.status)}</div>
+                                <div>משתמש: {purchase.contactDetails.firstName + ' ' + purchase.contactDetails.lastName}</div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             )}
         </div>
     );
