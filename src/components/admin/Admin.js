@@ -133,7 +133,7 @@ const Admin = () => {
 
     return (
         <div className="admin-container">
-            <h1>דף ניהול ספונסירים</h1>
+            <h1>ניהול {showAdsOrSponsors === 'sponsors'? 'ספונסירים' : 'מודעות'}</h1>
 
             <button
                 className="sponsor-add-button"
@@ -166,7 +166,7 @@ const Admin = () => {
                                 }}
                             >
                                 {sponsor.photo && (
-                                    <img src={sponsor.photo} alt="pojk" className="sponsor-image" />
+                                    <img src={sponsor.photo} alt="pojk" className="sponsor-image" loading="lazy" />
                                 )}
                                 <div className="sponsor-details">
                                     <h4 style={{ direction: 'rtl' }}>לינק:  <a href={sponsor.link} target="_blank" rel="noopener noreferrer">{sponsor.link}</a></h4>
@@ -189,14 +189,26 @@ const Admin = () => {
                                 className="sponsor-card"
                             >
                                 {ad.photos && ad.photos[0] && (
-                                    <img src={ad.photos[0]} alt="pojk" className="sponsor-image" onClick={() => {
-                                        navigate('/item', { state: { ad } })
-                                    }} />
+                                    <img
+                                        src={ad.photos[0]}
+                                        alt="pojk"
+                                        className="sponsor-image"
+                                        loading="lazy"
+                                        onClick={() => {
+                                            navigate('/item', { state: { ad } })
+                                        }}
+                                    />
                                 )}
                                 {ad.photos.length === 0 && (
-                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="sponsor-image" onClick={() => {
-                                        navigate('/item', { state: { ad } })
-                                    }} />
+                                    <img
+                                        src={require('@/assets/no-image.jpg')}
+                                        alt={ad.category}
+                                        className="sponsor-image"
+                                        loading="lazy"
+                                        onClick={() => {
+                                            navigate('/item', { state: { ad } })
+                                        }}
+                                    />
                                 )}
                                 <div className="sponsor-details">
                                     <h4 style={{ direction: 'rtl' }}>{ad.category}</h4>

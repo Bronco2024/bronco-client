@@ -14,7 +14,8 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user) {
+            //NEED TO REMOVE THE test@gmail.com BEFORE PRODUCTION
+            if ((auth.currentUser?.emailVerified && user) || user?.email === "test@gmail.com") {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists()) {
                     setCurrentUser({ uid: user.uid, ...userDoc.data() });

@@ -4,7 +4,8 @@ import './Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '@/firebase';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from '@/context/AuthProvider';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const {logout} = useAuth()
 
     const handleRegisterRedirect = () => {
         navigate('/register');
@@ -27,9 +29,10 @@ const Login = () => {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-
-            if (!auth.currentUser.emailVerified) {
-                await signOut(auth); // Sign the user out immediately
+            
+            //NEED TO REMOVE THE test@gmail.com BEFORE PRODUCTION
+            if (!auth.currentUser.emailVerified && email !== "test@gmail.com") {
+                await logout(); // Sign the user out immediately
                 setError("נא לאמת את כתובת האימייל שלך לפני ההתחברות");
                 return;
             }
