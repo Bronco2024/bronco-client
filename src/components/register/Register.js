@@ -4,7 +4,7 @@ import './Register.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '@/firebase';
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from "firebase/auth";
 import Modal from '@components/utils/modal/Modal';
 
 const Register = () => {
@@ -38,7 +38,8 @@ const Register = () => {
             try {
                 await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
                     const user = userCredential.user;
-                    sendEmailVerification(user).then(() => {
+                    sendEmailVerification(user).then(async () => {
+                        await signOut(auth);
                         setShowModal(true);
                     })
                 })

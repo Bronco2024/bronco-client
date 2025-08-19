@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '@/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, reload } from 'firebase/auth';
 import { useAuth } from '@/context/AuthProvider';
 
 const Login = () => {
@@ -13,7 +13,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
-    const {logout} = useAuth()
+    const { logout, currentUser, loading } = useAuth()
 
     const handleRegisterRedirect = () => {
         navigate('/register');
@@ -29,15 +29,15 @@ const Login = () => {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            
-            //NEED TO REMOVE THE test@gmail.com BEFORE PRODUCTION
-            if (!auth.currentUser.emailVerified && email !== "test@gmail.com") {
+            await reload(auth.currentUser);
+
+            if (!auth.currentUser.emailVerified) {
                 await logout(); // Sign the user out immediately
                 setError("נא לאמת את כתובת האימייל שלך לפני ההתחברות");
                 return;
             }
 
-            navigate('/');
+            navigate('/')
         } catch (error) {
             const errorCode = error.code;
             if (errorCode === "auth/invalid-credential" || errorCode === "auth/user-not-found" || errorCode === "auth/wrong-password") {

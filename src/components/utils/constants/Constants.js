@@ -30,9 +30,8 @@ export const EXTENDED_CATEGORIES = [
     { path: '/breeders', label: 'מפרזילים' },
     { path: '/schools', label: 'בתי ספר' },
     { path: '/trips', label: 'טיולים' },
-    // { path: '/shops', label: 'חנויות' },
     { path: '/shows-and-competitions', label: 'תצוגות ותחריות' },
-    { path: '/our-products', label: 'חנות' },
+    //{ path: '/our-products', label: 'חנות' },
 ]
 
 export const SEEDS_TYPES = [

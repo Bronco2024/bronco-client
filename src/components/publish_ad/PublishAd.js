@@ -84,14 +84,18 @@ const PublishAd = () => {
                 availableUntil: date
             });
 
-            await updateDoc(doc(db, "users", currentUser.uid), {
-                numberOfAds: increment(-1)
-            });
+            /**
+             * PAYMENTS
+             * This is currently closed until customer decides to make payments in the website
+             */
+            // await updateDoc(doc(db, "users", currentUser.uid), {
+            //     numberOfAds: increment(-1)
+            // });
 
-            setCurrentUser({
-                ...currentUser,
-                numberOfAds: currentUser.numberOfAds - 1
-            });
+            // setCurrentUser({
+            //     ...currentUser,
+            //     numberOfAds: currentUser.numberOfAds - 1
+            // });
 
             setFormData({
                 category: '',

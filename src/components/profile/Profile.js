@@ -113,14 +113,18 @@ const Profile = () => {
     }
 
     const RenewAdFirebase = async () => {
-        await updateDoc(doc(db, "users", currentUser.uid), {
-            numberOfAds: increment(-1)
-        });
+        /**
+         * PAYMENTS
+         * This is currently closed until customer decides to make payments in the website
+         */
+        // await updateDoc(doc(db, "users", currentUser.uid), {
+        //     numberOfAds: increment(-1)
+        // });
 
-        setCurrentUser({
-            ...currentUser,
-            numberOfAds: currentUser.numberOfAds - 1
-        });
+        // setCurrentUser({
+        //     ...currentUser,
+        //     numberOfAds: currentUser.numberOfAds - 1
+        // });
 
         const dateUntil = new Date()
         dateUntil.setMonth(dateUntil.getMonth() + 1);
@@ -136,7 +140,9 @@ const Profile = () => {
             <h1>ברוך הבא לאזור האישי</h1>
 
             <p style={{direction: 'rtl'}}>מייל: <b>{currentUser.email}</b></p>
-
+            {/* 
+             * PAYMENTS
+                * This is currently closed until customer decides to make payments in the website
             <p>מספר מודעות שנותרו לך: {numberOfAds(currentUser)}</p>
 
             {currentUser?.numberOfAds > 10000 && (
@@ -150,7 +156,7 @@ const Profile = () => {
                 >
                     קניית מודעות
                 </button>
-            )}
+            )} */}
 
 
             <div className="ads-container">

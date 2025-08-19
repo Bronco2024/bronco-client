@@ -15,19 +15,24 @@ const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
-    useEffect(() => {
-        const CheckUserYearly = async () => {
-            if (currentUser?.subscribedUntil !== null && IsDateNowGreaterThanAdDate(currentUser?.subscribedUntil)) {
-                await updateDoc(doc(db, "users", currentUser.uid), {
-                    subscribedUntil: null,
-                    numberOfAds: 0
-                })
-                const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-                setCurrentUser({ uid: currentUser.uid, ...userDoc.data() });
-            }
-        }
-        CheckUserYearly()
-    }, [currentUser, setCurrentUser])
+    /**
+    * PAYMENTS
+    * This is currently closed until customer decides to make payments in the website
+    */
+    // useEffect(() => {
+    //     const CheckUserYearly = async () => {
+    //         if (currentUser?.subscribedUntil !== null && IsDateNowGreaterThanAdDate(currentUser?.subscribedUntil)) {
+    //             await updateDoc(doc(db, "users", currentUser.uid), {
+    //                 subscribedUntil: null,
+    //                 numberOfAds: 0
+    //             })
+    //             const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+    //             setCurrentUser({ uid: currentUser.uid, ...userDoc.data() });
+    //         }
+    //     }
+        
+    //     CheckUserYearly()
+    // }, [currentUser, setCurrentUser])
 
     const handlePublishAd = () => {
         if (currentUser === null) {
@@ -88,6 +93,9 @@ const Header = () => {
 
                                 </button>
 
+                                {/* 
+                                 * PAYMENTS
+                                 * This is currently closed until customer decides to make payments in the website
                                 {!currentUser?.isAdmin && (
                                     <>
                                         <button className='dropdown-item' onClick={() => {
@@ -115,7 +123,7 @@ const Header = () => {
                                         ניהול רכישות
                                         <FontAwesomeIcon icon={faReceipt} style={{ marginLeft: '8px' }} />
                                     </button>
-                                )}
+                                )} */}
 
                                 <button className='dropdown-item' onClick={handleLogout}>
                                     התנתק

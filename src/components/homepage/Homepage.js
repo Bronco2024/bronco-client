@@ -96,7 +96,8 @@ const HomePage = () => {
     const handleClickOnItem = (ad) => {
         navigate('/item', { state: { ad } })
     }
-    const text = "🔥 הירשם עכשיו וקבל פרסום ראשון במתנה 🔥";
+
+    //const text_offer_header = "🔥 הירשם עכשיו וקבל פרסום ראשון במתנה 🔥";
 
     return (
         <div className="carousel-container">
@@ -109,14 +110,14 @@ const HomePage = () => {
                 />
             </div>
 
-            <div className="marquee-wrapper">
+            {/* <div className="marquee-wrapper">
                 <div className="marquee" onClick={() => {
                     navigate('/register')
                 }}>
-                    <span>{text}</span>
-                    <span>{text}</span>
+                    <span>{text_offer_header}</span>
+                    <span>{text_offer_header}</span>
                 </div>
-            </div>
+            </div> */}
 
             <div className='outer-sponsor-container'>
                 <div className='outer-sponsor-wrapper gold-sponsor'>
