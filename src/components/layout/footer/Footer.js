@@ -16,7 +16,7 @@ const Footer = () => {
                 </div>
 
                 <div className="footer-logo">
-                    <img src={require('@/assets/bronco.png')} alt="Bronco Estd 2024" loading='lazy'/>
+                    <img src={require('@/assets/HorseHub.png')} alt="HorseHub" loading='lazy'/>
                 </div>
 
                 <div className="footer-section contact">
@@ -24,17 +24,17 @@ const Footer = () => {
                     <div className="contact-item">
                         <a
                             className="contact-link"
-                            href='mailto:bronco.estd2024@gmail.com'>bronco.estd2024@gmail.com</a>
-                        <a href='tel:0500000000'
+                            href='mailto:Horsehub.team@gmail.com'>Horsehub.team@gmail.com</a>
+                        <a href='tel:0527502293'
                             className="contact-link"
-                        >0500000000</a>
+                        >0527502293</a>
                     </div>
                 </div>
             </div>
 
             <div className="footer-bottom">
                 <p className="copyright-text">
-                    © Bronco כל הזכויות שמורות ל
+                    © HorseHub כל הזכויות שמורות ל
                 </p>
             </div>
 

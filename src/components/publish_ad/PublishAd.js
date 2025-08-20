@@ -8,6 +8,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import Modal from '@components/utils/modal/Modal';
 import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import * as Sentry from "@sentry/react";
 
 const PublishAd = () => {
     const navigate = useNavigate();
@@ -110,6 +111,14 @@ const PublishAd = () => {
 
         } catch (error) {
             console.error("Error publishing ad:", error);
+            Sentry.captureException(`Error publishing ad`, {
+                tags: {
+                    component: "PublishAd"
+                },
+                extra: {
+                    info: error
+                }
+            });
         } finally {
             setUploading(false);
         }

@@ -7,6 +7,7 @@ import { ref, listAll, deleteObject } from 'firebase/storage';
 import './Profile.css';
 import Modal from '@components/utils/modal/Modal';
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from '@components/utils/constants/Functions';
+import * as Sentry from "@sentry/react";
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -34,6 +35,14 @@ const Profile = () => {
                 setUserAds(ads);
             } catch (error) {
                 console.error("Error fetching user ads:", error);
+                Sentry.captureException(`Error fetching user ads`, {
+                    tags: {
+                        component: "Profile"
+                    },
+                    extra: {
+                        info: error
+                    }
+                });
             }
         };
 
@@ -89,6 +98,14 @@ const Profile = () => {
             await Promise.all(deletePromises);
         } catch (error) {
             console.error("Error deleting ad:", error);
+            Sentry.captureException(`Error deleting ad`, {
+                tags: {
+                    component: "Profile"
+                },
+                extra: {
+                    info: error
+                }
+            });
         }
     };
 

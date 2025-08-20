@@ -168,7 +168,7 @@ export const ABOUTUS_FEATURES = [
     },
     {
         title: "חנות",
-        subtitle: "קו מוצרים ייחודי ואיכותי מבית Bronco",
+        subtitle: "קו מוצרים ייחודי ואיכותי מבית HorseHub",
         icon: require('@/assets/aboutus/products.png')
     }
 ];

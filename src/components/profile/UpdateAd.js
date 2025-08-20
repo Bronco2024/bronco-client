@@ -9,6 +9,7 @@ import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, ACCE
 import { v4 as uuidv4 } from 'uuid';
 import Modal from "@components/utils/modal/Modal"
 import { DeletedAttributesAfterUpdateForm } from '@components/utils/constants/Functions';
+import * as Sentry from "@sentry/react";
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -74,6 +75,14 @@ const UpdateAd = () => {
             }));
         } catch (error) {
             console.error("Error deleting photo:", error);
+            Sentry.captureException(`Error deleting photo`, {
+                tags: {
+                    component: "UpdateAd"
+                },
+                extra: {
+                    info: error
+                }
+            });
         }
     };
 
@@ -83,6 +92,14 @@ const UpdateAd = () => {
 
         if (!ad?.id) {
             console.error("Ad ID is missing.");
+            Sentry.captureException(`Ad ID is missing`, {
+                tags: {
+                    component: "UpdateAd"
+                },
+                extra: {
+                    info: ad
+                }
+            });
             return;
         }
 
@@ -100,6 +117,14 @@ const UpdateAd = () => {
             await setDoc(adRef, dataToSubmit);
         } catch (error) {
             console.error("Error updating ad:", error);
+            Sentry.captureException(`Error updating ad`, {
+                tags: {
+                    component: "UpdateAd"
+                },
+                extra: {
+                    info: error
+                }
+            });
         }
 
         if (newPhotos.photos.length > 0) {
@@ -121,6 +146,14 @@ const UpdateAd = () => {
 
             } catch (error) {
                 console.error("Error updating ad:", error);
+                Sentry.captureException(`Error updating ad`, {
+                    tags: {
+                        component: "UpdateAd"
+                    },
+                    extra: {
+                        info: error
+                    }
+                });
             }
         }
         setShowModal(true);

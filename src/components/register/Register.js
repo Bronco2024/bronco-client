@@ -6,6 +6,7 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '@/firebase';
 import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from "firebase/auth";
 import Modal from '@components/utils/modal/Modal';
+import * as Sentry from "@sentry/react";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -53,11 +54,21 @@ const Register = () => {
                 // navigate('/');
             } catch (error) {
                 const errorCode = error.code;
+                const errorCodeAndMessage = `${errorCode} - ${error}`;
+
                 if (errorCode === "auth/email-already-in-use") {
                     setError("אימייל זה כבר רשום");
 
                 } else {
                     setError("שגיאה לא צפויה, נסה שוב");
+                    Sentry.captureException(`Error in register`, {
+                        tags: {
+                            component: "Register"
+                        },
+                        extra: {
+                            info: errorCodeAndMessage
+                        }
+                    });
                 }
             }
         } else {

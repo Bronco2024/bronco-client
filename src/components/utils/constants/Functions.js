@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/react";
+
 export const FormatDateTimestampToDate = (timestamp) => {
     if (timestamp && timestamp.seconds) {
         const date = new Date(timestamp.seconds * 1000);
@@ -14,6 +16,14 @@ export const IsDateNowGreaterThanAdDate = (adAvailableUntil) => {
         return now.getTime() > timeOfAd.getTime()
     } catch (error) {
         console.error(error)
+        Sentry.captureException(`Error IsDateNowGreaterThanAdDate`, {
+            tags: {
+                component: "Functions"
+            },
+            extra: {
+                info: error
+            }
+        });
     }
 }
 

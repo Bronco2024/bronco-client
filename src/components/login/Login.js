@@ -6,6 +6,7 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '@/firebase';
 import { signInWithEmailAndPassword, reload } from 'firebase/auth';
 import { useAuth } from '@/context/AuthProvider';
+import * as Sentry from "@sentry/react";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -40,10 +41,20 @@ const Login = () => {
             navigate('/')
         } catch (error) {
             const errorCode = error.code;
+            const errorCodeAndMessage = `${errorCode} - ${error}`;
+            
             if (errorCode === "auth/invalid-credential" || errorCode === "auth/user-not-found" || errorCode === "auth/wrong-password") {
                 setError("אימייל או סיסמה לא נכונים");
             } else {
                 setError("שגיאה לא צפויה, נסה שוב");
+                Sentry.captureException(`Error in login`, {
+                    tags: {
+                        component: "Login"
+                    },
+                    extra: {
+                        info: errorCodeAndMessage
+                    }
+                });
             }
         }
     };

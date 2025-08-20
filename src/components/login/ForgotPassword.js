@@ -4,6 +4,7 @@ import { auth } from '@/firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import './ForgotPassword.css'
 import Modal from '@components/utils/modal/Modal';
+import * as Sentry from "@sentry/react";
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
@@ -25,7 +26,16 @@ const ForgotPassword = () => {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.error(errorCode," ",errorMessage)
+                const errorCodeAndMessage = `${errorCode} - ${errorMessage}`;
+                console.error(errorCodeAndMessage)
+                Sentry.captureException(`Error send password reset email`, {
+                    tags: {
+                        component: "ForgotPassword"
+                    },
+                    extra: {
+                        info: errorCodeAndMessage
+                    }
+                });
             });
     }
 

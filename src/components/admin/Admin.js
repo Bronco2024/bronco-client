@@ -5,6 +5,8 @@ import { collection, getDocs, deleteDoc, doc, where, orderBy, query } from 'fire
 import { useNavigate } from "react-router-dom";
 import Modal from '@components/utils/modal/Modal';
 import { ref, deleteObject, listAll } from "firebase/storage";
+import * as Sentry from "@sentry/react";
+
 
 const Admin = () => {
     const navigate = useNavigate();
@@ -32,6 +34,14 @@ const Admin = () => {
 
             } catch (error) {
                 console.error("Error fetching sponsors:", error);
+                Sentry.captureException(`Error fetching sponsors`, {
+                    tags: {
+                        component: "Admin"
+                    },
+                    extra: {
+                        info: error
+                    }
+                });
             }
         };
 
@@ -50,7 +60,15 @@ const Admin = () => {
                 setAds(ads);
 
             } catch (error) {
-                console.error("Error fetching sponsors:", error);
+                console.error("Error fetching ads:", error);
+                Sentry.captureException(`Error fetching ads`, {
+                    tags: {
+                        component: "Admin"
+                    },
+                    extra: {
+                        info: error
+                    }
+                });
             }
         };
 
@@ -67,7 +85,15 @@ const Admin = () => {
 
             await deleteObject(imageRef);
         } catch (error) {
-            console.error("Error deleting ad:", error);
+            console.error("Error deleting sponsor:", error);
+            Sentry.captureException(`Error deleting sponsor`, {
+                tags: {
+                    component: "Admin"
+                },
+                extra: {
+                    info: error
+                }
+            });
         }
     };
 
@@ -84,6 +110,14 @@ const Admin = () => {
             await Promise.all(deletePromises);
         } catch (error) {
             console.error("Error deleting ad:", error);
+            Sentry.captureException(`Error deleting ad`, {
+                tags: {
+                    component: "Admin"
+                },
+                extra: {
+                    info: error
+                }
+            });
         }
     };
 
@@ -133,7 +167,7 @@ const Admin = () => {
 
     return (
         <div className="admin-container">
-            <h1>ניהול {showAdsOrSponsors === 'sponsors'? 'ספונסירים' : 'מודעות'}</h1>
+            <h1>ניהול {showAdsOrSponsors === 'sponsors' ? 'ספונסירים' : 'מודעות'}</h1>
 
             <button
                 className="sponsor-add-button"

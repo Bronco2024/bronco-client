@@ -9,6 +9,7 @@ import { FormatDateTimestampToDate } from '@components/utils/constants/Functions
 import { CARDS } from '@components/utils/constants/Constants';
 import SlidingCard from './SlidingCard';
 import ApplicationLink from './ApplicationLink';
+import * as Sentry from "@sentry/react";
 
 const NUMBER_OF_LATEST_ADS_TO_FETCH = 8;
 
@@ -32,6 +33,14 @@ const HomePage = () => {
 
             } catch (error) {
                 console.error("Error fetching sponsors:", error);
+                Sentry.captureException(`Error fetching sponsors`, {
+                    tags: {
+                        component: "Homepage"
+                    },
+                    extra: {
+                        info: error
+                    }
+                });
             }
         };
 
@@ -50,7 +59,15 @@ const HomePage = () => {
                 setLatestAds(ads);
 
             } catch (error) {
-                console.error("Error fetching sponsors:", error);
+                console.error("Error fetching ads:", error);
+                Sentry.captureException(`Error fetching ads`, {
+                    tags: {
+                        component: "Homepage"
+                    },
+                    extra: {
+                        info: error
+                    }
+                });
             }
         };
 
@@ -103,9 +120,9 @@ const HomePage = () => {
         <div className="carousel-container">
             <div className="logo-container">
                 <img
-                    src={require('@/assets/bronco.png')}
-                    style={{ width: '250px', height: 'auto' }}
-                    alt="Bronco Logo"
+                    src={require('@/assets/HorseHub.png')}
+                    style={{ width: '20rem', height: 'auto' }}
+                    alt="HorseHub Logo"
                     loading='lazy'
                 />
             </div>
