@@ -26,7 +26,7 @@ const Boarding = () => {
     const [afterThis, setAfterThis] = useState(null);
     const [beforeThis, setBeforeThis] = useState(null);
 
-    const categoryFilter = "וטרינר";
+    const categoryFilter = "וטרינרים";
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
 
     const getTotalCount = useCallback(async () => {

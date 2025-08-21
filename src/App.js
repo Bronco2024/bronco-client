@@ -1,9 +1,10 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy,useState, useEffect  } from "react";
 import {
   Route,
   Routes
 } from "react-router-dom";
 import ProtectedRoute from "@/context/ProtectedRoute";
+import Loading from "./components/loading-screen/Loading";
 import Layout from './components/layout/Layout'
 import NotFound from "./NotFound";
 import './App.css'
@@ -46,16 +47,13 @@ const AboutUs = lazy(() => import("./components/layout/footer/about-links/aboutu
 const Regulations = lazy(() => import("./components/layout/footer/about-links/regulations/Regulations"));
 const PrivacyPolicy = lazy(() => import("./components/layout/footer/about-links/privacypolicy/PrivacyPolicy"));
 
-
-const Loading = ({ message }) => <div>{message || "Loading..."}</div>;
-
 function App() {
 
   return (
     <Routes>
       <Route path="/"
         element={
-          <Suspense fallback={<Loading message="Loading Home..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Homepage />
             </Layout>
@@ -64,7 +62,7 @@ function App() {
       />
       <Route path="/item"
         element={
-          <Suspense fallback={<Loading message="Loading Item page..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <ItemPage />
             </Layout>
@@ -74,7 +72,7 @@ function App() {
 
       <Route path="/login"
         element={
-          <Suspense fallback={<Loading message="Loading Login..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Login />
             </Layout>
@@ -84,7 +82,7 @@ function App() {
 
       <Route path="/login/forgot-password"
         element={
-          <Suspense fallback={<Loading message="Loading ForgotPassword..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <ForgotPassword />
             </Layout>
@@ -94,7 +92,7 @@ function App() {
 
       <Route path="/register"
         element={
-          <Suspense fallback={<Loading message="Loading Register..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Register />
             </Layout>
@@ -104,7 +102,7 @@ function App() {
 
       <Route path="/profile"
         element={
-          <Suspense fallback={<Loading message="Loading Profile..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute>
               <Layout>
                 <Profile />
@@ -116,7 +114,7 @@ function App() {
 
       <Route path="/publish_ad"
         element={
-          <Suspense fallback={<Loading message="Loading Publish Ad..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute condition={(user) => user.numberOfAds > 0}>
               <Layout>
                 <PublishAd />
@@ -128,7 +126,7 @@ function App() {
 
       {/* <Route path="/subscribe"
         element={
-          <Suspense fallback={<Loading message="Loading Subscribe..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute>
               <Layout>
                 <Subscribe />
@@ -140,7 +138,7 @@ function App() {
 
       {/* <Route path="/subscribe/payment"
         element={
-          <Suspense fallback={<Loading message="Loading Payment..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute>
               <Layout>
                 <Payment />
@@ -152,7 +150,7 @@ function App() {
 
       {/* <Route path="/subscribe/payment/thank-you"
         element={
-          <Suspense fallback={<Loading message="Loading ThankYou..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute>
               <Layout>
                 <ThankYou />
@@ -164,7 +162,7 @@ function App() {
 
       <Route path="/horses"
         element={
-          <Suspense fallback={<Loading message="Loading horses..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Horses />
             </Layout>
@@ -174,7 +172,7 @@ function App() {
 
       <Route path="/seeds"
         element={
-          <Suspense fallback={<Loading message="Loading seeds..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Seeds />
             </Layout>
@@ -184,7 +182,7 @@ function App() {
 
       <Route path="/accessories"
         element={
-          <Suspense fallback={<Loading message="Loading accessories..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Accessories />
             </Layout>
@@ -194,7 +192,7 @@ function App() {
 
       <Route path="/boarding"
         element={
-          <Suspense fallback={<Loading message="Loading boarding..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Boarding />
             </Layout>
@@ -204,7 +202,7 @@ function App() {
 
       <Route path="/exhibitors"
         element={
-          <Suspense fallback={<Loading message="Loading exhibitors..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Exhibitors />
             </Layout>
@@ -214,7 +212,7 @@ function App() {
 
       <Route path="/breeders"
         element={
-          <Suspense fallback={<Loading message="Loading breeders..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Breeders />
             </Layout>
@@ -224,7 +222,7 @@ function App() {
 
       <Route path="/veterinarians"
         element={
-          <Suspense fallback={<Loading message="Loading veterinarian..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Veterinarian />
             </Layout>
@@ -234,7 +232,7 @@ function App() {
 
       <Route path="/schools"
         element={
-          <Suspense fallback={<Loading message="Loading schools..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Schools />
             </Layout>
@@ -244,7 +242,7 @@ function App() {
 
       <Route path="/trips"
         element={
-          <Suspense fallback={<Loading message="Loading trips..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Trips />
             </Layout>
@@ -254,7 +252,7 @@ function App() {
 
       <Route path="/shows-and-competitions"
         element={
-          <Suspense fallback={<Loading message="Loading shops..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <ShowsAndCompetitions />
             </Layout>
@@ -269,7 +267,7 @@ function App() {
  
       <Route path="/our-products"
         element={
-          <Suspense fallback={<Loading message="Loading products..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <OurProducts />
             </Layout>
@@ -283,7 +281,7 @@ function App() {
        * This is currently closed until customer decides to make payments in the website
       <Route path="/cart"
         element={
-          <Suspense fallback={<Loading message="Loading cart page..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute>
               <Layout>
                 <Cart />
@@ -299,7 +297,7 @@ function App() {
        * This is currently closed until customer decides to make payments in the website
       <Route path="/cart/payment-form"
         element={
-          <Suspense fallback={<Loading message="Loading payment form..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute>
               <Layout>
                 <PaymentForm />
@@ -311,7 +309,7 @@ function App() {
 
       <Route path="/profile/update_ad"
         element={
-          <Suspense fallback={<Loading message="Loading Update ad page..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute>
               <Layout>
                 <UpdateAd />
@@ -323,7 +321,7 @@ function App() {
 
       <Route path="/admin"
         element={
-          <Suspense fallback={<Loading message="Loading Admin page..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute adminOnly>
               <Layout>
                 <Admin />
@@ -339,7 +337,7 @@ function App() {
        * This is currently closed until customer decides to make payments in the website
       <Route path="/admin/all-purchases"
         element={
-          <Suspense fallback={<Loading message="Loading all purchases page..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute adminOnly>
               <Layout>
                 <AllPurchases />
@@ -351,7 +349,7 @@ function App() {
 
       <Route path="/admin/add-sponsor"
         element={
-          <Suspense fallback={<Loading message="Loading Add Sponsor page..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute adminOnly>
               <Layout>
                 <AddSponsor />
@@ -363,7 +361,7 @@ function App() {
 
       <Route path="/about-us"
         element={
-          <Suspense fallback={<Loading message="Loading About Us..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <AboutUs />
             </Layout>
@@ -373,7 +371,7 @@ function App() {
 
       <Route path="/regulations"
         element={
-          <Suspense fallback={<Loading message="Loading Regulations..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <Regulations />
             </Layout>
@@ -387,7 +385,7 @@ function App() {
        * This is currently closed until customer decides to make payments in the website
       <Route path="/my-purchases"
         element={
-          <Suspense fallback={<Loading message="Loading my-purchases page..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute>
               <Layout>
                 <MyPurchases />
@@ -403,7 +401,7 @@ function App() {
        * This is currently closed until customer decides to make payments in the website
       <Route path="/purchase/:id"
         element={
-          <Suspense fallback={<Loading message="Loading purchase details page..." />}>
+          <Suspense fallback={<Loading />}>
             <ProtectedRoute>
               <Layout>
                 <PurchaseDetails />
@@ -415,7 +413,7 @@ function App() {
 
       <Route path="/privacy-policy"
         element={
-          <Suspense fallback={<Loading message="Loading Privacy Policy..." />}>
+          <Suspense fallback={<Loading />}>
             <Layout>
               <PrivacyPolicy />
             </Layout>
@@ -426,7 +424,7 @@ function App() {
       <Route
         path="*"
         element={
-          <Suspense fallback={<Loading message="Loading Not Found..." />}>
+          <Suspense fallback={<Loading />}>
             <NotFound />
           </Suspense>
         }

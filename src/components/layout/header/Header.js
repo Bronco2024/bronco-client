@@ -8,6 +8,7 @@ import { EXTENDED_CATEGORIES } from '@components/utils/constants/Constants';
 import { IsDateNowGreaterThanAdDate } from '@components/utils/constants/Functions';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
+import Loading from '../../loading-screen/Loading';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ const Header = () => {
     //             setCurrentUser({ uid: currentUser.uid, ...userDoc.data() });
     //         }
     //     }
-        
+
     //     CheckUserYearly()
     // }, [currentUser, setCurrentUser])
 
@@ -64,7 +65,7 @@ const Header = () => {
                     <FontAwesomeIcon icon={faPlus} style={{ marginLeft: '8px' }} />
                 </button>
                 {loading ? (
-                    <span>Loading...</span>
+                    <Loading size={24} fullscreen={false} />
                 ) : currentUser ? (
                     <div className='profile-dropdown-container'>
                         <button className='navbar-button' onClick={toggleProfileDropdown}>
