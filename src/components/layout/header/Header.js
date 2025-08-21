@@ -154,7 +154,7 @@ const Header = () => {
                     </div>
                 </div>
                 <Link to='/'>
-                    <img src={require('@/assets/HorseHub.png')} style={{ width: '50px', height: 'auto' }} alt="HorseHub" />
+                    <img src={require('@/assets/horsehub-gold.png')} style={{ width: '50px', height: 'auto' }} alt="HorseHub" />
                 </Link>
             </div>
         </nav>

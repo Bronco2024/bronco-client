@@ -16,7 +16,7 @@ const Footer = () => {
                 </div>
 
                 <div className="footer-logo">
-                    <img src={require('@/assets/HorseHub.png')} alt="HorseHub" loading='lazy'/>
+                    <img src={require('@/assets/horsehub-gold.png')} alt="HorseHub" loading='lazy'/>
                 </div>
 
                 <div className="footer-section contact">
@@ -24,7 +24,7 @@ const Footer = () => {
                     <div className="contact-item">
                         <a
                             className="contact-link"
-                            href='mailto:Horsehub.team@gmail.com'>Horsehub.team@gmail.com</a>
+                            href='mailto:horsehub.team@gmail.com'>horsehub.team@gmail.com</a>
                         <a href='tel:0527502293'
                             className="contact-link"
                         >0527502293</a>

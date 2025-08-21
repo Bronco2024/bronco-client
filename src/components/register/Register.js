@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './Register.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -29,7 +29,7 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(!agreed){
+        if (!agreed) {
             setError('אנא אשר את תנאי השימוש לפני ההרשמה');
             return;
         }
@@ -138,14 +138,12 @@ const Register = () => {
                     <label>
                         <input type="checkbox" id="agreement" name="agreement" checked={agreed} onChange={handleCheckboxChange} />
                         {' '}קראתי את{' '}
-                        <a
-                            href="/terms-and-conditions.pdf"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <Link
+                            to="/regulations"
                             style={{ color: 'blue', textDecoration: 'underline' }}
                         >
-                            תנאי הימוש
-                        </a>
+                            תנאי השימוש
+                        </Link>
                         {' '}ואני מסכים{' '}
                     </label>
                 </div>

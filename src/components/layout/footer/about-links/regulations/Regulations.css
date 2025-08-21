@@ -1,0 +1,70 @@
+.regulations-section {
+    padding: 50px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    line-height: 1.8;
+    direction: rtl;
+}
+
+.regulations-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.regulations-date {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.regulations-block {
+    margin-bottom: 25px;
+}
+
+.regulations-block h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.regulations-block p {
+    font-size: 1rem;
+    color: #444;
+}
+
+.regulations-block ul {
+    list-style: disc inside;
+    margin: 0;
+    padding-right: 20px;
+}
+
+.regulations-block li {
+    margin-bottom: 8px;
+    font-size: 1rem;
+    color: #333;
+}
+
+/* Nested lists */
+.regulations-block ul ul {
+    list-style: circle inside;
+    margin-top: 5px;
+    padding-right: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .regulations-section {
+        padding: 20px;
+    }
+
+    .regulations-heading {
+        font-size: 1.5rem;
+    }
+
+    .regulations-block h3 {
+        font-size: 1.1rem;
+    }
+}

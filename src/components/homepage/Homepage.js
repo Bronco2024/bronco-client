@@ -120,7 +120,7 @@ const HomePage = () => {
         <div className="carousel-container">
             <div className="logo-container">
                 <img
-                    src={require('@/assets/HorseHub.png')}
+                    src={require('@/assets/horsehub-gold.png')}
                     style={{ width: '20rem', height: 'auto' }}
                     alt="HorseHub Logo"
                     loading='lazy'
