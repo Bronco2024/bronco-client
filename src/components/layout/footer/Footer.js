@@ -1,5 +1,7 @@
 import './Footer.css';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFacebook, faInstagram, faTiktok } from "@fortawesome/free-brands-svg-icons";
 
 const Footer = () => {
     return (
@@ -15,8 +17,40 @@ const Footer = () => {
                     </div>
                 </div>
 
-                <div className="footer-logo">
+                {/* <div className="footer-logo">
                     <img src={require('@/assets/horsehub-gold.png')} alt="HorseHub" loading='lazy'/>
+                </div> */}
+
+                <div className="footer-section social">
+                    <h2>עקבו אחרינו</h2>
+                    <div className="social-links">
+                        <a
+                            href="https://www.tiktok.com/@horsehub5?_t=ZS-8z5k2Mo5VBs&_r=1"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="social-link"
+                        >
+                            <FontAwesomeIcon icon={faTiktok} />
+                        </a>
+
+                        <a
+                            href="https://www.instagram.com/horse.hub25?igsh=MWU1eWUwbHRjb3FwMQ=="
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="social-link"
+                        >
+                            <FontAwesomeIcon icon={faInstagram} />
+                        </a>
+
+                        <a
+                            href="https://www.facebook.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="social-link"
+                        >
+                            <FontAwesomeIcon icon={faFacebook} />
+                        </a>
+                    </div>
                 </div>
 
                 <div className="footer-section contact">
@@ -34,11 +68,9 @@ const Footer = () => {
 
             <div className="footer-bottom">
                 <p className="copyright-text">
-                    © HorseHub כל הזכויות שמורות ל
+                     HorseHub כל הזכויות שמורות ל ©
                 </p>
             </div>
-
-
         </div>
     );
 };

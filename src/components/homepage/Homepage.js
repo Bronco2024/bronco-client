@@ -46,16 +46,24 @@ const HomePage = () => {
 
         const fetchLatestAds = async () => {
             try {
+                const categories = ["סוסים", "זרע", "אביזרים"];
+
                 const adsRef = collection(db, "ads");
                 const filterQuery = where("availableUntil", ">", new Date());
-                const q = query(adsRef, filterQuery, orderBy("createdAt", "desc"), limit(NUMBER_OF_LATEST_ADS_TO_FETCH));
+                const q = query(
+                    adsRef,
+                    where("availableUntil", ">", new Date()),
+                    where("category", "in", categories),
+                    orderBy("createdAt", "desc"),
+                    limit(NUMBER_OF_LATEST_ADS_TO_FETCH)
+                );
                 const querySnapshot = await getDocs(q);
 
                 const ads = querySnapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data()
                 }));
-
+                console.log(ads)
                 setLatestAds(ads);
 
             } catch (error) {

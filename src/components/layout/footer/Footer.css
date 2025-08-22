@@ -87,6 +87,24 @@
     color: #aaa;
 }
 
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .social-link {
+    color: #ffcc00; /* matches your theme */
+    font-size: 2rem; /* adjust icon size */
+    transition: color 0.3s;
+  }
+  
+  .social-link:hover {
+    color: #fff;
+  }
+  
+
 /* Responsive Styles */
 @media screen and (max-width: 768px) {
     .footer-content {
