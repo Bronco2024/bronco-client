@@ -49,7 +49,6 @@ const HomePage = () => {
                 const categories = ["סוסים", "זרע", "אביזרים"];
 
                 const adsRef = collection(db, "ads");
-                const filterQuery = where("availableUntil", ">", new Date());
                 const q = query(
                     adsRef,
                     where("availableUntil", ">", new Date()),
