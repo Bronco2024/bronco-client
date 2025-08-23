@@ -68,13 +68,18 @@ const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                         </select>
                     </>
                 )}
-                <input
-                    type="number"
+
+                <select
                     name="age"
-                    placeholder="גיל"
                     value={filters.age}
                     onChange={handleFilterChange}
-                />
+                >
+                    <option value="">כל הגילאים</option>
+                    <option value="foal">סייח - עד 9 חודשים</option>
+                    <option value="young">צעיר - 9 חודשים עד 24 חודשים</option>
+                    <option value="adult">בוגר - 2 עד 7 שנים</option>
+                    <option value="senior">מבוגר - מעל 7 שנים</option>
+                </select>
                 <input
                     type="number"
                     name="minPrice"
@@ -148,9 +153,14 @@ const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                         )}
 
                         <div className="mobile-filter-row">
-                            <input type="number" name="age" placeholder="גיל" value={filters.age} onChange={handleFilterChange} />
+                            <select name="age" value={filters.age} onChange={handleFilterChange}>
+                                <option value="">כל הגילאים</option>
+                                <option value="foal">גור - עד 9 חודשים</option>
+                                <option value="young">צעיר - 9 חודשים עד 24 חודשים</option>
+                                <option value="adult">בוגר - 2 עד 7 שנים</option>
+                                <option value="senior">מבוגר - מעל 7 שנים</option>
+                            </select>
                         </div>
-
                         <div className="mobile-final-row">
                             <input type="number" name="minPrice" placeholder="מחיר מינימלי" value={filters.minPrice} onChange={handleFilterChange} />
                             <input type="number" name="maxPrice" placeholder="מחיר מקסימלי" value={filters.maxPrice} onChange={handleFilterChange} />

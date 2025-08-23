@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Modal from "@components/utils/modal/Modal"
 import { DeletedAttributesAfterUpdateForm } from '@components/utils/constants/Functions';
 import * as Sentry from "@sentry/react";
+import FloatingInput from '../../my_components/FloatingInput';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -38,8 +39,19 @@ const UpdateAd = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        if (name === "price" || name === "age") {
-            setFormData({ ...formData, [name]: Number(value) });
+        if (name === "price" || name === "ageYears" || name === "ageMonths") {
+            let numericValue = Number(value);
+
+            if (name === "ageYears") {
+                numericValue = Math.max(0, numericValue); // no negative years
+            }
+
+            if (name === "ageMonths") {
+                if (numericValue < 0) numericValue = 0;
+                if (numericValue > 11) numericValue = 11;
+            }
+
+            setFormData({ ...formData, [name]: numericValue });
         }
         else {
             setFormData({ ...formData, [name]: value });
@@ -107,6 +119,14 @@ const UpdateAd = () => {
             ...formData,
             createdAt: Timestamp.now(),
             availableUntil: new Timestamp(formData.availableUntil.seconds, formData.availableUntil.nanoseconds)
+        }
+
+        if (formData.category === "סוסים") {
+            const totalMonths =
+                (Number(formData.ageYears) || 0) * 12 +
+                (Number(formData.ageMonths) || 0);
+
+            dataToSubmit.ageInMonths = totalMonths;
         }
 
         dataToSubmit = DeletedAttributesAfterUpdateForm(dataToSubmit);
@@ -241,16 +261,28 @@ const UpdateAd = () => {
                         </select>
 
                         <div className="update-ad-form">
-
                             <label htmlFor="age">גיל</label>
-                            <input
-                                type="number"
-                                id="age"
-                                name="age"
-                                value={formData?.age}
-                                onChange={handleChange}
-                                required
-                            />
+                            <div className="age-row">
+                                <FloatingInput
+                                    label={'שנים'}
+                                    type={'number'}
+                                    id={"ageYears"}
+                                    value={formData.ageYears ?? ''}
+                                    onChange={handleChange}
+                                    min={"0"}
+                                    placeholder={' '}
+                                />
+                                <FloatingInput
+                                    label={'חודשים'}
+                                    type={'number'}
+                                    id={"ageMonths"}
+                                    value={formData.ageMonths || ''}
+                                    onChange={handleChange}
+                                    min={"0"}
+                                    max={"11"}
+                                    placeholder={' '}
+                                />
+                            </div>
                         </div>
 
                         <div style={{ marginTop: '3%', marginBottom: '1%' }}>
@@ -416,6 +448,9 @@ const UpdateAd = () => {
                                 value={formData.price}
                                 onChange={handleChange}
                                 required
+                                onInput={(e) => {
+                                    if (e.target.value > 999999) e.target.value = 999999;
+                                }}
                             />
                         </div>
                     )

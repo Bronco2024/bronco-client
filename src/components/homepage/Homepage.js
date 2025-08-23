@@ -62,9 +62,8 @@ const HomePage = () => {
                     id: doc.id,
                     ...doc.data()
                 }));
-                console.log(ads)
-                setLatestAds(ads);
 
+                setLatestAds(ads);
             } catch (error) {
                 console.error("Error fetching ads:", error);
                 Sentry.captureException(`Error fetching ads`, {

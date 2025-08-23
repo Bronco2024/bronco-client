@@ -132,6 +132,16 @@ const Horses = () => {
 
         let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no" ? false : "";
         setPage(1);
+        let ageQueries = [];
+        if (filters.age === "foal") {
+            ageQueries = [where("ageInMonths", "<=", 9)];
+        } else if (filters.age === "young") {
+            ageQueries = [where("ageInMonths", ">=", 9), where("ageInMonths", "<=", 24)];
+        } else if (filters.age === "adult") {
+            ageQueries = [where("ageInMonths", ">=", 24), where("ageInMonths", "<=", 84)];
+        } else if (filters.age === "senior") {
+            ageQueries = [where("ageInMonths", ">", 84)];
+        }
 
         const collectionRef = collection(db, "ads");
         const filterQueries = [
@@ -140,10 +150,11 @@ const Horses = () => {
             ...(filters.minPrice ? [where("price", ">=", parseFloat(filters.minPrice))] : []),
             ...(filters.maxPrice ? [where("price", "<=", parseFloat(filters.maxPrice))] : []),
             ...(filters.hasCertificate ? [where("hasCertificate", "==", certificate)] : []),
-            ...(filters.age ? [where("age", "==", parseInt(filters.age))] : []),
+            // ...(filters.age ? [where("age", "==", parseInt(filters.age))] : []),
             ...(filters.breed ? [where("breed", "==", filters.breed)] : []),
             ...(filters.district ? [where("district", "==", filters.district)] : []),
             ...(filters.location ? [where("location", "==", filters.location)] : []),
+            ...ageQueries
         ];
 
         const totalCountQuery = query(collectionRef, ...filterQueries);

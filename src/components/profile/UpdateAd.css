@@ -107,3 +107,9 @@
 .close-button-updatead:hover{
     background-color: #ccc;
 }
+
+.age-row {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}

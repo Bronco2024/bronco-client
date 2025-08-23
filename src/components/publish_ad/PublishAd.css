@@ -18,7 +18,7 @@
     font-weight: bold;
 }
 
-.publish-ad-form select{
+.publish-ad-form select {
     direction: rtl;
     width: 30%;
     align-self: flex-end;
@@ -26,12 +26,18 @@
 
 .publish-ad-form input,
 .publish-ad-form textarea,
-.publish-ad-form select { /* Include select in the styles */
-    padding: 10px; /* Add padding for input fields */
-    border: 1px solid #ccc; /* Light gray border for inputs */
-    border-radius: 4px; /* Rounded corners */
-    text-align: right; /* Align text inside inputs to the right */
-    resize: none; /* Disable resizing for textarea */
+.publish-ad-form select {
+    /* Include select in the styles */
+    padding: 10px;
+    /* Add padding for input fields */
+    border: 1px solid #ccc;
+    /* Light gray border for inputs */
+    border-radius: 4px;
+    /* Rounded corners */
+    text-align: right;
+    /* Align text inside inputs to the right */
+    resize: none;
+    /* Disable resizing for textarea */
 }
 
 .publish-button {
@@ -65,7 +71,8 @@
 
 .publish-ad-form label {
     margin: 10px 0 5px;
-    text-align: right; /* Align labels to the right */
+    text-align: right;
+    /* Align labels to the right */
 }
 
 .publish-ad-form input,
@@ -73,7 +80,8 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    text-align: right; /* Align text inside inputs to the right */
+    text-align: right;
+    /* Align text inside inputs to the right */
     resize: none;
 }
 
@@ -112,6 +120,12 @@
     color: black;
 }
 
-.close-button-publishad:hover{
+.close-button-publishad:hover {
     background-color: #ccc;
+}
+
+.age-row {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
 }

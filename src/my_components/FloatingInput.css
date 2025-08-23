@@ -1,0 +1,38 @@
+.input-floating {
+    position: relative;
+    width: 100%;
+}
+
+.input-floating input {
+    width: 70%;
+    padding: 12px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: right;
+    outline: none;
+    font-size: 1rem;
+}
+
+.input-floating label {
+    position: absolute;
+    top: 35%;
+    right: 10px;
+    transform: translateY(-65%);
+    padding: 0 4px;
+    color: #999;
+    font-size: 0.7rem;
+    pointer-events: none;
+    transition: 0.2s ease all;
+    font-weight: 300;
+}
+
+.input-floating input:focus+label,
+.input-floating input:not(:placeholder-shown)+label {
+    top: -8px;
+    transform: translateY(-65%);
+    font-size: 0.8rem;
+    font-weight: 500;
+    right: 20px;
+    color: #4CAF50;
+    background-color: #f9f9f9;
+}
