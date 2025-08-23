@@ -27,8 +27,8 @@ const Seeds = () => {
     const [afterThis, setAfterThis] = useState(null);
     const [beforeThis, setBeforeThis] = useState(null);
     const [filters, setFilters] = useState({
-        minPrice: "",
-        maxPrice: "",
+        minPrice: 0,
+        maxPrice: 999999,
         seed_type: "",
         semen_type: "",
         hasCertificate: "",
@@ -115,8 +115,8 @@ const Seeds = () => {
     const applyFilters = async () => {
         if (filters.hasCertificate === "" &&
             filters.seed_type === "" &&
-            filters.maxPrice === "" &&
-            filters.minPrice === "" &&
+            filters.maxPrice === 999999 &&
+            filters.minPrice === 0 &&
             filters.semen_type === "" &&
             filters.district === "" &&
             filters.location === ""
@@ -133,8 +133,8 @@ const Seeds = () => {
         const collectionRef = collection(db, "ads");
         const filterQueries = [
             where("category", "==", categoryFilter),
-            ...(filters.minPrice ? [where("price", ">=", parseFloat(filters.minPrice))] : []),
-            ...(filters.maxPrice ? [where("price", "<=", parseFloat(filters.maxPrice))] : []),
+            ...(filters.minPrice ? [where("price", ">=", (filters.minPrice))] : []),
+            ...(filters.maxPrice ? [where("price", "<=", (filters.maxPrice))] : []),
             ...(filters.seed_type ? [where("seed_type", "==", filters.seed_type)] : []),
             ...(filters.semen_type ? [where("semen_type", "==", filters.semen_type)] : []),
             ...(filters.district ? [where("district", "==", filters.district)] : []),
@@ -163,8 +163,8 @@ const Seeds = () => {
 
     const resetFilters = () => {
         setFilters({
-            minPrice: "",
-            maxPrice: "",
+            minPrice: 0,
+            maxPrice: 999999,
             seed_type: "",
             semen_type: "",
             hasCertificate: "",

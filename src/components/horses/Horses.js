@@ -29,8 +29,8 @@ const Horses = () => {
     const [beforeThis, setBeforeThis] = useState(null);
     const [filters, setFilters] = useState({
         gender: "",
-        minPrice: "",
-        maxPrice: "",
+        minPrice: 0,
+        maxPrice: 999999,
         hasCertificate: "",
         age: "",
         breed: "",
@@ -66,6 +66,7 @@ const Horses = () => {
         const querySnapshot = await getDocs(q);
         const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setAdList(items);
+        console.log("Ads fetched:", items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
     }, [categoryFilter]);
 
@@ -122,8 +123,8 @@ const Horses = () => {
             filters.hasCertificate === "" &&
             filters.district === "" &&
             filters.location === "" &&
-            filters.maxPrice === "" &&
-            filters.minPrice === "") {
+            filters.maxPrice === 999999 &&
+            filters.minPrice === 0) {
             fetchAds();
             getTotalCount();
             setPage(1);
@@ -147,8 +148,8 @@ const Horses = () => {
         const filterQueries = [
             where("category", "==", categoryFilter),
             ...(filters.gender ? [where("gender", "==", filters.gender)] : []),
-            ...(filters.minPrice ? [where("price", ">=", parseFloat(filters.minPrice))] : []),
-            ...(filters.maxPrice ? [where("price", "<=", parseFloat(filters.maxPrice))] : []),
+            ...(filters.minPrice ? [where("price", ">=", (filters.minPrice))] : []),
+            ...(filters.maxPrice ? [where("price", "<=", (filters.maxPrice))] : []),
             ...(filters.hasCertificate ? [where("hasCertificate", "==", certificate)] : []),
             // ...(filters.age ? [where("age", "==", parseInt(filters.age))] : []),
             ...(filters.breed ? [where("breed", "==", filters.breed)] : []),
@@ -179,8 +180,8 @@ const Horses = () => {
     const resetFilters = () => {
         setFilters({
             gender: "",
-            minPrice: "",
-            maxPrice: "",
+            minPrice: 0,
+            maxPrice: 999999,
             hasCertificate: "",
             age: "",
             breed: "",

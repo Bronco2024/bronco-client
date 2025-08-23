@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { BREEDS, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
 import './HorseFilters.css'
+import PriceFilters from "../../../my_components/price-filters/PriceFilters";
 
 const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters }) => {
-
+    const [isOpen, setIsOpen] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
     const toggleFilters = () => {
         setShowFilters(!showFilters);
     };
+    const togglePopup = () => setIsOpen(prev => !prev);
 
     return (
         <>
@@ -80,19 +82,12 @@ const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                     <option value="adult">בוגר - 2 עד 7 שנים</option>
                     <option value="senior">מבוגר - מעל 7 שנים</option>
                 </select>
-                <input
-                    type="number"
-                    name="minPrice"
-                    placeholder="מחיר מינימלי"
-                    value={filters.minPrice}
-                    onChange={handleFilterChange}
-                />
-                <input
-                    type="number"
-                    name="maxPrice"
-                    placeholder="מחיר מקסימלי"
-                    value={filters.maxPrice}
-                    onChange={handleFilterChange}
+                <PriceFilters
+                    isOpen={isOpen}
+                    togglePopup={togglePopup}
+                    minPrice={filters.minPrice}
+                    maxPrice={filters.maxPrice}
+                    handleChange={handleFilterChange}
                 />
 
                 <button className="apply-filters" onClick={applyFilters}>חפש</button>
@@ -155,15 +150,20 @@ const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                         <div className="mobile-filter-row">
                             <select name="age" value={filters.age} onChange={handleFilterChange}>
                                 <option value="">כל הגילאים</option>
-                                <option value="foal">גור - עד 9 חודשים</option>
+                                <option value="foal">סייח - עד 9 חודשים</option>
                                 <option value="young">צעיר - 9 חודשים עד 24 חודשים</option>
                                 <option value="adult">בוגר - 2 עד 7 שנים</option>
                                 <option value="senior">מבוגר - מעל 7 שנים</option>
                             </select>
                         </div>
-                        <div className="mobile-final-row">
-                            <input type="number" name="minPrice" placeholder="מחיר מינימלי" value={filters.minPrice} onChange={handleFilterChange} />
-                            <input type="number" name="maxPrice" placeholder="מחיר מקסימלי" value={filters.maxPrice} onChange={handleFilterChange} />
+                        <div className="mobile-price-row">
+                            <PriceFilters
+                                togglePopup={togglePopup}
+                                minPrice={filters.minPrice}
+                                maxPrice={filters.maxPrice}
+                                handleChange={handleFilterChange}
+                                forceOpen={true} // Force open for mobile view
+                            />
                         </div>
 
                         <div className="mobile-final-row">

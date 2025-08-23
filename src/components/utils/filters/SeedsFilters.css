@@ -38,6 +38,11 @@
         font-size: 0.95rem;
         background-color: #fff;
         transition: all 0.2s ease;
+        cursor: text;
+    }
+
+    .seeds-filters-box.desktop-only select {
+        cursor: pointer;
     }
 
     .seeds-filters-box.desktop-only select:focus,
@@ -179,4 +184,40 @@
         width: 100%;
         box-sizing: border-box;
     }
+
+    .mobile-price-row {
+        width: 93%;
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background-color: #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      }
+    
+      /* override popup styles so it looks inline */
+      .mobile-price-row .price-popup {
+        position: static;   /* no absolute positioning */
+        width: 93%;
+        box-shadow: none;
+        margin-top: 0;
+      }
+    
+      .mobile-price-row .inputs-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+    
+      .mobile-price-row input {
+        flex: 1;
+        padding: 8px 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        width: 93%;
+      }
+    
+      .mobile-price-row .slider-wrapper {
+        padding: 0 6px;
+      }
 }

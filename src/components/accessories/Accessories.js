@@ -29,8 +29,8 @@ const Accessories = () => {
 
     const [filters, setFilters] = useState({
         accessory: "",
-        minPrice: "",
-        maxPrice: "",
+        minPrice: 0,
+        maxPrice: 999999,
         district: "",
         location: ""
     });
@@ -113,8 +113,8 @@ const Accessories = () => {
     const applyFilters = async () => {
         if (filters.district === "" &&
             filters.location === "" &&
-            filters.maxPrice === "" &&
-            filters.minPrice === "" &&
+            filters.maxPrice === 999999 &&
+            filters.minPrice === 0 &&
             filters.accessory === "") {
             fetchAds();
             getTotalCount();
@@ -127,8 +127,8 @@ const Accessories = () => {
         const collectionRef = collection(db, "ads");
         const filterQueries = [
             where("category", "==", categoryFilter),
-            ...(filters.minPrice ? [where("price", ">=", parseFloat(filters.minPrice))] : []),
-            ...(filters.maxPrice ? [where("price", "<=", parseFloat(filters.maxPrice))] : []),
+            ...(filters.minPrice ? [where("price", ">=", (filters.minPrice))] : []),
+            ...(filters.maxPrice ? [where("price", "<=", (filters.maxPrice))] : []),
             ...(filters.accessory ? [where("accessory", "==", filters.accessory)] : []),
             ...(filters.district ? [where("district", "==", filters.district)] : []),
             ...(filters.location ? [where("location", "==", filters.location)] : []),
@@ -156,8 +156,8 @@ const Accessories = () => {
     const resetFilters = () => {
         setFilters({
             accessory: "",
-            minPrice: "",
-            maxPrice: "",
+            minPrice: 0,
+            maxPrice: 999999,
             district: "",
             location: ""
         });

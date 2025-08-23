@@ -59,9 +59,9 @@ const Footer = () => {
                         <a
                             className="contact-link"
                             href='mailto:horsehub.team@gmail.com'>horsehub.team@gmail.com</a>
-                        <a href='tel:0527502293'
+                        <a href='tel:0547926338'
                             className="contact-link"
-                        >0527502293</a>
+                        >0547926338</a>
                     </div>
                 </div>
             </div>
