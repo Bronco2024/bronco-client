@@ -20,7 +20,7 @@ const ItemPage = () => {
 
     const fetchSimilarAds = useCallback(async () => {
         if (!ad?.category) return;
-        
+
         const now = Timestamp.now();
         const collectionRef = collection(db, 'ads');
         const q = query(
@@ -128,7 +128,7 @@ const ItemPage = () => {
                             {ad.category === "זרע" && (
                                 <p><strong>סוג זרע:</strong> {ad.seed_type} - {ad.semen_type}</p>
                             )}
-                            <p className="price">₪{ad.price}</p>
+                            {ad.price && ad.price !== '' && (<p className="price">₪{ad.price}</p>)}
                         </div>
                     )}
 
@@ -162,7 +162,7 @@ const ItemPage = () => {
                                 />
                                 <div className="related-ad-info">
                                     <h4>{item.breed}</h4>
-                                    <p>₪{item.price}</p>
+                                    {item.price && item.price !== '' && (<p>₪{item.price}</p>)}
                                 </div>
                             </div>
                         ))}

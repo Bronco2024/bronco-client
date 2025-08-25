@@ -190,7 +190,7 @@ const Profile = () => {
                             <div className="ad-details">
                                 <h4 className="ad-title-profile">{ad.title}</h4>
                                 <p>{ad.description}</p>
-                                <p className="ad-price-profile">₪{ad.price}</p>
+                                {ad.price && ad.price !== "" && (<p className="ad-price-profile">₪{ad.price}</p>)}
                                 <small>תקף עד: {FormatDateTimestampToDate(ad?.availableUntil)}</small>
                             </div>
 

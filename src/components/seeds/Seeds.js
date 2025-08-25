@@ -207,7 +207,7 @@ const Seeds = () => {
                                     <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-seeds-image" />
                                 )}
                                 <h2 className="ad-seeds-title">{ad.seed_type}</h2>
-                                <p className="ad-seeds-price">₪{ad.price}</p>
+                                {ad.price && ad.price !== "" && (<p className="ad-seeds-price">₪{ad.price}</p>)}
                                 <p className='ad-seeds-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                             </div>
                         )

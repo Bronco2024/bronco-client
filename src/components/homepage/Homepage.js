@@ -86,32 +86,29 @@ const HomePage = () => {
     };
 
     const responsiveSilver = {
-        0: { items: 2 },
-        768: { items: 1 },
+        0: { items: 3},
+        768: { items: 1},
     };
 
     const responsiveBronze = {
-        0: { items: 1 },
-        768: { items: 2 },
+        0: { items: 3 },
+        768: { items: 3 },
         1024: { items: 3 },
     };
 
     const renderItems = (sponsors, type) => {
         const filteredSponsors = sponsors.filter(item => item.sponsor === type);
-        const imageFit = {
-            width: "100%",
-            height: type === "gold" ? '250px' : "100%"
-        };
 
         return filteredSponsors.map(item => (
-            <a href={item.link} target="_blank" rel="noopener noreferrer">
-                <img
-                    key={item.id}
-                    src={item.photo}
-                    alt="sponsor"
-                    style={{ width: imageFit.width, height: imageFit.height, objectFit: 'fill' }}
-                    loading='lazy'
-                />
+            <a key={item.id} href={item.link} target="_blank" rel="noopener noreferrer">
+                <div className={`sponsor-image-wrapper ${type}`}>
+                    <img
+                        src={item.photo}
+                        alt="sponsor"
+                        className={`sponsor-img ${type}`}
+                        loading='lazy'
+                    />
+                </div>
             </a>
         ));
     };
@@ -193,9 +190,10 @@ const HomePage = () => {
                                         <h2 className="ad-title-homepage">{ad.title}</h2>
                                     )}
 
-                                    {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים" || ad.category === "חנות") && (
-                                        <p className="ad-price-homepage">₪{ad.price}</p>
-                                    )}
+                                    {(ad.price && ad.price !== '') && (ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים" || ad.category === "חנות"
+                                    ) && (
+                                            <p className="ad-price-homepage">₪{ad.price}</p>
+                                        )}
                                     <p className='ad-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
 
                                     {ad.hasCertificate && (

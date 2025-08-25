@@ -35,7 +35,7 @@ const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competiti
  */
 //const Subscribe = lazy(() => import("./components/subscribe/Subscribe"));
 //const Payment = lazy(() => import("./components/payment/Payment"));
-//const OurProducts = lazy(() => import("./components/our_products/OurProducts"))
+const OurProducts = lazy(() => import("./components/our_products/OurProducts"))
 // const MyPurchases = lazy(() => import("./components/my_purchases/MyPurchases"))
 // const PurchaseDetails = lazy(() => import("./components/my_purchases/PurchaseDetails"))
 // const AllPurchases = lazy(() => import("./components/admin/AllPurchases"))
@@ -259,11 +259,6 @@ function App() {
           </Suspense>
         }
       />
-
-      {/* 
-       *
-       * PAYMENTS
-       * This is currently closed until customer decides to make payments in the website
  
       <Route path="/our-products"
         element={
@@ -273,7 +268,7 @@ function App() {
             </Layout>
           </Suspense>
         }
-      /> */}
+      />
 
       {/* 
       *

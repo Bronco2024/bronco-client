@@ -450,14 +450,13 @@ const PublishAd = () => {
                                 onInput={(e) => {
                                     if (e.target.value > 999999) e.target.value = 999999;
                                 }}
-                                required
                             />
                         </div>
                     )
                 }
 
                 {
-                    (formData.category === "סוסים") && (
+                    (formData.category === "סוסים" || formData.category === "זרע") && (
                         <div className='publish-ad-form'>
                             <label htmlFor="video">סרטון</label>
                             <input

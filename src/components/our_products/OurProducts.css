@@ -1,3 +1,6 @@
+/* 
+ * This component is currently not in use. until customer request it.
+
 .products-container {
     display: flex;
     flex-direction: column;
@@ -150,7 +153,6 @@
     background-color: #e0b300;
 }
 
-/* Icon Styling */
 .add-to-cart-icon,
 .minus-icon,
 .plus-icon,
@@ -158,7 +160,6 @@
     font-size: 1.2rem;
 }
 
-/* Quantity Controls */
 .quantity-controls {
     display: flex;
     flex-direction: column;
@@ -173,7 +174,6 @@
 }
 
 
-/* Responsive Adjustments */
 @media (max-width: 1024px) {
     .ads-products-wrapper {
         justify-content: center;
@@ -209,5 +209,52 @@
 
     .ad-products-price {
         font-size: 0.9em;
+    }
+} */
+
+/*******************************************************************************************************/
+
+.coming-soon-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 50px;
+    margin-bottom: 120px;
+
+    text-align: center;
+}
+
+.coming-soon-icon {
+    font-size: 4rem;
+    color: #ffcc00;
+}
+
+.coming-soon-title {
+    font-size: 2em;
+    font-weight: bold;
+    color: #333;
+    direction: rtl;
+}
+
+.coming-soon-text {
+    font-size: 1.2em;
+    color: #555;
+    direction: rtl;
+    max-width: 400px;
+}
+
+@media (max-width: 768px) {
+    .coming-soon-title {
+        font-size: 1.5em;
+    }
+
+    .coming-soon-text {
+        font-size: 1em;
+    }
+
+    .coming-soon-icon {
+        font-size: 3rem;
     }
 }

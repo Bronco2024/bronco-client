@@ -66,7 +66,6 @@ const Horses = () => {
         const querySnapshot = await getDocs(q);
         const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setAdList(items);
-        console.log("Ads fetched:", items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
     }, [categoryFilter]);
 
@@ -243,7 +242,7 @@ const Horses = () => {
                                     <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-horse-image" />
                                 )}
                                 <h2 className="ad-horse-title">{ad.breed}</h2>
-                                <p className="ad-horse-price">₪{ad.price}</p>
+                                {ad.price && ad.price !== "" && (<p className="ad-horse-price">₪{ad.price}</p>)}
                                 <p className='ad-horse-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                             </div>
                         )))

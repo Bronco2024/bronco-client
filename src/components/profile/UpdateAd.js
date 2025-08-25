@@ -18,6 +18,8 @@ const UpdateAd = () => {
     const { currentUser } = useAuth();
     const ad = location.state?.ad;
     const [newPhotos, setNewPhotos] = useState({ photos: [] })
+    const [newVideo, setNewVideo] = useState(null);
+
     const [showModal, setShowModal] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -29,6 +31,7 @@ const UpdateAd = () => {
         location: '',
         price: '',
         photos: [],
+        video: null
     });
 
     useEffect(() => {
@@ -60,6 +63,12 @@ const UpdateAd = () => {
 
     const handleFileChange = (e) => {
         setNewPhotos({ ...newPhotos, photos: Array.from(e.target.files) });
+    };
+
+    const handleVideoChange = (e) => {
+        if (e.target.files[0]) {
+            setNewVideo(e.target.files[0]);
+        }
     };
 
     const handleInputChange = (e) => {
@@ -97,6 +106,32 @@ const UpdateAd = () => {
             });
         }
     };
+
+    const handleDeleteVideo = async (videoUrl) => {
+        const storageRef = ref(storage, `ads/${ad.id}/${videoUrl.split('%2F')[2].split('?')[0]}`);
+
+        try {
+            await deleteObject(storageRef);
+
+            const adRef = doc(db, "ads", ad.id);
+            await updateDoc(adRef, {
+                video: null,
+            });
+
+            setFormData((prevData) => ({
+                ...prevData,
+                video: null,
+            }));
+        } catch (error) {
+            console.error("Error deleting video:", error);
+            Sentry.captureException(`Error deleting video`, {
+                tags: { component: "UpdateAd" },
+                extra: { info: error }
+            });
+        }
+    };
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -176,6 +211,26 @@ const UpdateAd = () => {
                 });
             }
         }
+
+        if (newVideo) {
+            const videoRef = ref(storage, `ads/${ad.id}/${uuidv4()}`);
+            await uploadBytes(videoRef, newVideo);
+            const videoURL = await getDownloadURL(videoRef);
+
+            try {
+                await updateDoc(adRef, {
+                    video: videoURL
+                });
+                setNewVideo(null);
+            } catch (error) {
+                console.error("Error updating ad video:", error);
+                Sentry.captureException(`Error updating ad video`, {
+                    tags: { component: "UpdateAd" },
+                    extra: { info: error }
+                });
+            }
+        }
+
         setShowModal(true);
     }
 
@@ -447,7 +502,6 @@ const UpdateAd = () => {
                                 name="price"
                                 value={formData.price}
                                 onChange={handleChange}
-                                required
                                 onInput={(e) => {
                                     if (e.target.value > 999999) e.target.value = 999999;
                                 }}
@@ -455,6 +509,33 @@ const UpdateAd = () => {
                         </div>
                     )
                 }
+
+                <label htmlFor="videos">וידאו</label>
+                <input
+                    type="file"
+                    id="videos"
+                    name="videos"
+                    multiple
+                    accept="video/*"
+                    onChange={handleVideoChange}
+                />
+
+                <div className="current-photos">
+                    {formData.video && (
+                        <div>
+                            <h3>וידאו קיים</h3>
+                            <div className="photo-item">
+                                <video width="300" controls>
+                                    <source src={formData.video} type="video/mp4" />
+                                    הדפדפן שלך לא תומך בווידאו.
+                                </video>
+                                <button type="button" className='del-photo-button' onClick={() => handleDeleteVideo(formData.video)}>מחק</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+
 
                 <label htmlFor="photos">תמונות</label>
                 <input
@@ -479,6 +560,8 @@ const UpdateAd = () => {
                         </div>
                     )}
                 </div>
+
+
 
                 <button type="submit" className="update-button">עדכן מודעה</button>
 

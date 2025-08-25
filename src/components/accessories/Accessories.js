@@ -196,7 +196,7 @@ const Accessories = () => {
                                     <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-accessory-image" />
                                 )}
                                 <h2 className="ad-accessory-title">{ad.category}</h2>
-                                <p className="ad-accessory-price">₪{ad.price}</p>
+                                {ad.price && ad.price !== "" && (<p className="ad-accessory-price">₪{ad.price}</p>)}
                                 <p className='ad-accessory-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                             </div>
                         )))
