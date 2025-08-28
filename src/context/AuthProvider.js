@@ -12,26 +12,23 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
-
   useEffect(() => {
-
     const handleRedirect = async () => {
       try {
         const result = await getRedirectResult(auth);
         if (result?.user) {
           console.log("Redirect login success:", result.user);
-          // Firestore user creation logic is already handled by onAuthStateChanged
+          // Firestore user creation is already handled by onAuthStateChanged
         }
       } catch (error) {
         console.error("Redirect login error", error);
-        // Sentry.captureException(error, {
-        //   tags: { component: "AuthProvider", method: "GoogleRedirect" }
-        // });
       }
     };
   
     handleRedirect();
+  }, []);
 
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setLoading(true);
       try {
