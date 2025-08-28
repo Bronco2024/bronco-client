@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { auth } from '@/firebase';
 import { signInWithEmailAndPassword, reload } from 'firebase/auth';
 import { useAuth } from '@/context/AuthProvider';
 import * as Sentry from "@sentry/react";
+import { handleGoogleSignupAndSignIn } from '../../helpers/firebase-helpers';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -42,7 +44,7 @@ const Login = () => {
         } catch (error) {
             const errorCode = error.code;
             const errorCodeAndMessage = `${errorCode} - ${error}`;
-            
+
             if (errorCode === "auth/invalid-credential" || errorCode === "auth/user-not-found" || errorCode === "auth/wrong-password") {
                 setError("אימייל או סיסמה לא נכונים");
             } else {
@@ -56,6 +58,17 @@ const Login = () => {
                     }
                 });
             }
+        }
+    };
+
+    const handleGoogleSignin = async () => {
+        try {
+            handleGoogleSignupAndSignIn();
+        } catch (error) {
+            setError("שגיאה בחיבור עם Google");
+            Sentry.captureException(error, {
+                tags: { component: "Login", method: "GoogleSignin" }
+            });
         }
     };
 
@@ -96,7 +109,15 @@ const Login = () => {
                 {error && <p className="error-message">{error}</p>}
 
                 <button type="submit" className="login-button" onClick={handleSubmit}>התחברות</button>
+                <div className="google-signup">
+                    <button type="button" onClick={handleGoogleSignin} className="google-button">
+                        <FontAwesomeIcon icon={faGoogle} className="google-icon" />
+                        התחבר עם Google
+                    </button>
+                </div>
             </form>
+
+
             <p className="register-text">
                 אין לך חשבון? <span onClick={handleRegisterRedirect} className="register-link">להרשמה</span>
             </p>
