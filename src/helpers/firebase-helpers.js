@@ -1,6 +1,6 @@
 import { doc, updateDoc } from "firebase/firestore";
-import { db, auth } from "@/firebase";
-import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { db, auth, googleProvider } from "@/firebase";
+import { signInWithRedirect } from "firebase/auth";
 
 export const updateUserCart = async (uid, cartItems) => {
     const userRef = doc(db, "users", uid);
@@ -10,10 +10,8 @@ export const updateUserCart = async (uid, cartItems) => {
 };
 
 export const handleGoogleSignupAndSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-
     try {
-        await signInWithRedirect(auth, provider);
+        await signInWithRedirect(auth, googleProvider);
     } catch (error) {
         console.error("Google signup error", error);
         throw error;
