@@ -109,12 +109,12 @@ const Login = () => {
                 {error && <p className="error-message">{error}</p>}
 
                 <button type="submit" className="login-button" onClick={handleSubmit}>התחברות</button>
-                <div className="google-signup">
+                {/* <div className="google-signup">
                     <button type="button" onClick={handleGoogleSignin} className="google-button">
                         <FontAwesomeIcon icon={faGoogle} className="google-icon" />
                         התחבר עם Google
                     </button>
-                </div>
+                </div> */}
             </form>
 
 

@@ -166,12 +166,12 @@ const Register = () => {
 
                 <button type="submit" className="register-button">הרשמה</button>
 
-                <div className="google-signup">
+                {/* <div className="google-signup">
                     <button type="button" onClick={handleGoogleSignup} className="google-button">
                         <FontAwesomeIcon icon={faGoogle} className="google-icon" />
                         הירשם עם Google
                     </button>
-                </div>
+                </div> */}
 
             </form>
 
