@@ -20,15 +20,15 @@ const Login = () => {
 
     useEffect(() => {
         getRedirectResult(auth)
-          .then((result) => {
-            if (result?.user) {
-              console.log("Signed in:", result.user);
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }, []);
+            .then((result) => {
+                if (result?.user) {
+                    navigate('/');
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }, []);
 
     const handleRegisterRedirect = () => {
         navigate('/register');
@@ -123,8 +123,9 @@ const Login = () => {
                 <button type="submit" className="login-button" onClick={handleSubmit}>התחברות</button>
                 <div className="google-signup">
                     <button type="button" onClick={handleGoogleSignin} className="google-button">
-                        <FontAwesomeIcon icon={faGoogle} className="google-icon" />
                         התחבר עם Google
+                        <FontAwesomeIcon icon={faGoogle} className="google-icon" />
+
                     </button>
                 </div>
             </form>

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Register.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { auth } from '@/firebase';
-import { createUserWithEmailAndPassword, sendEmailVerification, signOut} from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, signOut, getRedirectResult} from "firebase/auth";
 import Modal from '@components/utils/modal/Modal';
 import * as Sentry from "@sentry/react";
 import { handleGoogleSignupAndSignIn } from '../../helpers/firebase-helpers';
@@ -20,6 +20,18 @@ const Register = () => {
     const [error, setError] = useState('');
     const [agreed, setAgreed] = useState(false);
     const [showModal, setShowModal] = useState(false);
+
+    useEffect(() => {
+        getRedirectResult(auth)
+          .then((result) => {
+            if (result?.user) {
+              navigate('/');
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }, []);
 
     const handleLoginRedirect = () => {
         navigate('/login');
@@ -166,12 +178,12 @@ const Register = () => {
 
                 <button type="submit" className="register-button">הרשמה</button>
 
-                {/* <div className="google-signup">
+                <div className="google-signup">
                     <button type="button" onClick={handleGoogleSignup} className="google-button">
-                        <FontAwesomeIcon icon={faGoogle} className="google-icon" />
                         הירשם עם Google
+                        <FontAwesomeIcon icon={faGoogle} className="google-icon" />
                     </button>
-                </div> */}
+                </div>
 
             </form>
 

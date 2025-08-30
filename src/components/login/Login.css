@@ -138,6 +138,7 @@
     cursor: pointer;
 
     transition: background-color 0.2s, box-shadow 0.2s;
+    direction: rtl;
 }
 
 .google-button:hover {
