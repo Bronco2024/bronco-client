@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { auth } from '@/firebase';
-import { signInWithEmailAndPassword, reload } from 'firebase/auth';
+import { signInWithEmailAndPassword, reload, getRedirectResult } from 'firebase/auth';
 import { useAuth } from '@/context/AuthProvider';
 import * as Sentry from "@sentry/react";
 import { handleGoogleSignupAndSignIn } from '../../helpers/firebase-helpers';
@@ -17,6 +17,18 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const { logout, currentUser, loading } = useAuth()
+
+    useEffect(() => {
+        getRedirectResult(auth)
+          .then((result) => {
+            if (result?.user) {
+              console.log("Signed in:", result.user);
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }, []);
 
     const handleRegisterRedirect = () => {
         navigate('/register');
@@ -109,12 +121,12 @@ const Login = () => {
                 {error && <p className="error-message">{error}</p>}
 
                 <button type="submit" className="login-button" onClick={handleSubmit}>התחברות</button>
-                {/* <div className="google-signup">
+                <div className="google-signup">
                     <button type="button" onClick={handleGoogleSignin} className="google-button">
                         <FontAwesomeIcon icon={faGoogle} className="google-icon" />
                         התחבר עם Google
                     </button>
-                </div> */}
+                </div>
             </form>
 
 
