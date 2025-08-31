@@ -17,8 +17,10 @@ import './Veterinarian.css'
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import Paganation from "@components/utils/paganation/Paganation";
+import { faPhoneAlt, faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const Boarding = () => {
+const Veterinarian = () => {
     const navigate = useNavigate();
     const [adList, setAdList] = useState([]);
     const [totalAds, setTotalAds] = useState(0);
@@ -35,7 +37,6 @@ const Boarding = () => {
             collectionRef,
             where("category", "==", categoryFilter)
         );
-
         const aggregateQuerySnapshot = await getCountFromServer(q);
         setTotalAds(aggregateQuerySnapshot.data().count);
     }, [categoryFilter]);
@@ -48,7 +49,6 @@ const Boarding = () => {
             orderBy("createdAt", "desc"),
             limit(ADS_PER_PAGE)
         );
-
         const querySnapshot = await getDocs(q);
         const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setAdList(items);
@@ -69,7 +69,6 @@ const Boarding = () => {
             startAfter(afterThis),
             limit(ADS_PER_PAGE)
         );
-
         const querySnapshot = await getDocs(q);
         const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setAdList(items);
@@ -87,7 +86,6 @@ const Boarding = () => {
             limitToLast(ADS_PER_PAGE),
             endBefore(beforeThis)
         );
-
         const querySnapshot = await getDocs(q);
         const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setAdList(items);
@@ -96,13 +94,9 @@ const Boarding = () => {
         setPage((prevPage) => prevPage - 1);
     };
 
-    const handleClickOnItem = (ad) => {
-        navigate('/item', { state: { ad } })
-    }
-
     return (
         <div className="veterinarian-container">
-            <h1 className="veterinarian-title">וטרינר</h1>
+            <h1 className="veterinarian-title">וטרינרים</h1>
 
             <div className="ads-veterinarian-wrapper">
                 {adList.length === 0 ? (
@@ -113,18 +107,52 @@ const Boarding = () => {
                             <div
                                 key={ad.id}
                                 className="ad-veterinarian-card"
-                                onClick={() => handleClickOnItem(ad)}
                             >
-                                {ad.photos && ad.photos[0] && (
-                                    <img src={ad.photos[0]} alt={ad.title} className="ad-veterinarian-image" />
+                                {ad.photos && ad.photos[0] ? (
+                                    <img
+                                        src={ad.photos[0]}
+                                        alt={ad.title}
+                                        className="ad-veterinarian-image"
+                                    />
+                                ) : (
+                                    <img
+                                        src={require('@/assets/no-image.jpg')}
+                                        alt={ad.category}
+                                        className="ad-veterinarian-image"
+                                    />
                                 )}
-                                {ad.photos.length === 0 && (
-                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-veterinarian-image" />
-                                )}
+
                                 <h2 className="ad-veterinarian-title">{ad.title}</h2>
-                                <p className='ad-veterinarian-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                                {ad.price && (
+                                    <p className="ad-veterinarian-price">₪{ad.price}</p>
+                                )}
+
+                                <div className="ad-veterinarian-details">
+                                    <div className="location">
+                                        <span>{ad.location}</span>
+                                        <FontAwesomeIcon icon={faLocationDot} style={{ marginLeft: '8px', marginRight: '8px' }} />
+                                    </div>
+                                    {ad.description && <p><strong>תיאור:</strong> {ad.description}</p>}
+                                    {ad.contact && <p><strong>איש קשר:</strong> {ad.contact}</p>}
+                                </div>
+
+                                <div className="ad-veterinarian-footer">
+                                    {ad.phoneNumber && (
+                                        <div className="contact-box">
+                                            <a className="phone-link" href={`tel:${ad.phoneNumber}`}>
+                                                <FontAwesomeIcon icon={faPhoneAlt} />
+                                                <span>{ad.phoneNumber}</span>
+                                            </a>
+                                        </div>
+                                    )}
+                                    <p className="ad-veterinarian-date-create">
+                                        תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}
+                                    </p>
+                                </div>
+
                             </div>
-                        )))
+                        )
+                    ))
                 )}
             </div>
 
@@ -139,4 +167,4 @@ const Boarding = () => {
         </div>
     )
 }
-export default Boarding;
+export default Veterinarian;

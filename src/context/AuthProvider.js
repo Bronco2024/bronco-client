@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '@/firebase';
-import { onAuthStateChanged, signOut, reload, getRedirectResult } from 'firebase/auth';
+import { onAuthStateChanged, signOut, reload } from 'firebase/auth';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { clearCart, loadCart } from '@/redux/cartSlice';
 import { useDispatch } from 'react-redux';
@@ -11,22 +11,6 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   const handleRedirect = async () => {
-  //     try {
-  //       const result = await getRedirectResult(auth);
-  //       if (result?.user) {
-  //         console.log("Redirect login success:", result.user);
-  //         // Firestore user creation is already handled by onAuthStateChanged
-  //       }
-  //     } catch (error) {
-  //       console.error("Redirect login error", error);
-  //     }
-  //   };
-  
-  //   handleRedirect();
-  // }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {

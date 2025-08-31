@@ -10,12 +10,14 @@ import Modal from '@components/utils/modal/Modal';
 import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
 import * as Sentry from "@sentry/react";
 import FloatingInput from '../../my_components/FloatingInput';
+import { isPhoneNumberIsraeliValid } from '@components/utils/constants/Functions';
 
 const PublishAd = () => {
     const navigate = useNavigate();
     const { currentUser, setCurrentUser } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [phoneValid, setPhoneValid] = useState(true);
 
     const [formData, setFormData] = useState({
         contact: '',
@@ -55,6 +57,9 @@ const PublishAd = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if(phoneValid === false) {
+            return;
+        }
         setUploading(true);
 
         if ((formData.category === "סוסים" || formData.category === "זרע")
@@ -381,7 +386,14 @@ const PublishAd = () => {
                     required
                 />
 
-                <label htmlFor="phoneNumber">מספר טלפון</label>
+                <label htmlFor="phoneNumber">
+                {formData.phoneNumber && (
+                        <span>
+                            {phoneValid ? "✅" : "❌"}
+                        </span>
+                    )}
+                  {" "} מספר טלפון 
+                </label>
                 <input
                     type="tel"
                     id="phoneNumber"
@@ -390,9 +402,11 @@ const PublishAd = () => {
                     onChange={(e) => {
                         const numericValue = e.target.value.replace(/\D/g, '');
                         handleChange({ target: { name: 'phoneNumber', value: numericValue } });
+                        setPhoneValid(isPhoneNumberIsraeliValid(numericValue));
                     }}
                     required
                     maxLength={10}
+                    className={phoneValid ? 'valid-phone' : 'invalid-phone'}
                 />
 
 

@@ -11,6 +11,7 @@ import Modal from "@components/utils/modal/Modal"
 import { DeletedAttributesAfterUpdateForm } from '@components/utils/constants/Functions';
 import * as Sentry from "@sentry/react";
 import FloatingInput from '../../my_components/FloatingInput';
+import { isPhoneNumberIsraeliValid } from '@components/utils/constants/Functions';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -33,6 +34,8 @@ const UpdateAd = () => {
         photos: [],
         video: null
     });
+
+    const [phoneValid, setPhoneValid] = useState(true);
 
     useEffect(() => {
         if (ad) {
@@ -135,6 +138,9 @@ const UpdateAd = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (phoneValid === false) {
+            return;
+        }
         let dataToSubmit;
 
         if (!ad?.id) {
@@ -446,14 +452,27 @@ const UpdateAd = () => {
                     required
                 />
 
-                <label htmlFor="phoneNumber">מספר טלפון</label>
-                <input
+                <label htmlFor="phoneNumber">
+                    {formData.phoneNumber && (
+                        <span>
+                            {phoneValid ? "✅" : "❌"}
+                        </span>
+                    )}
+                    {" "} מספר טלפון
+                </label>                <input
                     type="tel"
                     id="phoneNumber"
                     name="phoneNumber"
                     value={formData?.phoneNumber}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                        const numericValue = e.target.value.replace(/\D/g, '');
+                        handleChange({ target: { name: 'phoneNumber', value: numericValue } });
+                        setPhoneValid(isPhoneNumberIsraeliValid(numericValue));
+                    }}
                     required
+                    maxLength={10}
+                    className={phoneValid ? 'valid-phone' : 'invalid-phone'}
+
                 />
 
                 <label htmlFor="district">אזור</label>

@@ -27,17 +27,19 @@
 .publish-ad-form input,
 .publish-ad-form textarea,
 .publish-ad-form select {
-    /* Include select in the styles */
     padding: 10px;
-    /* Add padding for input fields */
     border: 1px solid #ccc;
-    /* Light gray border for inputs */
     border-radius: 4px;
-    /* Rounded corners */
     text-align: right;
-    /* Align text inside inputs to the right */
     resize: none;
-    /* Disable resizing for textarea */
+}
+
+.publish-ad-form input.valid-phone {
+    border: 2px solid green !important;
+}
+
+.publish-ad-form input.invalid-phone {
+    border: 2px solid red !important;
 }
 
 .publish-button {

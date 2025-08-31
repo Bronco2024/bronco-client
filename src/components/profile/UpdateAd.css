@@ -21,12 +21,20 @@
 
 .update-ad-form input,
 .update-ad-form textarea,
-.update-ad-form select { /* Include select in the styles */
-    padding: 10px; /* Add padding for input fields */
-    border: 1px solid #ccc; /* Light gray border for inputs */
-    border-radius: 4px; /* Rounded corners */
-    text-align: right; /* Align text inside inputs to the right */
-    resize: none; /* Disable resizing for textarea */
+.update-ad-form select { 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 4px;
+    text-align: right; 
+    resize: none; 
+}
+
+.update-ad-form input.valid-phone {
+    border: 2px solid green !important;
+}
+
+.update-ad-form input.invalid-phone {
+    border: 2px solid red !important;
 }
 
 .update-ad-form select{
