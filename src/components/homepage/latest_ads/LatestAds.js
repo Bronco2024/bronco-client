@@ -65,10 +65,10 @@ const LatestAds = () => {
                         onClick={() => handleClickOnItem(ad)}
                     >
                         {categories.includes(ad.category) && (
-                            <div className="feature-icon-container">
+                            <div className="feature-icon-container-ads">
                                 <div className="feature-icon-circle" data-tooltip={ad.category}>
                                     <img
-                                        className="feature-icon"
+                                        className="feature-icon-ads"
                                         src={
                                             ad.category === "סוסים"
                                                 ? require('@/assets/aboutus/horse.png')

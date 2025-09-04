@@ -37,7 +37,7 @@
     border-color: #ccc;
 }
 
-.feature-icon-container {
+.feature-icon-container-ads {
     margin-bottom: 10px;
     width: 100%;
     display: flex;
@@ -80,7 +80,7 @@
     opacity: 1;
 }
 
-.feature-icon {
+.feature-icon-ads {
     width: 30px;
     height: 30px;
     object-fit: contain;
