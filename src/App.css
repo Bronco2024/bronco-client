@@ -22,4 +22,12 @@ html, body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+} .App {
+  min-height: 100vh;
+  background: transparent !important;
+}
+
+#root {
+  min-height: 100vh;
+  background: transparent !important;
 }
