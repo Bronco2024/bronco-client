@@ -1,205 +1,397 @@
 import React from "react";
 import "./Homepage.css";
 
+const animals = [
+  { icon: "🐶", name: "כלבים" },
+  { icon: "🐱", name: "חתולים" },
+  { icon: "🐴", name: "סוסים" },
+  { icon: "🐦", name: "ציפורים" },
+  { icon: "🐠", name: "דגים" },
+  { icon: "🐰", name: "ארנבים" },
+  { icon: "🦎", name: "זוחלים" },
+  { icon: "🐹", name: "מכרסמים" },
+  { icon: "🐑", name: "חיות משק" },
+];
+
+const listings = [
+  {
+    image: "🐶",
+    title: "גור גולדן רטריבר",
+    details: "זכר • 4 חודשים",
+    location: "תל אביב",
+    price: "₪4,500",
+  },
+  {
+    image: "🐱",
+    title: "חתול בריטי קצר שיער",
+    details: "נקבה • 3 חודשים",
+    location: "ירושלים",
+    price: "₪2,200",
+  },
+  {
+    image: "🐕",
+    title: "גור פומרניאן",
+    details: "זכר • 3 חודשים",
+    location: "חיפה",
+    price: "₪2,800",
+  },
+  {
+    image: "🦜",
+    title: "תוכי ארה כחול",
+    details: "זכר • שנה",
+    location: "ראשון לציון",
+    price: "₪1,600",
+  },
+];
+
 const services = [
-  { icon: "🐾", title: "אימוץ", text: "מצאו חבר חדש לחיים" },
-  { icon: "🛒", title: "חנות", text: "מזון, צעצועים ואביזרים" },
-  { icon: "✂️", title: "טיפוח וספר", text: "טיפוח מקצועי לחיות שלכם" },
-  { icon: "🏠", title: "פנסיון", text: "אירוח בטוח ונוח לחיות" },
-  { icon: "🎓", title: "אילוף", text: "אילוף והתנהגות מקצועית" },
-  { icon: "🩺", title: "וטרינר", text: "טיפול וייעוץ רפואי" },
-];
-
-const categories = [
-  ["🐶", "כלבים"],
-  ["🐱", "חתולים"],
-  ["🐴", "סוסים"],
-  ["🐰", "ארנבים"],
-  ["🐠", "דגים"],
-  ["🦜", "ציפורים"],
-  ["🦎", "זוחלים"],
-  ["🐢", "אחרים"],
-];
-
-const ads = [
-  { image: "🐶", title: "גור גולדן רטריבר", location: "תל אביב", price: "4,500 ₪" },
-  { image: "🐱", title: "חתול מקסים לאימוץ", location: "חיפה", price: "לאימוץ" },
-  { image: "🐴", title: "סוס ערבי יפהפה", location: "השרון", price: "18,000 ₪" },
-  { image: "🦜", title: "תוכי ארה מקאו", location: "ירושלים", price: "3,200 ₪" },
+  {
+    icon: "🩺",
+    title: "וטרינרים",
+    info: "רופאים וקליניקות",
+  },
+  {
+    icon: "✂️",
+    title: "מספרות",
+    info: "טיפוח וניקיון",
+  },
+  {
+    icon: "🏠",
+    title: "פנסיונים",
+    info: "מקום בטוח לחיית המחמד",
+  },
+  {
+    icon: "🎓",
+    title: "מאלפים",
+    info: "אילוף והתנהגות",
+  },
 ];
 
 function Homepage() {
   return (
-    <div className="pet-homepage" dir="rtl">
+    <div className="pet-page" dir="rtl">
 
-      {/* Header */}
+      {/* HEADER */}
       <header className="pet-header">
-        <div className="pet-logo">
-          <span>🐾</span>
+
+        <div className="brand">
+          <div className="brand-icon">🐾</div>
+
           <div>
-            <strong>עולם החיות</strong>
-            <small>כל מה שחיות המחמד שלכם צריכות</small>
+            <div className="brand-name">
+              Pet<span>Bones</span>
+            </div>
+
+            <div className="brand-subtitle">
+              עולם החיות במקום אחד
+            </div>
           </div>
         </div>
 
-        <nav>
-          <a className="active">דף הבית</a>
-          <a>חיות לאימוץ</a>
-          <a>חנות</a>
-          <a>שירותים</a>
-          <a>וטרינרים</a>
-          <a>מאמרים</a>
-          <a>צור קשר</a>
+        <nav className="main-nav">
+          <a href="#animals">חיות</a>
+          <a href="#services">שירותים</a>
+          <a href="#shop">חנות</a>
+          <a href="#adoption">אימוץ</a>
+          <a href="#professionals">בעלי מקצוע</a>
         </nav>
 
-        <button className="login-btn">התחבר / הירשם</button>
+        <div className="header-buttons">
+          <button className="header-search">
+            🔍
+          </button>
+
+          <button className="account-button">
+            👤 החשבון שלי
+          </button>
+
+          <button className="publish-button">
+            ＋ פרסם מודעה
+          </button>
+        </div>
+
       </header>
 
-      {/* Hero */}
+
+      {/* HERO */}
       <section className="hero">
-        <div className="hero-text">
-          <span className="welcome">ברוכים הבאים ל־</span>
 
-          <h1>עולם החיות 🐾</h1>
+        <div className="hero-content">
 
-          <p>
-            הפלטפורמה המובילה לכל צרכי חיות המחמד שלכם
-          </p>
+          <div className="hero-text">
 
-          <div className="hero-badges">
-            <span>🛡️ שירות אמין</span>
-            <span>🏷️ מחירים הוגנים</span>
-            <span>👨‍⚕️ אנשי מקצוע</span>
-            <span>🏠 הכל במקום אחד</span>
+            <span className="hero-small">
+              🐾 ברוכים הבאים ל־PetBones
+            </span>
+
+            <h1>
+              כל עולם החיות
+              <span> במקום אחד</span>
+            </h1>
+
+            <p>
+              קנו, מכרו, אמצו ומצאו את כל השירותים
+              והמוצרים שחיית המחמד שלכם צריכה.
+            </p>
+
           </div>
 
-          <div className="hero-buttons">
-            <button className="main-btn">🔎 חיפוש שירותים</button>
-            <button className="secondary-btn">כל השירותים</button>
-          </div>
-        </div>
 
-        <div className="hero-animals">
-          <div>🐶</div>
-          <div>🐱</div>
-          <div>🐰</div>
-        </div>
-      </section>
+          <div className="search-box">
 
-      {/* Services */}
-      <section className="section">
-        <h2>השירותים שלנו 🐾</h2>
+            <div className="search-field">
+              <span>🔍</span>
 
-        <div className="services-grid">
-          {services.map((service) => (
-            <div className="service-card" key={service.title}>
-              <div className="service-icon">{service.icon}</div>
-              <h3>{service.title}</h3>
-              <p>{service.text}</p>
-              <button>לפרטים נוספים ←</button>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="categories-section">
-        <h2>קטגוריות פופולריות 🐾</h2>
-
-        <div className="categories-grid">
-          {categories.map(([icon, title]) => (
-            <div className="category" key={title}>
-              <div>{icon}</div>
-              <span>{title}</span>
-            </div>
-          ))}
-        </div>
-
-        <button className="outline-btn">צפייה בכל הקטגוריות ←</button>
-      </section>
-
-      {/* Ads */}
-      <section className="section">
-        <h2>מודעות מומלצות 🐾</h2>
-
-        <div className="ads-grid">
-          {ads.map((ad) => (
-            <div className="ad-card" key={ad.title}>
-              <div className="ad-image">{ad.image}</div>
-
-              <div className="ad-content">
-                <span className="sale-tag">למכירה</span>
-                <h3>{ad.title}</h3>
-                <p>{ad.location}</p>
-                <strong>{ad.price}</strong>
+              <div>
+                <small>מה אתם מחפשים?</small>
+                <strong>חיה, מוצר, שירות...</strong>
               </div>
             </div>
+
+            <div className="search-field location">
+              <span>📍</span>
+
+              <div>
+                <small>איפה?</small>
+                <strong>עיר או אזור</strong>
+              </div>
+            </div>
+
+            <button className="search-button">
+              חיפוש
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div className="hero-animals">
+          <div className="big-dog">🐶</div>
+          <div className="big-cat">🐱</div>
+        </div>
+
+      </section>
+
+
+      {/* ANIMAL CATEGORIES */}
+      <section className="animals-section" id="animals">
+
+        <div className="section-title">
+          <div>
+            <span>בחרו קטגוריה</span>
+            <h2>חיות</h2>
+          </div>
+
+          <button>לכל החיות ←</button>
+        </div>
+
+
+        <div className="animal-grid">
+
+          {animals.map((animal, index) => (
+            <button className="animal-card" key={index}>
+
+              <div className="animal-icon">
+                {animal.icon}
+              </div>
+
+              <span>{animal.name}</span>
+
+            </button>
           ))}
+
         </div>
 
-        <button className="outline-btn">צפייה בכל המודעות</button>
       </section>
 
-      {/* Trust */}
+
+      {/* MARKETPLACE */}
+      <section className="marketplace-section">
+
+        <div className="section-title">
+
+          <div>
+            <span>מודעות חדשות</span>
+            <h2>חיות למכירה</h2>
+          </div>
+
+          <button>לכל המודעות ←</button>
+
+        </div>
+
+
+        <div className="marketplace-layout">
+
+          <div className="listing-grid">
+
+            {listings.map((item, index) => (
+
+              <article className="listing-card" key={index}>
+
+                <button className="favorite">
+                  ♡
+                </button>
+
+                <div className="listing-image">
+                  {item.image}
+                </div>
+
+                <div className="listing-content">
+
+                  <h3>{item.title}</h3>
+
+                  <p>{item.details}</p>
+
+                  <div className="listing-location">
+                    📍 {item.location}
+                  </div>
+
+                  <strong>{item.price}</strong>
+
+                  <button className="contact-button">
+                    💬 צור קשר
+                  </button>
+
+                </div>
+
+              </article>
+
+            ))}
+
+          </div>
+
+
+          {/* SERVICES */}
+          <aside className="nearby-services" id="services">
+
+            <div className="nearby-title">
+              <span>📍</span>
+              <h2>שירותים לידך</h2>
+            </div>
+
+            {services.map((service, index) => (
+
+              <div className="service-item" key={index}>
+
+                <div className="service-icon">
+                  {service.icon}
+                </div>
+
+                <div>
+                  <strong>{service.title}</strong>
+                  <p>{service.info}</p>
+                  <small>⭐ 4.{7 + index} • קרוב אליך</small>
+                </div>
+
+              </div>
+
+            ))}
+
+            <button className="all-services">
+              לכל השירותים
+            </button>
+
+          </aside>
+
+        </div>
+
+      </section>
+
+
+      {/* SHOP */}
+      <section className="shop-banner" id="shop">
+
+        <div>
+          <span>🛒 PetBones Shop</span>
+
+          <h2>
+            כל מה שחיית המחמד
+            <br />
+            שלכם צריכה
+          </h2>
+
+          <p>
+            מזון, משחקים, מיטות, ציוד ועוד.
+          </p>
+
+          <button>
+            לחנות ←
+          </button>
+        </div>
+
+        <div className="shop-animal">
+          🐕
+        </div>
+
+      </section>
+
+
+      {/* TRUST */}
       <section className="trust-section">
+
         <div>
-          <span>🔒</span>
-          <strong>תשלום מאובטח</strong>
-          <small>הקנייה שלך מוגנת</small>
+          <span>🛡️</span>
+          <strong>עסקאות בטוחות</strong>
+          <p>אנחנו שומרים עליכם</p>
         </div>
 
         <div>
-          <span>🚚</span>
-          <strong>משלוחים מהירים</strong>
-          <small>משלוח עד הבית</small>
+          <span>✓</span>
+          <strong>מודעות מאומתות</strong>
+          <p>איכות ואמינות גבוהה</p>
         </div>
 
         <div>
-          <span>🎧</span>
+          <span>🐾</span>
+          <strong>קהילת חובבי חיות</strong>
+          <p>אלפי חברים כמוך</p>
+        </div>
+
+        <div>
+          <span>💬</span>
           <strong>שירות לקוחות</strong>
-          <small>זמינים עבורכם 24/7</small>
+          <p>כאן לכל שאלה</p>
         </div>
 
-        <div>
-          <span>⭐</span>
-          <strong>דירוגים גבוהים</strong>
-          <small>אלפי לקוחות מרוצים</small>
-        </div>
       </section>
 
-      {/* App */}
-      <section className="app-banner">
-        <div>
-          <h2>האפליקציה של עולם החיות 📱</h2>
-          <p>כל השירותים והחיות בכף היד שלכם</p>
-          <button>הורידו את האפליקציה</button>
-        </div>
 
-        <div className="phone">📱</div>
-      </section>
+      {/* FOOTER */}
+      <footer className="pet-footer">
 
-      {/* Stats */}
-      <section className="stats">
-        <div>
-          <strong>+15,000</strong>
-          <span>לקוחות מרוצים</span>
+        <div className="footer-brand">
+          <strong>
+            Pet<span>Bones</span>
+          </strong>
+
+          <p>
+            עולם החיות במקום אחד
+          </p>
         </div>
 
         <div>
-          <strong>+5,000</strong>
-          <span>חיות שאומצו</span>
+          <h3>PetBones</h3>
+          <a href="#">אודות</a>
+          <a href="#">צור קשר</a>
+          <a href="#">תנאי שימוש</a>
         </div>
 
         <div>
-          <strong>+2,000</strong>
-          <span>שירותים בוצעו</span>
+          <h3>חיות</h3>
+          <a href="#">כלבים</a>
+          <a href="#">חתולים</a>
+          <a href="#">ציפורים</a>
         </div>
 
         <div>
-          <strong>+800</strong>
-          <span>עסקים שותפים</span>
+          <h3>שירותים</h3>
+          <a href="#">וטרינרים</a>
+          <a href="#">מספרות</a>
+          <a href="#">פנסיונים</a>
         </div>
-      </section>
+
+      </footer>
 
     </div>
   );
