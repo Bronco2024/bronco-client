@@ -34,12 +34,12 @@
 /* TEXT SIDE */
 
 .hero-text {
-  padding: 55px 45px;
+  padding: 40px 45px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-
   color: white;
+  background: #0f4c81;
 }
 
 .hero-label {
