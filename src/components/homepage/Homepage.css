@@ -4,7 +4,7 @@
 
 .homepage {
   min-height: 100vh;
-  background: #f7f9fc;
+  background: linear-gradient(135deg, #173b5e, #2563a6);
   color: #173b5e;
   font-family: Arial, "Segoe UI", sans-serif;
 }
