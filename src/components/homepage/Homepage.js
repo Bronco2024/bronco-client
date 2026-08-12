@@ -2,16 +2,16 @@ import React from "react";
 import "./Homepage.css";
 
 const categories = [
-  { name: "כלבים", image: "/images/dogs.jpg" },
-  { name: "חתולים", image: "/images/cats.jpg" },
-  { name: "סוסים", image: "/images/horses.jpg" },
-  { name: "ציפורים", image: "/images/birds.jpg" },
-  { name: "דגים", image: "/images/fish.jpg" },
-  { name: "ארנבים", image: "/images/rabbits.jpg" },
-  { name: "זוחלים", image: "/images/reptiles.jpg" },
-  { name: "תרנגולות", image: "/images/chickens.jpg" },
-  { name: "חיות משק", image: "/images/farm-animals.jpg" },
-  { name: "חיות קטנות", image: "/images/small-animals.jpg" },
+  { name: "כלבים", image: "/images/category-dogs.jpg" },
+  { name: "חתולים", image: "/images/category-cats.jpg" },
+  { name: "סוסים", image: "/images/category-horses.jpg" },
+  { name: "ציפורים", image: "/images/category-birds.jpg" },
+  { name: "דגים", image: "/images/category-fish.jpg" },
+  { name: "ארנבים", image: "/images/category-rabbits.jpg" },
+  { name: "חיות משק", image: "/images/category-farm.jpg" },
+  { name: "זוחלים", image: "/images/category-reptiles.jpg" },
+  { name: "עופות", image: "/images/category-poultry.jpg" },
+  { name: "חיות קטנות", image: "/images/category-small.jpg" },
 ];
 
 const listings = [
@@ -53,7 +53,7 @@ const listings = [
   },
   {
     id: 5,
-    name: "קוקטייל",
+    name: "קוקטייל צבעוני",
     type: "ציפור",
     location: "רמת גן",
     age: "8 חודשים",
@@ -75,6 +75,7 @@ function Homepage() {
   return (
     <main className="homepage" dir="rtl">
 
+      {/* HERO */}
       <section className="hero">
 
         <div className="hero-text">
@@ -104,11 +105,13 @@ function Homepage() {
               <option value="" disabled>
                 כל האזורים
               </option>
+
               <option>תל אביב</option>
               <option>ירושלים</option>
               <option>חיפה</option>
               <option>רמת גן</option>
               <option>נתניה</option>
+              <option>ראשון לציון</option>
             </select>
 
             <button>
@@ -135,6 +138,7 @@ function Homepage() {
       </section>
 
 
+      {/* CATEGORIES */}
       <section className="categories">
 
         <div className="section-header">
@@ -154,18 +158,21 @@ function Homepage() {
                 alt={category.name}
               />
 
-              <h3>
-                {category.name}
-              </h3>
+              <h3>{category.name}</h3>
 
             </div>
           ))}
 
         </div>
 
+        <button className="dark-button">
+          לכל הקטגוריות ←
+        </button>
+
       </section>
 
 
+      {/* LATEST LISTINGS */}
       <section className="latest">
 
         <div className="section-title">
@@ -179,7 +186,6 @@ function Homepage() {
           </button>
 
         </div>
-
 
         <div className="listings-grid">
 
@@ -205,7 +211,6 @@ function Homepage() {
                 </span>
 
               </div>
-
 
               <div className="listing-content">
 
@@ -235,7 +240,6 @@ function Homepage() {
           ))}
 
         </div>
-
 
         <button className="dark-button">
           לכל המודעות ←
