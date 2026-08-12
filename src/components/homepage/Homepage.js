@@ -17,7 +17,7 @@ const categories = [
 const listings = [
   {
     id: 1,
-    name: "גור כלבים",
+    name: "גור גולדן רטריבר",
     type: "כלב",
     location: "תל אביב",
     age: "3 חודשים",
@@ -141,16 +141,17 @@ function Homepage() {
               <option value="" disabled>
                 כל האזורים
               </option>
-
               <option>תל אביב</option>
               <option>ירושלים</option>
               <option>חיפה</option>
               <option>רמת גן</option>
               <option>נתניה</option>
+              <option>פתח תקווה</option>
               <option>באר שבע</option>
+              <option>אשדוד</option>
             </select>
 
-            <button>
+            <button type="button">
               🔍 חיפוש
             </button>
 
@@ -178,7 +179,19 @@ function Homepage() {
       <section className="categories">
 
         <div className="section-header">
-          <h2>🐾 קטגוריות חיות</h2>
+
+          <span className="section-kicker">
+            גלו את העולם שלנו
+          </span>
+
+          <h2>
+            🐾 קטגוריות חיות
+          </h2>
+
+          <p>
+            מצאו את החיה שמתאימה לכם מתוך מגוון קטגוריות
+          </p>
+
         </div>
 
         <div className="categories-grid">
@@ -189,21 +202,23 @@ function Homepage() {
               key={category.name}
             >
 
-              <img
-                src={category.image}
-                alt={category.name}
-              />
+              <div className="category-image">
+                <img
+                  src={category.image}
+                  alt={category.name}
+                />
+              </div>
 
-              <h3>
+              <div className="category-name">
                 {category.name}
-              </h3>
+              </div>
 
             </div>
           ))}
 
         </div>
 
-        <button className="dark-button">
+        <button className="dark-button" type="button">
           לכל הקטגוריות ←
         </button>
 
@@ -215,11 +230,20 @@ function Homepage() {
 
         <div className="section-title">
 
-          <h2>
-            מודעות אחרונות
-          </h2>
+          <div>
+            <span className="section-kicker">
+              חדש באתר
+            </span>
 
-          <button className="link-button">
+            <h2>
+              מודעות אחרונות
+            </h2>
+          </div>
+
+          <button
+            className="link-button"
+            type="button"
+          >
             לכל המודעות ←
           </button>
 
@@ -243,6 +267,7 @@ function Homepage() {
                 <button
                   className="favorite"
                   type="button"
+                  aria-label="הוסף למועדפים"
                 >
                   ♡
                 </button>
@@ -282,7 +307,7 @@ function Homepage() {
 
         </div>
 
-        <button className="dark-button">
+        <button className="dark-button" type="button">
           לכל המודעות ←
         </button>
 
