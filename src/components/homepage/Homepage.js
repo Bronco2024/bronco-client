@@ -126,7 +126,7 @@ function Homepage() {
 
         <div className="hero-image">
           <img
-            src="/images/hero-pets.jpg"
+            src="/hero-pets.jpg"
             alt="כלב וחתול"
           />
         </div>
