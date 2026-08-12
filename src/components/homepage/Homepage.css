@@ -15,17 +15,17 @@
 ========================= */
 
 .hero {
-  width: min(1200px, 94%);
-  height: 430px;
+  width: min(1100px, 92%);
+  height: 360px;
   margin: 25px auto 0;
 
   display: grid;
-  grid-template-columns: 48% 52%;
+  grid-template-columns: 50% 50%;
 
   overflow: hidden;
   border-radius: 24px;
 
-  background: #173b5e;
+  background: #0f4c81;
 
   box-shadow: 0 15px 40px rgba(23, 59, 94, 0.12);
 }
