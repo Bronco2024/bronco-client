@@ -2,19 +2,18 @@ import React from "react";
 import "./Homepage.css";
 
 const categories = [
-  { name: "כלבים", image: "/images/category-dogs.jpg" },
-  { name: "חתולים", image: "/images/category-cats.jpg" },
-  { name: "סוסים", image: "/images/category-horses.jpg" },
-  { name: "ציפורים", image: "/images/category-birds.jpg" },
-  { name: "דגים", image: "/images/category-fish.jpg" },
-  { name: "ארנבים", image: "/images/category-rabbits.jpg" },
+  { name: "כלבים", image: "/images/dogs.jpg" },
+  { name: "חתולים", image: "/images/cats.jpg" },
+  { name: "סוסים", image: "/images/horses.jpg" },
+  { name: "ציפורים", image: "/images/birds.jpg" },
+  { name: "דגים", image: "/images/fish.jpg" },
+  { name: "ארנבים", image: "/images/rabbits.jpg" },
+  { name: "זוחלים", image: "/images/reptiles.jpg" },
+  { name: "תרנגולות", image: "/images/chickens.jpg" },
+  { name: "חיות משק", image: "/images/farm-animals.jpg" },
+  { name: "חיות קטנות", image: "/images/small-animals.jpg" },
 ];
 
-/*
-  כרגע אלה נתוני הדגמה.
-  בהמשך מחליפים אותם בנתונים שמגיעים מהשרת,
-  ואז כל מודעה חדשה תופיע כאן אוטומטית.
-*/
 const listings = [
   {
     id: 1,
@@ -54,7 +53,7 @@ const listings = [
   },
   {
     id: 5,
-    name: "קוקטייל מחמור",
+    name: "קוקטייל",
     type: "ציפור",
     location: "רמת גן",
     age: "8 חודשים",
@@ -76,10 +75,10 @@ function Homepage() {
   return (
     <main className="homepage" dir="rtl">
 
-      {/* HERO */}
       <section className="hero">
 
         <div className="hero-text">
+
           <span className="hero-label">
             🐾 Pets & Bones
           </span>
@@ -109,6 +108,7 @@ function Homepage() {
               <option>ירושלים</option>
               <option>חיפה</option>
               <option>רמת גן</option>
+              <option>נתניה</option>
             </select>
 
             <button>
@@ -122,6 +122,7 @@ function Homepage() {
             <span>✓ אמין ובטוח</span>
             <span>♡ קהילה איכותית</span>
           </div>
+
         </div>
 
         <div className="hero-image">
@@ -134,7 +135,6 @@ function Homepage() {
       </section>
 
 
-      {/* CATEGORIES */}
       <section className="categories">
 
         <div className="section-header">
@@ -148,34 +148,38 @@ function Homepage() {
               className="category-card"
               key={category.name}
             >
+
               <img
                 src={category.image}
                 alt={category.name}
               />
 
-              <h3>{category.name}</h3>
+              <h3>
+                {category.name}
+              </h3>
+
             </div>
           ))}
 
         </div>
 
-        <button className="dark-button">
-          לכל הקטגוריות ←
-        </button>
-
       </section>
 
 
-      {/* LATEST LISTINGS */}
       <section className="latest">
 
         <div className="section-title">
-          <h2>מודעות אחרונות</h2>
+
+          <h2>
+            מודעות אחרונות
+          </h2>
 
           <button className="link-button">
             לכל המודעות ←
           </button>
+
         </div>
+
 
         <div className="listings-grid">
 
@@ -202,13 +206,23 @@ function Homepage() {
 
               </div>
 
+
               <div className="listing-content">
 
-                <h3>{listing.name}</h3>
+                <h3>
+                  {listing.name}
+                </h3>
 
                 <div className="listing-details">
-                  <span>📍 {listing.location}</span>
-                  <span>🕒 {listing.age}</span>
+
+                  <span>
+                    📍 {listing.location}
+                  </span>
+
+                  <span>
+                    🕒 {listing.age}
+                  </span>
+
                 </div>
 
                 <strong>
@@ -221,6 +235,7 @@ function Homepage() {
           ))}
 
         </div>
+
 
         <button className="dark-button">
           לכל המודעות ←
