@@ -2,72 +2,108 @@ import React from "react";
 import "./Homepage.css";
 
 const categories = [
-  { name: "כלבים", image: "/images/category-dogs.jpg" },
-  { name: "חתולים", image: "/images/category-cats.jpg" },
-  { name: "סוסים", image: "/images/category-horses.jpg" },
-  { name: "ציפורים", image: "/images/category-birds.jpg" },
-  { name: "דגים", image: "/images/category-fish.jpg" },
-  { name: "ארנבים", image: "/images/category-rabbits.jpg" },
-  { name: "חיות משק", image: "/images/category-farm.jpg" },
-  { name: "זוחלים", image: "/images/category-reptiles.jpg" },
-  { name: "עופות", image: "/images/category-poultry.jpg" },
-  { name: "חיות קטנות", image: "/images/category-small.jpg" },
+  { name: "כלבים", image: "/dogs.jpg" },
+  { name: "חתולים", image: "/cats.jpg" },
+  { name: "סוסים", image: "/horses.jpg" },
+  { name: "ציפורים", image: "/birds.jpg" },
+  { name: "דגים", image: "/fish.jpg" },
+  { name: "ארנבים", image: "/rabbits.jpg" },
+  { name: "זוחלים", image: "/reptiles.jpg" },
+  { name: "תרנגולות", image: "/chickens.jpg" },
+  { name: "חיות משק", image: "/farm-animals.jpg" },
+  { name: "חיות קטנות", image: "/small-animals.jpg" },
 ];
 
 const listings = [
   {
     id: 1,
-    name: "גור גולדן רטריבר",
+    name: "גור כלבים",
     type: "כלב",
     location: "תל אביב",
     age: "3 חודשים",
     price: "4,500 ₪",
-    image: "/images/listing-dog.jpg",
+    image: "/dogs.jpg",
   },
   {
     id: 2,
-    name: "חתול בריטי קצר",
+    name: "חתול בריטי",
     type: "חתול",
     location: "ירושלים",
     age: "2.5 חודשים",
     price: "2,200 ₪",
-    image: "/images/listing-cat.jpg",
+    image: "/cats.jpg",
   },
   {
     id: 3,
-    name: "גור פומרניאן",
-    type: "כלב",
+    name: "סוס צעיר",
+    type: "סוס",
     location: "חיפה",
-    age: "11 שבועות",
-    price: "3,000 ₪",
-    image: "/images/listing-pomeranian.jpg",
+    age: "2 שנים",
+    price: "12,000 ₪",
+    image: "/horses.jpg",
   },
   {
     id: 4,
+    name: "תוכי צבעוני",
+    type: "ציפור",
+    location: "רמת גן",
+    age: "8 חודשים",
+    price: "250 ₪",
+    image: "/birds.jpg",
+  },
+  {
+    id: 5,
+    name: "דג נוי",
+    type: "דג",
+    location: "נתניה",
+    age: "6 חודשים",
+    price: "30 ₪",
+    image: "/fish.jpg",
+  },
+  {
+    id: 6,
     name: "ארנב ננסי",
     type: "ארנב",
     location: "ראשון לציון",
     age: "4 חודשים",
     price: "350 ₪",
-    image: "/images/listing-rabbit.jpg",
+    image: "/rabbits.jpg",
   },
   {
-    id: 5,
-    name: "קוקטייל צבעוני",
-    type: "ציפור",
-    location: "רמת גן",
-    age: "8 חודשים",
-    price: "250 ₪",
-    image: "/images/listing-bird.jpg",
+    id: 7,
+    name: "לטאה מיוחדת",
+    type: "זוחל",
+    location: "פתח תקווה",
+    age: "1 שנה",
+    price: "600 ₪",
+    image: "/reptiles.jpg",
   },
   {
-    id: 6,
-    name: "דג בטא סיאמי",
-    type: "דג",
-    location: "נתניה",
-    age: "6 חודשים",
-    price: "30 ₪",
-    image: "/images/listing-fish.jpg",
+    id: 8,
+    name: "תרנגולות",
+    type: "עופות",
+    location: "אשדוד",
+    age: "7 חודשים",
+    price: "180 ₪",
+    image: "/chickens.jpg",
+  },
+  {
+    id: 9,
+    name: "חיות משק",
+    type: "חיית משק",
+    location: "באר שבע",
+    age: "1 שנה",
+    price: "1,500 ₪",
+    image: "/farm-animals.jpg",
+  },
+  {
+    id: 10,
+    name: "חיה קטנה",
+    type: "חיה קטנה",
+    location: "הרצליה",
+    age: "5 חודשים",
+    price: "200 ₪",
+    image: "/small-animals.jpg",
   },
 ];
 
@@ -111,7 +147,7 @@ function Homepage() {
               <option>חיפה</option>
               <option>רמת גן</option>
               <option>נתניה</option>
-              <option>ראשון לציון</option>
+              <option>באר שבע</option>
             </select>
 
             <button>
@@ -158,7 +194,9 @@ function Homepage() {
                 alt={category.name}
               />
 
-              <h3>{category.name}</h3>
+              <h3>
+                {category.name}
+              </h3>
 
             </div>
           ))}
@@ -202,7 +240,10 @@ function Homepage() {
                   alt={listing.name}
                 />
 
-                <button className="favorite">
+                <button
+                  className="favorite"
+                  type="button"
+                >
                   ♡
                 </button>
 
