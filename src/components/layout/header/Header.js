@@ -10,8 +10,7 @@ import {
     faHouseUser,
     faGear,
     faCartShopping,
-    faReceipt,
-    faChevronDown
+    faReceipt
 } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
@@ -38,100 +37,144 @@ const Header = () => {
     };
 
     const handleLogout = async () => {
-        setShowProfileDropdown(false);
+        toggleProfileDropdown();
         await logout();
         navigate('/');
     };
 
     const toggleProfileDropdown = () => {
-        setShowProfileDropdown(prev => !prev);
-    };
-
-    const handleMenuClick = () => {
-        setShowMenu(prev => !prev);
-        setShowProfileDropdown(false);
+        setShowProfileDropdown(!showProfileDropdown);
     };
 
     return (
         <nav className="navbar">
 
-            {/* ================= LEFT SIDE ================= */}
-            <div className="navbar-actions">
+            <div className="navbar-buttons">
 
                 <button
                     className="publish-ad-button"
                     onClick={handlePublishAd}
                 >
-                    <FontAwesomeIcon icon={faPlus} />
-                    <span>פרסום מודעה</span>
+                    פרסום מודעה
+                    <FontAwesomeIcon
+                        icon={faPlus}
+                        style={{ marginLeft: '8px' }}
+                    />
                 </button>
 
                 {loading ? (
-                    <div className="header-loading">
-                        <Loading size={24} fullscreen={false} />
-                    </div>
+                    <Loading size={24} fullscreen={false} />
                 ) : currentUser ? (
 
                     <div className="profile-dropdown-container">
 
                         <button
-                            className={`profile-button ${showProfileDropdown ? 'active' : ''}`}
+                            className="navbar-button"
                             onClick={toggleProfileDropdown}
                         >
-                            <span>פרופיל</span>
-                            <FontAwesomeIcon icon={faUser} />
+                            פרופיל
                             <FontAwesomeIcon
-                                icon={faChevronDown}
-                                className={`profile-chevron ${showProfileDropdown ? 'rotate' : ''}`}
+                                icon={faUser}
+                                style={{ marginLeft: '8px' }}
                             />
                         </button>
 
                         {showProfileDropdown && (
                             <div className="profile-dropdown">
 
-                                <div className="dropdown-header">
-                                    <div className="dropdown-avatar">
-                                        <FontAwesomeIcon icon={faUser} />
-                                    </div>
-
-                                    <div>
-                                        <span>שלום!</span>
-                                        <strong>האזור האישי</strong>
-                                    </div>
-                                </div>
-
-                                <div className="dropdown-divider" />
-
                                 {currentUser?.isAdmin && (
                                     <button
                                         className="dropdown-item"
                                         onClick={() => {
-                                            setShowProfileDropdown(false);
+                                            toggleProfileDropdown();
                                             navigate('/admin');
                                         }}
                                     >
-                                        <FontAwesomeIcon icon={faGear} />
-                                        <span>ניהול אתר</span>
+                                        ניהול אתר
+                                        <FontAwesomeIcon
+                                            icon={faGear}
+                                            style={{ marginLeft: '8px' }}
+                                        />
                                     </button>
                                 )}
 
                                 <button
                                     className="dropdown-item"
                                     onClick={() => {
-                                        setShowProfileDropdown(false);
+                                        toggleProfileDropdown();
                                         navigate('/profile');
                                     }}
                                 >
-                                    <FontAwesomeIcon icon={faHouseUser} />
-                                    <span>אזור אישי</span>
+                                    אזור אישי
+                                    <FontAwesomeIcon
+                                        icon={faHouseUser}
+                                        style={{ marginLeft: '8px' }}
+                                    />
                                 </button>
 
+                                {/*
+                                PAYMENTS
+                                This is currently closed until customer
+                                decides to make payments in the website.
+
+                                {!currentUser?.isAdmin && (
+                                    <>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => {
+                                                toggleProfileDropdown();
+                                                navigate('/cart');
+                                            }}
+                                        >
+                                            עגלה
+                                            <FontAwesomeIcon
+                                                icon={faCartShopping}
+                                                style={{ marginLeft: '8px' }}
+                                            />
+                                        </button>
+
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => {
+                                                toggleProfileDropdown();
+                                                navigate('/my-purchases');
+                                            }}
+                                        >
+                                            רכישות
+                                            <FontAwesomeIcon
+                                                icon={faReceipt}
+                                                style={{ marginLeft: '8px' }}
+                                            />
+                                        </button>
+                                    </>
+                                )}
+
+                                {currentUser?.isAdmin && (
+                                    <button
+                                        className="dropdown-item"
+                                        onClick={() => {
+                                            toggleProfileDropdown();
+                                            navigate('/admin/all-purchases');
+                                        }}
+                                    >
+                                        ניהול רכישות
+                                        <FontAwesomeIcon
+                                            icon={faReceipt}
+                                            style={{ marginLeft: '8px' }}
+                                        />
+                                    </button>
+                                )}
+                                */}
+
                                 <button
-                                    className="dropdown-item logout-item"
+                                    className="dropdown-item"
                                     onClick={handleLogout}
                                 >
-                                    <FontAwesomeIcon icon={faSignOut} />
-                                    <span>התנתק</span>
+                                    התנתק
+                                    <FontAwesomeIcon
+                                        icon={faSignOut}
+                                        style={{ marginLeft: '8px' }}
+                                    />
                                 </button>
 
                             </div>
@@ -142,44 +185,37 @@ const Header = () => {
                 ) : (
 
                     <button
-                        className="login-button"
+                        className="navbar-button"
                         onClick={() => navigate('/login')}
                     >
-                        <FontAwesomeIcon icon={faUser} />
-                        <span>התחברות</span>
+                        התחברות
+                        <FontAwesomeIcon
+                            icon={faUser}
+                            style={{ marginLeft: '8px' }}
+                        />
                     </button>
 
                 )}
 
             </div>
 
+            <div className="navbar-logo">
 
-            {/* ================= CENTER / RIGHT SIDE ================= */}
-            <div className="navbar-main">
-
-                {/* Logo */}
-                <Link
-                    to="/"
-                    className="navbar-logo"
-                    onClick={() => setShowMenu(false)}
-                >
-                    <img
-                        src={require('@/assets/horsehub-gold.png')}
-                        alt="HorseHub"
-                    />
-                </Link>
-
-                {/* Categories */}
-                <div className="categories">
+                {/* IMPORTANT:
+                    Do NOT use className="categories" here.
+                    Homepage.css already uses .categories.
+                */}
+                <div className="header-categories">
 
                     <button
-                        className="menu-icon"
-                        onClick={handleMenuClick}
-                        aria-label="פתיחת תפריט"
+                        className="navbar-button menu-icon"
+                        onClick={() => setShowMenu(!showMenu)}
                     >
-                        <FontAwesomeIcon
-                            icon={showMenu ? faTimes : faBars}
-                        />
+                        {showMenu ? (
+                            <FontAwesomeIcon icon={faTimes} />
+                        ) : (
+                            <FontAwesomeIcon icon={faBars} />
+                        )}
                     </button>
 
                     <div
@@ -187,7 +223,6 @@ const Header = () => {
                             showMenu ? "show" : ""
                         }`}
                     >
-
                         {EXTENDED_CATEGORIES.map((category, index) => (
                             <Link
                                 key={index}
@@ -198,10 +233,20 @@ const Header = () => {
                                 {category.label}
                             </Link>
                         ))}
-
                     </div>
 
                 </div>
+
+                <Link to="/">
+                    <img
+                        src={require('@/assets/horsehub-gold.png')}
+                        style={{
+                            width: '50px',
+                            height: 'auto'
+                        }}
+                        alt="HorseHub"
+                    />
+                </Link>
 
             </div>
 
