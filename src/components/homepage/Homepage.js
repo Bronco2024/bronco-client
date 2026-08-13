@@ -1,17 +1,18 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Homepage.css";
 
 const categories = [
-  { name: "כלבים", image: "/dogs.jpg" },
-  { name: "חתולים", image: "/cats.jpg" },
-  { name: "סוסים", image: "/horses.jpg" },
-  { name: "ציפורים", image: "/birds.jpg" },
-  { name: "דגים", image: "/fish.jpg" },
-  { name: "ארנבים", image: "/rabbits.jpg" },
-  { name: "זוחלים", image: "/reptiles.jpg" },
-  { name: "תרנגולות", image: "/chickens.jpg" },
-  { name: "חיות משק", image: "/farm-animals.jpg" },
-  { name: "חיות קטנות", image: "/small-animals.jpg" },
+  { name: "כלבים", type: "כלב", image: "/dogs.jpg" },
+  { name: "חתולים", type: "חתול", image: "/cats.jpg" },
+  { name: "סוסים", type: "סוס", image: "/horses.jpg", route: "/horses" },
+  { name: "ציפורים", type: "ציפור", image: "/birds.jpg" },
+  { name: "דגים", type: "דג", image: "/fish.jpg" },
+  { name: "ארנבים", type: "ארנב", image: "/rabbits.jpg" },
+  { name: "זוחלים", type: "זוחל", image: "/reptiles.jpg" },
+  { name: "תרנגולות", type: "עופות", image: "/chickens.jpg" },
+  { name: "חיות משק", type: "חיית משק", image: "/farm-animals.jpg" },
+  { name: "חיות קטנות", type: "חיה קטנה", image: "/small-animals.jpg" },
 ];
 
 const listings = [
@@ -19,6 +20,7 @@ const listings = [
     id: 1,
     name: "גור גולדן רטריבר",
     type: "כלב",
+    category: "כלבים",
     location: "תל אביב",
     age: "3 חודשים",
     price: "4,500 ₪",
@@ -28,6 +30,7 @@ const listings = [
     id: 2,
     name: "חתול בריטי",
     type: "חתול",
+    category: "חתולים",
     location: "ירושלים",
     age: "2.5 חודשים",
     price: "2,200 ₪",
@@ -37,6 +40,7 @@ const listings = [
     id: 3,
     name: "סוס צעיר",
     type: "סוס",
+    category: "סוסים",
     location: "חיפה",
     age: "2 שנים",
     price: "12,000 ₪",
@@ -46,6 +50,7 @@ const listings = [
     id: 4,
     name: "תוכי צבעוני",
     type: "ציפור",
+    category: "ציפורים",
     location: "רמת גן",
     age: "8 חודשים",
     price: "250 ₪",
@@ -55,6 +60,7 @@ const listings = [
     id: 5,
     name: "דג נוי",
     type: "דג",
+    category: "דגים",
     location: "נתניה",
     age: "6 חודשים",
     price: "30 ₪",
@@ -64,6 +70,7 @@ const listings = [
     id: 6,
     name: "ארנב ננסי",
     type: "ארנב",
+    category: "ארנבים",
     location: "ראשון לציון",
     age: "4 חודשים",
     price: "350 ₪",
@@ -73,6 +80,7 @@ const listings = [
     id: 7,
     name: "לטאה מיוחדת",
     type: "זוחל",
+    category: "זוחלים",
     location: "פתח תקווה",
     age: "1 שנה",
     price: "600 ₪",
@@ -82,6 +90,7 @@ const listings = [
     id: 8,
     name: "תרנגולות",
     type: "עופות",
+    category: "תרנגולות",
     location: "אשדוד",
     age: "7 חודשים",
     price: "180 ₪",
@@ -91,6 +100,7 @@ const listings = [
     id: 9,
     name: "חיות משק",
     type: "חיית משק",
+    category: "חיות משק",
     location: "באר שבע",
     age: "1 שנה",
     price: "1,500 ₪",
@@ -100,6 +110,7 @@ const listings = [
     id: 10,
     name: "חיה קטנה",
     type: "חיה קטנה",
+    category: "חיות קטנות",
     location: "הרצליה",
     age: "5 חודשים",
     price: "200 ₪",
@@ -143,10 +154,105 @@ const adoptionPets = [
 ];
 
 function Homepage() {
+  const navigate = useNavigate();
+
+  const [searchText, setSearchText] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const filteredListings = useMemo(() => {
+    return listings.filter((listing) => {
+      const text = searchText.trim().toLowerCase();
+
+      const matchesText =
+        !text ||
+        listing.name.toLowerCase().includes(text) ||
+        listing.type.toLowerCase().includes(text) ||
+        listing.category.toLowerCase().includes(text) ||
+        listing.location.toLowerCase().includes(text);
+
+      const matchesLocation =
+        !selectedLocation ||
+        listing.location === selectedLocation;
+
+      const matchesCategory =
+        !selectedCategory ||
+        listing.category === selectedCategory;
+
+      return (
+        matchesText &&
+        matchesLocation &&
+        matchesCategory
+      );
+    });
+  }, [searchText, selectedLocation, selectedCategory]);
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+
+    document
+      .getElementById("latest-listings")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  };
+
+  const handleCategoryClick = (category) => {
+    if (category.route) {
+      navigate(category.route);
+      return;
+    }
+
+    setSelectedCategory(category.name);
+
+    document
+      .getElementById("latest-listings")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  };
+
+  const handleListingClick = (listing) => {
+    navigate("/item", {
+      state: {
+        ad: listing,
+      },
+    });
+  };
+
+  const handleFavorite = (event, listing) => {
+    event.stopPropagation();
+
+    const favorites =
+      JSON.parse(
+        localStorage.getItem("pets_bones_favorites") || "[]"
+      );
+
+    const exists = favorites.some(
+      (item) => item.id === listing.id
+    );
+
+    const updatedFavorites = exists
+      ? favorites.filter(
+          (item) => item.id !== listing.id
+        )
+      : [...favorites, listing];
+
+    localStorage.setItem(
+      "pets_bones_favorites",
+      JSON.stringify(updatedFavorites)
+    );
+  };
+
   return (
     <main className="homepage" dir="rtl">
 
-      {/* HERO */}
+      {/* =========================
+          HERO
+      ========================= */}
+
       <section className="hero">
 
         <div className="hero-text">
@@ -165,52 +271,119 @@ function Homepage() {
             במקום אחד.
           </p>
 
-          <div className="search-box">
+          <form
+            className="search-box"
+            onSubmit={handleSearch}
+          >
 
             <input
               type="text"
+              value={searchText}
+              onChange={(event) =>
+                setSearchText(event.target.value)
+              }
               placeholder="מה אתם מחפשים?"
             />
 
-            <select defaultValue="">
-              <option value="" disabled>
+            <select
+              value={selectedLocation}
+              onChange={(event) =>
+                setSelectedLocation(event.target.value)
+              }
+            >
+              <option value="">
                 כל האזורים
               </option>
-              <option>תל אביב</option>
-              <option>ירושלים</option>
-              <option>חיפה</option>
-              <option>רמת גן</option>
-              <option>נתניה</option>
-              <option>פתח תקווה</option>
-              <option>באר שבע</option>
-              <option>אשדוד</option>
+
+              <option value="תל אביב">
+                תל אביב
+              </option>
+
+              <option value="ירושלים">
+                ירושלים
+              </option>
+
+              <option value="חיפה">
+                חיפה
+              </option>
+
+              <option value="רמת גן">
+                רמת גן
+              </option>
+
+              <option value="נתניה">
+                נתניה
+              </option>
+
+              <option value="פתח תקווה">
+                פתח תקווה
+              </option>
+
+              <option value="באר שבע">
+                באר שבע
+              </option>
+
+              <option value="אשדוד">
+                אשדוד
+              </option>
+
+              <option value="הרצליה">
+                הרצליה
+              </option>
+
+              <option value="ראשון לציון">
+                ראשון לציון
+              </option>
             </select>
 
-            <button type="button">
+            <button type="submit">
               🔍 חיפוש
             </button>
 
-          </div>
+          </form>
 
           <div className="hero-info">
-            <span>🐾 אלפי מודעות</span>
-            <span>✓ אמין ובטוח</span>
-            <span>♡ קהילה איכותית</span>
+
+            <span>
+              🐾 כל סוגי החיות
+            </span>
+
+            <span>
+              ✓ אמין ובטוח
+            </span>
+
+            <span>
+              ♡ קהילה איכותית
+            </span>
+
           </div>
+
+          <button
+            className="dark-button"
+            type="button"
+            onClick={() => navigate("/publish_ad")}
+          >
+            ➕ פרסום מודעה
+          </button>
 
         </div>
 
         <div className="hero-image">
+
           <img
             src="/hero-pets.png"
             alt="כלב וחתול"
           />
+
         </div>
 
       </section>
 
 
-      {/* CATEGORIES */}
+      {/* =========================
+          CATEGORIES
+      ========================= */}
+
       <section className="categories">
 
         <div className="section-header">
@@ -224,7 +397,7 @@ function Homepage() {
           </h2>
 
           <p>
-            מצאו את החיה שמתאימה לכם מתוך מגוון קטגוריות
+            בחרו את סוג החיה שמעניין אתכם
           </p>
 
         </div>
@@ -232,9 +405,18 @@ function Homepage() {
         <div className="categories-grid">
 
           {categories.map((category) => (
-            <div
-              className="category-card"
+
+            <button
               key={category.name}
+              type="button"
+              className={`category-card ${
+                selectedCategory === category.name
+                  ? "active"
+                  : ""
+              }`}
+              onClick={() =>
+                handleCategoryClick(category)
+              }
             >
 
               <div className="category-image">
@@ -242,6 +424,7 @@ function Homepage() {
                 <img
                   src={category.image}
                   alt={category.name}
+                  loading="lazy"
                 />
 
               </div>
@@ -250,23 +433,35 @@ function Homepage() {
                 {category.name}
               </div>
 
-            </div>
+            </button>
+
           ))}
 
         </div>
 
-        <button
-          className="dark-button"
-          type="button"
-        >
-          לכל הקטגוריות ←
-        </button>
+        {selectedCategory && (
+
+          <button
+            className="dark-button"
+            type="button"
+            onClick={() => setSelectedCategory("")}
+          >
+            הצג את כל החיות
+          </button>
+
+        )}
 
       </section>
 
 
-      {/* LATEST LISTINGS */}
-      <section className="latest">
+      {/* =========================
+          LATEST LISTINGS
+      ========================= */}
+
+      <section
+        className="latest"
+        id="latest-listings"
+      >
 
         <div className="section-title">
 
@@ -285,81 +480,126 @@ function Homepage() {
           <button
             className="link-button"
             type="button"
+            onClick={() => {
+              setSelectedCategory("");
+              setSelectedLocation("");
+              setSearchText("");
+
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            }}
           >
-            לכל המודעות ←
+            הצג הכל ←
           </button>
 
         </div>
 
-        <div className="listings-grid">
+        {filteredListings.length > 0 ? (
 
-          {listings.map((listing) => (
-            <article
-              className="listing-card"
-              key={listing.id}
-            >
+          <div className="listings-grid">
 
-              <div className="listing-image">
+            {filteredListings.map((listing) => (
 
-                <img
-                  src={listing.image}
-                  alt={listing.name}
-                />
+              <article
+                className="listing-card"
+                key={listing.id}
+                onClick={() =>
+                  handleListingClick(listing)
+                }
+              >
 
-                <button
-                  className="favorite"
-                  type="button"
-                  aria-label="הוסף למועדפים"
-                >
-                  ♡
-                </button>
+                <div className="listing-image">
 
-                <span className="listing-type">
-                  {listing.type}
-                </span>
+                  <img
+                    src={listing.image}
+                    alt={listing.name}
+                    loading="lazy"
+                  />
 
-              </div>
+                  <button
+                    className="favorite"
+                    type="button"
+                    aria-label="הוסף למועדפים"
+                    onClick={(event) =>
+                      handleFavorite(event, listing)
+                    }
+                  >
+                    ♡
+                  </button>
 
-              <div className="listing-content">
-
-                <h3>
-                  {listing.name}
-                </h3>
-
-                <div className="listing-details">
-
-                  <span>
-                    📍 {listing.location}
-                  </span>
-
-                  <span>
-                    🕒 {listing.age}
+                  <span className="listing-type">
+                    {listing.type}
                   </span>
 
                 </div>
 
-                <strong>
-                  {listing.price}
-                </strong>
+                <div className="listing-content">
 
-              </div>
+                  <h3>
+                    {listing.name}
+                  </h3>
 
-            </article>
-          ))}
+                  <div className="listing-details">
 
-        </div>
+                    <span>
+                      📍 {listing.location}
+                    </span>
 
-        <button
-          className="dark-button"
-          type="button"
-        >
-          לכל המודעות ←
-        </button>
+                    <span>
+                      🕒 {listing.age}
+                    </span>
+
+                  </div>
+
+                  <strong>
+                    {listing.price}
+                  </strong>
+
+                </div>
+
+              </article>
+
+            ))}
+
+          </div>
+
+        ) : (
+
+          <div className="no-results">
+
+            <h3>
+              לא נמצאו מודעות
+            </h3>
+
+            <p>
+              נסו לשנות את החיפוש או לבחור קטגוריה אחרת.
+            </p>
+
+            <button
+              className="dark-button"
+              type="button"
+              onClick={() => {
+                setSearchText("");
+                setSelectedLocation("");
+                setSelectedCategory("");
+              }}
+            >
+              נקה חיפוש
+            </button>
+
+          </div>
+
+        )}
 
       </section>
 
 
-      {/* ADOPTION - LAST SECTION */}
+      {/* =========================
+          ADOPTION
+      ========================= */}
+
       <section className="adoption-section">
 
         <div className="section-header">
@@ -381,6 +621,7 @@ function Homepage() {
         <div className="adoption-grid">
 
           {adoptionPets.map((pet) => (
+
             <article
               className="adoption-card"
               key={pet.id}
@@ -391,6 +632,7 @@ function Homepage() {
                 <img
                   src={pet.image}
                   alt={pet.name}
+                  loading="lazy"
                 />
 
                 <span className="adoption-badge">
@@ -424,6 +666,9 @@ function Homepage() {
                 <button
                   className="adoption-button"
                   type="button"
+                  onClick={() =>
+                    navigate("/publish_ad")
+                  }
                 >
                   לפרטים ואימוץ ←
                 </button>
@@ -431,16 +676,10 @@ function Homepage() {
               </div>
 
             </article>
+
           ))}
 
         </div>
-
-        <button
-          className="dark-button"
-          type="button"
-        >
-          לכל חיות האימוץ ←
-        </button>
 
       </section>
 
