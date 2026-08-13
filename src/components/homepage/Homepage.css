@@ -202,7 +202,7 @@ body {
    CATEGORIES
 ================================================== */
 
-.categories {
+.homepage .categories {
   width: min(1180px, 94%);
 
   margin: 0 auto;
