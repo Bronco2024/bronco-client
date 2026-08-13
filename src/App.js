@@ -60,7 +60,16 @@ function App() {
             </Layout>
           </Suspense>
         }
-      />
+ <Route
+  path="/dogs"
+  element={
+    <Suspense fallback={<Loading />}>
+      <Layout>
+        <Dogs />
+      </Layout>
+    </Suspense>
+  }
+/>
       <Route path="/item"
         element={
           <Suspense fallback={<Loading />}>
