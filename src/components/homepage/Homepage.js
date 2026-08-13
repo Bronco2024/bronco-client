@@ -14,6 +14,41 @@ const categories = [
   { name: "חיות קטנות", image: "/small-animals.jpg" },
 ];
 
+const adoptionPets = [
+  {
+    id: 1,
+    name: "כלב מחפש בית",
+    type: "כלב",
+    location: "תל אביב",
+    age: "8 חודשים",
+    image: "/dogs.jpg",
+  },
+  {
+    id: 2,
+    name: "חתול מתוק",
+    type: "חתול",
+    location: "ירושלים",
+    age: "1 שנה",
+    image: "/cats.jpg",
+  },
+  {
+    id: 3,
+    name: "ארנב קטן",
+    type: "ארנב",
+    location: "חיפה",
+    age: "5 חודשים",
+    image: "/rabbits.jpg",
+  },
+  {
+    id: 4,
+    name: "תוכי צבעוני",
+    type: "ציפור",
+    location: "רמת גן",
+    age: "10 חודשים",
+    image: "/birds.jpg",
+  },
+];
+
 const listings = [
   {
     id: 1,
@@ -175,6 +210,92 @@ function Homepage() {
       </section>
 
 
+      {/* ADOPTION */}
+      <section className="adoption-section">
+
+        <div className="section-header">
+
+          <span className="section-kicker">
+            ❤️ תנו להם בית
+          </span>
+
+          <h2>
+            אימוץ חיות
+          </h2>
+
+          <p>
+            חבר חדש מחכה לכם — אולי זה בדיוק הוא.
+          </p>
+
+        </div>
+
+        <div className="adoption-grid">
+
+          {adoptionPets.map((pet) => (
+            <article
+              className="adoption-card"
+              key={pet.id}
+            >
+
+              <div className="adoption-image">
+
+                <img
+                  src={pet.image}
+                  alt={pet.name}
+                />
+
+                <span className="adoption-badge">
+                  לאימוץ
+                </span>
+
+              </div>
+
+              <div className="adoption-content">
+
+                <h3>
+                  {pet.name}
+                </h3>
+
+                <div className="adoption-details">
+
+                  <span>
+                    🐾 {pet.type}
+                  </span>
+
+                  <span>
+                    📍 {pet.location}
+                  </span>
+
+                  <span>
+                    🕒 {pet.age}
+                  </span>
+
+                </div>
+
+                <button
+                  className="adoption-button"
+                  type="button"
+                >
+                  לפרטים ואימוץ ←
+                </button>
+
+              </div>
+
+            </article>
+          ))}
+
+        </div>
+
+        <button
+          className="dark-button"
+          type="button"
+        >
+          לכל חיות האימוץ ←
+        </button>
+
+      </section>
+
+
       {/* CATEGORIES */}
       <section className="categories">
 
@@ -203,10 +324,12 @@ function Homepage() {
             >
 
               <div className="category-image">
+
                 <img
                   src={category.image}
                   alt={category.name}
                 />
+
               </div>
 
               <div className="category-name">
@@ -218,7 +341,10 @@ function Homepage() {
 
         </div>
 
-        <button className="dark-button" type="button">
+        <button
+          className="dark-button"
+          type="button"
+        >
           לכל הקטגוריות ←
         </button>
 
@@ -231,6 +357,7 @@ function Homepage() {
         <div className="section-title">
 
           <div>
+
             <span className="section-kicker">
               חדש באתר
             </span>
@@ -238,6 +365,7 @@ function Homepage() {
             <h2>
               מודעות אחרונות
             </h2>
+
           </div>
 
           <button
@@ -307,7 +435,10 @@ function Homepage() {
 
         </div>
 
-        <button className="dark-button" type="button">
+        <button
+          className="dark-button"
+          type="button"
+        >
           לכל המודעות ←
         </button>
 
