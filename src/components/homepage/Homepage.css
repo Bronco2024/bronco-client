@@ -24,7 +24,7 @@ body {
 
 .hero {
   width: 100%;
-  min-height: 560px;
+  min-height: 390px;
   margin: 0;
 
   display: grid;
@@ -33,20 +33,20 @@ body {
   overflow: hidden;
   border-radius: 0 0 60px 60px;
 
-  background: #fff7ed;
+  background: #173b5e;
 
   box-shadow: 0 18px 45px rgba(23, 59, 94, 0.10);
 }
 
 .hero-text {
-  padding: 58px 64px;
+  padding: 38px 48px;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
 
-  background: #fff7ed;
-  color: #173b5e;
+  background: #173b5e;
+  color: #ffffff;
 }
 
 .hero-label {
@@ -57,9 +57,9 @@ body {
 
   margin-bottom: 20px;
 
-  color: #e97818;
+  color: #ff8a2b;
 
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 800;
   letter-spacing: 0.2px;
 }
@@ -67,16 +67,16 @@ body {
 .hero h1 {
   margin: 0;
 
-  color: #173b5e;
+  color: #ffffff;
 
-  font-size: 48px;
+  font-size: 40px;
   line-height: 1.15;
   font-weight: 800;
 }
 
 .hero h1 span {
   display: block;
-  color: #e97818;
+  color: #ff8a2b;
 }
 
 .hero p {
@@ -84,7 +84,7 @@ body {
 
   margin: 18px 0 24px;
 
-  color: #6f7f8c;
+  color: #e4edf5;
 
   font-size: 16px;
   line-height: 1.7;
@@ -170,7 +170,7 @@ body {
 
   margin-top: 20px;
 
-  color: #71808d;
+  color: #dce8f2;
 
   font-size: 13px;
 }
@@ -184,8 +184,8 @@ body {
 ================================================== */
 
 .hero-image {
-  height: 560px;
-  min-height: 560px;
+  height: 390px;
+  min-height: 390px;
 
   overflow: hidden;
 }
@@ -570,6 +570,12 @@ body {
    ADOPTION
 ================================================== */
 
+.adoption-section .section-header h2 {
+  overflow: visible;
+  white-space: normal;
+  line-height: 1.3;
+}
+
 .adoption-section {
   width: min(1180px, 94%);
 
@@ -630,7 +636,7 @@ body {
   height: 190px;
   margin: 20px auto 0;
 
-  overflow: hidden;
+  overflow: visible;
 
   border-radius: 50%;
 
@@ -646,6 +652,7 @@ body {
   display: block;
 
   object-fit: cover;
+  border-radius: 50%;
 
   transition: transform 0.3s ease;
 }
@@ -657,8 +664,8 @@ body {
 .adoption-badge {
   position: absolute;
 
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: -8px;
 
   padding: 6px 11px;
 
@@ -790,8 +797,8 @@ body {
   }
 
   .hero-image {
-    height: 340px;
-    min-height: 340px;
+    height: 300px;
+    min-height: 300px;
   }
 
   .categories-grid {
@@ -857,8 +864,8 @@ body {
   }
 
   .hero-image {
-    height: 280px;
-    min-height: 280px;
+    height: 240px;
+    min-height: 240px;
   }
 
   .categories {
@@ -970,76 +977,5 @@ body {
     padding: 5px 8px;
 
     font-size: 10px;
-  }
-}
-
-/* ==================================================
-   FINAL HERO + ADOPTION POLISH
-   ================================================== */
-
-.hero {
-  width: 100% !important;
-  margin: 0 !important;
-  border-radius: 0 0 60px 60px !important;
-}
-
-.hero-text {
-  background: #fff7ed !important;
-  color: #173b5e !important;
-}
-
-.hero-label {
-  color: #d96f16 !important;
-  font-size: 28px !important;
-  font-weight: 800 !important;
-}
-
-.hero h1 {
-  color: #173b5e !important;
-}
-
-.hero h1 span {
-  color: #d96f16 !important;
-}
-
-.hero p {
-  color: #6f7f8c !important;
-}
-
-.hero-info {
-  color: #71808d !important;
-}
-
-.adoption-image {
-  width: 190px !important;
-  height: 190px !important;
-  margin: 20px auto 0 !important;
-  border-radius: 50% !important;
-}
-
-.adoption-content {
-  text-align: center !important;
-}
-
-@media (max-width: 1050px) {
-  .hero {
-    width: 100% !important;
-  }
-}
-
-@media (max-width: 650px) {
-  .hero {
-    width: 100% !important;
-    border-radius: 0 0 28px 28px !important;
-  }
-
-  .hero-label {
-    font-size: 23px !important;
-  }
-
-  .adoption-image {
-    width: 125px !important;
-    height: 125px !important;
-    margin-top: 14px !important;
   }
 }
