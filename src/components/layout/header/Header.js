@@ -1,163 +1,210 @@
 import './Header.css';
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faPlus, faSignOut, faBars, faTimes, faHouseUser, faGear, faCartShopping, faReceipt } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import {
+    faUser,
+    faPlus,
+    faSignOut,
+    faBars,
+    faTimes,
+    faHouseUser,
+    faGear,
+    faCartShopping,
+    faReceipt,
+    faChevronDown
+} from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { EXTENDED_CATEGORIES } from '@components/utils/constants/Constants';
-import { IsDateNowGreaterThanAdDate } from '@components/utils/constants/Functions';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebase';
 import Loading from '../../loading-screen/Loading';
 
 const Header = () => {
     const navigate = useNavigate();
-    const { currentUser, setCurrentUser, loading, logout } = useAuth();
+    const { currentUser, loading, logout } = useAuth();
+
     const [showMenu, setShowMenu] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-
-    /**
-    * PAYMENTS
-    * This is currently closed until customer decides to make payments in the website
-    */
-    // useEffect(() => {
-    //     const CheckUserYearly = async () => {
-    //         if (currentUser?.subscribedUntil !== null && IsDateNowGreaterThanAdDate(currentUser?.subscribedUntil)) {
-    //             await updateDoc(doc(db, "users", currentUser.uid), {
-    //                 subscribedUntil: null,
-    //                 numberOfAds: 0
-    //             })
-    //             const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-    //             setCurrentUser({ uid: currentUser.uid, ...userDoc.data() });
-    //         }
-    //     }
-
-    //     CheckUserYearly()
-    // }, [currentUser, setCurrentUser])
 
     const handlePublishAd = () => {
         if (currentUser === null) {
             navigate('/login');
         } else {
             if (currentUser.numberOfAds > 0) {
-                navigate('/publish_ad')
+                navigate('/publish_ad');
             } else {
-                navigate('/subscribe')
+                navigate('/subscribe');
             }
         }
     };
 
     const handleLogout = async () => {
-        toggleProfileDropdown()
+        setShowProfileDropdown(false);
         await logout();
         navigate('/');
     };
 
     const toggleProfileDropdown = () => {
-        setShowProfileDropdown(!showProfileDropdown);
+        setShowProfileDropdown(prev => !prev);
+    };
+
+    const handleMenuClick = () => {
+        setShowMenu(prev => !prev);
+        setShowProfileDropdown(false);
     };
 
     return (
-        <nav className='navbar'>
-            <div className='navbar-buttons'>
-                <button className='publish-ad-button' onClick={handlePublishAd} >
-                    פרסום מודעה
-                    <FontAwesomeIcon icon={faPlus} style={{ marginLeft: '8px' }} />
+        <nav className="navbar">
+
+            {/* ================= LEFT SIDE ================= */}
+            <div className="navbar-actions">
+
+                <button
+                    className="publish-ad-button"
+                    onClick={handlePublishAd}
+                >
+                    <FontAwesomeIcon icon={faPlus} />
+                    <span>פרסום מודעה</span>
                 </button>
+
                 {loading ? (
-                    <Loading size={24} fullscreen={false} />
+                    <div className="header-loading">
+                        <Loading size={24} fullscreen={false} />
+                    </div>
                 ) : currentUser ? (
-                    <div className='profile-dropdown-container'>
-                        <button className='navbar-button' onClick={toggleProfileDropdown}>
-                            פרופיל
-                            <FontAwesomeIcon icon={faUser} style={{ marginLeft: '8px' }} />
+
+                    <div className="profile-dropdown-container">
+
+                        <button
+                            className={`profile-button ${showProfileDropdown ? 'active' : ''}`}
+                            onClick={toggleProfileDropdown}
+                        >
+                            <span>פרופיל</span>
+                            <FontAwesomeIcon icon={faUser} />
+                            <FontAwesomeIcon
+                                icon={faChevronDown}
+                                className={`profile-chevron ${showProfileDropdown ? 'rotate' : ''}`}
+                            />
                         </button>
+
                         {showProfileDropdown && (
                             <div className="profile-dropdown">
+
+                                <div className="dropdown-header">
+                                    <div className="dropdown-avatar">
+                                        <FontAwesomeIcon icon={faUser} />
+                                    </div>
+
+                                    <div>
+                                        <span>שלום!</span>
+                                        <strong>האזור האישי</strong>
+                                    </div>
+                                </div>
+
+                                <div className="dropdown-divider" />
+
                                 {currentUser?.isAdmin && (
-                                    <button className='dropdown-item'
+                                    <button
+                                        className="dropdown-item"
                                         onClick={() => {
-                                            toggleProfileDropdown()
-                                            navigate('/admin')
+                                            setShowProfileDropdown(false);
+                                            navigate('/admin');
                                         }}
                                     >
-                                        ניהול אתר
-                                        <FontAwesomeIcon icon={faGear} style={{ marginLeft: '8px' }} />
+                                        <FontAwesomeIcon icon={faGear} />
+                                        <span>ניהול אתר</span>
                                     </button>
                                 )}
-                                <button className='dropdown-item' onClick={() => {
-                                    toggleProfileDropdown()
-                                    navigate('/profile')
-                                }}>
-                                    אזור אישי
-                                    <FontAwesomeIcon icon={faHouseUser} style={{ marginLeft: '8px' }} />
 
+                                <button
+                                    className="dropdown-item"
+                                    onClick={() => {
+                                        setShowProfileDropdown(false);
+                                        navigate('/profile');
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faHouseUser} />
+                                    <span>אזור אישי</span>
                                 </button>
 
-                                {/* 
-                                 * PAYMENTS
-                                 * This is currently closed until customer decides to make payments in the website
-                                {!currentUser?.isAdmin && (
-                                    <>
-                                        <button className='dropdown-item' onClick={() => {
-                                            toggleProfileDropdown()
-                                            navigate('/cart')
-                                        }}>
-                                            עגלה
-                                            <FontAwesomeIcon icon={faCartShopping} style={{ marginLeft: '8px' }} />
-                                        </button>
-                                        <button className='dropdown-item' onClick={() => {
-                                            toggleProfileDropdown()
-                                            navigate('/my-purchases')
-                                        }}>
-                                            רכישות
-                                            <FontAwesomeIcon icon={faReceipt} style={{ marginLeft: '8px' }} />
-                                        </button>
-                                    </>
-                                )}
-
-                                {currentUser?.isAdmin && (
-                                    <button className='dropdown-item' onClick={() => {
-                                        toggleProfileDropdown()
-                                        navigate('/admin/all-purchases')
-                                    }}>
-                                        ניהול רכישות
-                                        <FontAwesomeIcon icon={faReceipt} style={{ marginLeft: '8px' }} />
-                                    </button>
-                                )} */}
-
-                                <button className='dropdown-item' onClick={handleLogout}>
-                                    התנתק
-                                    <FontAwesomeIcon icon={faSignOut} style={{ marginLeft: '8px' }} />
+                                <button
+                                    className="dropdown-item logout-item"
+                                    onClick={handleLogout}
+                                >
+                                    <FontAwesomeIcon icon={faSignOut} />
+                                    <span>התנתק</span>
                                 </button>
+
                             </div>
                         )}
+
                     </div>
+
                 ) : (
-                    <button className='navbar-button' onClick={() => navigate('/login')}>
-                        התחברות
-                        <FontAwesomeIcon icon={faUser} style={{ marginLeft: '8px' }} />
+
+                    <button
+                        className="login-button"
+                        onClick={() => navigate('/login')}
+                    >
+                        <FontAwesomeIcon icon={faUser} />
+                        <span>התחברות</span>
                     </button>
+
                 )}
+
             </div>
 
-            <div className='navbar-logo'>
+
+            {/* ================= CENTER / RIGHT SIDE ================= */}
+            <div className="navbar-main">
+
+                {/* Logo */}
+                <Link
+                    to="/"
+                    className="navbar-logo"
+                    onClick={() => setShowMenu(false)}
+                >
+                    <img
+                        src={require('@/assets/horsehub-gold.png')}
+                        alt="HorseHub"
+                    />
+                </Link>
+
+                {/* Categories */}
                 <div className="categories">
-                    <button className="navbar-button menu-icon" onClick={() => setShowMenu(!showMenu)}>
-                        {showMenu ? <FontAwesomeIcon icon={faTimes} /> : <FontAwesomeIcon icon={faBars} />}
+
+                    <button
+                        className="menu-icon"
+                        onClick={handleMenuClick}
+                        aria-label="פתיחת תפריט"
+                    >
+                        <FontAwesomeIcon
+                            icon={showMenu ? faTimes : faBars}
+                        />
                     </button>
-                    <div className={`navbar-buttons-category ${showMenu ? "show" : ""}`}>
+
+                    <div
+                        className={`navbar-buttons-category ${
+                            showMenu ? "show" : ""
+                        }`}
+                    >
+
                         {EXTENDED_CATEGORIES.map((category, index) => (
-                            <Link key={index} to={category.path} className='navbar-button-category' onClick={() => setShowMenu(false)}>
+                            <Link
+                                key={index}
+                                to={category.path}
+                                className="navbar-button-category"
+                                onClick={() => setShowMenu(false)}
+                            >
                                 {category.label}
                             </Link>
                         ))}
+
                     </div>
+
                 </div>
-                <Link to='/'>
-                    <img src={require('@/assets/horsehub-gold.png')} style={{ width: '50px', height: 'auto' }} alt="HorseHub" />
-                </Link>
+
             </div>
+
         </nav>
     );
 };
