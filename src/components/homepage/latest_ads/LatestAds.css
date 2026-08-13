@@ -6,74 +6,146 @@
     align-items: flex-end;
 }
 
+/* =========================
+   ADS TITLE
+========================= */
+
 .ad-title-section {
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #333;
     margin-right: 20px;
+    margin-bottom: 22px;
+
+    color: #173b5e;
+    font-size: 1.8em;
+    font-weight: 800;
+    line-height: 1.2;
 }
 
+/* =========================
+   ADS CONTAINER
+========================= */
+
 .ad-cards-container {
+    width: 100%;
+
     display: flex;
     flex-wrap: wrap;
-    gap: 30px;
-    justify-content: flex-start;
     flex-direction: row-reverse;
+
+    justify-content: flex-start;
+    align-items: stretch;
+
+    gap: 18px;
 }
+
+/* =========================
+   AD CARD
+========================= */
 
 .ad-card-homepage {
     width: 200px;
     max-width: 100%;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    min-width: 0;
+
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid #e3e8ed;
+    border-radius: 16px;
+
+    background: #ffffff;
+
+    box-shadow: 0 5px 18px rgba(23, 59, 94, 0.06);
+
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
+
     cursor: pointer;
 }
 
 .ad-card-homepage:hover {
-    border-color: #ccc;
+    transform: translateY(-4px);
+
+    border-color: rgba(255, 134, 28, 0.45);
+
+    box-shadow: 0 12px 28px rgba(23, 59, 94, 0.12);
 }
 
+/* =========================
+   ICON
+========================= */
+
 .feature-icon-container-ads {
-    margin-bottom: 10px;
     width: 100%;
+
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: center;
+
+    margin-bottom: 8px;
 }
 
 .feature-icon-circle {
-    width: 40px;
-    height: 40px;
-    background: #fff;
-    border-radius: 50%;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    width: 36px;
+    height: 36px;
+
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+
     position: relative;
+
+    border: 1px solid #eef1f4;
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    box-shadow: 0 3px 10px rgba(23, 59, 94, 0.08);
+
     cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.feature-icon-circle:hover {
+    transform: scale(1.06);
+
+    box-shadow: 0 5px 14px rgba(23, 59, 94, 0.13);
 }
 
 .feature-icon-circle::after {
     content: attr(data-tooltip);
+
     position: absolute;
-    top: -30px;
+
+    top: -34px;
     left: 50%;
+
     transform: translateX(-50%);
-    background-color: #333;
-    color: #fff;
-    padding: 4px 8px;
-    font-size: 0.75rem;
-    border-radius: 4px;
+
+    padding: 5px 9px;
+
+    border-radius: 6px;
+
+    background: #173b5e;
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 600;
+
     white-space: nowrap;
+
     opacity: 0;
     pointer-events: none;
+
     transition: opacity 0.2s ease;
-    z-index: 10;
+
+    z-index: 20;
 }
 
 .feature-icon-circle:hover::after {
@@ -81,78 +153,247 @@
 }
 
 .feature-icon-ads {
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
+
+    display: block;
+
     object-fit: contain;
 }
 
+/* =========================
+   IMAGE
+========================= */
 
 .ad-image-homepage {
     width: 100%;
-    height: 200px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    height: 185px;
+
+    display: block;
+
+    margin-bottom: 12px;
+
+    border-radius: 12px;
+
+    background: #f3f6f8;
+
     object-fit: cover;
+
+    transition: transform 0.3s ease;
 }
+
+.ad-card-homepage:hover .ad-image-homepage {
+    transform: scale(1.015);
+}
+
+/* =========================
+   TITLE
+========================= */
 
 .ad-title-homepage {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
+    margin: 0 0 7px;
+
+    color: #173b5e;
+
+    font-size: 1.1em;
+    font-weight: 800;
+
+    line-height: 1.35;
+
     text-align: center;
+
+    overflow: hidden;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
+
+/* =========================
+   PRICE
+========================= */
 
 .ad-price-homepage {
+    margin: auto 0 6px;
+
+    color: #ff861c;
+
     font-size: 1em;
-    font-weight: bold;
-    color: #555;
-    margin-top: 5px;
+    font-weight: 800;
+
+    line-height: 1.3;
+
     text-align: center;
 }
+
+/* =========================
+   DATE
+========================= */
 
 .ad-date-create {
+    margin-top: 2px;
+
+    color: #8a949d;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
     text-align: center;
-    font-size: medium;
-    color: #7c7c7c;
 }
 
+/* =========================
+   VERIFIED
+========================= */
+
 .homepage-verified-badge {
+    min-height: 38px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
+    margin-top: 8px;
+
+    color: #173b5e;
+
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .homepage-verified-badge img {
-    width: 35px;
-    height: 35px;
-    margin-left: 8px;
+    width: 30px;
+    height: 30px;
+
+    margin-left: 7px;
+
+    display: block;
+
+    object-fit: contain;
 }
+
+/* =========================
+   TABLET
+========================= */
 
 @media (max-width: 1024px) {
+
+    .ad-cards-container {
+        justify-content: center;
+        gap: 16px;
+    }
+
     .ad-card-homepage {
-        width: 100%;
+        width: calc(33.333% - 12px);
+    }
+
+    .ad-image-homepage {
+        height: 180px;
     }
 }
 
+/* =========================
+   TABLET SMALL
+========================= */
+
 @media (max-width: 768px) {
-    .ad-cards-container {
-        justify-content: center;
-        align-self: center;
-        width: 100%;
-    }
 
-    .ad-card-homepage {
-        width: 100%;
-    }
-
-    .homepage-verified-badge img {
-        width: 50px;
-        height: 50px;
-        margin-left: 8px;
+    .left-content {
+        align-items: center;
     }
 
     .ad-title-section {
         align-self: center;
+
+        margin-right: 0;
+
+        text-align: center;
+    }
+
+    .ad-cards-container {
+        width: 100%;
+
+        justify-content: center;
+
+        gap: 13px;
+    }
+
+    .ad-card-homepage {
+        width: calc(50% - 7px);
+
+        padding: 11px;
+
+        border-radius: 14px;
+    }
+
+    .ad-image-homepage {
+        height: 170px;
+    }
+
+    .homepage-verified-badge img {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 480px) {
+
+    .ad-cards-container {
+        gap: 10px;
+    }
+
+    .ad-card-homepage {
+        width: calc(50% - 5px);
+
+        padding: 9px;
+
+        border-radius: 13px;
+    }
+
+    .feature-icon-container-ads {
+        margin-bottom: 6px;
+    }
+
+    .feature-icon-circle {
+        width: 32px;
+        height: 32px;
+    }
+
+    .feature-icon-ads {
+        width: 22px;
+        height: 22px;
+    }
+
+    .ad-image-homepage {
+        height: 145px;
+
+        margin-bottom: 9px;
+
+        border-radius: 10px;
+    }
+
+    .ad-title-homepage {
+        font-size: 14px;
+    }
+
+    .ad-price-homepage {
+        font-size: 14px;
+    }
+
+    .ad-date-create {
+        font-size: 10px;
+    }
+
+    .homepage-verified-badge {
+        font-size: 10px;
+    }
+
+    .homepage-verified-badge img {
+        width: 27px;
+        height: 27px;
     }
 }
