@@ -10,6 +10,7 @@ import NotFound from "./NotFound";
 import './App.css'
 
 const Homepage = lazy(() => import("./components/homepage/Homepage"))
+const Dogs = lazy(() => import("./components/dogs/Dogs"));
 const ItemPage = lazy(() => import("./components/item/Item"));
 const Login = lazy(() => import("./components/login/Login"));
 const ForgotPassword = lazy(() => import("./components/login/ForgotPassword"));
