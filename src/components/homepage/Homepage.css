@@ -52,9 +52,7 @@ body {
 .hero-label {
   display: inline-flex;
   align-items: center;
-
   width: fit-content;
-
   margin-bottom: 14px;
 
   color: #ff861c;
@@ -95,7 +93,6 @@ body {
 
 .search-box {
   width: 100%;
-
   padding: 7px;
 
   display: grid;
@@ -199,20 +196,8 @@ body {
 }
 
 /* ==================================================
-   CATEGORIES
+   GENERAL SECTIONS
 ================================================== */
-
-.categories {
-  width: min(1180px, 94%);
-
-  margin: 0 auto;
-
-  padding: 70px 0 75px;
-
-  text-align: center;
-
-  background: #ffffff;
-}
 
 .section-header {
   margin-bottom: 34px;
@@ -248,8 +233,198 @@ body {
 }
 
 /* ==================================================
-   CATEGORY GRID
+   ADOPTION
 ================================================== */
+
+.adoption-section {
+  width: min(1180px, 94%);
+
+  margin: 0 auto;
+
+  padding: 70px 0 75px;
+
+  text-align: center;
+
+  position: relative;
+}
+
+.adoption-section::before {
+  content: "";
+
+  position: absolute;
+
+  top: 35px;
+  left: 50%;
+
+  width: 100%;
+  height: calc(100% - 70px);
+
+  transform: translateX(-50%);
+
+  background: #fff7ef;
+
+  border-radius: 30px;
+
+  z-index: 0;
+}
+
+.adoption-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.adoption-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 18px;
+
+  align-items: stretch;
+}
+
+.adoption-card {
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+
+  border: 1px solid #f0dfd0;
+
+  border-radius: 18px;
+
+  box-shadow: 0 8px 24px rgba(23, 59, 94, 0.08);
+
+  text-align: right;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.adoption-card:hover {
+  transform: translateY(-6px);
+
+  box-shadow: 0 16px 34px rgba(23, 59, 94, 0.14);
+}
+
+.adoption-image {
+  position: relative;
+
+  width: 100%;
+  height: 190px;
+
+  overflow: hidden;
+
+  background: #f3f6f8;
+}
+
+.adoption-image img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition: transform 0.3s ease;
+}
+
+.adoption-card:hover .adoption-image img {
+  transform: scale(1.05);
+}
+
+.adoption-badge {
+  position: absolute;
+
+  top: 11px;
+  right: 11px;
+
+  padding: 6px 11px;
+
+  border-radius: 20px;
+
+  background: #ff861c;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.adoption-content {
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+}
+
+.adoption-content h3 {
+  margin: 0 0 11px;
+
+  color: #173b5e;
+
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.adoption-details {
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+
+  color: #7a8794;
+
+  font-size: 12px;
+}
+
+.adoption-button {
+  width: 100%;
+
+  margin-top: auto;
+  padding: 10px 12px;
+
+  border: 0;
+  border-radius: 9px;
+
+  background: #173b5e;
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.adoption-button:hover {
+  background: #ff861c;
+
+  transform: translateY(-1px);
+}
+
+/* ==================================================
+   CATEGORIES
+================================================== */
+
+.categories {
+  width: min(1180px, 94%);
+
+  margin: 0 auto;
+
+  padding: 70px 0 75px;
+
+  text-align: center;
+
+  background: #ffffff;
+}
 
 .categories-grid {
   display: grid;
@@ -564,7 +739,8 @@ body {
   }
 
   .categories,
-  .latest {
+  .latest,
+  .adoption-section {
     width: 94%;
   }
 
@@ -580,6 +756,12 @@ body {
 
   .category-name {
     font-size: 14px;
+  }
+
+  .adoption-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
   }
 
   .listings-grid {
@@ -614,6 +796,14 @@ body {
 
   .category-image {
     height: 140px;
+  }
+
+  .adoption-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .adoption-image {
+    height: 175px;
   }
 }
 
@@ -664,6 +854,45 @@ body {
   .hero-image {
     height: 240px;
     min-height: 240px;
+  }
+
+  .adoption-section {
+    padding: 50px 0 60px;
+  }
+
+  .adoption-section::before {
+    top: 25px;
+    height: calc(100% - 50px);
+
+    border-radius: 22px;
+  }
+
+  .adoption-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 11px;
+  }
+
+  .adoption-image {
+    height: 145px;
+  }
+
+  .adoption-content {
+    padding: 11px;
+  }
+
+  .adoption-content h3 {
+    font-size: 14px;
+  }
+
+  .adoption-details {
+    font-size: 10px;
+  }
+
+  .adoption-button {
+    padding: 9px 7px;
+
+    font-size: 11px;
   }
 
   .categories {
