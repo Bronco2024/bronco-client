@@ -30,6 +30,7 @@ const Breeders = lazy(() => import("./components/breeders/Breeders"))
 const Schools = lazy(() => import("./components/schools/Schools"))
 const Trips = lazy(() => import("./components/trips/Trips"))
 const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competitions/ShowsAndCompetitions"))
+
 /**
  * PAYMENTS
  * This is currently closed until customer decides to make payments in the website
@@ -52,7 +53,9 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/"
+
+      <Route
+        path="/"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -60,17 +63,10 @@ function App() {
             </Layout>
           </Suspense>
         }
- <Route
-  path="/dogs"
-  element={
-    <Suspense fallback={<Loading />}>
-      <Layout>
-        <Dogs />
-      </Layout>
-    </Suspense>
-  }
-/>
-      <Route path="/item"
+      />
+
+      <Route
+        path="/item"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -80,7 +76,8 @@ function App() {
         }
       />
 
-      <Route path="/login"
+      <Route
+        path="/login"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -90,7 +87,8 @@ function App() {
         }
       />
 
-      <Route path="/login/forgot-password"
+      <Route
+        path="/login/forgot-password"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -100,7 +98,8 @@ function App() {
         }
       />
 
-      <Route path="/register"
+      <Route
+        path="/register"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -110,7 +109,8 @@ function App() {
         }
       />
 
-      <Route path="/profile"
+      <Route
+        path="/profile"
         element={
           <Suspense fallback={<Loading />}>
             <ProtectedRoute>
@@ -122,7 +122,8 @@ function App() {
         }
       />
 
-      <Route path="/publish_ad"
+      <Route
+        path="/publish_ad"
         element={
           <Suspense fallback={<Loading />}>
             <ProtectedRoute condition={(user) => user.numberOfAds > 0}>
@@ -170,7 +171,8 @@ function App() {
         }
       /> */}
 
-      <Route path="/horses"
+      <Route
+        path="/horses"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -180,7 +182,20 @@ function App() {
         }
       />
 
-      <Route path="/seeds"
+      {/* DOGS */}
+      <Route
+        path="/dogs"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Layout>
+              <Dogs />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route
+        path="/seeds"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -190,7 +205,8 @@ function App() {
         }
       />
 
-      <Route path="/accessories"
+      <Route
+        path="/accessories"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -200,7 +216,8 @@ function App() {
         }
       />
 
-      <Route path="/boarding"
+      <Route
+        path="/boarding"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -210,7 +227,8 @@ function App() {
         }
       />
 
-      <Route path="/exhibitors"
+      <Route
+        path="/exhibitors"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -220,7 +238,8 @@ function App() {
         }
       />
 
-      <Route path="/breeders"
+      <Route
+        path="/breeders"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -230,7 +249,8 @@ function App() {
         }
       />
 
-      <Route path="/veterinarians"
+      <Route
+        path="/veterinarians"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -240,7 +260,8 @@ function App() {
         }
       />
 
-      <Route path="/schools"
+      <Route
+        path="/schools"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -250,7 +271,8 @@ function App() {
         }
       />
 
-      <Route path="/trips"
+      <Route
+        path="/trips"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -260,7 +282,8 @@ function App() {
         }
       />
 
-      <Route path="/shows-and-competitions"
+      <Route
+        path="/shows-and-competitions"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -269,8 +292,9 @@ function App() {
           </Suspense>
         }
       />
- 
-      <Route path="/our-products"
+
+      <Route
+        path="/our-products"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -281,7 +305,7 @@ function App() {
       />
 
       {/* 
-      *
+       *
        * PAYMENTS
        * This is currently closed until customer decides to make payments in the website
       <Route path="/cart"
@@ -297,7 +321,7 @@ function App() {
       /> */}
 
       {/* 
-      *
+       *
        * PAYMENTS
        * This is currently closed until customer decides to make payments in the website
       <Route path="/cart/payment-form"
@@ -312,7 +336,8 @@ function App() {
         }
       /> */}
 
-      <Route path="/profile/update_ad"
+      <Route
+        path="/profile/update_ad"
         element={
           <Suspense fallback={<Loading />}>
             <ProtectedRoute>
@@ -324,7 +349,8 @@ function App() {
         }
       />
 
-      <Route path="/admin"
+      <Route
+        path="/admin"
         element={
           <Suspense fallback={<Loading />}>
             <ProtectedRoute adminOnly>
@@ -337,7 +363,7 @@ function App() {
       />
 
       {/* 
-      *
+       *
        * PAYMENTS
        * This is currently closed until customer decides to make payments in the website
       <Route path="/admin/all-purchases"
@@ -352,7 +378,8 @@ function App() {
         }
       /> */}
 
-      <Route path="/admin/add-sponsor"
+      <Route
+        path="/admin/add-sponsor"
         element={
           <Suspense fallback={<Loading />}>
             <ProtectedRoute adminOnly>
@@ -364,7 +391,8 @@ function App() {
         }
       />
 
-      <Route path="/about-us"
+      <Route
+        path="/about-us"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -374,7 +402,8 @@ function App() {
         }
       />
 
-      <Route path="/regulations"
+      <Route
+        path="/regulations"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
@@ -385,7 +414,7 @@ function App() {
       />
 
       {/*
-      *
+       *
        * PAYMENTS
        * This is currently closed until customer decides to make payments in the website
       <Route path="/my-purchases"
@@ -401,7 +430,7 @@ function App() {
       /> */}
 
       {/* 
-      *
+       *
        * PAYMENTS
        * This is currently closed until customer decides to make payments in the website
       <Route path="/purchase/:id"
@@ -416,7 +445,8 @@ function App() {
         }
       /> */}
 
-      <Route path="/privacy-policy"
+      <Route
+        path="/privacy-policy"
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
