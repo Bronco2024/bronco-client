@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./Homepage.css";
 
 const categories = [
-  { name: "כלבים", type: "כלב", image: "/dogs.jpg" },
+  { name: "כלבים", type: "כלב", image: "/dogs.jpg", route: "/dogs" },
   { name: "חתולים", type: "חתול", image: "/cats.jpg" },
   { name: "סוסים", type: "סוס", image: "/horses.jpg", route: "/horses" },
   { name: "ציפורים", type: "ציפור", image: "/birds.jpg" },
