@@ -6,52 +6,61 @@ const Dogs = () => {
       dir="rtl"
       style={{
         minHeight: "100vh",
-        padding: "50px 20px",
-        background: "#f7f9fb",
+        background: "#f5f8fc",
+        padding: "45px 20px",
       }}
     >
       <div
         style={{
-          maxWidth: "1100px",
+          maxWidth: "1150px",
           margin: "0 auto",
         }}
       >
-        <h1
-          style={{
-            color: "#173b5e",
-            textAlign: "center",
-            fontSize: "38px",
-            marginBottom: "10px",
-          }}
-        >
-          כלבים
-        </h1>
-
-        <p
+        <div
           style={{
             textAlign: "center",
-            color: "#777",
-            fontSize: "19px",
             marginBottom: "40px",
           }}
         >
-          מצאו את הכלב שמתאים לכם
-        </p>
+          <h1
+            style={{
+              margin: 0,
+              color: "#173b5e",
+              fontSize: "42px",
+              fontWeight: "800",
+            }}
+          >
+            כלבים
+          </h1>
+
+          <p
+            style={{
+              marginTop: "12px",
+              color: "#718096",
+              fontSize: "19px",
+            }}
+          >
+            מצאו את הכלב שמתאים לכם
+          </p>
+        </div>
 
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "25px",
+            background: "#ffffff",
+            borderRadius: "24px",
+            padding: "22px",
+            boxShadow: "0 12px 35px rgba(23,59,94,0.10)",
+            maxWidth: "650px",
+            margin: "0 auto",
           }}
         >
           <div
             style={{
-              background: "#fff",
-              borderRadius: "20px",
+              width: "100%",
+              height: "360px",
               overflow: "hidden",
-              boxShadow: "0 6px 25px rgba(0,0,0,0.08)",
-              border: "1px solid #eef1f4",
+              borderRadius: "18px",
+              background: "#eef2f6",
             }}
           >
             <img
@@ -59,122 +68,82 @@ const Dogs = () => {
               alt="כלב"
               style={{
                 width: "100%",
-                height: "270px",
+                height: "100%",
                 objectFit: "cover",
-                display: "block",
               }}
             />
+          </div>
 
-            <div style={{ padding: "25px" }}>
-              <h2
-                style={{
-                  color: "#173b5e",
-                  fontSize: "27px",
-                  margin: "0 0 22px",
-                }}
-              >
-                גולדן רטריבר
-              </h2>
+          <div style={{ padding: "20px 8px 5px" }}>
+            <h2
+              style={{
+                margin: "0 0 20px",
+                color: "#173b5e",
+                fontSize: "30px",
+              }}
+            >
+              כלב
+            </h2>
 
-              <div
-                style={{
-                  display: "grid",
-                  gap: "14px",
-                  color: "#333",
-                  fontSize: "17px",
-                }}
-              >
-                <div>
-                  <strong>גזע:</strong> גולדן רטריבר
-                </div>
-
-                <div>
-                  <strong>גיל:</strong> 3 חודשים
-                </div>
-
-                <div>
-                  <strong>מין:</strong> זכר
-                </div>
-
-                <div>
-                  <strong>תעודה:</strong> יש
-                </div>
-
-                <div>
-                  <strong>מחיר:</strong>{" "}
-                  <span
-                    style={{
-                      color: "#173b5e",
-                      fontWeight: "bold",
-                      fontSize: "20px",
-                    }}
-                  >
-                    4,500 ₪
-                  </span>
-                </div>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "14px",
+                color: "#374151",
+                fontSize: "17px",
+              }}
+            >
+              <div>
+                <strong>גזע:</strong> לא צוין
               </div>
 
-              <div
-                style={{
-                  marginTop: "25px",
-                  paddingTop: "20px",
-                  borderTop: "1px solid #eee",
-                }}
-              >
-                <h3
-                  style={{
-                    color: "#173b5e",
-                    marginBottom: "8px",
-                  }}
-                >
-                  תיאור
-                </h3>
-
-                <p
-                  style={{
-                    color: "#666",
-                    lineHeight: "1.7",
-                    margin: 0,
-                  }}
-                >
-                  כלב חברותי ומתאים למשפחה. פרטים נוספים על הכלב יופיעו כאן.
-                </p>
+              <div>
+                <strong>גיל:</strong> לא צוין
               </div>
 
-              <button
-                type="button"
-                style={{
-                  width: "100%",
-                  marginTop: "25px",
-                  padding: "14px",
-                  border: "none",
-                  borderRadius: "10px",
-                  background: "#173b5e",
-                  color: "#fff",
-                  fontSize: "17px",
-                  cursor: "pointer",
-                }}
-              >
-                צור קשר
-              </button>
+              <div>
+                <strong>מין:</strong> לא צוין
+              </div>
 
-              <button
-                type="button"
-                style={{
-                  width: "100%",
-                  marginTop: "10px",
-                  padding: "13px",
-                  border: "1px solid #173b5e",
-                  borderRadius: "10px",
-                  background: "#fff",
-                  color: "#173b5e",
-                  fontSize: "16px",
-                  cursor: "pointer",
-                }}
-              >
-                סרטון
-              </button>
+              <div>
+                <strong>תעודה:</strong> כן / לא
+              </div>
+
+              <div>
+                <strong>מחיר:</strong> לא צוין
+              </div>
             </div>
+
+            <p
+              style={{
+                marginTop: "25px",
+                color: "#6b7280",
+                lineHeight: "1.8",
+                fontSize: "16px",
+              }}
+            >
+              תיאור קצר של הכלב יופיע כאן. כאן ניתן להציג מידע נוסף
+              על הכלב, אופיו וכל הפרטים החשובים עבור הקונה.
+            </p>
+
+            <button
+              type="button"
+              style={{
+                width: "100%",
+                marginTop: "20px",
+                padding: "15px",
+                border: "none",
+                borderRadius: "12px",
+                background: "#173b5e",
+                color: "#ffffff",
+                fontSize: "18px",
+                fontWeight: "700",
+                cursor: "pointer",
+              }}
+            >
+              צור קשר
+            </button>
           </div>
         </div>
       </div>
