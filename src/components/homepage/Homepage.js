@@ -414,9 +414,14 @@ function Homepage() {
                   ? "active"
                   : ""
               }`}
-              onClick={() =>
-                handleCategoryClick(category)
-              }
+             onClick={() => {
+  if (category.name === "כלבים") {
+    navigate("/dogs");
+    return;
+  }
+
+  handleCategoryClick(category);
+}}
             >
 
               <div className="category-image">
