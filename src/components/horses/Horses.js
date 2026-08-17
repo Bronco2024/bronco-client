@@ -14,8 +14,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
-import './Horses.css'
+import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import HorseFilters from "@components/utils/filters/HorseFilters";
 import Paganation from "@components/utils/paganation/Paganation";
 
@@ -194,72 +194,47 @@ const Horses = () => {
     }
 
     return (
-        <div className="horses-container">
-
-            <div className="image-filter-container">
-                <div
-                    className="image-section"
-                    style={{
-                        backgroundImage: `url(${require('@/assets/horse-arabian2.jpg')})`,
-                    }}
+        <ServicePage
+            title="סוסים"
+            subtitle="סוסים וסייחים מכל הגזעים"
+            heroImage="/horses.jpg"
+            count={adList.length}
+            filters={
+                <HorseFilters
+                    filters={filters}
+                    handleFilterChange={handleFilterChange}
+                    applyFilters={applyFilters}
+                    resetFilters={resetFilters}
                 />
-
-                <div className="filter-desktop">
-                    <HorseFilters
-                        filters={filters}
-                        handleFilterChange={handleFilterChange}
-                        applyFilters={applyFilters}
-                        resetFilters={resetFilters}
-                    />
-                </div>
-
-                <div className="filter-mobile">
-                    <HorseFilters
-                        filters={filters}
-                        handleFilterChange={handleFilterChange}
-                        applyFilters={applyFilters}
-                        resetFilters={resetFilters}
-                    />
-                </div>
-            </div>
-
-            <div className="ads-horses-wrapper">
-                {adList.length === 0 ? (
-                    <p>לא נמצאו מודעות בקטיגוריה זו</p>
-                ) : (
-                    adList.map(ad => (
+            }
+        >
+            {adList.length === 0 ? (
+                <p className="ads-page-empty">לא נמצאו מודעות בקטיגוריה זו</p>
+            ) : (
+                <div className="ads-page-grid">
+                    {adList.map((ad) =>
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                            <div
+                            <AdGridCard
                                 key={ad.id}
-                                className="ad-horse-card"
-                                style={{ borderColor: ad?.hasCertificate ? '#0064E0' : null, borderWidth: ad?.hasCertificate ? '2px' : null }}
-                                onClick={() => handleClickOnItem(ad)}
-                            >
-                                {(ad.photos && ad.photos[0]) && (
-                                    <img src={ad.photos[0]} alt={ad.breed} className="ad-horse-image" />
-                                )}
-                                {ad.photos.length === 0 && (
-                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-horse-image" />
-                                )}
-                                <h2 className="ad-horse-title">{ad.breed}</h2>
-                                {ad.price && ad.price !== "" && (<p className="ad-horse-price">₪{ad.price}</p>)}
-                                <p className='ad-horse-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                            </div>
-                        )))
-                )}
-            </div>
+                                ad={ad}
+                                title={ad.breed}
+                                onClick={handleClickOnItem}
+                                verified={Boolean(ad?.hasCertificate)}
+                            />
+                        )
+                    )}
+                </div>
+            )}
 
-            <div style={{ marginBottom: '2%' }}>
-                <Paganation
-                    handleNextPage={handleNextPage}
-                    handlePrevPage={handlePrevPage}
-                    page={page}
-                    adList={adList}
-                    afterThis={afterThis}
-                    TOTAL_PAGES={TOTAL_PAGES}
-                />
-            </div>
-        </div>
+            <Paganation
+                handleNextPage={handleNextPage}
+                handlePrevPage={handlePrevPage}
+                page={page}
+                adList={adList}
+                afterThis={afterThis}
+                TOTAL_PAGES={TOTAL_PAGES}
+            />
+        </ServicePage>
     );
 };
 

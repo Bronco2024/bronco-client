@@ -1,6 +1,7 @@
 import {
   PET_CATEGORIES,
   PET_LISTINGS,
+  SITE_SERVICES,
   filterListings,
   getCategoryBySlug,
   getListingsByCategory,
@@ -32,5 +33,12 @@ describe("Pets & Bones catalog", () => {
     const cats = filterListings(PET_LISTINGS, { category: "חתולים" });
     expect(cats.length).toBeGreaterThan(0);
     expect(cats.every((listing) => listing.category === "חתולים")).toBe(true);
+  });
+
+  test("exposes service routes used in the header", () => {
+    expect(SITE_SERVICES.length).toBeGreaterThanOrEqual(6);
+    expect(SITE_SERVICES.map((service) => service.path)).toEqual(
+      expect.arrayContaining(["/veterinarians", "/boarding", "/accessories"])
+    );
   });
 });

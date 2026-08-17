@@ -15,7 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
-import { PET_CATEGORIES } from '@/data/pets';
+import { PET_CATEGORIES, SITE_SERVICES } from '@/data/pets';
 import Loading from '../../loading-screen/Loading';
 
 const Header = () => {
@@ -27,11 +27,13 @@ const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
     const [showCategories, setShowCategories] = useState(false);
+    const [showServices, setShowServices] = useState(false);
 
     const closeMenus = () => {
         setShowMenu(false);
         setShowProfileDropdown(false);
         setShowCategories(false);
+        setShowServices(false);
     };
 
     useEffect(() => {
@@ -43,6 +45,7 @@ const Header = () => {
             if (headerRef.current && !headerRef.current.contains(event.target)) {
                 setShowProfileDropdown(false);
                 setShowCategories(false);
+                setShowServices(false);
             }
         };
 
@@ -85,6 +88,9 @@ const Header = () => {
     const isCategoryActive = PET_CATEGORIES.some(
         (category) => location.pathname === category.path
     );
+    const isServiceActive = SITE_SERVICES.some(
+        (service) => location.pathname === service.path
+    );
 
     return (
         <nav className="navbar" ref={headerRef}>
@@ -108,6 +114,7 @@ const Header = () => {
                             aria-haspopup="true"
                             onClick={() => {
                                 setShowCategories((open) => !open);
+                                setShowServices(false);
                                 setShowProfileDropdown(false);
                             }}
                         >
@@ -128,6 +135,42 @@ const Header = () => {
                                         <span>
                                             <strong>{category.name}</strong>
                                             <small>{category.subtitle}</small>
+                                        </span>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className={`categories-menu ${showServices ? "open" : ""}`}>
+                        <button
+                            className={`navbar-text-link ${isServiceActive ? "active" : ""}`}
+                            type="button"
+                            aria-expanded={showServices}
+                            aria-haspopup="true"
+                            onClick={() => {
+                                setShowServices((open) => !open);
+                                setShowCategories(false);
+                                setShowProfileDropdown(false);
+                            }}
+                        >
+                            שירותים
+                            <FontAwesomeIcon icon={faChevronDown} />
+                        </button>
+
+                        {showServices && (
+                            <div className="categories-panel services-panel" role="menu">
+                                {SITE_SERVICES.map((service) => (
+                                    <Link
+                                        key={service.path}
+                                        to={service.path}
+                                        className="categories-panel-item"
+                                        onClick={closeMenus}
+                                    >
+                                        <img src={service.image} alt="" />
+                                        <span>
+                                            <strong>{service.name}</strong>
+                                            <small>{service.subtitle}</small>
                                         </span>
                                     </Link>
                                 ))}
@@ -249,6 +292,7 @@ const Header = () => {
                         onClick={() => {
                             setShowMenu((open) => !open);
                             setShowCategories(false);
+                            setShowServices(false);
                             setShowProfileDropdown(false);
                         }}
                         aria-label={showMenu ? "סגירת תפריט" : "פתיחת תפריט"}
@@ -275,6 +319,18 @@ const Header = () => {
                                 onClick={closeMenus}
                             >
                                 {category.name}
+                            </Link>
+                        ))}
+                    </div>
+                    <p className="mobile-menu-label">שירותים</p>
+                    <div className="mobile-categories">
+                        {SITE_SERVICES.map((service) => (
+                            <Link
+                                key={service.path}
+                                to={service.path}
+                                onClick={closeMenus}
+                            >
+                                {service.name}
                             </Link>
                         ))}
                     </div>

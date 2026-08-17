@@ -6,6 +6,7 @@ import {
   PET_CATEGORIES,
   PET_LISTINGS,
   PET_LOCATIONS,
+  SITE_SERVICES,
   filterListings,
 } from "@/data/pets";
 import "./Homepage.css";
@@ -28,27 +29,13 @@ const HOW_IT_WORKS = [
   },
 ];
 
-const SERVICES = [
+const HOMEPAGE_SERVICES = [
   {
-    title: "אימוץ",
-    text: "חיות שמחכות לבית חם.",
     path: "/adoption",
+    name: "אימוץ",
+    subtitle: "חיות שמחכות לבית חם",
   },
-  {
-    title: "וטרינרים",
-    text: "אנשי מקצוע לטיפול וליווי.",
-    path: "/veterinarians",
-  },
-  {
-    title: "פנסיון",
-    text: "מקומות אמינים לשהייה זמנית.",
-    path: "/boarding",
-  },
-  {
-    title: "אביזרים",
-    text: "ציוד, מזון וכל מה שצריך בבית.",
-    path: "/accessories",
-  },
+  ...SITE_SERVICES.slice(0, 3),
 ];
 
 function Homepage() {
@@ -347,15 +334,15 @@ function Homepage() {
           <p>כל מה שצריך אחרי שמצאתם חבר חדש</p>
         </div>
         <div className="services-grid">
-          {SERVICES.map((service) => (
+          {HOMEPAGE_SERVICES.map((service) => (
             <button
               key={service.path}
               type="button"
               className="service-card"
               onClick={() => navigate(service.path)}
             >
-              <h3>{service.title}</h3>
-              <p>{service.text}</p>
+              <h3>{service.name}</h3>
+              <p>{service.subtitle}</p>
               <span>לפרטים ←</span>
             </button>
           ))}

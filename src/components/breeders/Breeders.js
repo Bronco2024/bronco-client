@@ -13,9 +13,9 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
-import './Breeders.css'
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import Paganation from "@components/utils/paganation/Paganation";
 
 const Breeders = () => {
@@ -101,32 +101,28 @@ const Breeders = () => {
     }
 
     return (
-        <div className="breeders-container">
-            <h1 className="breeders-title">מפרזילים</h1>
-
-            <div className="ads-breeders-wrapper">
-                {adList.length === 0 ? (
-                    <p>לא נמצאו מודעות בקטיגוריה זו</p>
-                ) : (
-                    adList.map(ad => (
+        <ServicePage
+            title="מפרזילים"
+            subtitle="טיפול ואיזון מקצועי"
+            heroImage="/horses.jpg"
+            count={adList.length}
+        >
+            {adList.length === 0 ? (
+                <p className="ads-page-empty">לא נמצאו מודעות בקטיגוריה זו</p>
+            ) : (
+                <div className="ads-page-grid">
+                    {adList.map((ad) =>
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                            <div
+                            <AdGridCard
                                 key={ad.id}
-                                className="ad-breeders-card"
-                                onClick={() => handleClickOnItem(ad)}
-                            >
-                                {ad.photos && ad.photos[0] && (
-                                    <img src={ad.photos[0]} alt={ad.title} className="ad-breeders-image" />
-                                )}
-                                {ad.photos.length === 0 && (
-                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-breeders-image" />
-                                )}
-                                <h2 className="ad-breeders-title">{ad.title}</h2>
-                                <p className='ad-breeders-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                            </div>
-                        )))
-                )}
-            </div>
+                                ad={ad}
+                                title={ad.title}
+                                onClick={handleClickOnItem}
+                            />
+                        )
+                    )}
+                </div>
+            )}
 
             <Paganation
                 handleNextPage={handleNextPage}
@@ -136,7 +132,7 @@ const Breeders = () => {
                 afterThis={afterThis}
                 TOTAL_PAGES={TOTAL_PAGES}
             />
-        </div>
+        </ServicePage>
     )
 }
 export default Breeders;

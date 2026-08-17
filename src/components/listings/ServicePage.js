@@ -1,0 +1,88 @@
+import { useNavigate } from "react-router-dom";
+import { FormatDateTimestampToDate } from "@components/utils/constants/Functions";
+import "./ServicePage.css";
+
+const fallbackImage = () => require("@/assets/no-image.jpg");
+
+export const AdGridCard = ({
+  ad,
+  title,
+  onClick,
+  children,
+  verified = false,
+}) => {
+  const image = ad.photos?.[0] || fallbackImage();
+  const heading = title || ad.title || ad.name || ad.category;
+
+  const open = () => onClick?.(ad);
+
+  return (
+    <article
+      className={`ads-page-card ${verified ? "verified" : ""}`}
+      onClick={onClick ? open : undefined}
+      onKeyDown={(event) => {
+        if (!onClick) return;
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          open();
+        }
+      }}
+      role={onClick ? "link" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+    >
+      <div className="ads-page-card-image">
+        <img src={image} alt={heading} loading="lazy" />
+      </div>
+      <div className="ads-page-card-body">
+        <h2>{heading}</h2>
+        {ad.price !== undefined && ad.price !== null && ad.price !== "" && (
+          <strong>₪{ad.price}</strong>
+        )}
+        {children}
+        <span>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</span>
+      </div>
+    </article>
+  );
+};
+
+const ServicePage = ({
+  title,
+  subtitle,
+  heroImage,
+  count,
+  filters,
+  children,
+}) => {
+  const navigate = useNavigate();
+
+  return (
+    <main className="ads-page" dir="rtl">
+      <section
+        className="ads-page-hero"
+        style={{ backgroundImage: `url(${heroImage})` }}
+      >
+        <div className="ads-page-hero-overlay">
+          <button
+            type="button"
+            className="ads-page-back"
+            onClick={() => navigate("/")}
+          >
+            ← חזרה לדף הבית
+          </button>
+          <h1>{title}</h1>
+          {subtitle && <p>{subtitle}</p>}
+        </div>
+      </section>
+
+      <section className="ads-page-content">
+        {filters}
+        {typeof count === "number" && (
+          <p className="ads-page-count">{count} מודעות</p>
+        )}
+        {children}
+      </section>
+    </main>
+  );
+};
+
+export default ServicePage;

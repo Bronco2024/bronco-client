@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebook, faInstagram, faTiktok } from "@fortawesome/free-brands-svg-icons";
 import { faPaw } from "@fortawesome/free-solid-svg-icons";
-import { PET_CATEGORIES } from '@/data/pets';
+import { PET_CATEGORIES, SITE_SERVICES } from '@/data/pets';
 
 const Footer = () => {
     return (
@@ -30,6 +30,17 @@ const Footer = () => {
                             </Link>
                         ))}
                         <Link to="/listings" className="about-link">כל המודעות</Link>
+                    </div>
+                </div>
+
+                <div className="footer-section">
+                    <h2>שירותים</h2>
+                    <div className="footer-links">
+                        {SITE_SERVICES.slice(0, 6).map((service) => (
+                            <Link key={service.path} to={service.path} className="about-link">
+                                {service.name}
+                            </Link>
+                        ))}
                     </div>
                 </div>
 

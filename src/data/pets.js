@@ -98,6 +98,63 @@ export const PET_CATEGORIES = [
   },
 ];
 
+export const SITE_SERVICES = [
+  {
+    path: "/veterinarians",
+    name: "וטרינרים",
+    subtitle: "רופאים וטיפול מקצועי לחיות מחמד",
+    image: "/cats.jpg",
+  },
+  {
+    path: "/boarding",
+    name: "פנסיון",
+    subtitle: "מקומות אמינים לשהייה זמנית",
+    image: "/dogs.jpg",
+  },
+  {
+    path: "/accessories",
+    name: "אביזרים",
+    subtitle: "ציוד, מזון וכל מה שצריך בבית",
+    image: "/small-animals.jpg",
+  },
+  {
+    path: "/seeds",
+    name: "זרע",
+    subtitle: "לגידול מקצועי ומתקדם",
+    image: "/farm-animals.jpg",
+  },
+  {
+    path: "/exhibitors",
+    name: "מציגים",
+    subtitle: "אנשי מקצוע מהתחום",
+    image: "/horses.jpg",
+  },
+  {
+    path: "/breeders",
+    name: "מפרזילים",
+    subtitle: "טיפול ואיזון מקצועי",
+    image: "/horses.jpg",
+  },
+  {
+    path: "/schools",
+    name: "בתי ספר",
+    subtitle: "לימוד ואימון לכל הרמות",
+    image: "/horses.jpg",
+  },
+  {
+    path: "/trips",
+    name: "טיולים",
+    subtitle: "חוויות עם חיות בטבע",
+    image: "/farm-animals.jpg",
+  },
+  {
+    path: "/shows-and-competitions",
+    name: "תצוגות ותחרויות",
+    subtitle: "אירועים קרובים להשתתף ולהתרגש",
+    image: "/horses.jpg",
+  },
+];
+
 const listing = (data) => ({
   contact: data.contact || "צוות Pets & Bones",
   phoneNumber: data.phoneNumber || "0547926338",

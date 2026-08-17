@@ -13,10 +13,10 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
-import './Seeds.css'
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import SeedsFilters from "@components/utils/filters/SeedsFilters";
+import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import Paganation from "@components/utils/paganation/Paganation";
 
 const Seeds = () => {
@@ -178,43 +178,37 @@ const Seeds = () => {
     }
 
     return (
-        <div className="seeds-container">
-            <h1 className="seeds-title">זרעים</h1>
-
-            <SeedsFilters
-                filters={filters}
-                handleFilterChange={handleFilterChange}
-                applyFilters={applyFilters}
-                resetFilters={resetFilters}
-            />
-
-            <div className="ads-seeds-wrapper">
-                {adList.length === 0 ? (
-                    <p>לא נמצאו מודעות בקטיגוריה זו</p>
-                ) : (
-                    adList.map(ad => (
+        <ServicePage
+            title="זרע"
+            subtitle="לגידול מקצועי ומתקדם"
+            heroImage="/farm-animals.jpg"
+            count={adList.length}
+            filters={
+                <SeedsFilters
+                    filters={filters}
+                    handleFilterChange={handleFilterChange}
+                    applyFilters={applyFilters}
+                    resetFilters={resetFilters}
+                />
+            }
+        >
+            {adList.length === 0 ? (
+                <p className="ads-page-empty">לא נמצאו מודעות בקטיגוריה זו</p>
+            ) : (
+                <div className="ads-page-grid">
+                    {adList.map((ad) =>
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                            <div
+                            <AdGridCard
                                 key={ad.id}
-                                className="ad-seeds-card"
-                                style={{ borderColor: ad?.hasCertificate ? '#0064E0' : null, borderWidth: ad?.hasCertificate ? '2px' : null }}
-                                onClick={() => handleClickOnItem(ad)}
-                            >
-                                {ad.photos && ad.photos[0] && (
-                                    <img src={ad.photos[0]} alt={ad.title} className="ad-seeds-image" />
-                                )}
-                                {ad.photos.length === 0 && (
-                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-seeds-image" />
-                                )}
-                                <h2 className="ad-seeds-title">{ad.seed_type}</h2>
-                                {ad.price && ad.price !== "" && (<p className="ad-seeds-price">₪{ad.price}</p>)}
-                                <p className='ad-seeds-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                            </div>
+                                ad={ad}
+                                title={ad.seed_type || ad.title}
+                                onClick={handleClickOnItem}
+                                verified={Boolean(ad?.hasCertificate)}
+                            />
                         )
-
-                    ))
-                )}
-            </div>
+                    )}
+                </div>
+            )}
 
             <Paganation
                 handleNextPage={handleNextPage}
@@ -224,7 +218,7 @@ const Seeds = () => {
                 afterThis={afterThis}
                 TOTAL_PAGES={TOTAL_PAGES}
             />
-        </div>
+        </ServicePage>
     )
 }
 

@@ -142,6 +142,11 @@
     font-weight: 500;
 }
 
+.services-panel {
+    left: 0;
+    right: auto;
+}
+
 .navbar-buttons {
     display: flex;
     align-items: center;
