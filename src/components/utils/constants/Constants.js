@@ -1,3 +1,7 @@
+import { PET_CATEGORIES } from "@/data/pets";
+
+export { PET_CATEGORIES };
+
 export const BREEDS = [
     "ערבי מערוב קו ",
     "ערבי מצרי",
@@ -15,10 +19,6 @@ export const BREEDS = [
     "פוני שטלנד",
     "אחר",
 ];
-
-import { PET_CATEGORIES } from "@/data/pets";
-
-export { PET_CATEGORIES };
 
 export const CATEGORIES = [
     ...PET_CATEGORIES.map(({ path, name }) => ({ path, label: name })),

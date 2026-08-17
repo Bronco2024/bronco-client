@@ -438,7 +438,7 @@ export const getFavorites = () => {
       localStorage.getItem(FAVORITES_STORAGE_KEY) || "[]"
     );
     return Array.isArray(stored) ? stored : [];
-  } catch (error) {
+  } catch {
     return [];
   }
 };

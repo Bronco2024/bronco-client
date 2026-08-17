@@ -57,7 +57,7 @@ const ItemPage = () => {
                 .map(doc => ({ id: doc.id, ...doc.data() }));
 
             setSimilarAds(filtered.length > 0 ? filtered : getSimilarListings(ad));
-        } catch (error) {
+        } catch {
             setSimilarAds(getSimilarListings(ad));
         }
     }, [ad]);
