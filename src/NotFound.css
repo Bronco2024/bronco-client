@@ -1,0 +1,26 @@
+.not-found-page {
+  min-height: 60vh;
+  padding: 80px 20px;
+  text-align: center;
+  color: #173b5e;
+}
+
+.not-found-page h1 {
+  margin: 0 0 12px;
+  font-size: 36px;
+}
+
+.not-found-page p {
+  margin: 0 0 24px;
+  color: #7a8794;
+}
+
+.not-found-link {
+  display: inline-block;
+  padding: 12px 22px;
+  border-radius: 10px;
+  background: #173b5e;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+}

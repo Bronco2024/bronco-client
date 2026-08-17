@@ -298,7 +298,8 @@ body {
     border-color 0.25s ease;
 }
 
-.category-card:hover {
+.category-card:hover,
+.category-card.active {
   transform: translateY(-6px);
 
   border-color: #ff861c;
@@ -612,6 +613,8 @@ body {
   border: 1px solid #e4e9ee;
 
   border-radius: 17px;
+
+  cursor: pointer;
 
   box-shadow: 0 6px 20px rgba(23, 59, 94, 0.07);
 

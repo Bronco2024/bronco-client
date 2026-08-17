@@ -30,6 +30,19 @@ const Breeders = lazy(() => import("./components/breeders/Breeders"))
 const Schools = lazy(() => import("./components/schools/Schools"))
 const Trips = lazy(() => import("./components/trips/Trips"))
 const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competitions/ShowsAndCompetitions"))
+const CategoryListings = lazy(() => import("./components/pets/CategoryListings"));
+const Favorites = lazy(() => import("./components/pets/Favorites"));
+
+const PET_CATEGORY_ROUTES = [
+  "cats",
+  "birds",
+  "fish",
+  "rabbits",
+  "reptiles",
+  "chickens",
+  "farm-animals",
+  "small-animals",
+];
 
 /**
  * PAYMENTS
@@ -126,7 +139,7 @@ function App() {
         path="/publish_ad"
         element={
           <Suspense fallback={<Loading />}>
-            <ProtectedRoute condition={(user) => user.numberOfAds > 0}>
+            <ProtectedRoute>
               <Layout>
                 <PublishAd />
               </Layout>
@@ -189,6 +202,42 @@ function App() {
           <Suspense fallback={<Loading />}>
             <Layout>
               <Dogs />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      {PET_CATEGORY_ROUTES.map((slug) => (
+        <Route
+          key={slug}
+          path={`/${slug}`}
+          element={
+            <Suspense fallback={<Loading />}>
+              <Layout>
+                <CategoryListings slug={slug} />
+              </Layout>
+            </Suspense>
+          }
+        />
+      ))}
+
+      <Route
+        path="/adoption"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Layout>
+              <CategoryListings adoptionOnly />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route
+        path="/favorites"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Layout>
+              <Favorites />
             </Layout>
           </Suspense>
         }
@@ -460,7 +509,9 @@ function App() {
         path="*"
         element={
           <Suspense fallback={<Loading />}>
-            <NotFound />
+            <Layout>
+              <NotFound />
+            </Layout>
           </Suspense>
         }
       />

@@ -1,11 +1,20 @@
 import * as Sentry from "@sentry/react";
+import { isPetMarketplaceCategory } from "@/data/pets";
 
 export const FormatDateTimestampToDate = (timestamp) => {
-    if (timestamp && timestamp.seconds) {
-        const date = new Date(timestamp.seconds * 1000);
-        return date.toLocaleDateString('he-IL');
+    if (!timestamp) return '';
+
+    if (timestamp.seconds) {
+        return new Date(timestamp.seconds * 1000).toLocaleDateString('he-IL');
     }
-    return '';
+
+    if (typeof timestamp.toDate === "function") {
+        return timestamp.toDate().toLocaleDateString('he-IL');
+    }
+
+    const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleDateString('he-IL');
 };
 
 export const IsDateNowGreaterThanAdDate = (adAvailableUntil) => {
@@ -56,6 +65,13 @@ export const DeletedAttributesAfterUpdateForm = (data) => {
             break;
 
         default:
+            if (isPetMarketplaceCategory(data.category)) {
+                delete newData.seed_type;
+                delete newData.semen_type;
+                delete newData.accessory;
+                break;
+            }
+
             delete newData.age;
             delete newData.gender;
             delete newData.breed;

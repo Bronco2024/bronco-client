@@ -68,7 +68,7 @@ const Footer = () => {
 
             <div className="footer-bottom">
                 <p className="copyright-text">
-                     HorseHub כל הזכויות שמורות ל ©
+                     Pets & Bones כל הזכויות שמורות ל ©
                 </p>
             </div>
         </div>
