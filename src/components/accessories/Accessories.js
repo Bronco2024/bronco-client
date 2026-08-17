@@ -171,7 +171,7 @@ const Accessories = () => {
         <ServicePage
             title="אביזרים"
             subtitle="ציוד, מזון וכל מה שצריך בבית"
-            heroImage="/small-animals.jpg"
+            heroImage="/services/accessories.jpg"
             count={adList.length}
             filters={
                 <AccessoriesFilters

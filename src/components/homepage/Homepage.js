@@ -1,13 +1,16 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PetCard from "@/components/pets/PetCard";
+import Loading from "@/components/loading-screen/Loading";
+import useMarketplaceAds from "@/hooks/useMarketplaceAds";
 import {
-  ADOPTION_PETS,
   PET_CATEGORIES,
-  PET_LISTINGS,
   PET_LOCATIONS,
   SITE_SERVICES,
   filterListings,
+  isAdoptionListing,
+  mergeMarketplaceListings,
+  getCatalogPool,
 } from "@/data/pets";
 import "./Homepage.css";
 
@@ -44,18 +47,27 @@ function Homepage() {
   const [searchText, setSearchText] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const { listings, liveAds, loading } = useMarketplaceAds({ limitCount: 40 });
 
   const filteredListings = useMemo(
     () =>
-      filterListings(PET_LISTINGS, {
+      filterListings(listings, {
         searchText,
         location: selectedLocation,
         category: selectedCategory,
       }),
-    [searchText, selectedLocation, selectedCategory]
+    [listings, searchText, selectedLocation, selectedCategory]
   );
 
   const featuredListings = filteredListings.slice(0, 10);
+  const adoptionListings = useMemo(
+    () =>
+      mergeMarketplaceListings(
+        liveAds.filter(isAdoptionListing),
+        getCatalogPool({ adoptionOnly: true })
+      ).slice(0, 4),
+    [liveAds]
+  );
 
   const goToSearchResults = () => {
     const matchedCategory = PET_CATEGORIES.find(
@@ -168,11 +180,11 @@ function Homepage() {
           <span>קטגוריות חיות</span>
         </div>
         <div>
-          <strong>{PET_LISTINGS.length}+</strong>
+          <strong>{listings.length}+</strong>
           <span>מודעות פעילות</span>
         </div>
         <div>
-          <strong>{ADOPTION_PETS.length}</strong>
+          <strong>{adoptionListings.length}</strong>
           <span>חיות לאימוץ</span>
         </div>
         <div>
@@ -244,7 +256,11 @@ function Homepage() {
           </button>
         </div>
 
-        {featuredListings.length > 0 ? (
+        {loading && featuredListings.length === 0 ? (
+          <div className="no-results">
+            <Loading size={64} fullscreen={false} message="טוען מודעות..." />
+          </div>
+        ) : featuredListings.length > 0 ? (
           <div className="listings-grid">
             {featuredListings.map((listing) => (
               <PetCard key={listing.id} listing={listing} />
@@ -277,7 +293,7 @@ function Homepage() {
         </div>
 
         <div className="adoption-grid">
-          {ADOPTION_PETS.map((pet) => (
+          {adoptionListings.map((pet) => (
             <article
               className="adoption-card"
               key={pet.id}

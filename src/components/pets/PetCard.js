@@ -48,7 +48,7 @@ const PetCard = ({ listing, showAdoptionBadge = false }) => {
       tabIndex={0}
     >
       <div className="listing-image">
-        <img src={listing.image} alt={listing.name} loading="lazy" />
+        <img src={listing.image || listing.photos?.[0]} alt={listing.name} loading="lazy" />
 
         <button
           className={`favorite ${favorited ? "active" : ""}`}

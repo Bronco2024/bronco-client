@@ -103,6 +103,11 @@ const PublishAd = () => {
                 availableUntil: date
             };
 
+            if (formData.forAdoption) {
+                adData.forAdoption = true;
+                if (!adData.price) adData.price = "לאימוץ";
+            }
+
             if (formData.category === "סוסים") {
                 const totalMonths =
                     (Number(formData.ageYears) || 0) * 12 +
@@ -336,6 +341,21 @@ const PublishAd = () => {
                                 &nbsp; עם תעודה
                             </label>
                         </div>
+                    </div>
+                )}
+
+                {isPetMarketplaceCategory(formData.category) && (
+                    <div style={{ marginTop: '1%', marginBottom: '1%' }}>
+                        <label htmlFor="forAdoption">
+                            <input
+                                type="checkbox"
+                                id="forAdoption"
+                                name="forAdoption"
+                                checked={formData.forAdoption || false}
+                                onChange={handleInputChange}
+                            />
+                            &nbsp; מודעה לאימוץ
+                        </label>
                     </div>
                 )}
 

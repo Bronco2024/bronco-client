@@ -102,7 +102,7 @@ const Veterinarian = () => {
         <ServicePage
             title="וטרינרים"
             subtitle="רופאים וטיפול מקצועי לחיות מחמד"
-            heroImage="/cats.jpg"
+            heroImage="/services/veterinarian.jpg"
             count={adList.length}
         >
             {adList.length === 0 ? (

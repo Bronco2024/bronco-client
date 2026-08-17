@@ -104,7 +104,7 @@ const Schools = () => {
         <ServicePage
             title="בתי ספר"
             subtitle="לימוד ואימון לכל הרמות"
-            heroImage="/horses.jpg"
+            heroImage="/services/school.jpg"
             count={adList.length}
         >
             {adList.length === 0 ? (

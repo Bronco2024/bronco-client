@@ -104,7 +104,7 @@ const Boarding = () => {
         <ServicePage
             title="פנסיון"
             subtitle="מקומות אמינים לשהייה זמנית"
-            heroImage="/dogs.jpg"
+            heroImage="/services/boarding.jpg"
             count={adList.length}
         >
             {adList.length === 0 ? (
