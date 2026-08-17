@@ -85,7 +85,7 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
             value={selectedLocation}
             onChange={(event) => setSelectedLocation(event.target.value)}
           >
-            <option value="">כל האזורים</option>
+            <option value="">כל הערים</option>
             {PET_LOCATIONS.map((location) => (
               <option key={location} value={location}>
                 {location}
@@ -117,7 +117,7 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
         ) : (
           <div className="category-empty">
             <h3>לא נמצאו מודעות</h3>
-            <p>נסו לשנות את החיפוש או לבחור אזור אחר.</p>
+            <p>נסו לשנות את החיפוש או לבחור עיר אחרת.</p>
             <button
               type="button"
               className="category-reset"

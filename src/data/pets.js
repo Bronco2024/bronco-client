@@ -1,18 +1,9 @@
+import ISRAEL_CITIES from "./israel-cities";
+
 export const FAVORITES_STORAGE_KEY = "pets_bones_favorites";
 export const FAVORITES_CHANGED_EVENT = "pets-favorites-changed";
 
-export const PET_LOCATIONS = [
-  "תל אביב",
-  "ירושלים",
-  "חיפה",
-  "רמת גן",
-  "נתניה",
-  "פתח תקווה",
-  "באר שבע",
-  "אשדוד",
-  "הרצליה",
-  "ראשון לציון",
-];
+export const PET_LOCATIONS = ISRAEL_CITIES;
 
 export const PET_CATEGORIES = [
   {
@@ -110,6 +101,12 @@ export const SITE_SERVICES = [
     name: "פנסיון",
     subtitle: "מקומות אמינים לשהייה זמנית",
     image: "/services/boarding.jpg",
+  },
+  {
+    path: "/groomers",
+    name: "מספרות",
+    subtitle: "טיפוח, תספורת וטיפול חיצוני לחיות",
+    image: "/services/groomers.jpg",
   },
   {
     path: "/accessories",

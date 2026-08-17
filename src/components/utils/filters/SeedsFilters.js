@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SEEDS_TYPES, SEMEN_TYPES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { SEEDS_TYPES, SEMEN_TYPES, ISRAEL_CITIES } from "@components/utils/constants/Constants";
 import './SeedsFilters.css'
 import PriceFilters from "../../../my_components/price-filters/PriceFilters";
 
@@ -48,34 +48,17 @@ const SeedsFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                 </select>
 
                 <select
-                    name="district"
-                    value={filters.district}
+                    name="location"
+                    value={filters.location}
                     onChange={handleFilterChange}
                 >
-                    <option value="">בחר אזור</option>
-                    {Object.keys(DISTRICTS).map((districtKey) => (
-                        <option key={districtKey} value={districtKey}>
-                            {DISTRICT_NAMES[districtKey]}
+                    <option value="">כל הערים</option>
+                    {ISRAEL_CITIES.map((city) => (
+                        <option key={city} value={city}>
+                            {city}
                         </option>
                     ))}
                 </select>
-
-                {filters.district && (
-                    <>
-                        <select
-                            name="location"
-                            value={filters.location}
-                            onChange={handleFilterChange}
-                        >
-                            <option value="">בחר מיקום</option>
-                            {DISTRICTS[filters.district].map((city, index) => (
-                                <option key={index} value={city}>
-                                    {city}
-                                </option>
-                            ))}
-                        </select>
-                    </>
-                )}
                 <PriceFilters
                     isOpen={isOpen}
                     togglePopup={togglePopup}
@@ -137,24 +120,13 @@ const SeedsFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
 
 
                         <div className="mobile-filter-row">
-                            <select name="district" value={filters.district} onChange={handleFilterChange}>
-                                <option value="">בחר אזור</option>
-                                {Object.keys(DISTRICTS).map((key) => (
-                                    <option key={key} value={key}>{DISTRICT_NAMES[key]}</option>
+                            <select name="location" value={filters.location} onChange={handleFilterChange}>
+                                <option value="">כל הערים</option>
+                                {ISRAEL_CITIES.map((city) => (
+                                    <option key={city} value={city}>{city}</option>
                                 ))}
                             </select>
                         </div>
-
-                        {filters.district && (
-                            <div className="mobile-filter-row">
-                                <select name="location" value={filters.location} onChange={handleFilterChange}>
-                                    <option value="">בחר מיקום</option>
-                                    {DISTRICTS[filters.district].map((city, index) => (
-                                        <option key={index} value={city}>{city}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        )}
 
                         <div className="mobile-price-row">
                             <PriceFilters

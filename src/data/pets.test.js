@@ -1,6 +1,7 @@
 import {
   PET_CATEGORIES,
   PET_LISTINGS,
+  PET_LOCATIONS,
   SITE_SERVICES,
   filterListings,
   getCategoryBySlug,
@@ -8,6 +9,8 @@ import {
   mergeMarketplaceListings,
   normalizeMarketplaceAd,
 } from "./pets";
+import { getPetBreeds, PET_BREED_OTHER, resolvePetBreed } from "./pet-breeds";
+import ISRAEL_CITIES from "./israel-cities";
 
 describe("Pets & Bones catalog", () => {
   test("has a route for every animal category", () => {
@@ -79,5 +82,30 @@ describe("Pets & Bones catalog", () => {
     expect(merged[0].id).toBe("live-1");
     expect(merged[0].source).toBe("firebase");
     expect(merged.some((item) => item.id === "dog-1")).toBe(true);
+  });
+
+  test("includes groomers in site services", () => {
+    expect(SITE_SERVICES.map((service) => service.path)).toEqual(
+      expect.arrayContaining(["/groomers", "/veterinarians", "/boarding"])
+    );
+  });
+
+  test("exposes breed lists with an other option for every pet category", () => {
+    PET_CATEGORIES.filter((category) => category.name !== "סוסים").forEach((category) => {
+      const breeds = getPetBreeds(category.name);
+      expect(breeds.length).toBeGreaterThan(1);
+      expect(breeds.at(-1)).toBe(PET_BREED_OTHER);
+    });
+  });
+
+  test("resolves custom breed text when other is selected", () => {
+    expect(resolvePetBreed(PET_BREED_OTHER, "גזע מיוחד")).toBe("גזע מיוחד");
+  });
+
+  test("lists major israeli cities for location filters", () => {
+    expect(PET_LOCATIONS).toEqual(ISRAEL_CITIES);
+    expect(PET_LOCATIONS).toEqual(
+      expect.arrayContaining(["תל אביב-יפו", "ירושלים", "חיפה", "באר שבע"])
+    );
   });
 });

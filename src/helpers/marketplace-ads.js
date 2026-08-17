@@ -12,6 +12,7 @@ import {
   isAdoptionListing,
   normalizeMarketplaceAd,
 } from "@/data/pets";
+import { filterApprovedAds } from "@/helpers/ad-approval";
 
 export const fetchMarketplaceAds = async ({
   categoryName,
@@ -39,6 +40,7 @@ export const fetchMarketplaceAds = async ({
   );
 
   ads = ads.filter((ad) => !IsDateNowGreaterThanAdDate(ad.availableUntil));
+  ads = filterApprovedAds(ads);
 
   if (adoptionOnly) {
     ads = ads.filter(isAdoptionListing);
