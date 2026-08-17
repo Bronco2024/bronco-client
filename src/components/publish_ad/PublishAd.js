@@ -7,8 +7,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import Modal from '@components/utils/modal/Modal';
-import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES } from "@components/utils/constants/Constants";
 import { isPetMarketplaceCategory } from "@/data/pets";
+import BreedSelect from "@/components/pets/BreedSelect";
+import CitySelect from "@/components/pets/CitySelect";
+import { PET_BREED_OTHER, resolvePetBreed } from "@/data/pet-breeds";
 import * as Sentry from "@sentry/react";
 import FloatingInput from '../../my_components/FloatingInput';
 import { isPhoneNumberIsraeliValid } from '@components/utils/constants/Functions';
@@ -29,6 +32,7 @@ const PublishAd = () => {
         phoneNumber: '',
         location: '',
         district: '',
+        breedCustom: '',
         photos: [],
         video: null
     });
@@ -119,6 +123,9 @@ const PublishAd = () => {
                 adData.ageInMonths = totalMonths;
             }
 
+            adData.breed = resolvePetBreed(formData.breed, formData.breedCustom);
+            delete adData.breedCustom;
+
             await setDoc(doc(db, "ads", adId), adData);
 
             /**
@@ -175,14 +182,8 @@ const PublishAd = () => {
         }));
     };
 
-    const handleDistrictChange = (e) => {
-        const district = e.target.value;
-        setFormData({
-            ...formData,
-            district: district,
-            location: ""
-        });
-    };
+    const isOtherHorseBreed =
+        formData.category === "סוסים" && formData.breed === PET_BREED_OTHER;
 
     return (
         <div className="publish-ad-container" style={{ textAlign: 'right' }}>
@@ -249,6 +250,19 @@ const PublishAd = () => {
                             ))}
                         </select>
 
+                        {isOtherHorseBreed && (
+                            <>
+                                <label htmlFor="breedCustom">פרט את הגזע</label>
+                                <input
+                                    id="breedCustom"
+                                    name="breedCustom"
+                                    value={formData.breedCustom || ""}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </>
+                        )}
+
                         <label htmlFor="gender">מין</label>
                         <select
                             name="gender"
@@ -305,11 +319,10 @@ const PublishAd = () => {
 
                 {isPetMarketplaceCategory(formData.category) && formData.category !== "סוסים" && (
                     <div className="publish-ad-form">
-                        <label htmlFor="breed">גזע</label>
-                        <input
-                            id="breed"
-                            name="breed"
-                            value={formData.breed || ""}
+                        <BreedSelect
+                            category={formData.category}
+                            breed={formData.breed || ""}
+                            breedCustom={formData.breedCustom || ""}
                             onChange={handleChange}
                         />
 
@@ -480,40 +493,10 @@ const PublishAd = () => {
                 />
 
 
-                <label htmlFor="district">אזור</label>
-                <div style={{ display: 'flex', flexDirection: 'row', direction: 'rtl', gap: '10px' }}>
-                    <select
-                        name="district"
-                        value={formData.district}
-                        onChange={handleDistrictChange}
-                        required
-                    >
-                        <option value="">בחר אזור</option>
-                        {Object.keys(DISTRICTS).map((districtKey) => (
-                            <option key={districtKey} value={districtKey}>
-                                {DISTRICT_NAMES[districtKey]}
-                            </option>
-                        ))}
-                    </select>
-
-                    {formData.district && (
-                        <>
-                            <select
-                                name="location"
-                                value={formData.location}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="">בחר מיקום</option>
-                                {DISTRICTS[formData.district].map((city, index) => (
-                                    <option key={index} value={city}>
-                                        {city}
-                                    </option>
-                                ))}
-                            </select>
-                        </>
-                    )}
-                </div>
+                <CitySelect
+                    value={formData.location}
+                    onChange={handleChange}
+                />
 
                 {
                     ((formData.category === "סוסים") ||

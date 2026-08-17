@@ -5,8 +5,11 @@ import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'fire
 import { db, storage } from '@/firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
-import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES } from "@components/utils/constants/Constants";
 import { isPetMarketplaceCategory } from "@/data/pets";
+import BreedSelect from "@/components/pets/BreedSelect";
+import CitySelect from "@/components/pets/CitySelect";
+import { PET_BREED_OTHER, resolvePetBreed } from "@/data/pet-breeds";
 import { v4 as uuidv4 } from 'uuid';
 import Modal from "@components/utils/modal/Modal"
 import { DeletedAttributesAfterUpdateForm } from '@components/utils/constants/Functions';
@@ -34,7 +37,8 @@ const UpdateAd = () => {
         location: '',
         price: '',
         photos: [],
-        video: null
+        video: null,
+        breedCustom: '',
     });
 
     const [phoneValid, setPhoneValid] = useState(true);
@@ -173,6 +177,9 @@ const UpdateAd = () => {
             dataToSubmit.ageInMonths = totalMonths;
         }
 
+        dataToSubmit.breed = resolvePetBreed(formData.breed, formData.breedCustom);
+        delete dataToSubmit.breedCustom;
+
         dataToSubmit = DeletedAttributesAfterUpdateForm(dataToSubmit);
 
         const adRef = doc(db, "ads", ad.id);
@@ -248,6 +255,9 @@ const UpdateAd = () => {
         navigate('/profile');
     };
 
+    const isOtherHorseBreed =
+        formData.category === "סוסים" && formData.breed === PET_BREED_OTHER;
+
     return (
         <div className='update-ad-container' style={{ textAlign: 'right' }}>
             <h1>דף עדכון מודעה</h1>
@@ -312,6 +322,19 @@ const UpdateAd = () => {
                             ))}
                         </select>
 
+                        {isOtherHorseBreed && (
+                            <>
+                                <label htmlFor="breedCustom">פרט את הגזע</label>
+                                <input
+                                    id="breedCustom"
+                                    name="breedCustom"
+                                    value={formData?.breedCustom || ""}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </>
+                        )}
+
                         <label htmlFor="gender">מין</label>
                         <select
                             name="gender"
@@ -367,11 +390,10 @@ const UpdateAd = () => {
 
                 {isPetMarketplaceCategory(formData.category) && formData.category !== "סוסים" && (
                     <div className="update-ad-form">
-                        <label htmlFor="breed">גזע</label>
-                        <input
-                            id="breed"
-                            name="breed"
-                            value={formData?.breed || ""}
+                        <BreedSelect
+                            category={formData.category}
+                            breed={formData?.breed || ""}
+                            breedCustom={formData?.breedCustom || ""}
                             onChange={handleChange}
                         />
 
@@ -523,40 +545,10 @@ const UpdateAd = () => {
 
                 />
 
-                <label htmlFor="district">אזור</label>
-                <div style={{ display: 'flex', flexDirection: 'row', direction: 'rtl', gap: '10px' }}>
-                    <select
-                        name="district"
-                        value={formData.district}
-                        onChange={handleChange}
-                        required
-                    >
-                        <option value="">בחר אזור</option>
-                        {Object.keys(DISTRICTS).map((districtKey) => (
-                            <option key={districtKey} value={districtKey}>
-                                {DISTRICT_NAMES[districtKey]}
-                            </option>
-                        ))}
-                    </select>
-
-                    {formData.district && (
-                        <>
-                            <select
-                                name="location"
-                                value={formData.location}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="">בחר מיקום</option>
-                                {DISTRICTS[formData.district].map((city, index) => (
-                                    <option key={index} value={city}>
-                                        {city}
-                                    </option>
-                                ))}
-                            </select>
-                        </>
-                    )}
-                </div>
+                <CitySelect
+                    value={formData.location || ""}
+                    onChange={handleChange}
+                />
 
                 {((formData.category === "סוסים") ||
                     (formData.category === "זרע") ||

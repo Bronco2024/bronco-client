@@ -133,9 +133,9 @@ function Homepage() {
             <select
               value={selectedLocation}
               onChange={(event) => setSelectedLocation(event.target.value)}
-              aria-label="אזור"
+              aria-label="עיר"
             >
-              <option value="">כל האזורים</option>
+              <option value="">כל הערים</option>
               {PET_LOCATIONS.map((location) => (
                 <option key={location} value={location}>
                   {location}

@@ -1,6 +1,7 @@
 import { PET_CATEGORIES } from "@/data/pets";
+import ISRAEL_CITIES from "@/data/israel-cities";
 
-export { PET_CATEGORIES };
+export { PET_CATEGORIES, ISRAEL_CITIES };
 
 export const BREEDS = [
     "ערבי מערוב קו ",
@@ -29,6 +30,7 @@ export const CATEGORIES = [
 export const EXTENDED_CATEGORIES = [
     ...CATEGORIES,
     { path: '/boarding', label: 'פנסיון' },
+    { path: '/groomers', label: 'מספרות' },
     { path: '/veterinarians', label: 'וטרינרים' },
     { path: '/exhibitors', label: 'מציגים' },
     { path: '/breeders', label: 'מפרזילים' },
