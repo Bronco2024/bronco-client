@@ -16,8 +16,12 @@ export const BREEDS = [
     "אחר",
 ];
 
+import { PET_CATEGORIES } from "@/data/pets";
+
+export { PET_CATEGORIES };
+
 export const CATEGORIES = [
-    { path: '/horses', label: 'סוסים' },
+    ...PET_CATEGORIES.map(({ path, name }) => ({ path, label: name })),
     { path: '/seeds', label: 'זרע' },
     { path: '/accessories', label: 'אביזרים' },
 ];

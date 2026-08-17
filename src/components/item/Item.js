@@ -8,8 +8,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FormatDateTimestampToDate } from '@components/utils/constants/Functions';
 import { collection, getDocs, limit, query, where, Timestamp } from 'firebase/firestore';
 import { db } from '@/firebase';
+import {
+    getSimilarListings,
+    isPetMarketplaceCategory,
+} from '@/data/pets';
 
 const ADS_SUGGESTION_LIMIT = 10;
+
+const formatPrice = (price) => {
+    if (price === undefined || price === null || price === '') return '';
+    if (typeof price === 'string' && (price.includes('₪') || price.includes('אימוץ'))) {
+        return price;
+    }
+    return `₪${price}`;
+};
+
+const getAdTitle = (ad) => ad.title || ad.name || ad.breed || 'מודעה';
+const getAdImage = (item) => item.photos?.[0] || item.image || require('@/assets/no-image.jpg');
 
 const ItemPage = () => {
     const navigate = useNavigate();
@@ -21,21 +36,30 @@ const ItemPage = () => {
     const fetchSimilarAds = useCallback(async () => {
         if (!ad?.category) return;
 
-        const now = Timestamp.now();
-        const collectionRef = collection(db, 'ads');
-        const q = query(
-            collectionRef,
-            where('category', '==', ad.category),
-            where('availableUntil', '>=', now),
-            limit(ADS_SUGGESTION_LIMIT)
-        );
+        if (ad.source === 'catalog') {
+            setSimilarAds(getSimilarListings(ad));
+            return;
+        }
 
-        const querySnapshot = await getDocs(q);
-        const filtered = querySnapshot.docs
-            .filter(doc => doc.id !== ad.id) // Exclude the current ad
-            .map(doc => ({ id: doc.id, ...doc.data() }));
+        try {
+            const now = Timestamp.now();
+            const collectionRef = collection(db, 'ads');
+            const q = query(
+                collectionRef,
+                where('category', '==', ad.category),
+                where('availableUntil', '>=', now),
+                limit(ADS_SUGGESTION_LIMIT)
+            );
 
-        setSimilarAds(filtered);
+            const querySnapshot = await getDocs(q);
+            const filtered = querySnapshot.docs
+                .filter(doc => doc.id !== ad.id)
+                .map(doc => ({ id: doc.id, ...doc.data() }));
+
+            setSimilarAds(filtered.length > 0 ? filtered : getSimilarListings(ad));
+        } catch (error) {
+            setSimilarAds(getSimilarListings(ad));
+        }
     }, [ad]);
 
     useEffect(() => {
@@ -44,14 +68,32 @@ const ItemPage = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, []);
+    }, [ad?.id]);
 
-    const handleAdClick = (ad) => {
+    const handleAdClick = (nextAd) => {
         window.scrollTo(0, 0);
-        navigate('/item', { state: { ad } });
+        navigate('/item', { state: { ad: nextAd } });
     };
 
-    if (!ad) return <div>Loading...</div>;
+    if (!ad) {
+        return (
+            <div className="item-page-wrapper" dir="rtl">
+                <div className="item-info">
+                    <h1>המודעה לא נמצאה</h1>
+                    <p className="description">חזרו לדף הבית ובחרו מודעה מהרשימה.</p>
+                </div>
+            </div>
+        );
+    }
+
+    const photos = ad.photos?.length ? ad.photos : (ad.image ? [ad.image] : []);
+    const isPetAd = isPetMarketplaceCategory(ad.category) || Boolean(ad.type);
+    const showDetails =
+        isPetAd ||
+        ad.category === "סוסים" ||
+        ad.category === "זרע" ||
+        ad.category === "אביזרים" ||
+        ad.category === "חנות";
 
     if (ad.video) {
         items.push(
@@ -62,18 +104,16 @@ const ItemPage = () => {
         );
     }
 
-    if (ad.photos?.length > 0) {
-        ad.photos.forEach((photo, index) => {
-            items.push(
-                <img
-                    key={`photo-${index}`}
-                    src={photo}
-                    alt={`Ad ${index + 1}`}
-                    className="media-element"
-                />
-            );
-        });
-    }
+    photos.forEach((photo, index) => {
+        items.push(
+            <img
+                key={`photo-${index}`}
+                src={photo}
+                alt={`${getAdTitle(ad)} ${index + 1}`}
+                className="media-element"
+            />
+        );
+    });
 
     if (items.length === 0) {
         items.push(
@@ -112,32 +152,36 @@ const ItemPage = () => {
                             <FontAwesomeIcon icon={faLocationDot} style={{ marginLeft: '8px', marginRight: '8px' }} />
                         </div>
                     </div>
-                    <h1>{ad.title}</h1>
+                    <h1>{getAdTitle(ad)}</h1>
+                    {ad.forAdoption && <p className="description">מודעה לאימוץ — תנו בית חם לחיית מחמד.</p>}
                     <p className="description">{ad.description}</p>
 
-                    {(ad.category === "סוסים" || ad.category === "זרע" || ad.category === "אביזרים" || ad.category === "חנות") && (
+                    {showDetails && (
                         <div className="more-details">
                             <h3>פרטים נוספים</h3>
-                            {ad.category === "סוסים" && (
-                                <>
-                                    <p><strong>גיל:</strong> {ad.age}</p>
-                                    <p><strong>גזע:</strong> {ad.breed}</p>
-                                    <p><strong>מין:</strong> {ad.gender}</p>
-                                </>
-                            )}
+                            {ad.type && <p><strong>סוג:</strong> {ad.type}</p>}
+                            {ad.age && <p><strong>גיל:</strong> {ad.age}</p>}
+                            {ad.breed && <p><strong>גזע:</strong> {ad.breed}</p>}
+                            {ad.gender && <p><strong>מין:</strong> {ad.gender}</p>}
                             {ad.category === "זרע" && (
                                 <p><strong>סוג זרע:</strong> {ad.seed_type} - {ad.semen_type}</p>
                             )}
-                            {ad.price && ad.price !== '' && (<p className="price">₪{ad.price}</p>)}
+                            {formatPrice(ad.price) && (
+                                <p className="price">{formatPrice(ad.price)}</p>
+                            )}
                         </div>
                     )}
 
                     <div className="contact-box">
-                        <span className="contact-person"><strong>איש קשר:</strong> {ad.contact}</span>
-                        <a className="phone-link" href={`tel:${ad.phoneNumber}`}>
-                            <span>{ad.phoneNumber}</span>
-                            <FontAwesomeIcon icon={faPhoneAlt} />
-                        </a>
+                        <span className="contact-person">
+                            <strong>איש קשר:</strong> {ad.contact || 'לא צוין'}
+                        </span>
+                        {ad.phoneNumber && (
+                            <a className="phone-link" href={`tel:${ad.phoneNumber}`}>
+                                <span>{ad.phoneNumber}</span>
+                                <FontAwesomeIcon icon={faPhoneAlt} />
+                            </a>
+                        )}
                     </div>
 
                     <p className="date">תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
@@ -156,13 +200,13 @@ const ItemPage = () => {
                                 style={{ cursor: 'pointer' }}
                             >
                                 <img
-                                    src={item.photos?.[0] || require('@/assets/no-image.jpg')}
-                                    alt={item.breed}
+                                    src={getAdImage(item)}
+                                    alt={getAdTitle(item)}
                                     className="related-ad-image"
                                 />
                                 <div className="related-ad-info">
-                                    <h4>{item.breed}</h4>
-                                    {item.price && item.price !== '' && (<p>₪{item.price}</p>)}
+                                    <h4>{getAdTitle(item)}</h4>
+                                    {formatPrice(item.price) && <p>{formatPrice(item.price)}</p>}
                                 </div>
                             </div>
                         ))}

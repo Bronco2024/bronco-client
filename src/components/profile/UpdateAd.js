@@ -6,6 +6,7 @@ import { db, storage } from '@/firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
 import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, DISTRICTS, DISTRICT_NAMES } from "@components/utils/constants/Constants";
+import { isPetMarketplaceCategory } from "@/data/pets";
 import { v4 as uuidv4 } from 'uuid';
 import Modal from "@components/utils/modal/Modal"
 import { DeletedAttributesAfterUpdateForm } from '@components/utils/constants/Functions';
@@ -362,6 +363,51 @@ const UpdateAd = () => {
                     </div>
                 )}
 
+                {isPetMarketplaceCategory(formData.category) && formData.category !== "סוסים" && (
+                    <div className="update-ad-form">
+                        <label htmlFor="breed">גזע</label>
+                        <input
+                            id="breed"
+                            name="breed"
+                            value={formData?.breed || ""}
+                            onChange={handleChange}
+                        />
+
+                        <label htmlFor="gender">מין</label>
+                        <select
+                            name="gender"
+                            value={formData?.gender || ""}
+                            onChange={handleInputChange}
+                        >
+                            <option value="">בחר מין</option>
+                            <option value="זכר">זכר</option>
+                            <option value="נקבה">נקבה</option>
+                        </select>
+
+                        <label htmlFor="age">גיל</label>
+                        <input
+                            id="age"
+                            name="age"
+                            value={formData?.age || ""}
+                            onChange={handleChange}
+                            placeholder="לדוגמה: 3 חודשים"
+                        />
+
+                        <div style={{ marginTop: '3%', marginBottom: '1%' }}>
+                            <label htmlFor="hasCertificate">
+                                <input
+                                    type="checkbox"
+                                    id="hasCertificate"
+                                    name="hasCertificate"
+                                    checked={formData?.hasCertificate || false}
+                                    onChange={handleInputChange}
+                                />
+                                &nbsp; עם תעודה
+                            </label>
+                        </div>
+                    </div>
+                )}
+
                 {formData.category === "זרע" && (
                     <div className="update-ad-form">
                         <label htmlFor="seeds_types">סוג זרע</label>
@@ -512,7 +558,8 @@ const UpdateAd = () => {
 
                 {((formData.category === "סוסים") ||
                     (formData.category === "זרע") ||
-                    (formData.category === "אביזרים")) && (
+                    (formData.category === "אביזרים") ||
+                    isPetMarketplaceCategory(formData.category)) && (
                         <div className='update-ad-form'>
                             <label htmlFor="price">מחיר</label>
                             <input

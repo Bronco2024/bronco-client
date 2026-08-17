@@ -1,0 +1,131 @@
+.category-page {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #173b5e;
+}
+
+.category-hero {
+  min-height: 280px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 0 0 48px 48px;
+  overflow: hidden;
+}
+
+.category-hero-overlay {
+  min-height: 280px;
+  padding: 42px 8%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: linear-gradient(
+    180deg,
+    rgba(23, 59, 94, 0.15) 0%,
+    rgba(23, 59, 94, 0.82) 100%
+  );
+  color: #ffffff;
+}
+
+.category-back {
+  width: fit-content;
+  margin-bottom: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #ffd4b0;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.category-hero h1 {
+  margin: 0;
+  font-size: 42px;
+  font-weight: 800;
+}
+
+.category-hero p {
+  max-width: 520px;
+  margin: 10px 0 8px;
+  color: #e4edf5;
+  font-size: 16px;
+}
+
+.category-content {
+  width: min(1180px, 94%);
+  margin: 0 auto;
+  padding: 36px 0 80px;
+}
+
+.category-search {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto 32px;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr auto;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e3e8ed;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(23, 59, 94, 0.08);
+}
+
+.category-search input,
+.category-search select {
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid #e3e8ed;
+  border-radius: 9px;
+  outline: none;
+  background: #ffffff;
+  color: #173b5e;
+  font-size: 14px;
+}
+
+.category-search button,
+.category-reset {
+  height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 9px;
+  background: #ff861c;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.category-empty {
+  padding: 48px 20px;
+  text-align: center;
+  background: #f8fafc;
+  border-radius: 18px;
+}
+
+.category-empty h3 {
+  margin: 0 0 8px;
+  color: #173b5e;
+}
+
+.category-empty p {
+  margin: 0 0 18px;
+  color: #7a8794;
+}
+
+@media (max-width: 850px) {
+  .category-hero,
+  .category-hero-overlay {
+    min-height: 220px;
+    border-radius: 0 0 32px 32px;
+  }
+
+  .category-hero h1 {
+    font-size: 32px;
+  }
+
+  .category-search {
+    grid-template-columns: 1fr;
+  }
+}

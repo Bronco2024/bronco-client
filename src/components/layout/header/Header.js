@@ -9,12 +9,11 @@ import {
     faTimes,
     faHouseUser,
     faGear,
-    faCartShopping,
-    faReceipt
+    faHeart
 } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
-import { EXTENDED_CATEGORIES } from '@components/utils/constants/Constants';
+import { PET_CATEGORIES } from '@/data/pets';
 import Loading from '../../loading-screen/Loading';
 
 const Header = () => {
@@ -28,11 +27,7 @@ const Header = () => {
         if (currentUser === null) {
             navigate('/login');
         } else {
-            if (currentUser.numberOfAds > 0) {
-                navigate('/publish_ad');
-            } else {
-                navigate('/subscribe');
-            }
+            navigate('/publish_ad');
         }
     };
 
@@ -50,6 +45,18 @@ const Header = () => {
         <nav className="navbar">
 
             <div className="navbar-buttons">
+
+                <button
+                    className="navbar-button favorites-button"
+                    onClick={() => navigate('/favorites')}
+                    aria-label="מועדפים"
+                >
+                    מועדפים
+                    <FontAwesomeIcon
+                        icon={faHeart}
+                        style={{ marginLeft: '8px' }}
+                    />
+                </button>
 
                 <button
                     className="publish-ad-button"
@@ -112,59 +119,19 @@ const Header = () => {
                                     />
                                 </button>
 
-                                {/*
-                                PAYMENTS
-                                This is currently closed until customer
-                                decides to make payments in the website.
-
-                                {!currentUser?.isAdmin && (
-                                    <>
-                                        <button
-                                            className="dropdown-item"
-                                            onClick={() => {
-                                                toggleProfileDropdown();
-                                                navigate('/cart');
-                                            }}
-                                        >
-                                            עגלה
-                                            <FontAwesomeIcon
-                                                icon={faCartShopping}
-                                                style={{ marginLeft: '8px' }}
-                                            />
-                                        </button>
-
-                                        <button
-                                            className="dropdown-item"
-                                            onClick={() => {
-                                                toggleProfileDropdown();
-                                                navigate('/my-purchases');
-                                            }}
-                                        >
-                                            רכישות
-                                            <FontAwesomeIcon
-                                                icon={faReceipt}
-                                                style={{ marginLeft: '8px' }}
-                                            />
-                                        </button>
-                                    </>
-                                )}
-
-                                {currentUser?.isAdmin && (
-                                    <button
-                                        className="dropdown-item"
-                                        onClick={() => {
-                                            toggleProfileDropdown();
-                                            navigate('/admin/all-purchases');
-                                        }}
-                                    >
-                                        ניהול רכישות
-                                        <FontAwesomeIcon
-                                            icon={faReceipt}
-                                            style={{ marginLeft: '8px' }}
-                                        />
-                                    </button>
-                                )}
-                                */}
+                                <button
+                                    className="dropdown-item"
+                                    onClick={() => {
+                                        toggleProfileDropdown();
+                                        navigate('/favorites');
+                                    }}
+                                >
+                                    מועדפים
+                                    <FontAwesomeIcon
+                                        icon={faHeart}
+                                        style={{ marginLeft: '8px' }}
+                                    />
+                                </button>
 
                                 <button
                                     className="dropdown-item"
@@ -201,10 +168,6 @@ const Header = () => {
 
             <div className="navbar-logo">
 
-                {/* IMPORTANT:
-                    Do NOT use className="categories" here.
-                    Homepage.css already uses .categories.
-                */}
                 <div className="header-categories">
 
                     <button
@@ -223,29 +186,30 @@ const Header = () => {
                             showMenu ? "show" : ""
                         }`}
                     >
-                        {EXTENDED_CATEGORIES.map((category, index) => (
+                        {PET_CATEGORIES.map((category) => (
                             <Link
-                                key={index}
+                                key={category.slug}
                                 to={category.path}
                                 className="navbar-button-category"
                                 onClick={() => setShowMenu(false)}
                             >
-                                {category.label}
+                                {category.name}
                             </Link>
                         ))}
+                        <Link
+                            to="/adoption"
+                            className="navbar-button-category"
+                            onClick={() => setShowMenu(false)}
+                        >
+                            אימוץ
+                        </Link>
                     </div>
 
                 </div>
 
-                <Link to="/">
-                    <img
-                        src={require('@/assets/horsehub-gold.png')}
-                        style={{
-                            width: '50px',
-                            height: 'auto'
-                        }}
-                        alt="HorseHub"
-                    />
+                <Link to="/" className="brand-link">
+                    <span className="brand-mark">🐾</span>
+                    <span className="brand-text">Pets & Bones</span>
                 </Link>
 
             </div>
