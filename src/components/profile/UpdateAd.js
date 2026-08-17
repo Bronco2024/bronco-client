@@ -16,7 +16,8 @@ import { DeletedAttributesAfterUpdateForm } from '@components/utils/constants/Fu
 import * as Sentry from "@sentry/react";
 import FloatingInput from '../../my_components/FloatingInput';
 import { isPhoneNumberIsraeliValid } from '@components/utils/constants/Functions';
-import { getAdStatusAfterUpdate } from '@/helpers/ad-approval';
+import { getAdStatusAfterUpdate, AD_STATUS } from '@/helpers/ad-approval';
+import { createPendingAdNotification } from '@/helpers/admin-notifications';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -186,6 +187,13 @@ const UpdateAd = () => {
 
         try {
             await setDoc(adRef, dataToSubmit);
+
+            if (dataToSubmit.status === AD_STATUS.PENDING) {
+                await createPendingAdNotification({
+                    adId: ad.id,
+                    ad: dataToSubmit,
+                });
+            }
         } catch (error) {
             console.error("Error updating ad:", error);
             Sentry.captureException(`Error updating ad`, {

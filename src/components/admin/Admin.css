@@ -166,6 +166,53 @@
     gap: 8px;
 }
 
+.admin-notifications-panel {
+    margin: 16px 0 24px;
+    padding: 16px;
+    background: #fff8ef;
+    border: 1px solid #f0d2a5;
+    border-radius: 12px;
+}
+
+.admin-notifications-panel h2 {
+    margin: 0 0 12px;
+    font-size: 1.05rem;
+}
+
+.admin-notification-item {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 12px 14px;
+    border: 1px solid #ead7bf;
+    border-radius: 10px;
+    background: #ffffff;
+    cursor: pointer;
+    text-align: right;
+}
+
+.admin-notification-item:last-child {
+    margin-bottom: 0;
+}
+
+.admin-notification-item strong {
+    color: #173b5e;
+}
+
+.admin-notification-item span {
+    color: #6d7884;
+    font-size: 0.92rem;
+}
+
+.admin-notification-cta {
+    color: #a66a00 !important;
+    font-weight: 700;
+}
+
 .admin-approve-button,
 .admin-reject-button {
     padding: 10px 15px;

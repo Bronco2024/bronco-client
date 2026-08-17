@@ -12,6 +12,8 @@ import {
     getAdStatus,
     isAdPending,
 } from '@/helpers/ad-approval';
+import { markAdNotificationsRead } from '@/helpers/admin-notifications';
+import useAdminNotifications from '@/hooks/useAdminNotifications';
 
 
 const Admin = () => {
@@ -25,6 +27,8 @@ const Admin = () => {
     const [showAdsOrSponsors, setShowAdsOrSponsors] = useState("sponsors")
     const [ads, setAds] = useState([])
     const [adStatusFilter, setAdStatusFilter] = useState("pending")
+    const { notifications: adminNotifications, unreadCount: unreadNotificationCount } =
+        useAdminNotifications(true);
 
     useEffect(() => {
         const fetchSponsors = async () => {
@@ -144,6 +148,7 @@ const Admin = () => {
                 status,
                 reviewedAt: new Date(),
             });
+            await markAdNotificationsRead(adId);
             setRefresh((prev) => !prev);
         } catch (error) {
             console.error("Error updating ad status:", error);
@@ -208,6 +213,31 @@ const Admin = () => {
     return (
         <div className="admin-container">
             <h1>ניהול {showAdsOrSponsors === 'sponsors' ? 'ספונסירים' : 'מודעות'}</h1>
+
+            {showAdsOrSponsors === "ads" && unreadNotificationCount > 0 && (
+                <div className="admin-notifications-panel">
+                    <h2>התראות חדשות ({unreadNotificationCount})</h2>
+                    {adminNotifications.map((notification) => (
+                        <button
+                            key={notification.id}
+                            type="button"
+                            className="admin-notification-item"
+                            onClick={() => {
+                                setAdStatusFilter("pending");
+                                const matchedAd = ads.find((ad) => ad.id === notification.adId);
+                                if (matchedAd) {
+                                    navigate('/item', { state: { ad: matchedAd } });
+                                }
+                            }}
+                        >
+                            <strong>{notification.title}</strong>
+                            <span>{notification.category}</span>
+                            {notification.location && <span>{notification.location}</span>}
+                            <span className="admin-notification-cta">ממתין לאישור</span>
+                        </button>
+                    ))}
+                </div>
+            )}
 
             <button
                 className="sponsor-add-button"

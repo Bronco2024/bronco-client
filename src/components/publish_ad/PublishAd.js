@@ -15,7 +15,8 @@ import { PET_BREED_OTHER, resolvePetBreed } from "@/data/pet-breeds";
 import * as Sentry from "@sentry/react";
 import FloatingInput from '../../my_components/FloatingInput';
 import { isPhoneNumberIsraeliValid } from '@components/utils/constants/Functions';
-import { getInitialAdStatus } from '@/helpers/ad-approval';
+import { getInitialAdStatus, AD_STATUS } from '@/helpers/ad-approval';
+import { createPendingAdNotification } from '@/helpers/admin-notifications';
 
 const PublishAd = () => {
     const navigate = useNavigate();
@@ -127,6 +128,10 @@ const PublishAd = () => {
             delete adData.breedCustom;
 
             await setDoc(doc(db, "ads", adId), adData);
+
+            if (adData.status === AD_STATUS.PENDING) {
+                await createPendingAdNotification({ adId, ad: adData });
+            }
 
             /**
              * PAYMENTS

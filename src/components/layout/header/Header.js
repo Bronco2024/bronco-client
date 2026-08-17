@@ -15,6 +15,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
+import useAdminNotifications from '@/hooks/useAdminNotifications';
 import { PET_CATEGORIES, SITE_SERVICES } from '@/data/pets';
 import Loading from '../../loading-screen/Loading';
 
@@ -22,6 +23,9 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentUser, loading, logout } = useAuth();
+    const { unreadCount: adminUnreadCount } = useAdminNotifications(
+        Boolean(currentUser?.isAdmin)
+    );
     const headerRef = useRef(null);
 
     const [showMenu, setShowMenu] = useState(false);
@@ -241,6 +245,11 @@ const Header = () => {
                                             }}
                                         >
                                             ניהול אתר
+                                            {adminUnreadCount > 0 && (
+                                                <span className="admin-alert-badge">
+                                                    {adminUnreadCount}
+                                                </span>
+                                            )}
                                             <FontAwesomeIcon icon={faGear} />
                                         </button>
                                     )}
