@@ -13,6 +13,7 @@ import { DeletedAttributesAfterUpdateForm } from '@components/utils/constants/Fu
 import * as Sentry from "@sentry/react";
 import FloatingInput from '../../my_components/FloatingInput';
 import { isPhoneNumberIsraeliValid } from '@components/utils/constants/Functions';
+import { getAdStatusAfterUpdate } from '@/helpers/ad-approval';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -160,7 +161,8 @@ const UpdateAd = () => {
         dataToSubmit = {
             ...formData,
             createdAt: Timestamp.now(),
-            availableUntil: new Timestamp(formData.availableUntil.seconds, formData.availableUntil.nanoseconds)
+            availableUntil: new Timestamp(formData.availableUntil.seconds, formData.availableUntil.nanoseconds),
+            status: getAdStatusAfterUpdate(currentUser?.isAdmin),
         }
 
         if (formData.category === "סוסים") {

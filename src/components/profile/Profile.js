@@ -7,6 +7,7 @@ import { ref, listAll, deleteObject } from 'firebase/storage';
 import './Profile.css';
 import Modal from '@components/utils/modal/Modal';
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from '@components/utils/constants/Functions';
+import { AD_STATUS_LABELS, getAdStatus } from '@/helpers/ad-approval';
 import * as Sentry from "@sentry/react";
 
 const Profile = () => {
@@ -190,6 +191,9 @@ const Profile = () => {
                                 <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-image-profile" />
                             )}
                             <div className="ad-details">
+                                <span className={`profile-ad-status profile-ad-status--${getAdStatus(ad)}`}>
+                                    {AD_STATUS_LABELS[getAdStatus(ad)]}
+                                </span>
                                 <h4 className="ad-title-profile">{ad.title}</h4>
                                 <p>{ad.description}</p>
                                 {ad.price && ad.price !== "" && (<p className="ad-price-profile">₪{ad.price}</p>)}

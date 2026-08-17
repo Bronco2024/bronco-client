@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PetCard from "@/components/pets/PetCard";
+import ListingMeta from "@/components/pets/ListingMeta";
 import Loading from "@/components/loading-screen/Loading";
 import useMarketplaceAds from "@/hooks/useMarketplaceAds";
 import {
@@ -314,11 +315,12 @@ function Homepage() {
 
               <div className="adoption-content">
                 <h3>{pet.name}</h3>
-                <div className="adoption-details">
-                  <span>🐾 {pet.type}</span>
-                  <span>📍 {pet.location}</span>
-                  <span>🕒 {pet.age}</span>
-                </div>
+                <ListingMeta
+                  type={pet.type}
+                  location={pet.location}
+                  age={pet.age}
+                  className="adoption-meta"
+                />
                 <button
                   className="adoption-button"
                   type="button"

@@ -12,11 +12,13 @@ import { isPetMarketplaceCategory } from "@/data/pets";
 import * as Sentry from "@sentry/react";
 import FloatingInput from '../../my_components/FloatingInput';
 import { isPhoneNumberIsraeliValid } from '@components/utils/constants/Functions';
+import { getInitialAdStatus } from '@/helpers/ad-approval';
 
 const PublishAd = () => {
     const navigate = useNavigate();
     const { currentUser, setCurrentUser } = useAuth();
     const [showModal, setShowModal] = useState(false);
+    const [pendingApproval, setPendingApproval] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [phoneValid, setPhoneValid] = useState(true);
 
@@ -100,7 +102,8 @@ const PublishAd = () => {
                 video: videoURL || null,
                 userId: currentUser.uid,
                 createdAt: new Date(),
-                availableUntil: date
+                availableUntil: date,
+                status: getInitialAdStatus(currentUser?.isAdmin),
             };
 
             if (formData.forAdoption) {
@@ -141,6 +144,7 @@ const PublishAd = () => {
             });
 
             setShowModal(true);
+            setPendingApproval(!currentUser?.isAdmin);
 
         } catch (error) {
             console.error("Error publishing ad:", error);
@@ -564,9 +568,17 @@ const PublishAd = () => {
                 </button>
             </form >
 
-            <Modal isVisible={showModal} title="מודעה פורסמה" onClose={closeModal}>
+            <Modal
+                isVisible={showModal}
+                title={pendingApproval ? "המודעה נשלחה לאישור" : "מודעה פורסמה"}
+                onClose={closeModal}
+            >
                 <div className="modal-content-custom-publishad">
-                    <p>המודעה פורסמה בהצלחה!</p>
+                    <p>
+                        {pendingApproval
+                            ? "המודעה נשמרה בהצלחה ותוצג באתר לאחר אישור מנהל."
+                            : "המודעה פורסמה בהצלחה!"}
+                    </p>
                     <div className="modal-buttons-custom-publishad">
                         <button className="close-button-publishad" onClick={closeModal}>סגור</button>
                     </div>

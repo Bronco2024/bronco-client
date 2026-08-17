@@ -12,6 +12,7 @@ import {
     where
 } from 'firebase/firestore';
 import * as Sentry from "@sentry/react";
+import { filterApprovedAds } from "@/helpers/ad-approval";
 
 const NUMBER_OF_LATEST_ADS_TO_FETCH = 8;
 
@@ -39,10 +40,12 @@ const LatestAds = () => {
 
                 const querySnapshot = await getDocs(q);
 
-                const ads = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
+                const ads = filterApprovedAds(
+                    querySnapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }))
+                );
 
                 setLatestAds(ads);
 

@@ -709,15 +709,12 @@
   font-weight: 800;
 }
 
-.adoption-details {
-  display: flex;
-  flex-direction: column;
-
-  gap: 6px;
-
-  color: #7a8794;
-
+.adoption-meta .listing-meta-item {
   font-size: 12px;
+}
+
+.adoption-meta .listing-meta-label {
+  min-width: 30px;
 }
 
 .adoption-button {

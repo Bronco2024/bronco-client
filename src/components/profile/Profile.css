@@ -84,6 +84,30 @@
     margin-bottom: 5px;
 }
 
+.profile-ad-status {
+    display: inline-block;
+    margin-bottom: 8px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.profile-ad-status--pending {
+    background: #fff4df;
+    color: #a66a00;
+}
+
+.profile-ad-status--approved {
+    background: #e8f7ee;
+    color: #1e7a43;
+}
+
+.profile-ad-status--rejected {
+    background: #fdecec;
+    color: #b42318;
+}
+
 .ad-price-profile {
     font-size: 1em;
     font-weight: bold;

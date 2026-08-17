@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
+import { mapApprovedAdsFromSnapshot } from '@/helpers/ad-approval';
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import AccessoriesFilters from "@components/utils/filters/AccessoriesFilters";
@@ -59,7 +60,7 @@ const Accessories = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const items = mapApprovedAdsFromSnapshot(querySnapshot);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
     }, [categoryFilter]);
@@ -80,7 +81,7 @@ const Accessories = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const items = mapApprovedAdsFromSnapshot(querySnapshot);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
         setBeforeThis(querySnapshot.docs[0]);
@@ -98,7 +99,7 @@ const Accessories = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const items = mapApprovedAdsFromSnapshot(querySnapshot);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
         setBeforeThis(querySnapshot.docs[0]);
@@ -140,7 +141,7 @@ const Accessories = () => {
 
         const paginatedQuery = query(collectionRef, ...filterQueries, limit(ADS_PER_PAGE));
         const querySnapshot = await getDocs(paginatedQuery);
-        const items = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const items = mapApprovedAdsFromSnapshot(querySnapshot);
 
         setAdList(items);
 

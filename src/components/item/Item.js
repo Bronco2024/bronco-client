@@ -12,6 +12,7 @@ import {
     getSimilarListings,
     isPetMarketplaceCategory,
 } from '@/data/pets';
+import { filterApprovedAds } from '@/helpers/ad-approval';
 
 const ADS_SUGGESTION_LIMIT = 10;
 
@@ -52,9 +53,11 @@ const ItemPage = () => {
             );
 
             const querySnapshot = await getDocs(q);
-            const filtered = querySnapshot.docs
-                .filter(doc => doc.id !== ad.id)
-                .map(doc => ({ id: doc.id, ...doc.data() }));
+            const filtered = filterApprovedAds(
+                querySnapshot.docs
+                    .filter(doc => doc.id !== ad.id)
+                    .map(doc => ({ id: doc.id, ...doc.data() }))
+            );
 
             setSimilarAds(filtered.length > 0 ? filtered : getSimilarListings(ad));
         } catch {

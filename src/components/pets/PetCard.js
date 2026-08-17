@@ -5,6 +5,7 @@ import {
   isFavoriteListing,
   toggleFavoriteListing,
 } from "@/data/pets";
+import ListingMeta from "./ListingMeta";
 import "./PetCard.css";
 
 const PetCard = ({ listing, showAdoptionBadge = false }) => {
@@ -69,10 +70,7 @@ const PetCard = ({ listing, showAdoptionBadge = false }) => {
       <div className="listing-content">
         <h3>{listing.name}</h3>
 
-        <div className="listing-details">
-          <span>📍 {listing.location}</span>
-          <span>🕒 {listing.age}</span>
-        </div>
+        <ListingMeta location={listing.location} age={listing.age} />
 
         <strong>{listing.price}</strong>
       </div>

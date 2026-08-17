@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import './Admin.css'
 import { db, storage } from '@/firebase';
-import { collection, getDocs, deleteDoc, doc, where, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc, where, orderBy, query, updateDoc } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import Modal from '@components/utils/modal/Modal';
 import { ref, deleteObject, listAll } from "firebase/storage";
 import * as Sentry from "@sentry/react";
+import {
+    AD_STATUS,
+    AD_STATUS_LABELS,
+    getAdStatus,
+    isAdPending,
+} from '@/helpers/ad-approval';
 
 
 const Admin = () => {
@@ -18,6 +24,7 @@ const Admin = () => {
     const [refresh, setRefresh] = useState(false);
     const [showAdsOrSponsors, setShowAdsOrSponsors] = useState("sponsors")
     const [ads, setAds] = useState([])
+    const [adStatusFilter, setAdStatusFilter] = useState("pending")
 
     useEffect(() => {
         const fetchSponsors = async () => {
@@ -76,6 +83,16 @@ const Admin = () => {
         fetchAds()
     }, [refresh])
 
+    const filteredAds = useMemo(() => {
+        if (adStatusFilter === "all") return ads;
+        return ads.filter((ad) => getAdStatus(ad) === adStatusFilter);
+    }, [ads, adStatusFilter]);
+
+    const pendingCount = useMemo(
+        () => ads.filter((ad) => isAdPending(ad)).length,
+        [ads]
+    );
+
     const deleteSponsorFromFirebase = async (sponsorId) => {
         try {
             const adDocRef = doc(db, 'sponsors', sponsorId);
@@ -111,6 +128,26 @@ const Admin = () => {
         } catch (error) {
             console.error("Error deleting ad:", error);
             Sentry.captureException(`Error deleting ad`, {
+                tags: {
+                    component: "Admin"
+                },
+                extra: {
+                    info: error
+                }
+            });
+        }
+    };
+
+    const updateAdStatus = async (adId, status) => {
+        try {
+            await updateDoc(doc(db, "ads", adId), {
+                status,
+                reviewedAt: new Date(),
+            });
+            setRefresh((prev) => !prev);
+        } catch (error) {
+            console.error("Error updating ad status:", error);
+            Sentry.captureException(`Error updating ad status`, {
                 tags: {
                     component: "Admin"
                 },
@@ -165,6 +202,9 @@ const Admin = () => {
         setShowAdsOrSponsors(e.target.value)
     }
 
+    const getAdCardTitle = (ad) =>
+        ad.title || ad.name || ad.breed || ad.seed_type || ad.accessory || ad.category || "מודעה";
+
     return (
         <div className="admin-container">
             <h1>ניהול {showAdsOrSponsors === 'sponsors' ? 'ספונסירים' : 'מודעות'}</h1>
@@ -216,48 +256,103 @@ const Admin = () => {
                         <p>לא נמצאו ספונסירים</p>
                     )
                 ) : (
-                    ads.length > 0 ? (
-                        ads.map(ad => (
-                            <div
-                                key={ad.id}
-                                className="sponsor-card"
+                    <>
+                        <div className="admin-ads-toolbar">
+                            <select
+                                className="select-type"
+                                value={adStatusFilter}
+                                onChange={(event) => setAdStatusFilter(event.target.value)}
                             >
-                                {ad.photos && ad.photos[0] && (
-                                    <img
-                                        src={ad.photos[0]}
-                                        alt="pojk"
-                                        className="sponsor-image"
-                                        loading="lazy"
-                                        onClick={() => {
-                                            navigate('/item', { state: { ad } })
-                                        }}
-                                    />
-                                )}
-                                {ad.photos.length === 0 && (
-                                    <img
-                                        src={require('@/assets/no-image.jpg')}
-                                        alt={ad.category}
-                                        className="sponsor-image"
-                                        loading="lazy"
-                                        onClick={() => {
-                                            navigate('/item', { state: { ad } })
-                                        }}
-                                    />
-                                )}
-                                <div className="sponsor-details">
-                                    <h4 style={{ direction: 'rtl' }}>{ad.category}</h4>
-                                    <p style={{ direction: 'rtl' }}>{ad.description}</p>
-                                    <p style={{ direction: 'rtl' }}>₪{ad.price}</p>
-                                </div>
+                                <option value="pending">ממתינות לאישור ({pendingCount})</option>
+                                <option value="approved">מאושרות</option>
+                                <option value="rejected">נדחות</option>
+                                <option value="all">כל המודעות הפעילות</option>
+                            </select>
+                        </div>
 
-                                <div className="sponsor-crud">
-                                    <button className='sponsor-delete-button' onClick={() => handleDeleteAdButton(ad)}>מחק</button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p>לא נמצאו מודעות</p>
-                    )
+                        {filteredAds.length > 0 ? (
+                            filteredAds.map(ad => {
+                                const status = getAdStatus(ad);
+
+                                return (
+                                    <div
+                                        key={ad.id}
+                                        className="sponsor-card admin-ad-card"
+                                    >
+                                        {ad.photos && ad.photos[0] ? (
+                                            <img
+                                                src={ad.photos[0]}
+                                                alt={getAdCardTitle(ad)}
+                                                className="sponsor-image"
+                                                loading="lazy"
+                                                onClick={() => {
+                                                    navigate('/item', { state: { ad } })
+                                                }}
+                                            />
+                                        ) : (
+                                            <img
+                                                src={require('@/assets/no-image.jpg')}
+                                                alt={ad.category}
+                                                className="sponsor-image"
+                                                loading="lazy"
+                                                onClick={() => {
+                                                    navigate('/item', { state: { ad } })
+                                                }}
+                                            />
+                                        )}
+                                        <div className="sponsor-details">
+                                            <span className={`admin-ad-status admin-ad-status--${status}`}>
+                                                {AD_STATUS_LABELS[status]}
+                                            </span>
+                                            <h4 style={{ direction: 'rtl' }}>{getAdCardTitle(ad)}</h4>
+                                            <p style={{ direction: 'rtl' }}>{ad.category}</p>
+                                            <p style={{ direction: 'rtl' }}>{ad.description}</p>
+                                            <p style={{ direction: 'rtl' }}>{ad.location || ad.district || ""}</p>
+                                            {ad.price && <p style={{ direction: 'rtl' }}>₪{ad.price}</p>}
+                                        </div>
+
+                                        <div className="sponsor-crud admin-ad-actions">
+                                            {status === AD_STATUS.PENDING && (
+                                                <>
+                                                    <button
+                                                        className="admin-approve-button"
+                                                        onClick={() => updateAdStatus(ad.id, AD_STATUS.APPROVED)}
+                                                    >
+                                                        אשר
+                                                    </button>
+                                                    <button
+                                                        className="admin-reject-button"
+                                                        onClick={() => updateAdStatus(ad.id, AD_STATUS.REJECTED)}
+                                                    >
+                                                        דחה
+                                                    </button>
+                                                </>
+                                            )}
+                                            {status === AD_STATUS.REJECTED && (
+                                                <button
+                                                    className="admin-approve-button"
+                                                    onClick={() => updateAdStatus(ad.id, AD_STATUS.APPROVED)}
+                                                >
+                                                    אשר
+                                                </button>
+                                            )}
+                                            {status === AD_STATUS.APPROVED && (
+                                                <button
+                                                    className="admin-reject-button"
+                                                    onClick={() => updateAdStatus(ad.id, AD_STATUS.REJECTED)}
+                                                >
+                                                    הסתר
+                                                </button>
+                                            )}
+                                            <button className='sponsor-delete-button' onClick={() => handleDeleteAdButton(ad)}>מחק</button>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <p>לא נמצאו מודעות</p>
+                        )}
+                    </>
                 )}
             </div>
 
