@@ -98,6 +98,63 @@ export const PET_CATEGORIES = [
   },
 ];
 
+export const SITE_SERVICES = [
+  {
+    path: "/veterinarians",
+    name: "וטרינרים",
+    subtitle: "רופאים וטיפול מקצועי לחיות מחמד",
+    image: "/services/veterinarian.jpg",
+  },
+  {
+    path: "/boarding",
+    name: "פנסיון",
+    subtitle: "מקומות אמינים לשהייה זמנית",
+    image: "/services/boarding.jpg",
+  },
+  {
+    path: "/accessories",
+    name: "אביזרים",
+    subtitle: "ציוד, מזון וכל מה שצריך בבית",
+    image: "/services/accessories.jpg",
+  },
+  {
+    path: "/seeds",
+    name: "זרע",
+    subtitle: "לגידול מקצועי ומתקדם",
+    image: "/listings/goat.jpg",
+  },
+  {
+    path: "/exhibitors",
+    name: "מציגים",
+    subtitle: "אנשי מקצוע מהתחום",
+    image: "/listings/arabian-horse.jpg",
+  },
+  {
+    path: "/breeders",
+    name: "מפרזילים",
+    subtitle: "טיפול ואיזון מקצועי",
+    image: "/listings/arabian-horse.jpg",
+  },
+  {
+    path: "/schools",
+    name: "בתי ספר",
+    subtitle: "לימוד ואימון לכל הרמות",
+    image: "/services/school.jpg",
+  },
+  {
+    path: "/trips",
+    name: "טיולים",
+    subtitle: "חוויות עם חיות בטבע",
+    image: "/listings/goat.jpg",
+  },
+  {
+    path: "/shows-and-competitions",
+    name: "תצוגות ותחרויות",
+    subtitle: "אירועים קרובים להשתתף ולהתרגש",
+    image: "/listings/arabian-horse.jpg",
+  },
+];
+
 const listing = (data) => ({
   contact: data.contact || "צוות Pets & Bones",
   phoneNumber: data.phoneNumber || "0547926338",
@@ -121,7 +178,7 @@ export const PET_LISTINGS = [
     gender: "זכר",
     hasCertificate: true,
     price: "4,500 ₪",
-    image: "/dogs.jpg",
+    image: "/listings/golden-retriever.jpg",
     description:
       "גור גולדן רטריבר חברותי, מחוסן ומטופל. מתאים למשפחה עם ילדים ומחפש בית חם.",
   }),
@@ -136,7 +193,7 @@ export const PET_LISTINGS = [
     gender: "נקבה",
     hasCertificate: true,
     price: "3,200 ₪",
-    image: "/dogs.jpg",
+    image: "/listings/labrador.jpg",
     description:
       "לברדור רגועה ומחונכת. רגילה לבית, מסתדרת עם ילדים ואוהבת טיולים.",
   }),
@@ -150,7 +207,7 @@ export const PET_LISTINGS = [
     breed: "מעורב",
     gender: "זכר",
     price: "1,200 ₪",
-    image: "/dogs.jpg",
+    image: "/listings/mixed-dog.jpg",
     description:
       "כלב מעורב אנרגטי וחכם. מתאים לבית עם חצר ולבעלים שאוהבים פעילות.",
   }),
@@ -165,7 +222,7 @@ export const PET_LISTINGS = [
     gender: "נקבה",
     hasCertificate: true,
     price: "2,200 ₪",
-    image: "/cats.jpg",
+    image: "/listings/british-cat.jpg",
     description:
       "גורת חתולים בריטית רכה ומתוקה, מחוסנת ומוכנה לבית חדש.",
   }),
@@ -179,7 +236,7 @@ export const PET_LISTINGS = [
     breed: "פרסי",
     gender: "זכר",
     price: "1,800 ₪",
-    image: "/cats.jpg",
+    image: "/listings/persian-cat.jpg",
     description: "חתול פרסי רגוע, רגיל לדירה ומסתדר מצוין עם בני בית.",
   }),
   listing({
@@ -193,7 +250,7 @@ export const PET_LISTINGS = [
     gender: "זכר",
     hasCertificate: true,
     price: "12,000 ₪",
-    image: "/horses.jpg",
+    image: "/listings/arabian-horse.jpg",
     description: "סוס ערבי צעיר עם מבנה יפה. מתאים לרכיבה ולגידול.",
   }),
   listing({
@@ -206,7 +263,7 @@ export const PET_LISTINGS = [
     breed: "קוקטייל",
     gender: "זכר",
     price: "250 ₪",
-    image: "/birds.jpg",
+    image: "/listings/cockatiel.jpg",
     description: "תוכי קוקטייל ידידותי, רגיל לכלוב גדול ולתשומת לב.",
   }),
   listing({
@@ -219,7 +276,7 @@ export const PET_LISTINGS = [
     breed: "יונת נוי",
     gender: "זוג",
     price: "180 ₪",
-    image: "/birds.jpg",
+    image: "/listings/doves.jpg",
     description: "זוג יוני נוי בריאות, מתאימות לגינה או למרפסת סגורה.",
   }),
   listing({
@@ -231,7 +288,7 @@ export const PET_LISTINGS = [
     age: "6 חודשים",
     breed: "גולדפיש",
     price: "30 ₪",
-    image: "/fish.jpg",
+    image: "/listings/goldfish.jpg",
     description: "דגי נוי לאקווריום ביתי. נמכרים לבד או כקבוצה קטנה.",
   }),
   listing({
@@ -243,7 +300,7 @@ export const PET_LISTINGS = [
     age: "1 שנה",
     breed: "קוי",
     price: "120 ₪",
-    image: "/fish.jpg",
+    image: "/listings/koi.jpg",
     description: "דגי קוי צבעוניים לבריכת נוי. בריאים ומותאמים לאקלים מקומי.",
   }),
   listing({
@@ -256,7 +313,7 @@ export const PET_LISTINGS = [
     breed: "ננסי הולנדי",
     gender: "נקבה",
     price: "350 ₪",
-    image: "/rabbits.jpg",
+    image: "/listings/netherland-dwarf.jpg",
     description: "ארנבת ננסית עדינה, רגילה לידיים ומתאימה לילדים בהשגחה.",
   }),
   listing({
@@ -269,7 +326,7 @@ export const PET_LISTINGS = [
     breed: "הולנד לופ",
     gender: "זכר",
     price: "420 ₪",
-    image: "/rabbits.jpg",
+    image: "/listings/lop-rabbit.jpg",
     description: "ארנב לופ עם אוזניים שמוטות, שקט וחברותי.",
   }),
   listing({
@@ -282,7 +339,7 @@ export const PET_LISTINGS = [
     breed: "גקו מנומר",
     gender: "זכר",
     price: "600 ₪",
-    image: "/reptiles.jpg",
+    image: "/listings/leopard-gecko.jpg",
     description: "גקו מנומר בריא, כולל מידע בסיסי על תנאי גידול.",
   }),
   listing({
@@ -294,7 +351,7 @@ export const PET_LISTINGS = [
     age: "7 חודשים",
     breed: "לגיהורן",
     price: "180 ₪",
-    image: "/chickens.jpg",
+    image: "/listings/hens.jpg",
     description: "תרנגולות מטילות לחצר ביתית. נמכרות כזוג או יותר.",
   }),
   listing({
@@ -307,7 +364,7 @@ export const PET_LISTINGS = [
     breed: "עז",
     gender: "נקבה",
     price: "1,500 ₪",
-    image: "/farm-animals.jpg",
+    image: "/listings/goat.jpg",
     description: "עיזים צעירות למשק ביתי. מתאימות לחלב ולגידול.",
   }),
   listing({
@@ -320,7 +377,7 @@ export const PET_LISTINGS = [
     breed: "שרקן",
     gender: "זכר",
     price: "200 ₪",
-    image: "/small-animals.jpg",
+    image: "/listings/guinea-pig.jpg",
     description: "שרקן ידידותי, רגיל לכלוב מרווח ולמגע עדין.",
   }),
 ];
@@ -336,7 +393,7 @@ export const ADOPTION_PETS = [
     breed: "מעורב",
     gender: "זכר",
     price: "לאימוץ",
-    image: "/dogs.jpg",
+    image: "/listings/adopt-dog.jpg",
     forAdoption: true,
     description:
       "כלב מתוק שמחפש בית לכל החיים. מחוסן, מסורס ומוכן לאימוץ אחראי.",
@@ -351,7 +408,7 @@ export const ADOPTION_PETS = [
     breed: "מעורב",
     gender: "נקבה",
     price: "לאימוץ",
-    image: "/cats.jpg",
+    image: "/listings/adopt-cat.jpg",
     forAdoption: true,
     description: "חתולה ביתית, מעוקרת ומחפשת ספה שקטה ומשפחה אוהבת.",
   }),
@@ -365,7 +422,7 @@ export const ADOPTION_PETS = [
     breed: "ננסי",
     gender: "נקבה",
     price: "לאימוץ",
-    image: "/rabbits.jpg",
+    image: "/listings/adopt-rabbit.jpg",
     forAdoption: true,
     description: "ארנבת קטנה שגדלה בבית ומחפשת כלוב גדול וידיים עדינות.",
   }),
@@ -379,7 +436,7 @@ export const ADOPTION_PETS = [
     breed: "קוקטייל",
     gender: "זכר",
     price: "לאימוץ",
-    image: "/birds.jpg",
+    image: "/listings/adopt-bird.jpg",
     forAdoption: true,
     description: "תוכי חברותי שרגיל לאנשים ומחפש בית עם סבלנות וזמן.",
   }),
@@ -396,6 +453,100 @@ export const getCategoryByName = (name) =>
 
 export const getListingsByCategory = (categoryName) =>
   PET_LISTINGS.filter((item) => item.category === categoryName);
+
+export const getAdDisplayName = (ad) =>
+  ad?.name ||
+  ad?.title ||
+  ad?.breed ||
+  ad?.seed_type ||
+  ad?.accessory ||
+  ad?.category ||
+  "מודעה";
+
+export const getAdDisplayImage = (ad) =>
+  ad?.image || ad?.photos?.[0] || "/hero-pets.png";
+
+export const isAdoptionListing = (ad) => {
+  if (!ad) return false;
+  if (ad.forAdoption) return true;
+  const price = String(ad.price ?? "").trim();
+  return price === "לאימוץ" || price === "אימוץ";
+};
+
+export const formatListingAge = (ad) => {
+  if (!ad) return "";
+  if (ad.age) return ad.age;
+
+  if (typeof ad.ageInMonths === "number") {
+    const years = Math.floor(ad.ageInMonths / 12);
+    const months = ad.ageInMonths % 12;
+    if (years && months) {
+      const yearLabel = years === 1 ? "שנה" : `${years} שנים`;
+      return `${yearLabel} ו-${months} חודשים`;
+    }
+    if (years) return years === 1 ? "שנה" : `${years} שנים`;
+    return `${months} חודשים`;
+  }
+
+  const years = Number(ad.ageYears) || 0;
+  const months = Number(ad.ageMonths) || 0;
+  if (!years && !months) return "";
+  if (years && months) {
+    const yearLabel = years === 1 ? "שנה" : `${years} שנים`;
+    return `${yearLabel} ו-${months} חודשים`;
+  }
+  if (years) return years === 1 ? "שנה" : `${years} שנים`;
+  return `${months} חודשים`;
+};
+
+export const formatListingPrice = (ad) => {
+  if (isAdoptionListing(ad)) return "לאימוץ";
+  if (ad?.price === undefined || ad?.price === null || ad?.price === "") return "";
+  if (typeof ad.price === "string" && (ad.price.includes("₪") || ad.price.includes("אימוץ"))) {
+    return ad.price;
+  }
+  return `₪${ad.price}`;
+};
+
+export const getListingType = (ad) =>
+  ad?.type || getCategoryByName(ad?.category)?.type || ad?.category || "";
+
+export const normalizeMarketplaceAd = (ad) => {
+  const name = getAdDisplayName(ad);
+  const image = getAdDisplayImage(ad);
+  const forAdoption = isAdoptionListing(ad);
+
+  return {
+    ...ad,
+    name,
+    title: ad.title || name,
+    image,
+    photos: ad.photos?.length ? ad.photos : [image],
+    type: getListingType(ad),
+    age: formatListingAge(ad),
+    price: formatListingPrice(ad),
+    forAdoption,
+    source: ad.source || "firebase",
+  };
+};
+
+export const mergeMarketplaceListings = (liveAds = [], catalogAds = []) => {
+  const normalizedLive = liveAds.map((ad) =>
+    normalizeMarketplaceAd({ ...ad, source: ad.source || "firebase" })
+  );
+  const liveIds = new Set(normalizedLive.map((ad) => String(ad.id)));
+  const catalog = catalogAds
+    .map((ad) => normalizeMarketplaceAd({ ...ad, source: ad.source || "catalog" }))
+    .filter((ad) => !liveIds.has(String(ad.id)));
+
+  return [...normalizedLive, ...catalog];
+};
+
+export const getCatalogPool = ({ categoryName, adoptionOnly = false } = {}) => {
+  if (adoptionOnly) return ADOPTION_PETS;
+  if (categoryName) return getListingsByCategory(categoryName);
+  return PET_LISTINGS;
+};
 
 export const getSimilarListings = (listingItem, limit = 6) => {
   if (!listingItem) return [];
@@ -419,9 +570,9 @@ export const filterListings = (
   return listings.filter((item) => {
     const matchesText =
       !text ||
-      [item.name, item.type, item.category, item.location, item.breed]
+      [item.name, item.title, item.type, item.category, item.location, item.breed, item.description]
         .filter(Boolean)
-        .some((value) => value.toLowerCase().includes(text));
+        .some((value) => String(value).toLowerCase().includes(text));
 
     const matchesLocation = !location || item.location === location;
     const matchesCategory = !category || item.category === category;

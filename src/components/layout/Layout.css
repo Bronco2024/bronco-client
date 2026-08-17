@@ -1,0 +1,28 @@
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-cream);
+}
+
+.app-main {
+  flex: 1;
+  outline: none;
+}
+
+.skip-link {
+  position: absolute;
+  right: 16px;
+  top: -60px;
+  z-index: 2000;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--color-navy);
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 12px;
+}

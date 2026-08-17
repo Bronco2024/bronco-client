@@ -47,7 +47,7 @@
 
     .seeds-filters-box.desktop-only select:focus,
     .seeds-filters-box.desktop-only input:focus {
-        border-color: #00796b;
+        border-color: #ff861c;
         box-shadow: 0 0 3px rgba(0, 121, 107, 0.3);
         outline: none;
     }
@@ -62,12 +62,12 @@
     }
 
     .seeds-filters-box.desktop-only .apply-filters {
-        background-color: #4CAF50;
+        background-color: #ff861c;
         color: #fff;
     }
 
     .seeds-filters-box.desktop-only .apply-filters:hover {
-        background-color: #45a049;
+        background-color: #e8750d;
     }
 
     .seeds-filters-box.desktop-only .reset-filters {
@@ -126,7 +126,7 @@
 
     .seeds-filters-box.mobile select:focus,
     .seeds-filters-box.mobile input:focus {
-        border-color: #00796b;
+        border-color: #ff861c;
         box-shadow: 0 0 3px rgba(0, 121, 107, 0.3);
         outline: none;
     }
@@ -141,12 +141,12 @@
     }
 
     .seeds-filters-box.mobile .apply-filters {
-        background-color: #4CAF50;
+        background-color: #ff861c;
         color: #fff;
     }
 
     .seeds-filters-box.mobile .apply-filters:hover {
-        background-color: #45a049;
+        background-color: #e8750d;
     }
 
     .seeds-filters-box.mobile .reset-filters {

@@ -1,10 +1,12 @@
 .publish-ad-container {
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+    max-width: 560px;
+    margin: 2.5rem auto;
+    padding: 28px;
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+    background-color: #fff;
+    box-shadow: var(--shadow-sm);
+    color: var(--color-navy);
 }
 
 .publish-ad-form {
@@ -45,7 +47,7 @@
 .publish-button {
     margin-top: 10px;
     padding: 10px;
-    background-color: #4CAF50;
+    background-color: var(--color-navy);
     color: white;
     border: none;
     border-radius: 4px;
@@ -54,16 +56,18 @@
 }
 
 .publish-button:hover {
-    background-color: #45a049;
+    background-color: var(--color-navy-dark);
 }
 
 .publish-ad-container {
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+    max-width: 560px;
+    margin: 2.5rem auto;
+    padding: 28px;
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+    background-color: #fff;
+    box-shadow: var(--shadow-sm);
+    color: var(--color-navy);
 }
 
 .publish-ad-form {
@@ -90,7 +94,7 @@
 .publish-button {
     margin-top: 10px;
     padding: 10px;
-    background-color: #4CAF50;
+    background-color: var(--color-navy);
     color: white;
     border: none;
     border-radius: 4px;
@@ -98,7 +102,7 @@
 }
 
 .publish-button:hover {
-    background-color: #45a049;
+    background-color: var(--color-navy-dark);
 }
 
 .modal-content-custom-publishad {

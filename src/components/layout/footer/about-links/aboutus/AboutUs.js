@@ -9,16 +9,17 @@ const AboutUs = () => {
                 <div className="about-image-container">
                     <img
                         className="main-image"
-                        src={require('@/assets/aboutus/aboutus-horse.png')}
-                        alt="Main visual"
+                        src="/hero-pets.png"
+                        alt="Pets & Bones"
                         loading='lazy'
                     />
                 </div>
 
                 <div className="about-text-container">
-                    <h2 className="about-heading">Horsehub – הדהירה שלך מתחילה כאן</h2>
+                    <h2 className="about-heading">Pets & Bones – הבית של חיות המחמד</h2>
                     <p className="about-description">
-                    Horsehub היא הפלטפורמה המובילה בישראל לאוהבי סוסים, רוכבים, מגדלים ואנשי מקצוע. יצרנו מקום אחד שמרכז את כל מה שצריך – לקנייה, טיפול, למידה וחוויה – והכל ברמה הגבוהה ביותר
+                        Pets & Bones היא הפלטפורמה שמחברת בין אנשים, חיות מחמד ושירותים במקום אחד.
+                        כאן אפשר למצוא מודעות למכירה ולאימוץ, לפרסם חיה, ולגלות וטרינרים, פנסיונים ואביזרים מכל הארץ.
                     </p>
 
                     <div className="feature-list">
@@ -28,7 +29,7 @@ const AboutUs = () => {
                                     <img
                                         className="feature-icon"
                                         src={feature.icon}
-                                        alt="Feature icon"
+                                        alt=""
                                         loading='lazy'
                                     />
                                 </div>
@@ -42,16 +43,10 @@ const AboutUs = () => {
                 </div>
 
                 <div className="feature-extra-text">
-                    <p>אנחנו מאמינים בשירות אישי, מקצועיות בלתי מתפשרת ואהבה אמיתית לעולם הסוסים.<br />
-                    Horsehub הוא לא רק אתר – זו קהילה. זו דרך חיים.</p>
-                    <p><strong>ברוכים הבאים ל־ Horsehub, המקום שבו הכל מתחיל</strong></p>
+                    <p>אנחנו מאמינים בשקיפות, באחריות כלפי החיות, ובקהילה שמחברת בין אנשים שאוהבים אותן באמת.<br />
+                    Pets & Bones הוא לא רק לוח מודעות — זה מקום מפגש.</p>
+                    <p><strong>ברוכים הבאים ל־Pets & Bones, המקום שבו מתחיל הסיפור הבא</strong></p>
                 </div>
-
-                <img
-                    className="decorative-dots red-dots"
-                    src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/cw3.svg"
-                    alt="Red dots"
-                />
             </div>
         </div>
     );

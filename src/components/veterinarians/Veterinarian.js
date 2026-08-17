@@ -13,9 +13,9 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
-import './Veterinarian.css'
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import Paganation from "@components/utils/paganation/Paganation";
 import { faPhoneAlt, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -94,67 +94,49 @@ const Veterinarian = () => {
         setPage((prevPage) => prevPage - 1);
     };
 
+    const handleClickOnItem = (ad) => {
+        navigate('/item', { state: { ad } })
+    }
+
     return (
-        <div className="veterinarian-container">
-            <h1 className="veterinarian-title">וטרינרים</h1>
-
-            <div className="ads-veterinarian-wrapper">
-                {adList.length === 0 ? (
-                    <p>לא נמצאו מודעות בקטיגוריה זו</p>
-                ) : (
-                    adList.map(ad => (
+        <ServicePage
+            title="וטרינרים"
+            subtitle="רופאים וטיפול מקצועי לחיות מחמד"
+            heroImage="/services/veterinarian.jpg"
+            count={adList.length}
+        >
+            {adList.length === 0 ? (
+                <p className="ads-page-empty">לא נמצאו מודעות בקטיגוריה זו</p>
+            ) : (
+                <div className="ads-page-grid">
+                    {adList.map((ad) =>
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                            <div
+                            <AdGridCard
                                 key={ad.id}
-                                className="ad-veterinarian-card"
+                                ad={ad}
+                                title={ad.title}
+                                onClick={handleClickOnItem}
                             >
-                                {ad.photos && ad.photos[0] ? (
-                                    <img
-                                        src={ad.photos[0]}
-                                        alt={ad.title}
-                                        className="ad-veterinarian-image"
-                                    />
-                                ) : (
-                                    <img
-                                        src={require('@/assets/no-image.jpg')}
-                                        alt={ad.category}
-                                        className="ad-veterinarian-image"
-                                    />
-                                )}
-
-                                <h2 className="ad-veterinarian-title">{ad.title}</h2>
-                                {ad.price && (
-                                    <p className="ad-veterinarian-price">₪{ad.price}</p>
-                                )}
-
-                                <div className="ad-veterinarian-details">
-                                    <div className="location">
-                                        <span>{ad.location}</span>
-                                        <FontAwesomeIcon icon={faLocationDot} style={{ marginLeft: '8px', marginRight: '8px' }} />
-                                    </div>
-                                    {ad.description && <p><strong>תיאור:</strong> {ad.description}</p>}
-                                    {ad.contact && <p><strong>איש קשר:</strong> {ad.contact}</p>}
-                                </div>
-
-                                <div className="ad-veterinarian-footer">
-                                    {ad.phoneNumber && (
-                                        <div className="contact-box">
-                                            <a className="phone-link" href={`tel:${ad.phoneNumber}`}>
-                                                <FontAwesomeIcon icon={faPhoneAlt} />
-                                                <span>{ad.phoneNumber}</span>
-                                            </a>
-                                        </div>
-                                    )}
-                                    <p className="ad-veterinarian-date-create">
-                                        תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}
+                                {ad.location && (
+                                    <p>
+                                        <FontAwesomeIcon icon={faLocationDot} /> {ad.location}
                                     </p>
-                                </div>
-
-                            </div>
+                                )}
+                                {ad.phoneNumber && (
+                                    <a
+                                        className="phone-link"
+                                        href={`tel:${ad.phoneNumber}`}
+                                        onClick={(event) => event.stopPropagation()}
+                                    >
+                                        <FontAwesomeIcon icon={faPhoneAlt} />
+                                        <span>{ad.phoneNumber}</span>
+                                    </a>
+                                )}
+                            </AdGridCard>
                         )
-                    ))
-                )}
-            </div>
+                    )}
+                </div>
+            )}
 
             <Paganation
                 handleNextPage={handleNextPage}
@@ -164,7 +146,7 @@ const Veterinarian = () => {
                 afterThis={afterThis}
                 TOTAL_PAGES={TOTAL_PAGES}
             />
-        </div>
+        </ServicePage>
     )
 }
 export default Veterinarian;

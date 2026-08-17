@@ -46,8 +46,8 @@
 
     .horses-filters-box.desktop-only select:focus,
     .horses-filters-box.desktop-only input:focus {
-        border-color: #00796b;
-        box-shadow: 0 0 3px rgba(0, 121, 107, 0.3);
+        border-color: #ff861c;
+        box-shadow: 0 0 3px rgba(255, 134, 28, 0.3);
         outline: none;
     }
 
@@ -61,12 +61,12 @@
     }
 
     .horses-filters-box.desktop-only .apply-filters {
-        background-color: #4CAF50;
+        background-color: #ff861c;
         color: #fff;
     }
 
     .horses-filters-box.desktop-only .apply-filters:hover {
-        background-color: #45a049;
+        background-color: #e8750d;
     }
 
     .horses-filters-box.desktop-only .reset-filters {
@@ -131,7 +131,7 @@
 
     .horses-filters-box.mobile select:focus,
     .horses-filters-box.mobile input:focus {
-        border-color: #00796b;
+        border-color: #ff861c;
         box-shadow: 0 0 3px rgba(0, 121, 107, 0.3);
         outline: none;
     }
@@ -146,12 +146,12 @@
     }
 
     .horses-filters-box.mobile .apply-filters {
-        background-color: #4CAF50;
+        background-color: #ff861c;
         color: #fff;
     }
 
     .horses-filters-box.mobile .apply-filters:hover {
-        background-color: #45a049;
+        background-color: #e8750d;
     }
 
     .horses-filters-box.mobile .reset-filters {

@@ -13,9 +13,9 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
-import './Schools.css'
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import Paganation from "@components/utils/paganation/Paganation";
 
 const Schools = () => {
@@ -101,46 +101,40 @@ const Schools = () => {
     }
 
     return (
-        <div className="schools-container">
-            <div className="ads-school-wrapper">
-                <h1 className="schools-title">בתי ספר</h1>
-
-                {adList.length === 0 ? (
-                    <p>לא נמצאו מודעות בקטיגוריה זו</p>
-                ) : (
-                    adList.map(ad => (
+        <ServicePage
+            title="בתי ספר"
+            subtitle="לימוד ואימון לכל הרמות"
+            heroImage="/services/school.jpg"
+            count={adList.length}
+        >
+            {adList.length === 0 ? (
+                <p className="ads-page-empty">לא נמצאו מודעות בקטיגוריה זו</p>
+            ) : (
+                <div className="ads-page-grid">
+                    {adList.map((ad) =>
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                            <div
+                            <AdGridCard
                                 key={ad.id}
-                                className="ad-school-card"
-                                onClick={() => handleClickOnItem(ad)}
+                                ad={ad}
+                                title={ad.title}
+                                onClick={handleClickOnItem}
                             >
-                                {ad.photos && ad.photos[0] && (
-                                    <img src={ad.photos[0]} alt={ad.title} className="ad-school-image" />
-                                )}
-                                {ad.photos.length === 0 && (
-                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-school-image" />
-                                )}
-                                <div className="ad-school-details">
-                                    <h2 className="ad-school-title">{ad.title}</h2>
-                                    <p className="ad-school-price">{ad.description}</p>
-                                    <p className='ad-school-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                                </div>
+                                {ad.description && <p>{ad.description}</p>}
+                            </AdGridCard>
+                        )
+                    )}
+                </div>
+            )}
 
-                            </div>
-                        )))
-                )}
-
-                <Paganation
-                    handleNextPage={handleNextPage}
-                    handlePrevPage={handlePrevPage}
-                    page={page}
-                    adList={adList}
-                    afterThis={afterThis}
-                    TOTAL_PAGES={TOTAL_PAGES}
-                />
-            </div>
-        </div>
+            <Paganation
+                handleNextPage={handleNextPage}
+                handlePrevPage={handlePrevPage}
+                page={page}
+                adList={adList}
+                afterThis={afterThis}
+                TOTAL_PAGES={TOTAL_PAGES}
+            />
+        </ServicePage>
     )
 }
 export default Schools;

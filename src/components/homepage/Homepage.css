@@ -1,21 +1,8 @@
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  background: #ffffff;
-}
-
 .homepage {
   min-height: 100vh;
-  background: #ffffff;
-  color: #173b5e;
-  font-family: Arial, "Segoe UI", sans-serif;
+  background: var(--color-white);
+  color: var(--color-navy);
+  font-family: var(--font);
 }
 
 /* ==================================================
@@ -100,7 +87,7 @@ body {
   padding: 7px;
 
   display: grid;
-  grid-template-columns: 1.4fr 1fr auto;
+  grid-template-columns: 1.3fr 0.9fr 0.9fr auto;
 
   gap: 7px;
 
@@ -177,6 +164,32 @@ body {
 
 .hero-info span {
   white-space: nowrap;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.hero-actions .dark-button {
+  margin-top: 0;
+}
+
+.ghost-button {
+  padding: 12px 27px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ghost-button:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* ==================================================
@@ -854,6 +867,15 @@ body {
     padding: 7px;
   }
 
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-actions .dark-button,
+  .ghost-button {
+    width: 100%;
+  }
+
   .search-box button {
     width: 100%;
   }
@@ -980,5 +1002,182 @@ body {
     padding: 5px 8px;
 
     font-size: 10px;
+  }
+
+  .stats-strip,
+  .steps-grid,
+  .services-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cta-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* ==================================================
+   STATS / HOW IT WORKS / SERVICES / CTA
+================================================== */
+
+.stats-strip {
+  width: var(--container);
+  margin: -28px auto 0;
+  padding: 22px 10px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--color-line);
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.stats-strip strong {
+  display: block;
+  color: var(--color-navy);
+  font-size: 1.4rem;
+}
+
+.stats-strip span {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.how-it-works,
+.services-section {
+  width: var(--container);
+  margin: 0 auto;
+  padding: 20px 0 70px;
+  text-align: center;
+}
+
+.steps-grid,
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.services-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.step-card,
+.service-card {
+  padding: 24px 18px;
+  background: #fff;
+  border: 1px solid var(--color-line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+  text-align: right;
+}
+
+.step-card span {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--color-orange);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.step-card h3,
+.service-card h3 {
+  margin: 0 0 8px;
+  color: var(--color-navy);
+}
+
+.step-card p,
+.service-card p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.service-card {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: right;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.service-card span {
+  display: inline-block;
+  margin-top: 14px;
+  color: var(--color-orange);
+  font-weight: 800;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-orange);
+}
+
+.cta-banner {
+  width: var(--container);
+  margin: 0 auto 80px;
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: var(--color-navy);
+  color: #fff;
+  border-radius: 24px;
+}
+
+.cta-banner h2 {
+  margin: 0 0 8px;
+}
+
+.cta-banner p {
+  margin: 0;
+  color: #d5e2ee;
+}
+
+.cta-banner button {
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--color-orange);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.no-results {
+  padding: 48px 20px;
+  text-align: center;
+  background: #f8fafc;
+  border-radius: 18px;
+}
+
+.no-results h3 {
+  margin: 0 0 8px;
+}
+
+.no-results p {
+  margin: 0 0 18px;
+  color: var(--color-muted);
+}
+
+.no-results .dark-button {
+  margin-top: 0;
+}
+
+@media (max-width: 850px) {
+  .stats-strip,
+  .steps-grid,
+  .services-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .search-box {
+    grid-template-columns: 1fr;
   }
 }

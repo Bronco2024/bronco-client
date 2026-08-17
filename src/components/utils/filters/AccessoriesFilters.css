@@ -47,8 +47,8 @@
 
     .accessories-filters-box.desktop-only select:focus,
     .accessories-filters-box.desktop-only input:focus {
-        border-color: #00796b;
-        box-shadow: 0 0 3px rgba(0, 121, 107, 0.3);
+        border-color: #ff861c;
+        box-shadow: 0 0 3px rgba(255, 134, 28, 0.3);
         outline: none;
     }
 
@@ -62,12 +62,12 @@
     }
 
     .accessories-filters-box.desktop-only .apply-filters {
-        background-color: #4CAF50;
+        background-color: #ff861c;
         color: #fff;
     }
 
     .accessories-filters-box.desktop-only .apply-filters:hover {
-        background-color: #45a049;
+        background-color: #e8750d;
     }
 
     .accessories-filters-box.desktop-only .reset-filters {
@@ -124,7 +124,7 @@
 
     .accessories-filters-box.mobile select:focus,
     .accessories-filters-box.mobile input:focus {
-        border-color: #00796b;
+        border-color: #ff861c;
         box-shadow: 0 0 3px rgba(0, 121, 107, 0.3);
         outline: none;
     }
@@ -139,12 +139,12 @@
     }
 
     .accessories-filters-box.mobile .apply-filters {
-        background-color: #4CAF50;
+        background-color: #ff861c;
         color: #fff;
     }
 
     .accessories-filters-box.mobile .apply-filters:hover {
-        background-color: #45a049;
+        background-color: #e8750d;
     }
 
     .accessories-filters-box.mobile .reset-filters {

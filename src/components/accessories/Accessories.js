@@ -13,10 +13,10 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
-import './Accessories.css'
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
-import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
+import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import AccessoriesFilters from "@components/utils/filters/AccessoriesFilters";
+import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import Paganation from "@components/utils/paganation/Paganation";
 
 const Accessories = () => {
@@ -168,40 +168,36 @@ const Accessories = () => {
     }
 
     return (
-        <div className="accessories-container">
-            <h1 className="accessories-title">אביזרים</h1>
-
-            <AccessoriesFilters
-                filters={filters}
-                handleFilterChange={handleFilterChange}
-                applyFilters={applyFilters}
-                resetFilters={resetFilters}
-            />
-
-            <div className="ads-accessory-wrapper">
-                {adList.length === 0 ? (
-                    <p>לא נמצאו מודעות בקטיגוריה זו</p>
-                ) : (
-                    adList.map(ad => (
+        <ServicePage
+            title="אביזרים"
+            subtitle="ציוד, מזון וכל מה שצריך בבית"
+            heroImage="/services/accessories.jpg"
+            count={adList.length}
+            filters={
+                <AccessoriesFilters
+                    filters={filters}
+                    handleFilterChange={handleFilterChange}
+                    applyFilters={applyFilters}
+                    resetFilters={resetFilters}
+                />
+            }
+        >
+            {adList.length === 0 ? (
+                <p className="ads-page-empty">לא נמצאו מודעות בקטיגוריה זו</p>
+            ) : (
+                <div className="ads-page-grid">
+                    {adList.map((ad) =>
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                            <div
+                            <AdGridCard
                                 key={ad.id}
-                                className="ad-accessory-card"
-                                onClick={() => handleClickOnItem(ad)}
-                            >
-                                {ad.photos && ad.photos[0] && (
-                                    <img src={ad.photos[0]} alt={ad.title} className="ad-accessory-image" />
-                                )}
-                                {ad.photos.length === 0 && (
-                                    <img src={require('@/assets/no-image.jpg')} alt={ad.category} className="ad-accessory-image" />
-                                )}
-                                <h2 className="ad-accessory-title">{ad.category}</h2>
-                                {ad.price && ad.price !== "" && (<p className="ad-accessory-price">₪{ad.price}</p>)}
-                                <p className='ad-accessory-date-create'>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
-                            </div>
-                        )))
-                )}
-            </div>
+                                ad={ad}
+                                title={ad.title || ad.category}
+                                onClick={handleClickOnItem}
+                            />
+                        )
+                    )}
+                </div>
+            )}
 
             <Paganation
                 handleNextPage={handleNextPage}
@@ -211,7 +207,7 @@ const Accessories = () => {
                 afterThis={afterThis}
                 TOTAL_PAGES={TOTAL_PAGES}
             />
-        </div>
+        </ServicePage>
     )
 }
 export default Accessories;

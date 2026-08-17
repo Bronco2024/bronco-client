@@ -32,13 +32,23 @@ const PetCard = ({ listing, showAdoptionBadge = false }) => {
     setFavorited(toggleFavoriteListing(listing));
   };
 
+  const openListing = () => navigate("/item", { state: { ad: listing } });
+
   return (
     <article
       className="listing-card"
-      onClick={() => navigate("/item", { state: { ad: listing } })}
+      onClick={openListing}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openListing();
+        }
+      }}
+      role="link"
+      tabIndex={0}
     >
       <div className="listing-image">
-        <img src={listing.image} alt={listing.name} loading="lazy" />
+        <img src={listing.image || listing.photos?.[0]} alt={listing.name} loading="lazy" />
 
         <button
           className={`favorite ${favorited ? "active" : ""}`}

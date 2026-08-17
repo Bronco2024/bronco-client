@@ -1,18 +1,36 @@
 .profile-container {
-    padding: 20px;
-    background-color: #f8f9fa;
+    width: var(--container);
+    margin: 0 auto;
+    padding: 32px 0 60px;
     text-align: right;
-    /* Ensures text aligns to the right */
+    color: var(--color-navy);
+}
+
+.profile-hero {
+    margin-bottom: 24px;
+    padding: 24px;
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.profile-hero h1 {
+    margin: 4px 0 8px;
+}
+
+.profile-hero p {
+    margin: 0;
+    color: var(--color-muted);
 }
 
 .ads-container {
     margin-top: 20px;
-    padding: 10px;
+    padding: 20px;
     background-color: #ffffff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    max-height: 800px;
-    overflow-y: auto;
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
 }
 
 .subscribe-button-profile {
@@ -35,9 +53,18 @@
     flex-direction: row-reverse;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    padding: 10px;
+    gap: 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--color-line);
+    border-radius: 16px;
+    padding: 14px;
+}
+
+.ad-image-profile {
+    width: 200px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
 }
 
 .ad-details {
@@ -47,14 +74,7 @@
 }
 
 .ad-card1:hover {
-    border-color: #ccc;
-}
-
-.ad-image-profile {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 5px;
+    border-color: var(--color-orange);
 }
 
 .ad-title-profile {

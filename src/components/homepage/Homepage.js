@@ -1,14 +1,45 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PetCard from "@/components/pets/PetCard";
+import Loading from "@/components/loading-screen/Loading";
+import useMarketplaceAds from "@/hooks/useMarketplaceAds";
 import {
-  ADOPTION_PETS,
   PET_CATEGORIES,
-  PET_LISTINGS,
   PET_LOCATIONS,
+  SITE_SERVICES,
   filterListings,
+  isAdoptionListing,
+  mergeMarketplaceListings,
+  getCatalogPool,
 } from "@/data/pets";
 import "./Homepage.css";
+
+const HOW_IT_WORKS = [
+  {
+    step: "01",
+    title: "חפשו",
+    text: "סננו לפי סוג חיה, עיר או מילת חיפוש — ותגיעו למודעות הרלוונטיות במהירות.",
+  },
+  {
+    step: "02",
+    title: "השוו ושמרו",
+    text: "פתחו כרטיס מודעה, שמרו מועדפים, ובדקו פרטים כמו גיל, מיקום ומחיר.",
+  },
+  {
+    step: "03",
+    title: "צרו קשר",
+    text: "דברו ישירות עם המפרסם, או פרסמו מודעה משלכם כשאתם מוכנים.",
+  },
+];
+
+const HOMEPAGE_SERVICES = [
+  {
+    path: "/adoption",
+    name: "אימוץ",
+    subtitle: "חיות שמחכות לבית חם",
+  },
+  ...SITE_SERVICES.slice(0, 3),
+];
 
 function Homepage() {
   const navigate = useNavigate();
@@ -16,50 +47,49 @@ function Homepage() {
   const [searchText, setSearchText] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const { listings, liveAds, loading } = useMarketplaceAds({ limitCount: 40 });
 
   const filteredListings = useMemo(
     () =>
-      filterListings(PET_LISTINGS, {
+      filterListings(listings, {
         searchText,
         location: selectedLocation,
         category: selectedCategory,
       }),
-    [searchText, selectedLocation, selectedCategory]
+    [listings, searchText, selectedLocation, selectedCategory]
   );
 
-  const handleSearch = (event) => {
-    event.preventDefault();
+  const featuredListings = filteredListings.slice(0, 10);
+  const adoptionListings = useMemo(
+    () =>
+      mergeMarketplaceListings(
+        liveAds.filter(isAdoptionListing),
+        getCatalogPool({ adoptionOnly: true })
+      ).slice(0, 4),
+    [liveAds]
+  );
 
+  const goToSearchResults = () => {
     const matchedCategory = PET_CATEGORIES.find(
       (category) => category.name === selectedCategory
     );
+    const params = new URLSearchParams();
+    if (searchText.trim()) params.set("q", searchText.trim());
+    if (selectedLocation) params.set("location", selectedLocation);
+    const query = params.toString();
+    const path = matchedCategory ? matchedCategory.path : "/listings";
+    navigate(`${path}${query ? `?${query}` : ""}`);
+  };
 
-    if (matchedCategory) {
-      const params = new URLSearchParams();
-      if (searchText.trim()) params.set("q", searchText.trim());
-      if (selectedLocation) params.set("location", selectedLocation);
-      const query = params.toString();
-      navigate(`${matchedCategory.path}${query ? `?${query}` : ""}`);
-      return;
-    }
-
-    document.getElementById("latest-listings")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+  const handleSearch = (event) => {
+    event.preventDefault();
+    goToSearchResults();
   };
 
   const handleCategoryClick = (category) => {
     if (category.path) {
       navigate(category.path);
-      return;
     }
-
-    setSelectedCategory(category.name);
-    document.getElementById("latest-listings")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
   };
 
   return (
@@ -83,11 +113,26 @@ function Homepage() {
               value={searchText}
               onChange={(event) => setSearchText(event.target.value)}
               placeholder="מה אתם מחפשים?"
+              aria-label="חיפוש מודעות"
             />
+
+            <select
+              value={selectedCategory}
+              onChange={(event) => setSelectedCategory(event.target.value)}
+              aria-label="קטגוריה"
+            >
+              <option value="">כל הקטגוריות</option>
+              {PET_CATEGORIES.map((category) => (
+                <option key={category.slug} value={category.name}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
 
             <select
               value={selectedLocation}
               onChange={(event) => setSelectedLocation(event.target.value)}
+              aria-label="אזור"
             >
               <option value="">כל האזורים</option>
               {PET_LOCATIONS.map((location) => (
@@ -97,7 +142,7 @@ function Homepage() {
               ))}
             </select>
 
-            <button type="submit">🔍 חיפוש</button>
+            <button type="submit">חיפוש</button>
           </form>
 
           <div className="hero-info">
@@ -106,17 +151,45 @@ function Homepage() {
             <span>♡ קהילה איכותית</span>
           </div>
 
-          <button
-            className="dark-button"
-            type="button"
-            onClick={() => navigate("/publish_ad")}
-          >
-            ➕ פרסום מודעה
-          </button>
+          <div className="hero-actions">
+            <button
+              className="dark-button"
+              type="button"
+              onClick={() => navigate("/publish_ad")}
+            >
+              ➕ פרסום מודעה
+            </button>
+            <button
+              className="ghost-button"
+              type="button"
+              onClick={() => navigate("/adoption")}
+            >
+              לאימוץ חיות
+            </button>
+          </div>
         </div>
 
         <div className="hero-image">
           <img src="/hero-pets.png" alt="כלב וחתול" />
+        </div>
+      </section>
+
+      <section className="stats-strip" aria-label="נתוני האתר">
+        <div>
+          <strong>10</strong>
+          <span>קטגוריות חיות</span>
+        </div>
+        <div>
+          <strong>{listings.length}+</strong>
+          <span>מודעות פעילות</span>
+        </div>
+        <div>
+          <strong>{adoptionListings.length}</strong>
+          <span>חיות לאימוץ</span>
+        </div>
+        <div>
+          <strong>כל הארץ</strong>
+          <span>חיפוש לפי עיר</span>
         </div>
       </section>
 
@@ -150,6 +223,23 @@ function Homepage() {
         </div>
       </section>
 
+      <section className="how-it-works">
+        <div className="section-header">
+          <span className="section-kicker">פשוט וברור</span>
+          <h2>איך זה עובד?</h2>
+          <p>שלושה צעדים קצרים עד לחיה הבאה שלכם</p>
+        </div>
+        <div className="steps-grid">
+          {HOW_IT_WORKS.map((item) => (
+            <article className="step-card" key={item.step}>
+              <span>{item.step}</span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="latest" id="latest-listings">
         <div className="section-title">
           <div>
@@ -160,19 +250,19 @@ function Homepage() {
           <button
             className="link-button"
             type="button"
-            onClick={() => {
-              setSelectedCategory("");
-              setSelectedLocation("");
-              setSearchText("");
-            }}
+            onClick={() => navigate("/listings")}
           >
             הצג הכל ←
           </button>
         </div>
 
-        {filteredListings.length > 0 ? (
+        {loading && featuredListings.length === 0 ? (
+          <div className="no-results">
+            <Loading size={64} fullscreen={false} message="טוען מודעות..." />
+          </div>
+        ) : featuredListings.length > 0 ? (
           <div className="listings-grid">
-            {filteredListings.map((listing) => (
+            {featuredListings.map((listing) => (
               <PetCard key={listing.id} listing={listing} />
             ))}
           </div>
@@ -203,11 +293,19 @@ function Homepage() {
         </div>
 
         <div className="adoption-grid">
-          {ADOPTION_PETS.map((pet) => (
+          {adoptionListings.map((pet) => (
             <article
               className="adoption-card"
               key={pet.id}
               onClick={() => navigate("/item", { state: { ad: pet } })}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  navigate("/item", { state: { ad: pet } });
+                }
+              }}
+              role="link"
+              tabIndex={0}
             >
               <div className="adoption-image">
                 <img src={pet.image} alt={pet.name} loading="lazy" />
@@ -242,6 +340,38 @@ function Homepage() {
           onClick={() => navigate("/adoption")}
         >
           לכל מודעות האימוץ
+        </button>
+      </section>
+
+      <section className="services-section">
+        <div className="section-header">
+          <span className="section-kicker">מעבר למודעות</span>
+          <h2>שירותים מסביב לחיות</h2>
+          <p>כל מה שצריך אחרי שמצאתם חבר חדש</p>
+        </div>
+        <div className="services-grid">
+          {HOMEPAGE_SERVICES.map((service) => (
+            <button
+              key={service.path}
+              type="button"
+              className="service-card"
+              onClick={() => navigate(service.path)}
+            >
+              <h3>{service.name}</h3>
+              <p>{service.subtitle}</p>
+              <span>לפרטים ←</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="cta-banner">
+        <div>
+          <h2>יש לכם חיה למכירה או לאימוץ?</h2>
+          <p>פרסמו מודעה מסודרת עם תמונות, מחיר ופרטי קשר — בחינם.</p>
+        </div>
+        <button type="button" onClick={() => navigate("/publish_ad")}>
+          פרסום מודעה
         </button>
       </section>
     </main>

@@ -1,13 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PetCard from "./PetCard";
+import Loading from "@/components/loading-screen/Loading";
+import useMarketplaceAds from "@/hooks/useMarketplaceAds";
 import {
-  ADOPTION_PETS,
-  PET_LISTINGS,
   PET_LOCATIONS,
   filterListings,
   getCategoryBySlug,
-  getListingsByCategory,
 } from "@/data/pets";
 import "./CategoryListings.css";
 
@@ -20,20 +19,19 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
   const [selectedLocation, setSelectedLocation] = useState(
     searchParams.get("location") || ""
   );
-
-  const sourceListings = useMemo(() => {
-    if (adoptionOnly) return ADOPTION_PETS;
-    if (category) return getListingsByCategory(category.name);
-    return PET_LISTINGS;
-  }, [adoptionOnly, category]);
+  const { listings, loading } = useMarketplaceAds({
+    categoryName: adoptionOnly ? undefined : category?.name,
+    adoptionOnly,
+    limitCount: 50,
+  });
 
   const filteredListings = useMemo(
     () =>
-      filterListings(sourceListings, {
+      filterListings(listings, {
         searchText,
         location: selectedLocation,
       }),
-    [sourceListings, searchText, selectedLocation]
+    [listings, searchText, selectedLocation]
   );
 
   const title = adoptionOnly
@@ -43,7 +41,7 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
     ? "חבר חדש מחכה לכם — אולי זה בדיוק הוא."
     : category?.subtitle || "כל המודעות הזמינות באתר";
   const heroImage = adoptionOnly
-    ? "/cats.jpg"
+    ? "/listings/adopt-cat.jpg"
     : category?.image || "/hero-pets.png";
 
   const handleSearch = (event) => {
@@ -98,7 +96,15 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
           <button type="submit">חיפוש</button>
         </form>
 
-        {filteredListings.length > 0 ? (
+        <p className="category-count">
+          {filteredListings.length} מודעות
+        </p>
+
+        {loading && filteredListings.length === 0 ? (
+          <div className="category-empty">
+            <Loading size={64} fullscreen={false} message="טוען מודעות..." />
+          </div>
+        ) : filteredListings.length > 0 ? (
           <div className="listings-grid">
             {filteredListings.map((listing) => (
               <PetCard

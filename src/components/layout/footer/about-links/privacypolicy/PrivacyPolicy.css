@@ -1,11 +1,10 @@
 .policy-section {
-    padding: 50px;
+    width: var(--container);
+    padding: 50px 0;
     margin: 0 auto;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     line-height: 1.8;
     direction: rtl;
+    color: var(--color-navy);
 }
 
 .policy-heading {

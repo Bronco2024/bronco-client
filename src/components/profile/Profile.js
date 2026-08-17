@@ -154,9 +154,11 @@ const Profile = () => {
 
     return (
         <div className="profile-container">
-            <h1>ברוך הבא לאזור האישי</h1>
-
-            <p style={{direction: 'rtl'}}>מייל: <b>{currentUser.email}</b></p>
+            <div className="profile-hero">
+                <span className="section-kicker">החשבון שלי</span>
+                <h1>ברוך הבא לאזור האישי</h1>
+                <p>מייל: <b>{currentUser.email}</b></p>
+            </div>
             {/* 
              * PAYMENTS
                 * This is currently closed until customer decides to make payments in the website

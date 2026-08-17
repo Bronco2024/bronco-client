@@ -233,6 +233,17 @@ function App() {
       />
 
       <Route
+        path="/listings"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Layout>
+              <CategoryListings />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route
         path="/favorites"
         element={
           <Suspense fallback={<Loading />}>

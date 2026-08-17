@@ -126,53 +126,43 @@ export const CARDS = [
 
 export const ABOUTUS_FEATURES = [
     {
-        title: "סוסים למכירה",
-        subtitle: "תוכלו לפרסם את הסוס שלכם או למצוא את הסוס שמתאים לכם בדיוק",
+        title: "חיות מחמד למכירה",
+        subtitle: "כלבים, חתולים וכל סוגי החיות — במקום אחד ומסודר",
         icon: require('@/assets/aboutus/horse.png')
     },
     {
-        title: "זרע איכותי",
-        subtitle: "לגידול מקצועי ומתקדם",
-        icon: require('@/assets/aboutus/sperm.png')
+        title: "אימוץ אחראי",
+        subtitle: "חיות שמחכות לבית חם, עם פרטים ברורים ליצירת קשר",
+        icon: require('@/assets/aboutus/trip.png')
     },
     {
         title: "אבזרים וציוד",
-        subtitle: "לרכיבה, טיפול, הובלה ואחזקה",
+        subtitle: "מזון, צעצועים וציוד לכל חיה",
         icon: require('@/assets/aboutus/tool-box.png')
     },
     {
         title: "וטרינרים מומלצים",
-        subtitle: "שירותים רפואיים מקצועיים לסוסים",
+        subtitle: "שירותים רפואיים מקצועיים לחיות מחמד",
         icon: require('@/assets/aboutus/veterinarian.png')
     },
     {
-        title: "מציגים וספקים",
-        subtitle: "מכל תחומי עולם הסוסים",
+        title: "פנסיון וטיפול",
+        subtitle: "מקומות אמינים לשהייה זמנית ולטיפול שוטף",
         icon: require('@/assets/aboutus/supplier.png')
     },
     {
-        title: "מפרזילים מקצועיים",
-        subtitle: "לאיזון וטיפוח הסוס",
-        icon: require('@/assets/aboutus/horseshoe.png')
-    },
-    {
-        title: "בתי ספר לרכיבה",
-        subtitle: "לכל הרמות, בכל הארץ",
-        icon: require('@/assets/aboutus/horse-rider.png')
-    },
-    {
-        title: "טיולי רכיבה",
-        subtitle: "חוויות שטח עם סוסים בטבע",
-        icon: require('@/assets/aboutus/trip.png')
-    },
-    {
-        title: "תצוגות ותחרויות",
-        subtitle: "להתעדכן, להשתתף ולהתרגש",
+        title: "קהילה איכותית",
+        subtitle: "מפרסמים, מאמצים ואנשי מקצוע מכל הארץ",
         icon: require('@/assets/aboutus/competition.png')
     },
     {
-        title: "חנות",
-        subtitle: "קו מוצרים ייחודי ואיכותי מבית HorseHub",
+        title: "פרסום מודעות",
+        subtitle: "העלו מודעה עם תמונות, מחיר ופרטי קשר בקלות",
+        icon: require('@/assets/aboutus/horse-rider.png')
+    },
+    {
+        title: "חנות ושירותים",
+        subtitle: "כל מה שצריך אחרי שמצאתם חבר חדש",
         icon: require('@/assets/aboutus/products.png')
     }
 ];
