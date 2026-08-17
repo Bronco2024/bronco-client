@@ -27,4 +27,10 @@ describe("Pets & Bones catalog", () => {
     const byText = filterListings(PET_LISTINGS, { searchText: "גולדן" });
     expect(byText.some((listing) => listing.name.includes("גולדן"))).toBe(true);
   });
+
+  test("filters listings by category name", () => {
+    const cats = filterListings(PET_LISTINGS, { category: "חתולים" });
+    expect(cats.length).toBeGreaterThan(0);
+    expect(cats.every((listing) => listing.category === "חתולים")).toBe(true);
+  });
 });

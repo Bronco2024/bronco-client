@@ -57,6 +57,12 @@
   padding: 36px 0 80px;
 }
 
+.category-count {
+  margin: -8px 0 20px;
+  color: #6d7b88;
+  font-weight: 700;
+}
+
 .category-search {
   width: 100%;
   max-width: 760px;

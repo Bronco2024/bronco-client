@@ -11,6 +11,11 @@
     box-shadow 0.2s ease;
 }
 
+.listing-card:focus-visible {
+  outline: 3px solid rgba(255, 134, 28, 0.55);
+  outline-offset: 2px;
+}
+
 .listing-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 28px rgba(23, 59, 94, 0.11);

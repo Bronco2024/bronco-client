@@ -98,6 +98,10 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
           <button type="submit">חיפוש</button>
         </form>
 
+        <p className="category-count">
+          {filteredListings.length} מודעות
+        </p>
+
         {filteredListings.length > 0 ? (
           <div className="listings-grid">
             {filteredListings.map((listing) => (

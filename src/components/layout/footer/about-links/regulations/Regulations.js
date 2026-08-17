@@ -4,13 +4,13 @@ import './Regulations.css';
 const Regulations = () => {
     return (
         <div className="regulations-section">
-            <h2 className="regulations-heading">תקנון שימוש לאתר HorseHub</h2>
-            <p className="regulations-date">עדכון אחרון: 08/2025</p>
+            <h2 className="regulations-heading">תקנון שימוש לאתר Pets & Bones</h2>
+            <p className="regulations-date">עדכון אחרון: 08/2026</p>
 
             <div className="regulations-block">
                 <h3>1. מבוא</h3>
                 <p>
-                    ברוכים הבאים ל-HorseHub (www.horsehub.co.il), אתר המאפשר למשתמשים לפרסם מודעות למכירת סוסים, זרע, אביזרים נלווים ומוצרים הקשורים לסוסים.
+                    ברוכים הבאים ל-Pets & Bones, אתר המאפשר למשתמשים לפרסם ולחפש מודעות של חיות מחמד, אימוץ, אביזרים ושירותים נלווים.
                     השימוש באתר כפוף לתנאים המפורטים בתקנון זה.
                 </p>
             </div>

@@ -1,5 +1,5 @@
 import './Header.css';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faUser,
@@ -9,21 +9,66 @@ import {
     faTimes,
     faHouseUser,
     faGear,
-    faHeart
+    faHeart,
+    faPaw,
+    faChevronDown
 } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { PET_CATEGORIES } from '@/data/pets';
 import Loading from '../../loading-screen/Loading';
 
 const Header = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { currentUser, loading, logout } = useAuth();
+    const headerRef = useRef(null);
 
     const [showMenu, setShowMenu] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+    const [showCategories, setShowCategories] = useState(false);
+
+    const closeMenus = () => {
+        setShowMenu(false);
+        setShowProfileDropdown(false);
+        setShowCategories(false);
+    };
+
+    useEffect(() => {
+        closeMenus();
+    }, [location.pathname]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (headerRef.current && !headerRef.current.contains(event.target)) {
+                setShowProfileDropdown(false);
+                setShowCategories(false);
+            }
+        };
+
+        const handleEscape = (event) => {
+            if (event.key === "Escape") {
+                closeMenus();
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("keydown", handleEscape);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("keydown", handleEscape);
+        };
+    }, []);
+
+    useEffect(() => {
+        document.body.style.overflow = showMenu ? "hidden" : "";
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [showMenu]);
 
     const handlePublishAd = () => {
+        closeMenus();
         if (currentUser === null) {
             navigate('/login');
         } else {
@@ -32,188 +77,209 @@ const Header = () => {
     };
 
     const handleLogout = async () => {
-        toggleProfileDropdown();
+        closeMenus();
         await logout();
         navigate('/');
     };
 
-    const toggleProfileDropdown = () => {
-        setShowProfileDropdown(!showProfileDropdown);
-    };
+    const isCategoryActive = PET_CATEGORIES.some(
+        (category) => location.pathname === category.path
+    );
 
     return (
-        <nav className="navbar">
+        <nav className="navbar" ref={headerRef}>
+            <div className="navbar-inner">
+                <Link to="/" className="brand-link" onClick={closeMenus}>
+                    <span className="brand-mark" aria-hidden="true">
+                        <FontAwesomeIcon icon={faPaw} />
+                    </span>
+                    <span className="brand-copy">
+                        <span className="brand-text">Pets & Bones</span>
+                        <span className="brand-tagline">לוח חיות מחמד</span>
+                    </span>
+                </Link>
 
-            <div className="navbar-buttons">
-
-                <button
-                    className="navbar-button favorites-button"
-                    onClick={() => navigate('/favorites')}
-                    aria-label="מועדפים"
-                >
-                    מועדפים
-                    <FontAwesomeIcon
-                        icon={faHeart}
-                        style={{ marginLeft: '8px' }}
-                    />
-                </button>
-
-                <button
-                    className="publish-ad-button"
-                    onClick={handlePublishAd}
-                >
-                    פרסום מודעה
-                    <FontAwesomeIcon
-                        icon={faPlus}
-                        style={{ marginLeft: '8px' }}
-                    />
-                </button>
-
-                {loading ? (
-                    <Loading size={24} fullscreen={false} />
-                ) : currentUser ? (
-
-                    <div className="profile-dropdown-container">
-
+                <div className="navbar-links">
+                    <div className={`categories-menu ${showCategories ? "open" : ""}`}>
                         <button
-                            className="navbar-button"
-                            onClick={toggleProfileDropdown}
+                            className={`navbar-text-link ${isCategoryActive ? "active" : ""}`}
+                            type="button"
+                            aria-expanded={showCategories}
+                            aria-haspopup="true"
+                            onClick={() => {
+                                setShowCategories((open) => !open);
+                                setShowProfileDropdown(false);
+                            }}
                         >
-                            פרופיל
-                            <FontAwesomeIcon
-                                icon={faUser}
-                                style={{ marginLeft: '8px' }}
-                            />
+                            קטגוריות
+                            <FontAwesomeIcon icon={faChevronDown} />
                         </button>
 
-                        {showProfileDropdown && (
-                            <div className="profile-dropdown">
+                        {showCategories && (
+                            <div className="categories-panel" role="menu">
+                                {PET_CATEGORIES.map((category) => (
+                                    <Link
+                                        key={category.slug}
+                                        to={category.path}
+                                        className="categories-panel-item"
+                                        onClick={closeMenus}
+                                    >
+                                        <img src={category.image} alt="" />
+                                        <span>
+                                            <strong>{category.name}</strong>
+                                            <small>{category.subtitle}</small>
+                                        </span>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
-                                {currentUser?.isAdmin && (
+                    <NavLink
+                        to="/adoption"
+                        className={({ isActive }) =>
+                            `navbar-text-link ${isActive ? "active" : ""}`
+                        }
+                    >
+                        אימוץ
+                    </NavLink>
+                    <NavLink
+                        to="/listings"
+                        className={({ isActive }) =>
+                            `navbar-text-link ${isActive ? "active" : ""}`
+                        }
+                    >
+                        כל המודעות
+                    </NavLink>
+                </div>
+
+                <div className="navbar-buttons">
+                    <button
+                        className="navbar-button favorites-button"
+                        onClick={() => navigate('/favorites')}
+                        aria-label="מועדפים"
+                    >
+                        <span>מועדפים</span>
+                        <FontAwesomeIcon icon={faHeart} />
+                    </button>
+
+                    <button
+                        className="publish-ad-button"
+                        onClick={handlePublishAd}
+                    >
+                        פרסום מודעה
+                        <FontAwesomeIcon icon={faPlus} />
+                    </button>
+
+                    {loading ? (
+                        <Loading size={24} fullscreen={false} />
+                    ) : currentUser ? (
+                        <div className="profile-dropdown-container">
+                            <button
+                                className="navbar-button"
+                                onClick={() => {
+                                    setShowProfileDropdown((open) => !open);
+                                    setShowCategories(false);
+                                }}
+                                aria-expanded={showProfileDropdown}
+                            >
+                                פרופיל
+                                <FontAwesomeIcon icon={faUser} />
+                            </button>
+
+                            {showProfileDropdown && (
+                                <div className="profile-dropdown">
+                                    {currentUser?.isAdmin && (
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => {
+                                                closeMenus();
+                                                navigate('/admin');
+                                            }}
+                                        >
+                                            ניהול אתר
+                                            <FontAwesomeIcon icon={faGear} />
+                                        </button>
+                                    )}
+
                                     <button
                                         className="dropdown-item"
                                         onClick={() => {
-                                            toggleProfileDropdown();
-                                            navigate('/admin');
+                                            closeMenus();
+                                            navigate('/profile');
                                         }}
                                     >
-                                        ניהול אתר
-                                        <FontAwesomeIcon
-                                            icon={faGear}
-                                            style={{ marginLeft: '8px' }}
-                                        />
+                                        אזור אישי
+                                        <FontAwesomeIcon icon={faHouseUser} />
                                     </button>
-                                )}
 
-                                <button
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                        toggleProfileDropdown();
-                                        navigate('/profile');
-                                    }}
-                                >
-                                    אזור אישי
-                                    <FontAwesomeIcon
-                                        icon={faHouseUser}
-                                        style={{ marginLeft: '8px' }}
-                                    />
-                                </button>
+                                    <button
+                                        className="dropdown-item"
+                                        onClick={() => {
+                                            closeMenus();
+                                            navigate('/favorites');
+                                        }}
+                                    >
+                                        מועדפים
+                                        <FontAwesomeIcon icon={faHeart} />
+                                    </button>
 
-                                <button
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                        toggleProfileDropdown();
-                                        navigate('/favorites');
-                                    }}
-                                >
-                                    מועדפים
-                                    <FontAwesomeIcon
-                                        icon={faHeart}
-                                        style={{ marginLeft: '8px' }}
-                                    />
-                                </button>
-
-                                <button
-                                    className="dropdown-item"
-                                    onClick={handleLogout}
-                                >
-                                    התנתק
-                                    <FontAwesomeIcon
-                                        icon={faSignOut}
-                                        style={{ marginLeft: '8px' }}
-                                    />
-                                </button>
-
-                            </div>
-                        )}
-
-                    </div>
-
-                ) : (
-
-                    <button
-                        className="navbar-button"
-                        onClick={() => navigate('/login')}
-                    >
-                        התחברות
-                        <FontAwesomeIcon
-                            icon={faUser}
-                            style={{ marginLeft: '8px' }}
-                        />
-                    </button>
-
-                )}
-
-            </div>
-
-            <div className="navbar-logo">
-
-                <div className="header-categories">
+                                    <button
+                                        className="dropdown-item"
+                                        onClick={handleLogout}
+                                    >
+                                        התנתק
+                                        <FontAwesomeIcon icon={faSignOut} />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <button
+                            className="navbar-button"
+                            onClick={() => navigate('/login')}
+                        >
+                            התחברות
+                            <FontAwesomeIcon icon={faUser} />
+                        </button>
+                    )}
 
                     <button
                         className="navbar-button menu-icon"
-                        onClick={() => setShowMenu(!showMenu)}
+                        onClick={() => {
+                            setShowMenu((open) => !open);
+                            setShowCategories(false);
+                            setShowProfileDropdown(false);
+                        }}
+                        aria-label={showMenu ? "סגירת תפריט" : "פתיחת תפריט"}
+                        aria-expanded={showMenu}
                     >
-                        {showMenu ? (
-                            <FontAwesomeIcon icon={faTimes} />
-                        ) : (
-                            <FontAwesomeIcon icon={faBars} />
-                        )}
+                        <FontAwesomeIcon icon={showMenu ? faTimes : faBars} />
                     </button>
+                </div>
+            </div>
 
-                    <div
-                        className={`navbar-buttons-category ${
-                            showMenu ? "show" : ""
-                        }`}
-                    >
+            {showMenu && (
+                <div className="mobile-menu">
+                    <div className="mobile-menu-links">
+                        <Link to="/listings" onClick={closeMenus}>כל המודעות</Link>
+                        <Link to="/adoption" onClick={closeMenus}>אימוץ</Link>
+                        <Link to="/favorites" onClick={closeMenus}>מועדפים</Link>
+                    </div>
+                    <p className="mobile-menu-label">קטגוריות</p>
+                    <div className="mobile-categories">
                         {PET_CATEGORIES.map((category) => (
                             <Link
                                 key={category.slug}
                                 to={category.path}
-                                className="navbar-button-category"
-                                onClick={() => setShowMenu(false)}
+                                onClick={closeMenus}
                             >
                                 {category.name}
                             </Link>
                         ))}
-                        <Link
-                            to="/adoption"
-                            className="navbar-button-category"
-                            onClick={() => setShowMenu(false)}
-                        >
-                            אימוץ
-                        </Link>
                     </div>
-
                 </div>
-
-                <Link to="/" className="brand-link">
-                    <span className="brand-mark">🐾</span>
-                    <span className="brand-text">Pets & Bones</span>
-                </Link>
-
-            </div>
-
+            )}
         </nav>
     );
 };
