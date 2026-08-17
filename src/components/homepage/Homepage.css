@@ -978,9 +978,8 @@
     font-size: 14px;
   }
 
-  .adoption-details {
+  .adoption-meta .listing-meta-item {
     gap: 5px;
-
     font-size: 10px;
   }
 
