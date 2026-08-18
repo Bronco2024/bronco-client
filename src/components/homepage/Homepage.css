@@ -1132,21 +1132,11 @@
   }
 
   .hero-visual {
-    display: none;
-  }
-
-  .hero-visual-frame,
-  .hero-stat-card {
-    display: none;
-  }
-
-  .hero {
-    padding: 18px 0 22px;
-    border-radius: 0 0 22px 22px;
+    min-height: 200px;
   }
 
   .hero-visual-frame {
-    min-height: 260px;
+    min-height: 200px;
   }
 
   .hero-stat-card--adoption {
