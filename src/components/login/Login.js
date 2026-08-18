@@ -5,7 +5,8 @@ import './Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faEye,
-    faEyeSlash
+    faEyeSlash,
+    faPaw
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
@@ -276,6 +277,13 @@ const Login = () => {
     return (
 
         <div className="login-container">
+
+            <div className="auth-brand">
+                <span className="auth-brand-mark" aria-hidden="true">
+                    <FontAwesomeIcon icon={faPaw} />
+                </span>
+                <span>Pets & Bones</span>
+            </div>
 
             <h2 className="login-title">
                 היי, טוב לראות אותך

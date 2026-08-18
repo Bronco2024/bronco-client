@@ -1,9 +1,9 @@
 import './Footer.css';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFacebook, faInstagram, faTiktok } from "@fortawesome/free-brands-svg-icons";
 import { faPaw } from "@fortawesome/free-solid-svg-icons";
 import { PET_CATEGORIES, SITE_SERVICES } from '@/data/pets';
+import { SITE_NAME } from '@/data/site-config';
 
 const Footer = () => {
     return (
@@ -15,7 +15,7 @@ const Footer = () => {
                             <FontAwesomeIcon icon={faPaw} />
                         </span>
                         <div>
-                            <strong>Pets & Bones</strong>
+                            <strong>{SITE_NAME}</strong>
                             <p>המקום שמחבר בין חיות מחמד, אנשים ושירותים במקום אחד.</p>
                         </div>
                     </div>
@@ -62,41 +62,12 @@ const Footer = () => {
                         </a>
                         <a href="tel:0547926338" className="contact-link">054-792-6338</a>
                     </div>
-                    <div className="social-links">
-                        <a
-                            href="https://www.tiktok.com/@horsehub5?_t=ZS-8z5k2Mo5VBs&_r=1"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="social-link"
-                            aria-label="TikTok"
-                        >
-                            <FontAwesomeIcon icon={faTiktok} />
-                        </a>
-                        <a
-                            href="https://www.instagram.com/horse.hub25?igsh=MWU1eWUwbHRjb3FwMQ=="
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="social-link"
-                            aria-label="Instagram"
-                        >
-                            <FontAwesomeIcon icon={faInstagram} />
-                        </a>
-                        <a
-                            href="https://www.facebook.com/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="social-link"
-                            aria-label="Facebook"
-                        >
-                            <FontAwesomeIcon icon={faFacebook} />
-                        </a>
-                    </div>
                 </div>
             </div>
 
             <div className="footer-bottom">
                 <p className="copyright-text">
-                    © {new Date().getFullYear()} Pets & Bones. כל הזכויות שמורות.
+                    © {new Date().getFullYear()} {SITE_NAME}. כל הזכויות שמורות.
                 </p>
             </div>
         </footer>

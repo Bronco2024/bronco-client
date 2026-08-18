@@ -1,6 +1,29 @@
 import React from 'react';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faBoxOpen,
+    faHeart,
+    faHouse,
+    faPaw,
+    faPlus,
+    faStethoscope,
+    faStore,
+    faUsers,
+} from "@fortawesome/free-solid-svg-icons";
 import { ABOUTUS_FEATURES } from '@components/utils/constants/Constants';
+import { SITE_NAME } from '@/data/site-config';
 import './AboutUs.css'
+
+const FEATURE_ICONS = {
+    paw: faPaw,
+    heart: faHeart,
+    box: faBoxOpen,
+    stethoscope: faStethoscope,
+    house: faHouse,
+    users: faUsers,
+    plus: faPlus,
+    store: faStore,
+};
 
 const AboutUs = () => {
     return (
@@ -10,27 +33,25 @@ const AboutUs = () => {
                     <img
                         className="main-image"
                         src="/hero-pets.png"
-                        alt="Pets & Bones"
+                        alt={SITE_NAME}
                         loading='lazy'
                     />
                 </div>
 
                 <div className="about-text-container">
-                    <h2 className="about-heading">Pets & Bones – הבית של חיות המחמד</h2>
+                    <h2 className="about-heading">{SITE_NAME} – הבית של חיות המחמד</h2>
                     <p className="about-description">
-                        Pets & Bones היא הפלטפורמה שמחברת בין אנשים, חיות מחמד ושירותים במקום אחד.
+                        {SITE_NAME} היא הפלטפורמה שמחברת בין אנשים, חיות מחמד ושירותים במקום אחד.
                         כאן אפשר למצוא מודעות למכירה ולאימוץ, לפרסם חיה, ולגלות וטרינרים, פנסיונים ואביזרים מכל הארץ.
                     </p>
 
                     <div className="feature-list">
-                        {ABOUTUS_FEATURES.map((feature, i) => (
-                            <div className="feature-item" key={i}>
+                        {ABOUTUS_FEATURES.map((feature) => (
+                            <div className="feature-item" key={feature.title}>
                                 <div className="feature-icon-container">
-                                    <img
+                                    <FontAwesomeIcon
                                         className="feature-icon"
-                                        src={feature.icon}
-                                        alt=""
-                                        loading='lazy'
+                                        icon={FEATURE_ICONS[feature.icon] || faPaw}
                                     />
                                 </div>
                                 <div className="feature-text">
@@ -44,8 +65,8 @@ const AboutUs = () => {
 
                 <div className="feature-extra-text">
                     <p>אנחנו מאמינים בשקיפות, באחריות כלפי החיות, ובקהילה שמחברת בין אנשים שאוהבים אותן באמת.<br />
-                    Pets & Bones הוא לא רק לוח מודעות — זה מקום מפגש.</p>
-                    <p><strong>ברוכים הבאים ל־Pets & Bones, המקום שבו מתחיל הסיפור הבא</strong></p>
+                    {SITE_NAME} הוא לא רק לוח מודעות — זה מקום מפגש.</p>
+                    <p><strong>ברוכים הבאים ל־{SITE_NAME}, המקום שבו מתחיל הסיפור הבא</strong></p>
                 </div>
             </div>
         </div>

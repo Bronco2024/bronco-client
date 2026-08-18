@@ -1,43 +1,58 @@
 .loading-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; /* stays on top */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fffaf7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading-inline .loading-content {
+  flex-direction: row;
+  gap: 8px;
+}
+
+.loading-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #173b5e;
+  color: #ff861c;
+  animation: paw-pulse 1.1s ease-in-out infinite;
+}
+
+.loading-text {
+  margin: 0;
+  color: #173b5e;
+  font-weight: 800;
+  direction: rtl;
+}
+
+@keyframes paw-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 134, 28, 0.28);
   }
-  
-  .loading-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 10px rgba(255, 134, 28, 0);
   }
-  
-  .horse {
-    width: 250px;
-    height: auto;
-    animation: bounce 1.2s infinite;
-  }
-  
-  .loading-text {
-    margin-top: 20px;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    direction: rtl;
-  }
-  
-  /* Simple bounce effect */
-  @keyframes bounce {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-15px);
-    }
-  }
-  
+}
