@@ -254,7 +254,7 @@ function Homepage() {
       <section className="categories">
         <div className="section-header">
           <span className="section-kicker">גלו את העולם שלנו</span>
-          <h2>🐾 קטגוריות חיות</h2>
+          <h2>קטגוריות חיות</h2>
           <p>בחרו את סוג החיה שמעניין אתכם</p>
         </div>
 
@@ -345,7 +345,7 @@ function Homepage() {
 
       <section className="adoption-section">
         <div className="section-header">
-          <span className="section-kicker">❤️ תנו להם בית</span>
+          <span className="section-kicker">תנו להם בית</span>
           <h2>אימוץ חיות</h2>
           <p>חבר חדש מחכה לכם — אולי זה בדיוק הוא.</p>
         </div>

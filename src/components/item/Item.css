@@ -41,7 +41,7 @@
 
     display: block;
 
-    object-fit: contain;
+    object-fit: cover;
 
     background: #f4f6f8;
 }
@@ -61,6 +61,21 @@
 
     color: #173b5e;
     font-size: 1rem;
+}
+
+.item-back {
+    width: fit-content;
+    margin-bottom: 16px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-orange);
+    font-size: 0.92rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .item-info h1 {
@@ -97,6 +112,8 @@
     align-items: center;
     justify-content: center;
 
+    gap: 8px;
+
     border: 1px solid #e4e9ed;
     border-radius: 20px;
 
@@ -118,6 +135,44 @@
 /* ==================================================
    VERIFIED
 ================================================== */
+
+.item-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.item-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #f5f7f9;
+    border: 1px solid #e4e9ed;
+    color: #173b5e;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.item-badge--adoption {
+    background: var(--color-navy);
+    border-color: var(--color-navy);
+    color: #fff;
+}
+
+.item-badge--verified {
+    background: #fff7ee;
+    border-color: #ffd7b0;
+    color: var(--color-navy);
+}
+
+.item-badge img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+}
 
 .verified,
 .verified-placeholder {
@@ -156,6 +211,13 @@
    MORE DETAILS
 ================================================== */
 
+.adoption-note {
+    margin: 0 0 12px;
+    color: var(--color-navy);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
 .more-details {
     margin-bottom: 20px;
     padding: 18px;
@@ -166,6 +228,29 @@
     border-right: 4px solid #ff861c;
 
     border-radius: 14px;
+}
+
+.more-details h3 {
+    margin: 0 0 14px;
+}
+
+.item-details-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 18px;
+    margin: 0;
+}
+
+.item-details-grid dt {
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.item-details-grid dd {
+    margin: 0;
+    color: var(--color-navy);
+    font-weight: 700;
 }
 
 .price {

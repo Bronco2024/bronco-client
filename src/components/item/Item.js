@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import './Item.css';
-import { faPhoneAlt, faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faPhoneAlt, faLocationDot, faArrowRight, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FormatDateTimestampToDate } from '@components/utils/constants/Functions';
 import { collection, getDocs, limit, query, where, Timestamp } from 'firebase/firestore';
@@ -84,6 +84,9 @@ const ItemPage = () => {
                 <div className="item-info">
                     <h1>המודעה לא נמצאה</h1>
                     <p className="description">חזרו לדף הבית ובחרו מודעה מהרשימה.</p>
+                    <button className="item-back" type="button" onClick={() => navigate("/")}>
+                        חזרה לדף הבית
+                    </button>
                 </div>
             </div>
         );
@@ -142,33 +145,82 @@ const ItemPage = () => {
                 </div>
 
                 <div className="item-info">
-                    <div className="top-row">
-                        {ad.hasCertificate ? (
-                            <div className="verified">
-                                <img src={require('@/assets/bitcoin-icons--verify-outline.png')} alt="verified" />
-                                <span>עם תעודה</span>
-                            </div>
-                        ) : (<div className="verified-placeholder" />)}
+                    <button
+                        className="item-back"
+                        type="button"
+                        onClick={() => navigate(-1)}
+                    >
+                        <FontAwesomeIcon icon={faArrowRight} />
+                        חזרה
+                    </button>
 
-                        <div className="location">
-                            <span>{ad.location}</span>
-                            <FontAwesomeIcon icon={faLocationDot} style={{ marginLeft: '8px', marginRight: '8px' }} />
+                    <div className="top-row">
+                        <div className="item-badges">
+                            {ad.forAdoption && (
+                                <span className="item-badge item-badge--adoption">
+                                    <FontAwesomeIcon icon={faHeart} />
+                                    לאימוץ
+                                </span>
+                            )}
+                            {ad.hasCertificate ? (
+                                <span className="item-badge item-badge--verified">
+                                    <img src={require('@/assets/bitcoin-icons--verify-outline.png')} alt="" />
+                                    עם תעודה
+                                </span>
+                            ) : null}
+                            {ad.category && (
+                                <span className="item-badge">{ad.category}</span>
+                            )}
                         </div>
+
+                        {ad.location && (
+                            <div className="location">
+                                <span>{ad.location}</span>
+                                <FontAwesomeIcon icon={faLocationDot} />
+                            </div>
+                        )}
                     </div>
                     <h1>{getAdTitle(ad)}</h1>
-                    {ad.forAdoption && <p className="description">מודעה לאימוץ — תנו בית חם לחיית מחמד.</p>}
+                    {ad.forAdoption && (
+                        <p className="adoption-note">מודעה לאימוץ — תנו בית חם לחיית מחמד.</p>
+                    )}
                     <p className="description">{ad.description}</p>
 
                     {showDetails && (
                         <div className="more-details">
                             <h3>פרטים נוספים</h3>
-                            {ad.type && <p><strong>סוג:</strong> {ad.type}</p>}
-                            {ad.age && <p><strong>גיל:</strong> {ad.age}</p>}
-                            {ad.breed && <p><strong>גזע:</strong> {ad.breed}</p>}
-                            {ad.gender && <p><strong>מין:</strong> {ad.gender}</p>}
-                            {ad.category === "זרע" && (
-                                <p><strong>סוג זרע:</strong> {ad.seed_type} - {ad.semen_type}</p>
-                            )}
+                            <dl className="item-details-grid">
+                                {ad.type && (
+                                    <>
+                                        <dt>סוג</dt>
+                                        <dd>{ad.type}</dd>
+                                    </>
+                                )}
+                                {ad.age && (
+                                    <>
+                                        <dt>גיל</dt>
+                                        <dd>{ad.age}</dd>
+                                    </>
+                                )}
+                                {ad.breed && (
+                                    <>
+                                        <dt>גזע</dt>
+                                        <dd>{ad.breed}</dd>
+                                    </>
+                                )}
+                                {ad.gender && (
+                                    <>
+                                        <dt>מין</dt>
+                                        <dd>{ad.gender}</dd>
+                                    </>
+                                )}
+                                {ad.category === "זרע" && (
+                                    <>
+                                        <dt>סוג זרע</dt>
+                                        <dd>{ad.seed_type} - {ad.semen_type}</dd>
+                                    </>
+                                )}
+                            </dl>
                             {formatPrice(ad.price) && (
                                 <p className="price">{formatPrice(ad.price)}</p>
                             )}

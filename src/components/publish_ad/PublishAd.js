@@ -191,8 +191,11 @@ const PublishAd = () => {
         formData.category === "סוסים" && formData.breed === PET_BREED_OTHER;
 
     return (
-        <div className="publish-ad-container" style={{ textAlign: 'right' }}>
+        <div className="publish-ad-container">
             <h1>פרסם מודעה</h1>
+            <p className="publish-ad-lead">
+                מלאו את הפרטים, הוסיפו תמונות ברורות, והמודעה תופיע באתר לאחר אישור מנהל.
+            </p>
             <form onSubmit={handleSubmit} className="publish-ad-form">
 
                 <label htmlFor="category"> קטגוריה</label>
@@ -305,7 +308,7 @@ const PublishAd = () => {
                             </div>
                         </div>
 
-                        <div style={{ marginTop: '3%', marginBottom: '1%' }}>
+                        <div className="checkbox-row">
                             <label htmlFor="hasCertificate">
                                 <input
                                     type="checkbox"
@@ -314,8 +317,7 @@ const PublishAd = () => {
                                     checked={formData.hasCertificate || false}
                                     onChange={handleInputChange}
                                 />
-
-                                &nbsp; עם תעודה
+                                עם תעודה
                             </label>
                         </div>
                     </div>
@@ -351,7 +353,7 @@ const PublishAd = () => {
                             placeholder="לדוגמה: 3 חודשים"
                         />
 
-                        <div style={{ marginTop: '3%', marginBottom: '1%' }}>
+                        <div className="checkbox-row">
                             <label htmlFor="hasCertificate">
                                 <input
                                     type="checkbox"
@@ -360,14 +362,14 @@ const PublishAd = () => {
                                     checked={formData.hasCertificate || false}
                                     onChange={handleInputChange}
                                 />
-                                &nbsp; עם תעודה
+                                עם תעודה
                             </label>
                         </div>
                     </div>
                 )}
 
                 {isPetMarketplaceCategory(formData.category) && (
-                    <div style={{ marginTop: '1%', marginBottom: '1%' }}>
+                    <div className="checkbox-row">
                         <label htmlFor="forAdoption">
                             <input
                                 type="checkbox"
@@ -376,7 +378,7 @@ const PublishAd = () => {
                                 checked={formData.forAdoption || false}
                                 onChange={handleInputChange}
                             />
-                            &nbsp; מודעה לאימוץ
+                            מודעה לאימוץ
                         </label>
                     </div>
                 )}
@@ -385,7 +387,7 @@ const PublishAd = () => {
                     formData.category === "זרע" && (
                         <div className="publish-ad-form" >
                             <label htmlFor="seeds_types">סוג זרע</label>
-                            <div style={{ display: 'flex', flexDirection: 'row', direction: 'rtl', gap: '10px' }}>
+                            <div className="seed-row">
                                 <select
                                     id="seeds_types"
                                     name="seed_type"
@@ -416,7 +418,7 @@ const PublishAd = () => {
                                 </select>
                             </div>
 
-                            <div style={{ marginTop: '3%', marginBottom: '1%' }}>
+                            <div className="checkbox-row">
                                 <label htmlFor="hasCertificate">
                                     <input
                                         type="checkbox"
@@ -425,8 +427,7 @@ const PublishAd = () => {
                                         checked={formData.hasCertificate || false}
                                         onChange={handleInputChange}
                                     />
-
-                                    &nbsp; עם תעודת הרבעה
+                                    עם תעודת הרבעה
                                 </label>
                             </div>
                         </div>
@@ -462,7 +463,7 @@ const PublishAd = () => {
                     value={formData.description}
                     onChange={handleChange}
                     required
-                    style={{ height: 100 }}
+                    rows={5}
                 />
 
                 <label htmlFor="phoneNumber">שם איש קשר</label>
@@ -474,13 +475,13 @@ const PublishAd = () => {
                     required
                 />
 
-                <label htmlFor="phoneNumber">
-                {formData.phoneNumber && (
-                        <span>
-                            {phoneValid ? "✅" : "❌"}
+                <label htmlFor="phoneNumber" className="phone-label">
+                    <span>מספר טלפון</span>
+                    {formData.phoneNumber && (
+                        <span className={`phone-status ${phoneValid ? "is-valid" : "is-invalid"}`}>
+                            {phoneValid ? "מספר תקין" : "מספר לא תקין"}
                         </span>
                     )}
-                  {" "} מספר טלפון 
                 </label>
                 <input
                     type="tel"
