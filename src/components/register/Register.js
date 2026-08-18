@@ -31,7 +31,7 @@ const Register = () => {
           .catch((error) => {
             console.error(error);
           });
-      }, []);
+      }, [navigate]);
 
     const handleLoginRedirect = () => {
         navigate('/login');
@@ -98,7 +98,7 @@ const Register = () => {
 
     const handleGoogleSignup = async () => {
         try {
-            handleGoogleSignupAndSignIn()
+            await handleGoogleSignupAndSignIn();
         } catch (error) {
             setError("שגיאה בהרשמה עם Google");
             Sentry.captureException(error, {

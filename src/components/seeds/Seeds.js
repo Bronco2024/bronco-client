@@ -20,6 +20,25 @@ import SeedsFilters from "@components/utils/filters/SeedsFilters";
 import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import Paganation from "@components/utils/paganation/Paganation";
 
+const parseNumericPrice = (price) => {
+    if (typeof price === "number") return price;
+    if (typeof price === "string") {
+        const normalized = Number(price.replace(/[^\d.-]/g, ""));
+        return Number.isFinite(normalized) ? normalized : Number.MAX_SAFE_INTEGER;
+    }
+    return Number.MAX_SAFE_INTEGER;
+};
+
+const sortAds = (items, sortBy = "newest") => {
+    const sorted = [...items];
+    if (sortBy === "priceAsc") {
+        sorted.sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
+    } else if (sortBy === "priceDesc") {
+        sorted.sort((a, b) => parseNumericPrice(b.price) - parseNumericPrice(a.price));
+    }
+    return sorted;
+};
+
 const Seeds = () => {
     const navigate = useNavigate();
     const [adList, setAdList] = useState([]);
@@ -34,7 +53,8 @@ const Seeds = () => {
         semen_type: "",
         hasCertificate: "",
         district: "",
-        location: ""
+        location: "",
+        sortBy: "newest",
     });
 
     const categoryFilter = "זרע";
@@ -62,10 +82,10 @@ const Seeds = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
-    }, [categoryFilter]);
+    }, [categoryFilter, filters.sortBy]);
 
     useEffect(() => {
         fetchAds();
@@ -83,7 +103,7 @@ const Seeds = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
         setBeforeThis(querySnapshot.docs[0]);
@@ -101,7 +121,7 @@ const Seeds = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
         setBeforeThis(querySnapshot.docs[0]);
@@ -110,7 +130,12 @@ const Seeds = () => {
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
-        setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+        setFilters((prevFilters) => {
+            if (name === "district") {
+                return { ...prevFilters, district: value, location: "" };
+            }
+            return { ...prevFilters, [name]: value };
+        });
     };
 
     const applyFilters = async () => {
@@ -119,8 +144,8 @@ const Seeds = () => {
             filters.maxPrice === 999999 &&
             filters.minPrice === 0 &&
             filters.semen_type === "" &&
-            filters.district === "" &&
-            filters.location === ""
+            filters.location === "" &&
+            filters.sortBy === "newest"
         ) {
             fetchAds();
             getTotalCount();
@@ -138,7 +163,6 @@ const Seeds = () => {
             ...(filters.maxPrice ? [where("price", "<=", (filters.maxPrice))] : []),
             ...(filters.seed_type ? [where("seed_type", "==", filters.seed_type)] : []),
             ...(filters.semen_type ? [where("semen_type", "==", filters.semen_type)] : []),
-            ...(filters.district ? [where("district", "==", filters.district)] : []),
             ...(filters.location ? [where("location", "==", filters.location)] : []),
             ...(filters.hasCertificate ? [where("hasCertificate", "==", certificate)] : []),
         ];
@@ -149,7 +173,7 @@ const Seeds = () => {
 
         const paginatedQuery = query(collectionRef, ...filterQueries, limit(ADS_PER_PAGE));
         const querySnapshot = await getDocs(paginatedQuery);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
 
         setAdList(items);
 
@@ -170,7 +194,8 @@ const Seeds = () => {
             semen_type: "",
             hasCertificate: "",
             district: "",
-            location: ""
+            location: "",
+            sortBy: "newest",
         });
     }
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { SEEDS_TYPES, SEMEN_TYPES, ISRAEL_CITIES } from "@components/utils/constants/Constants";
+import { SEEDS_TYPES, SEMEN_TYPES } from "@components/utils/constants/Constants";
+import CitySelect from "@/components/pets/CitySelect";
 import './SeedsFilters.css'
 import PriceFilters from "../../../my_components/price-filters/PriceFilters";
 
@@ -47,17 +48,22 @@ const SeedsFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                     <option value="no">לא</option>
                 </select>
 
-                <select
-                    name="location"
+                <CitySelect
                     value={filters.location}
                     onChange={handleFilterChange}
+                    required={false}
+                    emptyLabel="כל הערים"
+                    areaValue={filters.district || ""}
+                    enableAreaFilter
+                />
+                <select
+                    name="sortBy"
+                    value={filters.sortBy || "newest"}
+                    onChange={handleFilterChange}
                 >
-                    <option value="">כל הערים</option>
-                    {ISRAEL_CITIES.map((city) => (
-                        <option key={city} value={city}>
-                            {city}
-                        </option>
-                    ))}
+                    <option value="newest">הכי חדשים</option>
+                    <option value="priceAsc">מחיר מהנמוך לגבוה</option>
+                    <option value="priceDesc">מחיר מהגבוה לנמוך</option>
                 </select>
                 <PriceFilters
                     isOpen={isOpen}
@@ -120,11 +126,24 @@ const SeedsFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
 
 
                         <div className="mobile-filter-row">
-                            <select name="location" value={filters.location} onChange={handleFilterChange}>
-                                <option value="">כל הערים</option>
-                                {ISRAEL_CITIES.map((city) => (
-                                    <option key={city} value={city}>{city}</option>
-                                ))}
+                            <CitySelect
+                                value={filters.location}
+                                onChange={handleFilterChange}
+                                required={false}
+                                emptyLabel="כל הערים"
+                                areaValue={filters.district || ""}
+                                enableAreaFilter
+                            />
+                        </div>
+                        <div className="mobile-filter-row">
+                            <select
+                                name="sortBy"
+                                value={filters.sortBy || "newest"}
+                                onChange={handleFilterChange}
+                            >
+                                <option value="newest">הכי חדשים</option>
+                                <option value="priceAsc">מחיר מהנמוך לגבוה</option>
+                                <option value="priceDesc">מחיר מהגבוה לנמוך</option>
                             </select>
                         </div>
 

@@ -21,8 +21,8 @@ export default function PriceFilters({
   const MAX = 999999;
 
   const handleSliderChange = ([newMin, newMax]) => {
-    handleChange({ target: { name: "maxPrice", value: newMax } });
     handleChange({ target: { name: "minPrice", value: newMin } });
+    handleChange({ target: { name: "maxPrice", value: newMax } });
   };
 
   const open = forceOpen ? true : isOpen;
@@ -72,10 +72,9 @@ export default function PriceFilters({
           <div className="slider-wrapper">
             <Slider
               range
-              reverse
               min={MIN}
               max={MAX}
-              value={[maxPrice, minPrice]}
+              value={[Number(minPrice) || 0, Number(maxPrice) || MAX]}
               onChange={handleSliderChange}
               allowCross={false}
               styles={{

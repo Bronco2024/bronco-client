@@ -40,6 +40,10 @@ const PublishAd = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name === "district") {
+            setFormData({ ...formData, district: value, location: "" });
+            return;
+        }
         if (name === "price" || name === "ageYears" || name === "ageMonths") {
             let numericValue = Number(value);
 
@@ -502,6 +506,8 @@ const PublishAd = () => {
                 <CitySelect
                     value={formData.location}
                     onChange={handleChange}
+                    areaValue={formData.district || ""}
+                    enableAreaFilter
                 />
 
                 {
@@ -521,6 +527,7 @@ const PublishAd = () => {
                                     const numericValue = e.target.value.replace(/\D/g, '');
                                     handleChange({ target: { name: 'price', value: numericValue } });
                                 }}
+                                min={0}
                                 onInput={(e) => {
                                     if (e.target.value > 999999) e.target.value = 999999;
                                 }}

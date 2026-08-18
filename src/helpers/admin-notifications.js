@@ -13,6 +13,7 @@ import {
   ADMIN_NOTIFICATION_TYPES,
   getNotificationTitle,
 } from "@/helpers/admin-notification-helpers";
+import { sendPendingAdEmailToAdmin } from "@/helpers/admin-email";
 
 export {
   ADMIN_NOTIFICATION_TYPES,
@@ -32,6 +33,13 @@ export const createPendingAdNotification = async ({ adId, ad }) => {
     read: false,
     createdAt: new Date(),
   });
+
+  try {
+    await sendPendingAdEmailToAdmin({ adId, ad });
+  } catch (error) {
+    // Keep notification flow resilient if email provider is misconfigured.
+    console.warn("Failed to send pending ad email to admin", error);
+  }
 };
 
 export const markAdNotificationsRead = async (adId) => {
