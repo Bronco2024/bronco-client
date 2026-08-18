@@ -2,15 +2,12 @@ import { useState } from "react";
 import { BREEDS } from "@components/utils/constants/Constants";
 import CitySelect from "@/components/pets/CitySelect";
 import "./HorseFilters.css";
-import PriceFilters from "../../../my_components/price-filters/PriceFilters";
 
 const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters }) => {
-    const [isOpen, setIsOpen] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
     const toggleFilters = () => {
         setShowFilters(!showFilters);
     };
-    const togglePopup = () => setIsOpen(prev => !prev);
 
     return (
         <>
@@ -71,13 +68,28 @@ const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                     <option value="priceAsc">מחיר מהנמוך לגבוה</option>
                     <option value="priceDesc">מחיר מהגבוה לנמוך</option>
                 </select>
-                <PriceFilters
-                    isOpen={isOpen}
-                    togglePopup={togglePopup}
-                    minPrice={filters.minPrice}
-                    maxPrice={filters.maxPrice}
-                    handleChange={handleFilterChange}
-                />
+                <div className="horse-price-range">
+                    <label htmlFor="horse-min-price">מחיר מ-</label>
+                    <input
+                        id="horse-min-price"
+                        type="number"
+                        name="minPrice"
+                        min={0}
+                        value={filters.minPrice || ""}
+                        onChange={handleFilterChange}
+                        placeholder="מינימום"
+                    />
+                    <label htmlFor="horse-max-price">עד</label>
+                    <input
+                        id="horse-max-price"
+                        type="number"
+                        name="maxPrice"
+                        min={0}
+                        value={filters.maxPrice === 999999 ? "" : filters.maxPrice}
+                        onChange={handleFilterChange}
+                        placeholder="מקסימום"
+                    />
+                </div>
 
                 <button className="apply-filters" onClick={applyFilters}>חפש</button>
                 <button className="reset-filters" onClick={resetFilters}>איפוס</button>
@@ -147,13 +159,26 @@ const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                                 <option value="priceDesc">מחיר מהגבוה לנמוך</option>
                             </select>
                         </div>
-                        <div className="mobile-price-row">
-                            <PriceFilters
-                                togglePopup={togglePopup}
-                                minPrice={filters.minPrice}
-                                maxPrice={filters.maxPrice}
-                                handleChange={handleFilterChange}
-                                forceOpen={true} // Force open for mobile view
+                        <div className="mobile-price-row horse-price-range">
+                            <label htmlFor="horse-min-price-mobile">מחיר מ-</label>
+                            <input
+                                id="horse-min-price-mobile"
+                                type="number"
+                                name="minPrice"
+                                min={0}
+                                value={filters.minPrice || ""}
+                                onChange={handleFilterChange}
+                                placeholder="מינימום"
+                            />
+                            <label htmlFor="horse-max-price-mobile">עד</label>
+                            <input
+                                id="horse-max-price-mobile"
+                                type="number"
+                                name="maxPrice"
+                                min={0}
+                                value={filters.maxPrice === 999999 ? "" : filters.maxPrice}
+                                onChange={handleFilterChange}
+                                placeholder="מקסימום"
                             />
                         </div>
 

@@ -3,12 +3,24 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import PetCard from "./PetCard";
 import Loading from "@/components/loading-screen/Loading";
 import useMarketplaceAds from "@/hooks/useMarketplaceAds";
+import CitySelect from "@/components/pets/CitySelect";
+import { getPetBreeds } from "@/data/pet-breeds";
 import {
-  PET_LOCATIONS,
-  filterListings,
   getCategoryBySlug,
 } from "@/data/pets";
 import "./CategoryListings.css";
+
+const parseNumericPrice = (price) => {
+  if (typeof price === "number") return price;
+  if (typeof price === "string") {
+    const normalized = Number(price.replace(/[^\d.-]/g, ""));
+    return Number.isFinite(normalized) ? normalized : Number.MAX_SAFE_INTEGER;
+  }
+  return Number.MAX_SAFE_INTEGER;
+};
+
+const formatPriceForQuery = (value) =>
+  Number.isFinite(value) && value > 0 ? String(value) : "";
 
 const CategoryListings = ({ slug, adoptionOnly = false }) => {
   const navigate = useNavigate();
@@ -19,20 +31,86 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
   const [selectedLocation, setSelectedLocation] = useState(
     searchParams.get("location") || ""
   );
+  const [selectedArea, setSelectedArea] = useState(searchParams.get("area") || "");
+  const [selectedBreed, setSelectedBreed] = useState(searchParams.get("breed") || "");
+  const [selectedGender, setSelectedGender] = useState(searchParams.get("gender") || "");
+  const [minPrice, setMinPrice] = useState(Number(searchParams.get("minPrice")) || 0);
+  const [maxPrice, setMaxPrice] = useState(
+    Number(searchParams.get("maxPrice")) || 999999
+  );
+  const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "newest");
+
   const { listings, loading } = useMarketplaceAds({
     categoryName: adoptionOnly ? undefined : category?.name,
     adoptionOnly,
     limitCount: 50,
   });
 
-  const filteredListings = useMemo(
-    () =>
-      filterListings(listings, {
-        searchText,
-        location: selectedLocation,
-      }),
-    [listings, searchText, selectedLocation]
-  );
+  const breedOptions = useMemo(() => {
+    if (!adoptionOnly && category?.name) {
+      return getPetBreeds(category.name).filter((breed) => breed !== "אחר");
+    }
+    const fallbackBreeds = Array.from(
+      new Set(listings.map((item) => item.breed).filter(Boolean))
+    );
+    return fallbackBreeds.sort((a, b) => a.localeCompare(b, "he"));
+  }, [adoptionOnly, category?.name, listings]);
+
+  const filteredListings = useMemo(() => {
+    const text = searchText.trim().toLowerCase();
+
+    const base = listings.filter((item) => {
+      const matchesText =
+        !text ||
+        [
+          item.name,
+          item.title,
+          item.type,
+          item.category,
+          item.location,
+          item.breed,
+          item.description,
+        ]
+          .filter(Boolean)
+          .some((value) => String(value).toLowerCase().includes(text));
+
+      const matchesLocation = !selectedLocation || item.location === selectedLocation;
+      const matchesBreed = !selectedBreed || item.breed === selectedBreed;
+      const matchesGender = !selectedGender || item.gender === selectedGender;
+
+      const numericPrice = parseNumericPrice(item.price);
+      const matchesMin = !minPrice || numericPrice >= minPrice;
+      const matchesMax = !maxPrice || numericPrice <= maxPrice;
+
+      return (
+        matchesText &&
+        matchesLocation &&
+        matchesBreed &&
+        matchesGender &&
+        matchesMin &&
+        matchesMax
+      );
+    });
+
+    if (sortBy === "priceAsc") {
+      return [...base].sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
+    }
+
+    if (sortBy === "priceDesc") {
+      return [...base].sort((a, b) => parseNumericPrice(b.price) - parseNumericPrice(a.price));
+    }
+
+    return base;
+  }, [
+    listings,
+    searchText,
+    selectedLocation,
+    selectedBreed,
+    selectedGender,
+    minPrice,
+    maxPrice,
+    sortBy,
+  ]);
 
   const title = adoptionOnly
     ? "אימוץ חיות"
@@ -49,7 +127,13 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
 
     const nextParams = {};
     if (searchText.trim()) nextParams.q = searchText.trim();
+    if (selectedArea) nextParams.area = selectedArea;
     if (selectedLocation) nextParams.location = selectedLocation;
+    if (selectedBreed) nextParams.breed = selectedBreed;
+    if (selectedGender) nextParams.gender = selectedGender;
+    if (minPrice) nextParams.minPrice = formatPriceForQuery(minPrice);
+    if (maxPrice && maxPrice < 999999) nextParams.maxPrice = formatPriceForQuery(maxPrice);
+    if (sortBy !== "newest") nextParams.sortBy = sortBy;
     setSearchParams(nextParams);
   };
 
@@ -74,26 +158,104 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
 
       <section className="category-content">
         <form className="category-search" onSubmit={handleSearch}>
-          <input
-            type="text"
-            value={searchText}
-            onChange={(event) => setSearchText(event.target.value)}
-            placeholder="חיפוש לפי שם, גזע או עיר"
-          />
+          <div className="category-filter-field category-filter-field--wide">
+            <label htmlFor="category-search-text">חיפוש</label>
+            <input
+              id="category-search-text"
+              type="text"
+              value={searchText}
+              onChange={(event) => setSearchText(event.target.value)}
+              placeholder="חיפוש לפי שם, גזע או עיר"
+            />
+          </div>
 
-          <select
-            value={selectedLocation}
-            onChange={(event) => setSelectedLocation(event.target.value)}
-          >
-            <option value="">כל הערים</option>
-            {PET_LOCATIONS.map((location) => (
-              <option key={location} value={location}>
-                {location}
-              </option>
-            ))}
-          </select>
+          <div className="category-filter-field">
+            <CitySelect
+              value={selectedLocation}
+              onChange={(event) => setSelectedLocation(event.target.value)}
+              required={false}
+              emptyLabel="כל הערים"
+              areaValue={selectedArea}
+              onAreaChange={(event) => {
+                setSelectedArea(event.target.value);
+                setSelectedLocation("");
+              }}
+              enableAreaFilter
+              areaLabel="אזור"
+            />
+          </div>
 
-          <button type="submit">חיפוש</button>
+          <div className="category-filter-field">
+            <label htmlFor="category-breed">גזע / סוג</label>
+            <select
+              id="category-breed"
+              value={selectedBreed}
+              onChange={(event) => setSelectedBreed(event.target.value)}
+            >
+              <option value="">כל הגזעים</option>
+              {breedOptions.map((breed) => (
+                <option key={breed} value={breed}>
+                  {breed}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="category-filter-field">
+            <label htmlFor="category-gender">מין</label>
+            <select
+              id="category-gender"
+              value={selectedGender}
+              onChange={(event) => setSelectedGender(event.target.value)}
+            >
+              <option value="">הכל</option>
+              <option value="זכר">זכר</option>
+              <option value="נקבה">נקבה</option>
+            </select>
+          </div>
+
+          <div className="category-filter-field">
+            <label htmlFor="category-min-price">מחיר מינימלי</label>
+            <input
+              id="category-min-price"
+              type="number"
+              min={0}
+              value={minPrice || ""}
+              onChange={(event) => setMinPrice(Number(event.target.value) || 0)}
+              placeholder="מ-"
+            />
+          </div>
+
+          <div className="category-filter-field">
+            <label htmlFor="category-max-price">מחיר מקסימלי</label>
+            <input
+              id="category-max-price"
+              type="number"
+              min={0}
+              value={maxPrice === 999999 ? "" : maxPrice}
+              onChange={(event) =>
+                setMaxPrice(Number(event.target.value) || 999999)
+              }
+              placeholder="עד-"
+            />
+          </div>
+
+          <div className="category-filter-field">
+            <label htmlFor="category-sort">מיון</label>
+            <select
+              id="category-sort"
+              value={sortBy}
+              onChange={(event) => setSortBy(event.target.value)}
+            >
+              <option value="newest">הכי חדשים</option>
+              <option value="priceAsc">מחיר מהנמוך לגבוה</option>
+              <option value="priceDesc">מחיר מהגבוה לנמוך</option>
+            </select>
+          </div>
+
+          <button type="submit" className="category-submit">
+            חיפוש
+          </button>
         </form>
 
         <p className="category-count">
@@ -123,7 +285,13 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
               className="category-reset"
               onClick={() => {
                 setSearchText("");
+                setSelectedArea("");
                 setSelectedLocation("");
+                setSelectedBreed("");
+                setSelectedGender("");
+                setMinPrice(0);
+                setMaxPrice(999999);
+                setSortBy("newest");
                 setSearchParams({});
               }}
             >
