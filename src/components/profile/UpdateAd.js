@@ -267,8 +267,8 @@ const UpdateAd = () => {
         formData.category === "סוסים" && formData.breed === PET_BREED_OTHER;
 
     return (
-        <div className='update-ad-container' style={{ textAlign: 'right' }}>
-            <h1>דף עדכון מודעה</h1>
+        <div className="update-ad-container">
+            <h1>עדכון מודעה</h1>
             <form className="update-ad-form" onSubmit={handleSubmit}>
 
                 {((formData.category !== "") &&
@@ -380,7 +380,7 @@ const UpdateAd = () => {
                             </div>
                         </div>
 
-                        <div style={{ marginTop: '3%', marginBottom: '1%' }}>
+                        <div className="checkbox-row">
                             <label htmlFor="hasCertificate">
                                 <input
                                     type="checkbox"
@@ -389,8 +389,7 @@ const UpdateAd = () => {
                                     checked={formData?.hasCertificate}
                                     onChange={handleInputChange}
                                 />
-
-                                &nbsp; עם תעודה
+                                עם תעודה
                             </label>
                         </div>
                     </div>
@@ -425,7 +424,7 @@ const UpdateAd = () => {
                             placeholder="לדוגמה: 3 חודשים"
                         />
 
-                        <div style={{ marginTop: '3%', marginBottom: '1%' }}>
+                        <div className="checkbox-row">
                             <label htmlFor="hasCertificate">
                                 <input
                                     type="checkbox"
@@ -434,16 +433,31 @@ const UpdateAd = () => {
                                     checked={formData?.hasCertificate || false}
                                     onChange={handleInputChange}
                                 />
-                                &nbsp; עם תעודה
+                                עם תעודה
                             </label>
                         </div>
+                    </div>
+                )}
+
+                {isPetMarketplaceCategory(formData.category) && (
+                    <div className="checkbox-row">
+                        <label htmlFor="forAdoption">
+                            <input
+                                type="checkbox"
+                                id="forAdoption"
+                                name="forAdoption"
+                                checked={formData.forAdoption || false}
+                                onChange={handleInputChange}
+                            />
+                            מודעה לאימוץ
+                        </label>
                     </div>
                 )}
 
                 {formData.category === "זרע" && (
                     <div className="update-ad-form">
                         <label htmlFor="seeds_types">סוג זרע</label>
-                        <div style={{ display: 'flex', flexDirection: 'row', direction: 'rtl', gap: '10px' }}>
+                        <div className="seed-row">
 
                             <select
                                 id="seeds_types"
@@ -475,7 +489,7 @@ const UpdateAd = () => {
                             </select>
                         </div>
 
-                        <div style={{ marginTop: '3%', marginBottom: '1%' }}>
+                        <div className="checkbox-row">
                             <label htmlFor="hasCertificate">
                                 <input
                                     type="checkbox"
@@ -484,8 +498,7 @@ const UpdateAd = () => {
                                     checked={formData.hasCertificate || false}
                                     onChange={handleInputChange}
                                 />
-
-                                &nbsp; עם תעודת הרבעה
+                                עם תעודת הרבעה
                             </label>
                         </div>
                     </div>
@@ -518,7 +531,7 @@ const UpdateAd = () => {
                     value={formData?.description}
                     onChange={handleChange}
                     required
-                    style={{ height: 100 }}
+                    rows={5}
                 />
 
                 <label htmlFor="phoneNumber">שם איש קשר</label>
@@ -530,14 +543,15 @@ const UpdateAd = () => {
                     required
                 />
 
-                <label htmlFor="phoneNumber">
+                <label htmlFor="phoneNumber" className="phone-label">
+                    <span>מספר טלפון</span>
                     {formData.phoneNumber && (
-                        <span>
-                            {phoneValid ? "✅" : "❌"}
+                        <span className={`phone-status ${phoneValid ? "is-valid" : "is-invalid"}`}>
+                            {phoneValid ? "מספר תקין" : "מספר לא תקין"}
                         </span>
                     )}
-                    {" "} מספר טלפון
-                </label>                <input
+                </label>
+                <input
                     type="tel"
                     id="phoneNumber"
                     name="phoneNumber"
@@ -621,7 +635,7 @@ const UpdateAd = () => {
                             <h3>תמונות קיימות</h3>
                             {formData.photos.map((photoUrl, index) => (
                                 <div key={index} className="photo-item">
-                                    <img src={photoUrl} alt={`Ad ${index + 1}`} style={{ width: 100, height: 100 }} />
+                                    <img src={photoUrl} alt={`Ad ${index + 1}`} />
                                     <button type="button" className='del-photo-button' onClick={() => handleDeletePhoto(photoUrl)}>מחק</button>
                                 </div>
                             ))}

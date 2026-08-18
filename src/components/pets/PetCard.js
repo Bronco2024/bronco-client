@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import {
   FAVORITES_CHANGED_EVENT,
   isFavoriteListing,
@@ -57,7 +59,7 @@ const PetCard = ({ listing, showAdoptionBadge = false }) => {
           aria-label={favorited ? "הסר מהמועדפים" : "הוסף למועדפים"}
           onClick={handleFavorite}
         >
-          {favorited ? "♥" : "♡"}
+          <FontAwesomeIcon icon={faHeartSolid} />
         </button>
 
         <span className="listing-type">{listing.type}</span>
