@@ -320,6 +320,7 @@
   color: var(--color-navy);
   box-shadow: 0 16px 34px rgba(8, 24, 40, 0.16);
   backdrop-filter: blur(10px);
+  pointer-events: none;
 }
 
 .hero-stat-card strong {
@@ -334,15 +335,15 @@
 }
 
 .hero-stat-card--listings {
-  right: -10px;
-  bottom: 28px;
+  right: 14px;
+  bottom: 14px;
   min-width: 132px;
 }
 
 .hero-stat-card--adoption {
-  left: -8px;
-  top: 24px;
-  max-width: 210px;
+  right: 14px;
+  top: 14px;
+  max-width: 230px;
   flex-direction: row;
   align-items: center;
   gap: 10px;
@@ -356,6 +357,12 @@
 
 .hero-stat-card--adoption span {
   line-height: 1.45;
+}
+
+.hero-stat-card--adoption strong {
+  display: block;
+  font-size: 1rem;
+  line-height: 1.1;
 }
 
 /* Legacy search styles used elsewhere */
@@ -985,13 +992,13 @@
   }
 
   .hero-stat-card--listings {
-    right: 16px;
-    bottom: 16px;
+    right: 12px;
+    bottom: 12px;
   }
 
   .hero-stat-card--adoption {
-    left: 16px;
-    top: 16px;
+    right: 12px;
+    top: 12px;
   }
 
   .categories,
@@ -1135,7 +1142,9 @@
   }
 
   .hero-stat-card--adoption {
-    max-width: calc(100% - 32px);
+    max-width: calc(100% - 24px);
+    right: 12px;
+    top: 12px;
   }
 
   .categories {

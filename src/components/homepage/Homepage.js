@@ -226,7 +226,10 @@ function Homepage() {
 
             <div className="hero-stat-card hero-stat-card--adoption">
               <FontAwesomeIcon icon={faCircleCheck} />
-              <span>מודעות מאושרות על ידי צוות האתר</span>
+              <div>
+                <strong>{Math.max(listings.length, 1)}+</strong>
+                <span>מודעות מאושרות</span>
+              </div>
             </div>
           </div>
         </div>

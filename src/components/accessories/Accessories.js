@@ -128,11 +128,18 @@ const Accessories = () => {
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
+        const normalizedValue =
+            name === "minPrice" || name === "maxPrice"
+                ? Number(value) || 0
+                : value;
         setFilters((prevFilters) => {
             if (name === "district") {
                 return { ...prevFilters, district: value, location: "" };
             }
-            return { ...prevFilters, [name]: value };
+            if (name === "maxPrice" && normalizedValue === 0) {
+                return { ...prevFilters, maxPrice: 999999 };
+            }
+            return { ...prevFilters, [name]: normalizedValue };
         });
     };
 
