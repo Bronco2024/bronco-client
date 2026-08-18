@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCircleCheck,
   faHeart,
   faMagnifyingGlass,
   faPaw,
@@ -217,19 +216,6 @@ function Homepage() {
             <div className="hero-visual-frame">
               <img src="/hero-pets.png" alt="כלב וחתול" />
               <div className="hero-visual-overlay" aria-hidden="true" />
-            </div>
-
-            <div className="hero-stat-card hero-stat-card--listings">
-              <strong>{Math.max(listings.length, 1)}+</strong>
-              <span>מודעות פעילות</span>
-            </div>
-
-            <div className="hero-stat-card hero-stat-card--adoption">
-              <FontAwesomeIcon icon={faCircleCheck} />
-              <div>
-                <strong>{Math.max(listings.length, 1)}+</strong>
-                <span>מודעות מאושרות</span>
-              </div>
             </div>
           </div>
         </div>
