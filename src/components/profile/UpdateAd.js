@@ -195,7 +195,10 @@ const UpdateAd = () => {
             if (dataToSubmit.status === AD_STATUS.PENDING) {
                 await createPendingAdNotification({
                     adId: ad.id,
-                    ad: dataToSubmit,
+                    ad: {
+                        ...dataToSubmit,
+                        publisherEmail: currentUser?.email || "",
+                    },
                 });
             }
         } catch (error) {

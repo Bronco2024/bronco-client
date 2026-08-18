@@ -134,7 +134,13 @@ const PublishAd = () => {
             await setDoc(doc(db, "ads", adId), adData);
 
             if (adData.status === AD_STATUS.PENDING) {
-                await createPendingAdNotification({ adId, ad: adData });
+                await createPendingAdNotification({
+                    adId,
+                    ad: {
+                        ...adData,
+                        publisherEmail: currentUser?.email || "",
+                    },
+                });
             }
 
             /**
