@@ -52,6 +52,10 @@ const UpdateAd = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name === "district") {
+            setFormData({ ...formData, district: value, location: "" });
+            return;
+        }
         if (name === "price" || name === "ageYears" || name === "ageMonths") {
             let numericValue = Number(value);
 
@@ -570,6 +574,8 @@ const UpdateAd = () => {
                 <CitySelect
                     value={formData.location || ""}
                     onChange={handleChange}
+                    areaValue={formData.district || ""}
+                    enableAreaFilter
                 />
 
                 {((formData.category === "סוסים") ||
@@ -583,7 +589,11 @@ const UpdateAd = () => {
                                 id="price"
                                 name="price"
                                 value={formData.price}
-                                onChange={handleChange}
+                                onChange={(e) => {
+                                    const numericValue = e.target.value.replace(/\D/g, '');
+                                    handleChange({ target: { name: 'price', value: numericValue } });
+                                }}
+                                min={0}
                                 onInput={(e) => {
                                     if (e.target.value > 999999) e.target.value = 999999;
                                 }}

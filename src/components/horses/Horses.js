@@ -20,6 +20,25 @@ import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import HorseFilters from "@components/utils/filters/HorseFilters";
 import Paganation from "@components/utils/paganation/Paganation";
 
+const parseNumericPrice = (price) => {
+    if (typeof price === "number") return price;
+    if (typeof price === "string") {
+        const normalized = Number(price.replace(/[^\d.-]/g, ""));
+        return Number.isFinite(normalized) ? normalized : Number.MAX_SAFE_INTEGER;
+    }
+    return Number.MAX_SAFE_INTEGER;
+};
+
+const sortHorseAds = (items, sortBy = "newest") => {
+    const sorted = [...items];
+    if (sortBy === "priceAsc") {
+        sorted.sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
+    } else if (sortBy === "priceDesc") {
+        sorted.sort((a, b) => parseNumericPrice(b.price) - parseNumericPrice(a.price));
+    }
+    return sorted;
+};
+
 const Horses = () => {
     const navigate = useNavigate();
 
@@ -36,7 +55,8 @@ const Horses = () => {
         age: "",
         breed: "",
         district: "",
-        location: ""
+        location: "",
+        sortBy: "newest",
     });
 
     const categoryFilter = "סוסים";
@@ -65,10 +85,10 @@ const Horses = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortHorseAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
-    }, [categoryFilter]);
+    }, [categoryFilter, filters.sortBy]);
 
     useEffect(() => {
         fetchAds();
@@ -86,7 +106,7 @@ const Horses = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortHorseAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
         setBeforeThis(querySnapshot.docs[0]);
@@ -104,7 +124,7 @@ const Horses = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortHorseAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
         setBeforeThis(querySnapshot.docs[0]);
@@ -113,7 +133,12 @@ const Horses = () => {
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
-        setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+        setFilters((prevFilters) => {
+            if (name === "district") {
+                return { ...prevFilters, district: value, location: "" };
+            }
+            return { ...prevFilters, [name]: value };
+        });
     };
 
     const applyFilters = async () => {
@@ -121,10 +146,10 @@ const Horses = () => {
             filters.breed === "" &&
             filters.gender === "" &&
             filters.hasCertificate === "" &&
-            filters.district === "" &&
             filters.location === "" &&
             filters.maxPrice === 999999 &&
-            filters.minPrice === 0) {
+            filters.minPrice === 0 &&
+            filters.sortBy === "newest") {
             fetchAds();
             getTotalCount();
             setPage(1);
@@ -153,7 +178,6 @@ const Horses = () => {
             ...(filters.hasCertificate ? [where("hasCertificate", "==", certificate)] : []),
             // ...(filters.age ? [where("age", "==", parseInt(filters.age))] : []),
             ...(filters.breed ? [where("breed", "==", filters.breed)] : []),
-            ...(filters.district ? [where("district", "==", filters.district)] : []),
             ...(filters.location ? [where("location", "==", filters.location)] : []),
             ...ageQueries
         ];
@@ -164,7 +188,7 @@ const Horses = () => {
 
         const paginatedQuery = query(collectionRef, ...filterQueries, limit(ADS_PER_PAGE));
         const querySnapshot = await getDocs(paginatedQuery);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortHorseAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
 
         setAdList(items);
 
@@ -186,7 +210,8 @@ const Horses = () => {
             age: "",
             breed: "",
             district: "",
-            location: ""
+            location: "",
+            sortBy: "newest",
         });
     }
 

@@ -20,6 +20,25 @@ import AccessoriesFilters from "@components/utils/filters/AccessoriesFilters";
 import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import Paganation from "@components/utils/paganation/Paganation";
 
+const parseNumericPrice = (price) => {
+    if (typeof price === "number") return price;
+    if (typeof price === "string") {
+        const normalized = Number(price.replace(/[^\d.-]/g, ""));
+        return Number.isFinite(normalized) ? normalized : Number.MAX_SAFE_INTEGER;
+    }
+    return Number.MAX_SAFE_INTEGER;
+};
+
+const sortAds = (items, sortBy = "newest") => {
+    const sorted = [...items];
+    if (sortBy === "priceAsc") {
+        sorted.sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
+    } else if (sortBy === "priceDesc") {
+        sorted.sort((a, b) => parseNumericPrice(b.price) - parseNumericPrice(a.price));
+    }
+    return sorted;
+};
+
 const Accessories = () => {
     const navigate = useNavigate();
     const [adList, setAdList] = useState([]);
@@ -33,7 +52,8 @@ const Accessories = () => {
         minPrice: 0,
         maxPrice: 999999,
         district: "",
-        location: ""
+        location: "",
+        sortBy: "newest",
     });
 
     const categoryFilter = "אביזרים";
@@ -60,10 +80,10 @@ const Accessories = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
-    }, [categoryFilter]);
+    }, [categoryFilter, filters.sortBy]);
 
     useEffect(() => {
         fetchAds();
@@ -81,7 +101,7 @@ const Accessories = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
         setBeforeThis(querySnapshot.docs[0]);
@@ -99,7 +119,7 @@ const Accessories = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
         setBeforeThis(querySnapshot.docs[0]);
@@ -108,15 +128,20 @@ const Accessories = () => {
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
-        setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+        setFilters((prevFilters) => {
+            if (name === "district") {
+                return { ...prevFilters, district: value, location: "" };
+            }
+            return { ...prevFilters, [name]: value };
+        });
     };
 
     const applyFilters = async () => {
-        if (filters.district === "" &&
-            filters.location === "" &&
+        if (filters.location === "" &&
             filters.maxPrice === 999999 &&
             filters.minPrice === 0 &&
-            filters.accessory === "") {
+            filters.accessory === "" &&
+            filters.sortBy === "newest") {
             fetchAds();
             getTotalCount();
             setPage(1);
@@ -131,7 +156,6 @@ const Accessories = () => {
             ...(filters.minPrice ? [where("price", ">=", (filters.minPrice))] : []),
             ...(filters.maxPrice ? [where("price", "<=", (filters.maxPrice))] : []),
             ...(filters.accessory ? [where("accessory", "==", filters.accessory)] : []),
-            ...(filters.district ? [where("district", "==", filters.district)] : []),
             ...(filters.location ? [where("location", "==", filters.location)] : []),
         ];
 
@@ -141,7 +165,7 @@ const Accessories = () => {
 
         const paginatedQuery = query(collectionRef, ...filterQueries, limit(ADS_PER_PAGE));
         const querySnapshot = await getDocs(paginatedQuery);
-        const items = mapApprovedAdsFromSnapshot(querySnapshot);
+        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
 
         setAdList(items);
 
@@ -160,7 +184,8 @@ const Accessories = () => {
             minPrice: 0,
             maxPrice: 999999,
             district: "",
-            location: ""
+            location: "",
+            sortBy: "newest",
         });
     }
 

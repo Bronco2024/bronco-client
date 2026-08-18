@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { BREEDS, ISRAEL_CITIES } from "@components/utils/constants/Constants";
-import './HorseFilters.css'
+import { BREEDS } from "@components/utils/constants/Constants";
+import CitySelect from "@/components/pets/CitySelect";
+import "./HorseFilters.css";
 import PriceFilters from "../../../my_components/price-filters/PriceFilters";
 
 const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters }) => {
@@ -41,18 +42,14 @@ const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                     <option value="no">לא</option>
                 </select>
 
-                <select
-                    name="location"
+                <CitySelect
                     value={filters.location}
                     onChange={handleFilterChange}
-                >
-                    <option value="">כל הערים</option>
-                    {ISRAEL_CITIES.map((city) => (
-                        <option key={city} value={city}>
-                            {city}
-                        </option>
-                    ))}
-                </select>
+                    required={false}
+                    emptyLabel="כל הערים"
+                    areaValue={filters.district || ""}
+                    enableAreaFilter
+                />
 
                 <select
                     name="age"
@@ -64,6 +61,15 @@ const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                     <option value="young">צעיר - 9 חודשים עד 24 חודשים</option>
                     <option value="adult">בוגר - 2 עד 7 שנים</option>
                     <option value="senior">מבוגר - מעל 7 שנים</option>
+                </select>
+                <select
+                    name="sortBy"
+                    value={filters.sortBy || "newest"}
+                    onChange={handleFilterChange}
+                >
+                    <option value="newest">הכי חדשים</option>
+                    <option value="priceAsc">מחיר מהנמוך לגבוה</option>
+                    <option value="priceDesc">מחיר מהגבוה לנמוך</option>
                 </select>
                 <PriceFilters
                     isOpen={isOpen}
@@ -111,12 +117,14 @@ const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                         </div>
 
                         <div className="mobile-filter-row">
-                            <select name="location" value={filters.location} onChange={handleFilterChange}>
-                                <option value="">כל הערים</option>
-                                {ISRAEL_CITIES.map((city) => (
-                                    <option key={city} value={city}>{city}</option>
-                                ))}
-                            </select>
+                            <CitySelect
+                                value={filters.location}
+                                onChange={handleFilterChange}
+                                required={false}
+                                emptyLabel="כל הערים"
+                                areaValue={filters.district || ""}
+                                enableAreaFilter
+                            />
                         </div>
 
                         <div className="mobile-filter-row">
@@ -126,6 +134,17 @@ const HorseFilters = ({ filters, handleFilterChange, applyFilters, resetFilters 
                                 <option value="young">צעיר - 9 חודשים עד 24 חודשים</option>
                                 <option value="adult">בוגר - 2 עד 7 שנים</option>
                                 <option value="senior">מבוגר - מעל 7 שנים</option>
+                            </select>
+                        </div>
+                        <div className="mobile-filter-row">
+                            <select
+                                name="sortBy"
+                                value={filters.sortBy || "newest"}
+                                onChange={handleFilterChange}
+                            >
+                                <option value="newest">הכי חדשים</option>
+                                <option value="priceAsc">מחיר מהנמוך לגבוה</option>
+                                <option value="priceDesc">מחיר מהגבוה לנמוך</option>
                             </select>
                         </div>
                         <div className="mobile-price-row">
