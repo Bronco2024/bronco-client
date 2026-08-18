@@ -1,52 +1,76 @@
-.add-sponsor-container {
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    text-align: right;
+.add-sponsor-page {
+    width: var(--container);
+    margin: 0 auto;
+    padding: 28px 0 72px;
+    color: var(--color-navy);
+}
+
+.add-sponsor-card {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 28px;
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.add-sponsor-card h1 {
+    margin: 4px 0 8px;
+}
+
+.add-sponsor-card p {
+    margin: 0 0 20px;
+    color: var(--color-muted);
 }
 
 .add-sponsor-form {
     display: flex;
     flex-direction: column;
-    text-align: right;
 }
 
 .add-sponsor-form label {
-    margin: 10px 0 5px;
-    font-weight: bold;
+    margin: 12px 0 6px;
+    font-size: 0.85rem;
+    font-weight: 800;
 }
 
 .add-sponsor-form select,
 .add-sponsor-form input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    text-align: right;
-    resize: none;
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 14px;
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--color-navy);
 }
 
-.add-sponsor-form select{
-    direction: rtl;
-    width: 30%;
-    align-self: flex-end;
+.add-sponsor-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.publish-sponsor-button,
+.add-sponsor-back {
+    min-height: 46px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
 }
 
 .publish-sponsor-button {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
+    background: var(--color-orange);
+    color: #fff;
 }
 
-.publish-sponsor-button:hover {
-    background-color: #45a049;
+.add-sponsor-back {
+    background: #eef1f4;
+    color: var(--color-navy);
 }
 
 .modal-content-custom-add-sponsors {
@@ -62,14 +86,10 @@
 
 .close-button-add-sponsors {
     padding: 8px 16px;
-    font-size: 1rem;
-    border-radius: 4px;
+    border: 0;
+    border-radius: 10px;
+    background: #eef1f4;
+    color: var(--color-navy);
+    font-weight: 800;
     cursor: pointer;
-    border: none;
-    background-color: #e8e7e7;
-    color: black;
-}
-
-.close-button-add-sponsors:hover{
-    background-color: #ccc;
 }
