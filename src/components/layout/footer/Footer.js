@@ -2,7 +2,7 @@ import './Footer.css';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaw } from "@fortawesome/free-solid-svg-icons";
-import { PET_CATEGORIES, SITE_SERVICES } from '@/data/pets';
+import { SITE_SERVICES, MARKETPLACE_CATEGORIES } from '@/data/pets';
 import { SITE_NAME } from '@/data/site-config';
 
 const Footer = () => {
@@ -24,7 +24,7 @@ const Footer = () => {
                 <div className="footer-section">
                     <h2>קטגוריות</h2>
                     <div className="footer-links">
-                        {PET_CATEGORIES.slice(0, 6).map((category) => (
+                        {MARKETPLACE_CATEGORIES.slice(0, 6).map((category) => (
                             <Link key={category.slug} to={category.path} className="about-link">
                                 {category.name}
                             </Link>

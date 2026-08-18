@@ -16,7 +16,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import useAdminNotifications from '@/hooks/useAdminNotifications';
-import { PET_CATEGORIES, SITE_SERVICES } from '@/data/pets';
+import { SITE_SERVICES, MARKETPLACE_CATEGORIES } from '@/data/pets';
 import { SITE_NAME } from '@/data/site-config';
 import Loading from '../../loading-screen/Loading';
 
@@ -90,7 +90,7 @@ const Header = () => {
         navigate('/');
     };
 
-    const isCategoryActive = PET_CATEGORIES.some(
+    const isCategoryActive = MARKETPLACE_CATEGORIES.some(
         (category) => location.pathname === category.path
     );
     const isServiceActive = SITE_SERVICES.some(
@@ -129,7 +129,7 @@ const Header = () => {
 
                         {showCategories && (
                             <div className="categories-panel" role="menu">
-                                {PET_CATEGORIES.map((category) => (
+                                {MARKETPLACE_CATEGORIES.map((category) => (
                                     <Link
                                         key={category.slug}
                                         to={category.path}
@@ -322,7 +322,7 @@ const Header = () => {
                     </div>
                     <p className="mobile-menu-label">קטגוריות</p>
                     <div className="mobile-categories">
-                        {PET_CATEGORIES.map((category) => (
+                        {MARKETPLACE_CATEGORIES.map((category) => (
                             <Link
                                 key={category.slug}
                                 to={category.path}

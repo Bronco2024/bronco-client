@@ -1,38 +1,101 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import './Item.css';
-import { faPhoneAlt, faLocationDot, faArrowRight, faHeart } from '@fortawesome/free-solid-svg-icons';
+import {
+    faPhoneAlt,
+    faLocationDot,
+    faArrowRight,
+    faHeart,
+    faShareNodes,
+    faCopy,
+} from '@fortawesome/free-solid-svg-icons';
+import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FormatDateTimestampToDate } from '@components/utils/constants/Functions';
-import { collection, getDocs, limit, query, where, Timestamp } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, limit, query, where, Timestamp } from 'firebase/firestore';
 import { db } from '@/firebase';
 import {
     getSimilarListings,
     isPetMarketplaceCategory,
+    PET_LISTINGS,
 } from '@/data/pets';
 import { filterApprovedAds } from '@/helpers/ad-approval';
+import {
+    buildWhatsAppLink,
+    getListingPath,
+    getListingShareUrl,
+} from '@/helpers/listing-links';
+import { SITE_URL } from '@/data/site-config';
 
 const ADS_SUGGESTION_LIMIT = 10;
 
 const formatPrice = (price) => {
     if (price === undefined || price === null || price === '') return '';
+    if (price === 0 || price === '0') return 'לאימוץ';
     if (typeof price === 'string' && (price.includes('₪') || price.includes('אימוץ'))) {
         return price;
     }
     return `₪${price}`;
 };
 
-const getAdTitle = (ad) => ad.title || ad.name || ad.breed || 'מודעה';
+const getAdTitle = (ad) => ad.title || ad.name || ad.breed || ad.accessory || 'מודעה';
 const getAdImage = (item) => item.photos?.[0] || item.image || require('@/assets/no-image.jpg');
 
 const ItemPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const ad = location.state?.ad;
-    const items = [];
+    const { adId } = useParams();
+    const [ad, setAd] = useState(location.state?.ad || null);
+    const [loadingAd, setLoadingAd] = useState(!location.state?.ad && Boolean(adId));
     const [similarAds, setSimilarAds] = useState([]);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [shareStatus, setShareStatus] = useState('');
+
+    useEffect(() => {
+        if (location.state?.ad && location.state.ad.id === adId) {
+            setAd(location.state.ad);
+            setLoadingAd(false);
+            return;
+        }
+
+        if (!adId) {
+            if (!location.state?.ad) setAd(null);
+            setLoadingAd(false);
+            return;
+        }
+
+        let cancelled = false;
+
+        const loadAd = async () => {
+            setLoadingAd(true);
+            try {
+                const snap = await getDoc(doc(db, 'ads', adId));
+                if (cancelled) return;
+
+                if (snap.exists()) {
+                    setAd({ id: snap.id, ...snap.data() });
+                    return;
+                }
+
+                const catalogAd = PET_LISTINGS.find((item) => String(item.id) === String(adId));
+                setAd(catalogAd || null);
+            } catch {
+                if (!cancelled) {
+                    const catalogAd = PET_LISTINGS.find((item) => String(item.id) === String(adId));
+                    setAd(catalogAd || location.state?.ad || null);
+                }
+            } finally {
+                if (!cancelled) setLoadingAd(false);
+            }
+        };
+
+        loadAd();
+        return () => {
+            cancelled = true;
+        };
+    }, [adId, location.state]);
 
     const fetchSimilarAds = useCallback(async () => {
         if (!ad?.category) return;
@@ -55,8 +118,8 @@ const ItemPage = () => {
             const querySnapshot = await getDocs(q);
             const filtered = filterApprovedAds(
                 querySnapshot.docs
-                    .filter(doc => doc.id !== ad.id)
-                    .map(doc => ({ id: doc.id, ...doc.data() }))
+                    .filter((docSnap) => docSnap.id !== ad.id)
+                    .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
             );
 
             setSimilarAds(filtered.length > 0 ? filtered : getSimilarListings(ad));
@@ -71,12 +134,104 @@ const ItemPage = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        setActiveIndex(0);
+        setShareStatus('');
     }, [ad?.id]);
+
+    const mediaItems = useMemo(() => {
+        if (!ad) return [];
+        const photos = ad.photos?.length ? ad.photos : (ad.image ? [ad.image] : []);
+        const items = [];
+
+        if (ad.video) {
+            items.push({
+                key: 'video',
+                thumb: photos[0] || require('@/assets/no-image.jpg'),
+                node: (
+                    <video key="video" controls className="media-element">
+                        <source src={ad.video} type="video/mp4" />
+                    </video>
+                ),
+            });
+        }
+
+        photos.forEach((photo, index) => {
+            items.push({
+                key: `photo-${index}`,
+                thumb: photo,
+                node: (
+                    <img
+                        key={`photo-${index}`}
+                        src={photo}
+                        alt={`${getAdTitle(ad)} ${index + 1}`}
+                        className="media-element"
+                    />
+                ),
+            });
+        });
+
+        if (items.length === 0) {
+            items.push({
+                key: 'empty',
+                thumb: require('@/assets/no-image.jpg'),
+                node: (
+                    <img
+                        src={require('@/assets/no-image.jpg')}
+                        alt="empty"
+                        className="media-element"
+                    />
+                ),
+            });
+        }
+
+        return items;
+    }, [ad]);
 
     const handleAdClick = (nextAd) => {
         window.scrollTo(0, 0);
-        navigate('/item', { state: { ad: nextAd } });
+        navigate(getListingPath(nextAd), { state: { ad: nextAd } });
     };
+
+    const handleShare = async () => {
+        if (!ad) return;
+        const shareUrl = getListingShareUrl(
+            ad,
+            typeof window !== 'undefined' ? window.location.origin : SITE_URL
+        );
+        const title = getAdTitle(ad);
+
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: `${title} | Pets & Bones`,
+                    text: 'מודעה מ-Pets & Bones',
+                    url: shareUrl,
+                });
+                setShareStatus('המודעה שותפה');
+                return;
+            }
+
+            await navigator.clipboard.writeText(shareUrl);
+            setShareStatus('הקישור הועתק');
+        } catch {
+            try {
+                await navigator.clipboard.writeText(shareUrl);
+                setShareStatus('הקישור הועתק');
+            } catch {
+                setShareStatus('לא ניתן לשתף כרגע');
+            }
+        }
+    };
+
+    if (loadingAd) {
+        return (
+            <div className="item-page-wrapper" dir="rtl">
+                <div className="item-info">
+                    <h1>טוען מודעה...</h1>
+                </div>
+            </div>
+        );
+    }
 
     if (!ad) {
         return (
@@ -92,7 +247,6 @@ const ItemPage = () => {
         );
     }
 
-    const photos = ad.photos?.length ? ad.photos : (ad.image ? [ad.image] : []);
     const isPetAd = isPetMarketplaceCategory(ad.category) || Boolean(ad.type);
     const showDetails =
         isPetAd ||
@@ -100,36 +254,10 @@ const ItemPage = () => {
         ad.category === "זרע" ||
         ad.category === "אביזרים" ||
         ad.category === "חנות";
-
-    if (ad.video) {
-        items.push(
-            <video key="video" controls className="media-element">
-                <source src={ad.video} type="video/mp4" />
-                Your browser does not support the video tag.
-            </video>
-        );
-    }
-
-    photos.forEach((photo, index) => {
-        items.push(
-            <img
-                key={`photo-${index}`}
-                src={photo}
-                alt={`${getAdTitle(ad)} ${index + 1}`}
-                className="media-element"
-            />
-        );
+    const whatsappLink = buildWhatsAppLink({
+        phoneNumber: ad.phoneNumber,
+        title: getAdTitle(ad),
     });
-
-    if (items.length === 0) {
-        items.push(
-            <img
-                src={require('@/assets/no-image.jpg')}
-                alt="empty"
-                className="media-element"
-            />
-        );
-    }
 
     return (
         <>
@@ -137,11 +265,28 @@ const ItemPage = () => {
                 <div className="item-media">
                     <AliceCarousel
                         mouseTracking
-                        items={items}
-                        infinite
-                        disableDotsControls
+                        items={mediaItems.map((item) => item.node)}
+                        infinite={mediaItems.length > 1}
+                        disableDotsControls={mediaItems.length < 2}
+                        disableButtonsControls={mediaItems.length < 2}
+                        activeIndex={activeIndex}
+                        onSlideChanged={(event) => setActiveIndex(event.item)}
                         responsive={{ 0: { items: 1 } }}
                     />
+                    {mediaItems.length > 1 && (
+                        <div className="item-thumbs">
+                            {mediaItems.map((item, index) => (
+                                <button
+                                    key={item.key}
+                                    type="button"
+                                    className={`item-thumb ${activeIndex === index ? "active" : ""}`}
+                                    onClick={() => setActiveIndex(index)}
+                                >
+                                    <img src={item.thumb} alt="" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="item-info">
@@ -214,6 +359,12 @@ const ItemPage = () => {
                                         <dd>{ad.gender}</dd>
                                     </>
                                 )}
+                                {ad.accessory && (
+                                    <>
+                                        <dt>סוג מוצר</dt>
+                                        <dd>{ad.accessory}</dd>
+                                    </>
+                                )}
                                 {ad.category === "זרע" && (
                                     <>
                                         <dt>סוג זרע</dt>
@@ -239,6 +390,24 @@ const ItemPage = () => {
                         )}
                     </div>
 
+                    <div className="item-actions">
+                        {whatsappLink && (
+                            <a
+                                className="whatsapp-link"
+                                href={whatsappLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <FontAwesomeIcon icon={faWhatsapp} />
+                                וואטסאפ
+                            </a>
+                        )}
+                        <button type="button" className="share-link" onClick={handleShare}>
+                            <FontAwesomeIcon icon={shareStatus ? faCopy : faShareNodes} />
+                            {shareStatus || "שיתוף מודעה"}
+                        </button>
+                    </div>
+
                     <p className="date">תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                 </div>
             </div>
@@ -246,13 +415,13 @@ const ItemPage = () => {
             {similarAds.length > 0 && (
                 <div className="related-ads-section">
                     <h2 className="related-ads-title">מודעות דומות</h2>
-                    <div className="related-ads-scroll">
-                        {similarAds.map((item) => (
-                            <div
+                    <div className="related-ads-grid">
+                        {similarAds.slice(0, 8).map((item) => (
+                            <button
+                                type="button"
                                 className="related-ad-card"
                                 key={item.id}
                                 onClick={() => handleAdClick(item)}
-                                style={{ cursor: 'pointer' }}
                             >
                                 <img
                                     src={getAdImage(item)}
@@ -261,9 +430,10 @@ const ItemPage = () => {
                                 />
                                 <div className="related-ad-info">
                                     <h4>{getAdTitle(item)}</h4>
+                                    {item.location && <span>{item.location}</span>}
                                     {formatPrice(item.price) && <p>{formatPrice(item.price)}</p>}
                                 </div>
-                            </div>
+                            </button>
                         ))}
                     </div>
                 </div>

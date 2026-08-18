@@ -80,6 +80,17 @@ function App() {
       />
 
       <Route
+        path="/item/:adId"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Layout>
+              <ItemPage />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route
         path="/item"
         element={
           <Suspense fallback={<Loading />}>

@@ -89,6 +89,21 @@ export const PET_CATEGORIES = [
   },
 ];
 
+export const ACCESSORIES_CATEGORY = {
+  slug: "accessories",
+  path: "/accessories",
+  name: "אביזרים",
+  type: "אביזר",
+  image: "/services/accessories.jpg",
+  subtitle: "ציוד, מזון וכל מה שצריך בבית",
+  useExistingPage: true,
+};
+
+export const MARKETPLACE_CATEGORIES = [
+  ...PET_CATEGORIES,
+  ACCESSORIES_CATEGORY,
+];
+
 export const SITE_SERVICES = [
   {
     path: "/veterinarians",
@@ -107,12 +122,6 @@ export const SITE_SERVICES = [
     name: "מספרות",
     subtitle: "טיפוח, תספורת וטיפול חיצוני לחיות",
     image: "/services/groomers.jpg",
-  },
-  {
-    path: "/accessories",
-    name: "אביזרים",
-    subtitle: "ציוד, מזון וכל מה שצריך בבית",
-    image: "/services/accessories.jpg",
   },
   {
     path: "/seeds",
