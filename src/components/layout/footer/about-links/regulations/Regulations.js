@@ -100,7 +100,7 @@ const Regulations = () => {
 
             <div className="regulations-block">
                 <h3>11. יצירת קשר</h3>
-                <p>לשאלות: <strong><a href='mailto:horsehub.team@gmail.com'>horsehub.team@gmail.com</a></strong></p>
+                <p>לשאלות: <strong><a href='mailto:petsbones@gmail.com'>petsbones@gmail.com</a></strong></p>
             </div>
 
             <div className="regulations-block">
