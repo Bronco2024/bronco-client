@@ -1,4 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faBell,
+    faCheck,
+    faEyeSlash,
+    faPlus,
+    faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import './Admin.css'
 import { db, storage } from '@/firebase';
 import { collection, getDocs, deleteDoc, doc, where, orderBy, query, updateDoc } from 'firebase/firestore';
@@ -15,6 +23,11 @@ import {
 import { markAdNotificationsRead } from '@/helpers/admin-notifications';
 import useAdminNotifications from '@/hooks/useAdminNotifications';
 
+const SPONSOR_LABELS = {
+    gold: "זהב",
+    silver: "כסף",
+    bronze: "ארד",
+};
 
 const Admin = () => {
     const navigate = useNavigate();
@@ -24,7 +37,7 @@ const Admin = () => {
     const [isModalDeleteAdVisible, setIsModalDeleteAdVisible] = useState(false);
     const [sponsorToDelete, setSponsorToDelete] = useState(null);
     const [refresh, setRefresh] = useState(false);
-    const [showAdsOrSponsors, setShowAdsOrSponsors] = useState("sponsors")
+    const [activeTab, setActiveTab] = useState("ads");
     const [ads, setAds] = useState([])
     const [adStatusFilter, setAdStatusFilter] = useState("pending")
     const { notifications: adminNotifications, unreadCount: unreadNotificationCount } =
@@ -36,9 +49,9 @@ const Admin = () => {
                 const goldCollectionRef = collection(db, 'sponsors');
                 const querySnapshot = await getDocs(goldCollectionRef);
 
-                const fetchedSponsors = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
+                const fetchedSponsors = querySnapshot.docs.map(docSnap => ({
+                    id: docSnap.id,
+                    ...docSnap.data()
                 }));
 
                 setSponsors(fetchedSponsors);
@@ -63,12 +76,12 @@ const Admin = () => {
                 const q = query(adsRef, filterQuery, orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
 
-                const ads = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data()
+                const fetchedAds = querySnapshot.docs.map((docSnap) => ({
+                    id: docSnap.id,
+                    ...docSnap.data()
                 }));
 
-                setAds(ads);
+                setAds(fetchedAds);
 
             } catch (error) {
                 console.error("Error fetching ads:", error);
@@ -203,26 +216,61 @@ const Admin = () => {
         setAdToDelete(ad);
     }
 
-    const changeShowAdsOrSponsors = (e) => {
-        setShowAdsOrSponsors(e.target.value)
-    }
-
     const getAdCardTitle = (ad) =>
         ad.title || ad.name || ad.breed || ad.seed_type || ad.accessory || ad.category || "מודעה";
 
     return (
-        <div className="admin-container">
-            <h1>ניהול {showAdsOrSponsors === 'sponsors' ? 'ספונסירים' : 'מודעות'}</h1>
+        <div className="admin-page" dir="rtl">
+            <section className="account-hero admin-hero">
+                <div className="account-hero-copy">
+                    <span className="section-kicker">ניהול האתר</span>
+                    <h1>אזור המנהל</h1>
+                    <p>אישור מודעות, מעקב אחרי התראות וניהול ספונסורים במקום אחד.</p>
+                </div>
+                {activeTab === "sponsors" && (
+                    <button
+                        type="button"
+                        className="account-primary-button"
+                        onClick={() => navigate('/admin/add-sponsor')}
+                    >
+                        <FontAwesomeIcon icon={faPlus} />
+                        הוסף ספונסור
+                    </button>
+                )}
+            </section>
 
-            {showAdsOrSponsors === "ads" && unreadNotificationCount > 0 && (
-                <div className="admin-notifications-panel">
-                    <h2>התראות חדשות ({unreadNotificationCount})</h2>
+            <section className="account-stats" aria-label="סיכום ניהול">
+                <div>
+                    <strong>{pendingCount}</strong>
+                    <span>ממתינות לאישור</span>
+                </div>
+                <div>
+                    <strong>{ads.length}</strong>
+                    <span>מודעות פעילות</span>
+                </div>
+                <div>
+                    <strong>{unreadNotificationCount}</strong>
+                    <span>התראות חדשות</span>
+                </div>
+                <div>
+                    <strong>{sponsors.length}</strong>
+                    <span>ספונסורים</span>
+                </div>
+            </section>
+
+            {unreadNotificationCount > 0 && (
+                <section className="admin-notifications-panel">
+                    <h2>
+                        <FontAwesomeIcon icon={faBell} />
+                        התראות חדשות ({unreadNotificationCount})
+                    </h2>
                     {adminNotifications.map((notification) => (
                         <button
                             key={notification.id}
                             type="button"
                             className="admin-notification-item"
                             onClick={() => {
+                                setActiveTab("ads");
                                 setAdStatusFilter("pending");
                                 const matchedAd = ads.find((ad) => ad.id === notification.adId);
                                 if (matchedAd) {
@@ -236,155 +284,181 @@ const Admin = () => {
                             <span className="admin-notification-cta">ממתין לאישור</span>
                         </button>
                     ))}
-                </div>
+                </section>
             )}
 
-            <button
-                className="sponsor-add-button"
-                onClick={() => {
-                    navigate('/admin/add-sponsor')
-                }}>הוסף ספונסור</button>
+            <section className="account-panel">
+                <div className="admin-tabs">
+                    <button
+                        type="button"
+                        className={`admin-tab ${activeTab === "ads" ? "active" : ""}`}
+                        onClick={() => setActiveTab("ads")}
+                    >
+                        מודעות
+                        {pendingCount > 0 && <span className="admin-tab-badge">{pendingCount}</span>}
+                    </button>
+                    <button
+                        type="button"
+                        className={`admin-tab ${activeTab === "sponsors" ? "active" : ""}`}
+                        onClick={() => setActiveTab("sponsors")}
+                    >
+                        ספונסורים
+                    </button>
+                </div>
 
-            <div className="sponsors-container">
-                <select
-                    className="select-type"
-                    value={showAdsOrSponsors}
-                    onChange={changeShowAdsOrSponsors}
-                >
-                    <option value="sponsors">ספונסורים</option>
-                    <option value="ads">מודעות</option>
-                </select>
-
-                {showAdsOrSponsors === "sponsors" ? (
+                {activeTab === "sponsors" ? (
                     sponsors.length > 0 ? (
-                        sponsors.map(sponsor => (
-                            <div
-                                key={sponsor.id}
-                                className="sponsor-card"
-                                style={{
-                                    borderColor: sponsor.sponsor === "gold" ? "#FFD700"
-                                        : sponsor.sponsor === "silver" ? "#C0C0C0"
-                                            : "#cd7f32",
-                                    borderWidth: '3px',
-                                    borderRadius: '10px'
-                                }}
-                            >
-                                {sponsor.photo && (
-                                    <img src={sponsor.photo} alt="pojk" className="sponsor-image" loading="lazy" />
-                                )}
-                                <div className="sponsor-details">
-                                    <h4 style={{ direction: 'rtl' }}>לינק:  <a href={sponsor.link} target="_blank" rel="noopener noreferrer">{sponsor.link}</a></h4>
-                                    <p style={{ direction: 'rtl' }}>סוג ספונסור: <b>{sponsor.sponsor}</b></p>
-                                </div>
-
-                                <div className="sponsor-crud">
-                                    <button className='sponsor-delete-button' onClick={() => handleDeleteButton(sponsor)}>מחק</button>
-                                </div>
-                            </div>
-                        ))
+                        <div className="account-card-list">
+                            {sponsors.map((sponsor) => (
+                                <article
+                                    key={sponsor.id}
+                                    className={`account-card sponsor-tier sponsor-tier--${sponsor.sponsor}`}
+                                >
+                                    {sponsor.photo && (
+                                        <div className="account-card-image">
+                                            <img src={sponsor.photo} alt={sponsor.sponsor} />
+                                        </div>
+                                    )}
+                                    <div className="account-card-body">
+                                        <span className={`account-status sponsor-status--${sponsor.sponsor}`}>
+                                            {SPONSOR_LABELS[sponsor.sponsor] || sponsor.sponsor}
+                                        </span>
+                                        <h3>{sponsor.link}</h3>
+                                        <p className="account-card-meta">
+                                            <a href={sponsor.link} target="_blank" rel="noopener noreferrer">
+                                                פתיחת הקישור
+                                            </a>
+                                        </p>
+                                    </div>
+                                    <div className="account-card-actions">
+                                        <button
+                                            type="button"
+                                            className="account-action account-action--delete"
+                                            onClick={() => handleDeleteButton(sponsor)}
+                                        >
+                                            <FontAwesomeIcon icon={faTrash} />
+                                            מחק
+                                        </button>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
                     ) : (
-                        <p>לא נמצאו ספונסירים</p>
+                        <div className="account-empty">
+                            <h3>אין ספונסורים עדיין</h3>
+                            <p>אפשר להוסיף ספונסור חדש מתי שתרצו.</p>
+                        </div>
                     )
                 ) : (
                     <>
-                        <div className="admin-ads-toolbar">
-                            <select
-                                className="select-type"
-                                value={adStatusFilter}
-                                onChange={(event) => setAdStatusFilter(event.target.value)}
-                            >
-                                <option value="pending">ממתינות לאישור ({pendingCount})</option>
-                                <option value="approved">מאושרות</option>
-                                <option value="rejected">נדחות</option>
-                                <option value="all">כל המודעות הפעילות</option>
-                            </select>
+                        <div className="admin-filters">
+                            {[
+                                { value: "pending", label: `ממתינות (${pendingCount})` },
+                                { value: "approved", label: "מאושרות" },
+                                { value: "rejected", label: "נדחות" },
+                                { value: "all", label: "הכל" },
+                            ].map((filter) => (
+                                <button
+                                    key={filter.value}
+                                    type="button"
+                                    className={`admin-filter ${adStatusFilter === filter.value ? "active" : ""}`}
+                                    onClick={() => setAdStatusFilter(filter.value)}
+                                >
+                                    {filter.label}
+                                </button>
+                            ))}
                         </div>
 
                         {filteredAds.length > 0 ? (
-                            filteredAds.map(ad => {
-                                const status = getAdStatus(ad);
+                            <div className="account-card-list">
+                                {filteredAds.map((ad) => {
+                                    const status = getAdStatus(ad);
+                                    const title = getAdCardTitle(ad);
+                                    const image = ad.photos?.[0] || require('@/assets/no-image.jpg');
 
-                                return (
-                                    <div
-                                        key={ad.id}
-                                        className="sponsor-card admin-ad-card"
-                                    >
-                                        {ad.photos && ad.photos[0] ? (
-                                            <img
-                                                src={ad.photos[0]}
-                                                alt={getAdCardTitle(ad)}
-                                                className="sponsor-image"
-                                                loading="lazy"
-                                                onClick={() => {
-                                                    navigate('/item', { state: { ad } })
-                                                }}
-                                            />
-                                        ) : (
-                                            <img
-                                                src={require('@/assets/no-image.jpg')}
-                                                alt={ad.category}
-                                                className="sponsor-image"
-                                                loading="lazy"
-                                                onClick={() => {
-                                                    navigate('/item', { state: { ad } })
-                                                }}
-                                            />
-                                        )}
-                                        <div className="sponsor-details">
-                                            <span className={`admin-ad-status admin-ad-status--${status}`}>
-                                                {AD_STATUS_LABELS[status]}
-                                            </span>
-                                            <h4 style={{ direction: 'rtl' }}>{getAdCardTitle(ad)}</h4>
-                                            <p style={{ direction: 'rtl' }}>{ad.category}</p>
-                                            <p style={{ direction: 'rtl' }}>{ad.description}</p>
-                                            <p style={{ direction: 'rtl' }}>{ad.location || ad.district || ""}</p>
-                                            {ad.price && <p style={{ direction: 'rtl' }}>₪{ad.price}</p>}
-                                        </div>
-
-                                        <div className="sponsor-crud admin-ad-actions">
-                                            {status === AD_STATUS.PENDING && (
-                                                <>
+                                    return (
+                                        <article key={ad.id} className="account-card">
+                                            <button
+                                                type="button"
+                                                className="account-card-image"
+                                                onClick={() => navigate('/item', { state: { ad } })}
+                                            >
+                                                <img src={image} alt={title} />
+                                            </button>
+                                            <div className="account-card-body">
+                                                <span className={`account-status account-status--${status}`}>
+                                                    {AD_STATUS_LABELS[status]}
+                                                </span>
+                                                <h3>{title}</h3>
+                                                <p className="account-card-meta">
+                                                    {ad.category}
+                                                    {ad.location ? ` · ${ad.location}` : ""}
+                                                </p>
+                                                {ad.price ? <strong className="account-card-price">₪{ad.price}</strong> : null}
+                                            </div>
+                                            <div className="account-card-actions">
+                                                {status === AD_STATUS.PENDING && (
+                                                    <>
+                                                        <button
+                                                            type="button"
+                                                            className="account-action account-action--approve"
+                                                            onClick={() => updateAdStatus(ad.id, AD_STATUS.APPROVED)}
+                                                        >
+                                                            <FontAwesomeIcon icon={faCheck} />
+                                                            אשר
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="account-action account-action--reject"
+                                                            onClick={() => updateAdStatus(ad.id, AD_STATUS.REJECTED)}
+                                                        >
+                                                            <FontAwesomeIcon icon={faEyeSlash} />
+                                                            דחה
+                                                        </button>
+                                                    </>
+                                                )}
+                                                {status === AD_STATUS.REJECTED && (
                                                     <button
-                                                        className="admin-approve-button"
+                                                        type="button"
+                                                        className="account-action account-action--approve"
                                                         onClick={() => updateAdStatus(ad.id, AD_STATUS.APPROVED)}
                                                     >
+                                                        <FontAwesomeIcon icon={faCheck} />
                                                         אשר
                                                     </button>
+                                                )}
+                                                {status === AD_STATUS.APPROVED && (
                                                     <button
-                                                        className="admin-reject-button"
+                                                        type="button"
+                                                        className="account-action account-action--reject"
                                                         onClick={() => updateAdStatus(ad.id, AD_STATUS.REJECTED)}
                                                     >
-                                                        דחה
+                                                        <FontAwesomeIcon icon={faEyeSlash} />
+                                                        הסתר
                                                     </button>
-                                                </>
-                                            )}
-                                            {status === AD_STATUS.REJECTED && (
+                                                )}
                                                 <button
-                                                    className="admin-approve-button"
-                                                    onClick={() => updateAdStatus(ad.id, AD_STATUS.APPROVED)}
+                                                    type="button"
+                                                    className="account-action account-action--delete"
+                                                    onClick={() => handleDeleteAdButton(ad)}
                                                 >
-                                                    אשר
+                                                    <FontAwesomeIcon icon={faTrash} />
+                                                    מחק
                                                 </button>
-                                            )}
-                                            {status === AD_STATUS.APPROVED && (
-                                                <button
-                                                    className="admin-reject-button"
-                                                    onClick={() => updateAdStatus(ad.id, AD_STATUS.REJECTED)}
-                                                >
-                                                    הסתר
-                                                </button>
-                                            )}
-                                            <button className='sponsor-delete-button' onClick={() => handleDeleteAdButton(ad)}>מחק</button>
-                                        </div>
-                                    </div>
-                                );
-                            })
+                                            </div>
+                                        </article>
+                                    );
+                                })}
+                            </div>
                         ) : (
-                            <p>לא נמצאו מודעות</p>
+                            <div className="account-empty">
+                                <h3>לא נמצאו מודעות</h3>
+                                <p>נסו לשנות את הסינון או להמתין למודעות חדשות.</p>
+                            </div>
                         )}
                     </>
                 )}
-            </div>
+            </section>
 
             <Modal isVisible={isModalVisible} title="מחיקת ספונסור" onClose={closeModal}>
                 <div className="modal-content-custom">
