@@ -26,6 +26,7 @@ import * as Sentry from '@sentry/react';
 import {
     handleGoogleSignupAndSignIn
 } from '../../helpers/firebase-helpers';
+import { sendSiteEmailVerification } from '../../helpers/auth-email';
 
 
 const Login = () => {
@@ -36,6 +37,8 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const [needsVerification, setNeedsVerification] = useState(false);
+    const [resendStatus, setResendStatus] = useState('');
 
     const { logout } = useAuth();
 
@@ -189,12 +192,16 @@ const Login = () => {
 
                 await logout();
 
+                setNeedsVerification(true);
                 setError(
-                    'נא לאמת את כתובת האימייל שלך לפני ההתחברות'
+                    'נא לאמת את כתובת האימייל לפני ההתחברות. אם לא מצאתם את המייל, בדקו גם בספאם.'
                 );
 
                 return;
             }
+
+            setNeedsVerification(false);
+            setResendStatus('');
 
 
             /* Login successful */
@@ -268,6 +275,48 @@ const Login = () => {
                 tags: {
                     component: 'Login',
                     method: 'GoogleSignin'
+                }
+            });
+        }
+    };
+
+
+    const handleResendVerification = async () => {
+        const cleanEmail = email.trim().toLowerCase();
+
+        if (!cleanEmail || !password) {
+            setError('נא למלא אימייל וסיסמה כדי לשלוח שוב את מייל האימות');
+            return;
+        }
+
+        try {
+            setResendStatus('');
+            setError('');
+
+            const userCredential = await signInWithEmailAndPassword(
+                auth,
+                cleanEmail,
+                password
+            );
+
+            if (userCredential.user.emailVerified) {
+                await logout();
+                setNeedsVerification(false);
+                setError('החשבון כבר מאומת. אפשר להתחבר עכשיו.');
+                return;
+            }
+
+            await sendSiteEmailVerification(userCredential.user);
+            await logout();
+            setResendStatus(
+                'מייל אימות נשלח שוב. בדקו את תיבת הדואר וגם את תיקיית הספאם.'
+            );
+        } catch (error) {
+            setError('לא הצלחנו לשלוח שוב את מייל האימות. נסו שוב.');
+            Sentry.captureException(error, {
+                tags: {
+                    component: 'Login',
+                    method: 'ResendVerification'
                 }
             });
         }
@@ -368,6 +417,22 @@ const Login = () => {
                         {error}
                     </p>
 
+                )}
+
+                {resendStatus && (
+                    <p className="verification-status">
+                        {resendStatus}
+                    </p>
+                )}
+
+                {needsVerification && (
+                    <button
+                        type="button"
+                        className="resend-verification-button"
+                        onClick={handleResendVerification}
+                    >
+                        שלח שוב מייל אימות
+                    </button>
                 )}
 
 
