@@ -57,8 +57,8 @@ const Footer = () => {
                 <div className="footer-section">
                     <h2>צור קשר</h2>
                     <div className="contact-item">
-                        <a className="contact-link" href="mailto:horsehub.team@gmail.com">
-                            horsehub.team@gmail.com
+                        <a className="contact-link" href="mailto:petsbones@gmail.com">
+                            petsbones@gmail.com
                         </a>
                         <a href="tel:0547926338" className="contact-link">054-792-6338</a>
                     </div>

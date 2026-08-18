@@ -51,7 +51,7 @@ const PrivacyPolicy = () => {
                     <li>לעיין במידע שנשמר אודותיך.</li>
                     <li>לבקש עדכון, תיקון או מחיקה.</li>
                     <li>לבטל קבלת הודעות שיווקיות.</li>
-                    <li>לפנות אלינו בכתובת: <strong>horsehub.team@gmail.com</strong>.</li>
+                    <li>לפנות אלינו בכתובת: <strong>petsbones@gmail.com</strong>.</li>
                 </ul>
             </div>
 
@@ -72,7 +72,7 @@ const PrivacyPolicy = () => {
 
             <div className="policy-section-block">
                 <h3>8. יצירת קשר</h3>
-                <p>לשאלות או בקשות: <strong><a href='mailto:horsehub.team@gmail.com'>horsehub.team@gmail.com</a></strong></p>
+                <p>לשאלות או בקשות: <strong><a href='mailto:petsbones@gmail.com'>petsbones@gmail.com</a></strong></p>
             </div>
         </div>
     );
