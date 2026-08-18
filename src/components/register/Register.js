@@ -5,10 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { auth } from '@/firebase';
-import { createUserWithEmailAndPassword, sendEmailVerification, signOut, getRedirectResult} from "firebase/auth";
+import { createUserWithEmailAndPassword, signOut, getRedirectResult} from "firebase/auth";
 import Modal from '@components/utils/modal/Modal';
 import * as Sentry from "@sentry/react";
 import { handleGoogleSignupAndSignIn } from '../../helpers/firebase-helpers';
+import { sendSiteEmailVerification } from '../../helpers/auth-email';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -53,7 +54,7 @@ const Register = () => {
             try {
                 await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
                     const user = userCredential.user;
-                    sendEmailVerification(user).then(async () => {
+                    sendSiteEmailVerification(user).then(async () => {
                         await signOut(auth);
                         setShowModal(true);
                     })
@@ -197,9 +198,13 @@ const Register = () => {
                 כבר יש לך חשבון? <span onClick={handleLoginRedirect} className="login-link">התחברות</span>
             </p>
 
-            <Modal isVisible={showModal} title="מודעה פורסמה" onClose={closeModal}>
+            <Modal isVisible={showModal} title="נשלח מייל אימות" onClose={closeModal}>
                 <div className="modal-content-custom-register">
-                    <p>מייל נשלח אליך לצורך אימות</p>
+                    <p>שלחנו אליכם מייל לאימות החשבון.</p>
+                    <p className="verification-hint">
+                        אם המייל לא מופיע בתיבת הדואר, בדקו גם בתיקיית הספאם / דואר זבל
+                        וסמנו אותו כ־לא ספאם.
+                    </p>
                     <div className="modal-buttons-custom-register">
                         <button className="close-button-register" onClick={closeModal}>סגור</button>
                     </div>
