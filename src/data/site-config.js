@@ -7,3 +7,6 @@ export const CONTACT_EMAIL = "petsbones@gmail.com";
 
 export const SITE_URL =
   process.env.REACT_APP_SITE_URL || "https://petbones.netlify.app";
+
+export const FIREBASE_SMTP_FROM_NAME = SITE_NAME;
+export const FIREBASE_SMTP_FROM_EMAIL = CONTACT_EMAIL;

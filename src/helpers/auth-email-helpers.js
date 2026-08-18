@@ -8,6 +8,6 @@ export const getSiteOrigin = () => {
 };
 
 export const getEmailVerificationSettings = () => ({
-  url: `${getSiteOrigin()}/login`,
+  url: `${getSiteOrigin()}/login?verified=1`,
   handleCodeInApp: false,
 });

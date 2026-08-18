@@ -5,7 +5,7 @@ describe("Auth verification email settings", () => {
   test("points the continue link back to the login page", () => {
     const settings = getEmailVerificationSettings();
 
-    expect(settings.url).toBe(`${getSiteOrigin()}/login`);
+    expect(settings.url).toBe(`${getSiteOrigin()}/login?verified=1`);
     expect(settings.handleCodeInApp).toBe(false);
   });
 

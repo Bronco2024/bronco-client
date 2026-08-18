@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Login.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,6 +32,7 @@ import { sendSiteEmailVerification } from '../../helpers/auth-email';
 const Login = () => {
 
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -80,6 +81,12 @@ const Login = () => {
         checkRedirectResult();
 
     }, [navigate]);
+
+    useEffect(() => {
+        if (searchParams.get('verified') === '1') {
+            setResendStatus('האימייל אומת בהצלחה. אפשר להתחבר עכשיו.');
+        }
+    }, [searchParams]);
 
 
     /* ================================

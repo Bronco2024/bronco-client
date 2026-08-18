@@ -1,4 +1,5 @@
 import {
+  MARKETPLACE_CATEGORIES,
   PET_CATEGORIES,
   PET_LISTINGS,
   PET_LOCATIONS,
@@ -43,8 +44,10 @@ describe("Pets & Bones catalog", () => {
   test("exposes service routes used in the header", () => {
     expect(SITE_SERVICES.length).toBeGreaterThanOrEqual(6);
     expect(SITE_SERVICES.map((service) => service.path)).toEqual(
-      expect.arrayContaining(["/veterinarians", "/boarding", "/accessories"])
+      expect.arrayContaining(["/veterinarians", "/boarding", "/groomers"])
     );
+    expect(SITE_SERVICES.map((service) => service.path)).not.toContain("/accessories");
+    expect(MARKETPLACE_CATEGORIES.map((category) => category.path)).toContain("/accessories");
   });
 
   test("gives each catalog listing its own photo", () => {

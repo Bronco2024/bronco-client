@@ -7,6 +7,7 @@ import {
   isFavoriteListing,
   toggleFavoriteListing,
 } from "@/data/pets";
+import { getListingPath } from "@/helpers/listing-links";
 import ListingMeta from "./ListingMeta";
 import "./PetCard.css";
 
@@ -35,7 +36,7 @@ const PetCard = ({ listing, showAdoptionBadge = false }) => {
     setFavorited(toggleFavoriteListing(listing));
   };
 
-  const openListing = () => navigate("/item", { state: { ad: listing } });
+  const openListing = () => navigate(getListingPath(listing), { state: { ad: listing } });
 
   return (
     <article

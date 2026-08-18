@@ -13,7 +13,7 @@ import ListingMeta from "@/components/pets/ListingMeta";
 import Loading from "@/components/loading-screen/Loading";
 import useMarketplaceAds from "@/hooks/useMarketplaceAds";
 import {
-  PET_CATEGORIES,
+  MARKETPLACE_CATEGORIES,
   PET_LOCATIONS,
   SITE_SERVICES,
   filterListings,
@@ -21,6 +21,8 @@ import {
   mergeMarketplaceListings,
   getCatalogPool,
 } from "@/data/pets";
+import { getListingPath } from "@/helpers/listing-links";
+import SponsorsStrip from "@/components/homepage/SponsorsStrip";
 import "./Homepage.css";
 
 const HERO_TRUST_ITEMS = [
@@ -85,7 +87,7 @@ function Homepage() {
   );
 
   const goToSearchResults = () => {
-    const matchedCategory = PET_CATEGORIES.find(
+    const matchedCategory = MARKETPLACE_CATEGORIES.find(
       (category) => category.name === selectedCategory
     );
     const params = new URLSearchParams();
@@ -154,7 +156,7 @@ function Homepage() {
                   onChange={(event) => setSelectedCategory(event.target.value)}
                 >
                   <option value="">כל הקטגוריות</option>
-                  {PET_CATEGORIES.map((category) => (
+                  {MARKETPLACE_CATEGORIES.map((category) => (
                     <option key={category.slug} value={category.name}>
                       {category.name}
                     </option>
@@ -223,8 +225,8 @@ function Homepage() {
 
       <section className="stats-strip" aria-label="נתוני האתר">
         <div>
-          <strong>10</strong>
-          <span>קטגוריות חיות</span>
+          <strong>{MARKETPLACE_CATEGORIES.length}</strong>
+          <span>קטגוריות</span>
         </div>
         <div>
           <strong>{listings.length}+</strong>
@@ -243,12 +245,12 @@ function Homepage() {
       <section className="categories">
         <div className="section-header">
           <span className="section-kicker">גלו את העולם שלנו</span>
-          <h2>קטגוריות חיות</h2>
-          <p>בחרו את סוג החיה שמעניין אתכם</p>
+          <h2>קטגוריות</h2>
+          <p>בחרו סוג חיה או אביזרים</p>
         </div>
 
         <div className="categories-grid">
-          {PET_CATEGORIES.map((category) => (
+          {MARKETPLACE_CATEGORIES.map((category) => (
             <button
               key={category.slug}
               type="button"
@@ -344,11 +346,11 @@ function Homepage() {
             <article
               className="adoption-card"
               key={pet.id}
-              onClick={() => navigate("/item", { state: { ad: pet } })}
+              onClick={() => navigate(getListingPath(pet), { state: { ad: pet } })}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
                   event.preventDefault();
-                  navigate("/item", { state: { ad: pet } });
+                  navigate(getListingPath(pet), { state: { ad: pet } });
                 }
               }}
               role="link"
@@ -372,7 +374,7 @@ function Homepage() {
                   type="button"
                   onClick={(event) => {
                     event.stopPropagation();
-                    navigate("/item", { state: { ad: pet } });
+                    navigate(getListingPath(pet), { state: { ad: pet } });
                   }}
                 >
                   לפרטים ואימוץ ←
@@ -412,6 +414,8 @@ function Homepage() {
           ))}
         </div>
       </section>
+
+      <SponsorsStrip />
 
       <section className="cta-banner">
         <div>
