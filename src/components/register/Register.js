@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Register.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { auth } from '@/firebase';
 import { createUserWithEmailAndPassword, sendEmailVerification, signOut, getRedirectResult} from "firebase/auth";
@@ -109,6 +109,12 @@ const Register = () => {
 
     return (
         <div className="register-container">
+            <div className="auth-brand">
+                <span className="auth-brand-mark" aria-hidden="true">
+                    <FontAwesomeIcon icon={faPaw} />
+                </span>
+                <span>Pets & Bones</span>
+            </div>
             <h2 className="register-title">הירשם</h2>
             <form className="register-form" onSubmit={handleSubmit}>
                 <label htmlFor="email">מייל</label>
