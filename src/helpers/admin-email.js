@@ -69,6 +69,7 @@ const sendWithFormSubmit = async ({ adId, ad, origin }) => {
   if (!adminEmail) return false;
 
   const email = buildPendingAdEmail({ adId, ad, origin });
+  const publisherEmail = ad.publisherEmail?.trim();
 
   const response = await fetch(
     `https://formsubmit.co/ajax/${encodeURIComponent(adminEmail)}`,
@@ -82,8 +83,9 @@ const sendWithFormSubmit = async ({ adId, ad, origin }) => {
         _subject: email.subject,
         _template: "box",
         _captcha: "false",
+        _replyto: publisherEmail || adminEmail,
         name: SITE_NAME,
-        email: ad.publisherEmail || adminEmail,
+        email: adminEmail,
         message: email.message,
       }),
     }
