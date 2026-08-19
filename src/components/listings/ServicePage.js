@@ -57,7 +57,7 @@ export const AdGridCard = ({
             className="ads-certificate-badge"
             title="חיה עם תעודה מאושרת"
           >
-            <FontAwesomeIcon icon={faCertificate} />
+            <FontAwesomeIcon icon={faCertificate} /> תעודה
           </span>
         )}
       </div>
