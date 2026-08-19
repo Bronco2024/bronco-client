@@ -23,6 +23,7 @@ import {
   getCatalogPool,
 } from "@/data/pets";
 import { getListingPath } from "@/helpers/listing-links";
+import { SITE_NAME } from "@/data/site-config";
 import SponsorsStrip from "@/components/homepage/SponsorsStrip";
 import "./Homepage.css";
 
@@ -116,7 +117,7 @@ function Homepage() {
         <div className="hero-inner">
           <div className="hero-logo">
             <FontAwesomeIcon icon={faPaw} />
-            <span>PETS &<br />BONES</span>
+            <span>{SITE_NAME}</span>
           </div>
 
           <h1 id="hero-heading">
