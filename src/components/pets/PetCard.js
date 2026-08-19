@@ -74,7 +74,7 @@ const PetCard = ({ listing, showAdoptionBadge = false }) => {
             className="listing-certificate-badge"
             title="חיה עם תעודה מאושרת"
           >
-            <FontAwesomeIcon icon={faCertificate} />
+            <FontAwesomeIcon icon={faCertificate} /> תעודה
           </span>
         )}
       </div>

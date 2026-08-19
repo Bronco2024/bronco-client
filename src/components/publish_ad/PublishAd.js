@@ -234,22 +234,7 @@ const PublishAd = () => {
                 </select>
 
 
-                {((formData.category !== "") &&
-                    (formData.category !== "סוסים") &&
-                    (formData.category !== "זרע") &&
-                    (formData.category !== "אביזרים")) && (
-                        <div className='publish-ad-form'>
-                            <label htmlFor="title">כותרת</label>
-                            <input
-                                id="title"
-                                name="title"
-                                value={formData.title}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    )
-                }
+                
 
                 {formData.category === "סוסים" && (
                     <div className="publish-ad-form">
@@ -482,6 +467,15 @@ const PublishAd = () => {
                         </div>
                     )
                 }
+
+                <label htmlFor="description">תיאור</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows={5}
+                />
 
                 <label htmlFor="phoneNumber">שם איש קשר</label>
                 <input

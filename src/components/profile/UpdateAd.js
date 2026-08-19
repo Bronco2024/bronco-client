@@ -284,23 +284,6 @@ const UpdateAd = () => {
             <h1>עדכון מודעה</h1>
             <form className="update-ad-form" onSubmit={handleSubmit}>
 
-                {((formData.category !== "") &&
-                    (formData.category !== "סוסים") &&
-                    (formData.category !== "זרע") &&
-                    (formData.category !== "אביזרים")) && (
-                        <div className='update-ad-form'>
-                            <label htmlFor="title">כותרת</label>
-                            <input
-                                id="title"
-                                name="title"
-                                value={formData.title}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    )
-                }
-
                 <label htmlFor="category"> קטגוריה</label>
                 <select
                     id="category"
@@ -552,6 +535,15 @@ const UpdateAd = () => {
                         </select>
                     </div>
                 )}
+
+                <label htmlFor="description">תיאור</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    value={formData?.description || ""}
+                    onChange={handleChange}
+                    rows={5}
+                />
 
                 <label htmlFor="phoneNumber">שם איש קשר</label>
                 <input
