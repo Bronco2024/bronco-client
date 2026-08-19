@@ -5,6 +5,8 @@ import Loading from "@/components/loading-screen/Loading";
 import useMarketplaceAds from "@/hooks/useMarketplaceAds";
 import { getPetBreeds } from "@/data/pet-breeds";
 import { AREA_OPTIONS, getCitiesByArea } from "@/data/city-areas";
+import { SITE_NAME } from "@/data/site-config";
+import useSeo from "@/hooks/useSeo";
 import {
   getCategoryBySlug,
 } from "@/data/pets";
@@ -125,6 +127,12 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
   const heroImage = adoptionOnly
     ? "/listings/adopt-cat.jpg"
     : category?.image || "/hero-pets.png";
+
+  useSeo({
+    title: `${title} | ${SITE_NAME}`,
+    description: subtitle,
+    image: heroImage,
+  });
 
   const handleSearch = (event) => {
     event.preventDefault();

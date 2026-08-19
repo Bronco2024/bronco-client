@@ -27,7 +27,8 @@ import {
     getListingPath,
     getListingShareUrl,
 } from '@/helpers/listing-links';
-import { SITE_URL } from '@/data/site-config';
+import { SITE_NAME, SITE_URL } from '@/data/site-config';
+import useSeo from "@/hooks/useSeo";
 
 const ADS_SUGGESTION_LIMIT = 10;
 
@@ -52,6 +53,14 @@ const ItemPage = () => {
     const [similarAds, setSimilarAds] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
     const [shareStatus, setShareStatus] = useState('');
+
+    useSeo({
+        title: ad ? `${getAdTitle(ad)} | ${SITE_NAME}` : SITE_NAME,
+        description: ad?.description
+            ? String(ad.description)
+            : "מצאו עוד מודעות ב-Pets & Bones או פרסמו חיה חדשה.",
+        image: ad ? getAdImage(ad) : "/hero-pets.png",
+    });
 
     useEffect(() => {
         if (location.state?.ad && location.state.ad.id === adId) {
