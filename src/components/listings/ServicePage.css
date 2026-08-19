@@ -98,9 +98,27 @@
 }
 
 .ads-page-card-image {
+  position: relative;
   height: 210px;
   overflow: hidden;
   background: #f3f6f8;
+}
+
+.ads-certificate-badge {
+  position: absolute;
+  bottom: 9px;
+  left: 9px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: #f5a623;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  cursor: help;
 }
 
 .ads-page-card-image img {
