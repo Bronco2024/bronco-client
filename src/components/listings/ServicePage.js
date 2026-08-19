@@ -49,6 +49,9 @@ export const AdGridCard = ({
     >
       <div className="ads-page-card-image">
         <img src={image} alt={heading} loading="lazy" />
+        {ad.category && (
+          <span className="ads-type-badge">{ad.category}</span>
+        )}
         {ad.hasCertificate && (
           <span
             className="ads-certificate-badge"
