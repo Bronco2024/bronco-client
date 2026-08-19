@@ -299,6 +299,7 @@ const PublishAd = () => {
                                     onChange={handleChange}
                                     min={"0"}
                                     max={"11"}
+                                    required={false}
                                     placeholder={' '}
                                 />
                             </div>
@@ -360,6 +361,7 @@ const PublishAd = () => {
                                     onChange={handleChange}
                                     min={"0"}
                                     max={"11"}
+                                    required={false}
                                     placeholder={' '}
                                 />
                             </div>
@@ -381,7 +383,9 @@ const PublishAd = () => {
                 )}
 
                 {isPetMarketplaceCategory(formData.category) && (
-                    <div className="checkbox-row">
+                    <div className="publish-ad-option-block">
+                        <p className="publish-ad-option-title">אפשרות אימוץ</p>
+                        <div className="checkbox-row">
                         <label htmlFor="forAdoption">
                             <input
                                 type="checkbox"
@@ -392,6 +396,7 @@ const PublishAd = () => {
                             />
                             מודעה לאימוץ
                         </label>
+                        </div>
                     </div>
                 )}
 
