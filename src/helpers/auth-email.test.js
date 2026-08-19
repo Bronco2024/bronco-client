@@ -10,6 +10,6 @@ describe("Auth verification email settings", () => {
   });
 
   test("falls back to the public site URL outside the browser", () => {
-    expect(SITE_URL).toContain("petbones.netlify.app");
+    expect(SITE_URL).toContain("petzo.co.il");
   });
 });

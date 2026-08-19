@@ -30,3 +30,10 @@ The values below are aligned with `src/data/site-config.js` and `src/helpers/fir
 This app expects the verification redirect URL to be:
 `/login?verified=1` (configured in `auth-email-helpers.js`).
 
+## Custom domain (`petzo.co.il`)
+- Set **Netlify → Domain management → Add custom domain** to `petzo.co.il`.
+- In **Firebase Console → Authentication → Settings → Authorized domains**, add:
+  - `petzo.co.il`
+  - `www.petzo.co.il` (if you use www)
+- Optional env override for previews: `REACT_APP_SITE_URL=https://petzo.co.il`
+
