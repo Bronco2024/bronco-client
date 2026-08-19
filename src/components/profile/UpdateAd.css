@@ -202,6 +202,28 @@
     gap: 12px;
 }
 
+.publish-ad-option-block {
+    margin: 10px 0 4px;
+    padding: 10px 12px;
+    border: 1px dashed #d8e0e7;
+    border-radius: 10px;
+    background: #fbfdff;
+}
+
+.publish-ad-option-title {
+    margin: 0 0 6px;
+    color: #5f6c78;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.publish-ad-option-note {
+    margin: 0 0 8px;
+    color: #2f8f5b;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
 @media (max-width: 650px) {
     .update-ad-container {
         margin: 1.4rem auto 3rem;

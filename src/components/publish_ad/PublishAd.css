@@ -127,6 +127,13 @@
     font-weight: 800;
 }
 
+.publish-ad-option-note {
+    margin: 0 0 8px;
+    color: #2f8f5b;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
 .seed-row {
     display: grid;
     grid-template-columns: 1fr 1fr;

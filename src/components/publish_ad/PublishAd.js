@@ -192,6 +192,16 @@ const PublishAd = () => {
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
+
+        if (name === "forAdoption") {
+            setFormData((prevData) => ({
+                ...prevData,
+                forAdoption: checked,
+                price: checked ? "" : prevData.price,
+            }));
+            return;
+        }
+
         setFormData((prevData) => ({
             ...prevData,
             [name]: type === 'checkbox' ? checked : value,
@@ -385,6 +395,7 @@ const PublishAd = () => {
                 {isPetMarketplaceCategory(formData.category) && (
                     <div className="publish-ad-option-block">
                         <p className="publish-ad-option-title">אפשרות אימוץ</p>
+                        <p className="publish-ad-option-note">פרסום לאימוץ — ללא תשלום, תמיד.</p>
                         <div className="checkbox-row">
                         <label htmlFor="forAdoption">
                             <input
@@ -527,7 +538,8 @@ const PublishAd = () => {
                         (formData.category === "זרע") ||
                         (formData.category === "אביזרים") ||
                         (formData.category === "חנות") ||
-                        isPetMarketplaceCategory(formData.category)) && (
+                        isPetMarketplaceCategory(formData.category)) &&
+                    !formData.forAdoption && (
                         <div className='publish-ad-form'>
                             <label htmlFor="price">מחיר</label>
                             <input
