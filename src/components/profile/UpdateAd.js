@@ -92,6 +92,16 @@ const UpdateAd = () => {
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
+
+        if (name === "forAdoption") {
+            setFormData((prevData) => ({
+                ...prevData,
+                forAdoption: checked,
+                price: checked ? "" : prevData.price,
+            }));
+            return;
+        }
+
         setFormData((prevData) => ({
             ...prevData,
             [name]: type === 'checkbox' ? checked : value,
@@ -190,6 +200,13 @@ const UpdateAd = () => {
 
         dataToSubmit.breed = resolvePetBreed(formData.breed, formData.breedCustom);
         delete dataToSubmit.breedCustom;
+
+        if (formData.forAdoption) {
+            dataToSubmit.forAdoption = true;
+            dataToSubmit.price = "לאימוץ";
+        } else {
+            delete dataToSubmit.forAdoption;
+        }
 
         dataToSubmit = DeletedAttributesAfterUpdateForm(dataToSubmit);
 
@@ -454,17 +471,21 @@ const UpdateAd = () => {
                 )}
 
                 {isPetMarketplaceCategory(formData.category) && (
-                    <div className="checkbox-row">
-                        <label htmlFor="forAdoption">
-                            <input
-                                type="checkbox"
-                                id="forAdoption"
-                                name="forAdoption"
-                                checked={formData.forAdoption || false}
-                                onChange={handleInputChange}
-                            />
-                            מודעה לאימוץ
-                        </label>
+                    <div className="publish-ad-option-block">
+                        <p className="publish-ad-option-title">אפשרות אימוץ</p>
+                        <p className="publish-ad-option-note">פרסום לאימוץ — ללא תשלום, תמיד.</p>
+                        <div className="checkbox-row">
+                            <label htmlFor="forAdoption">
+                                <input
+                                    type="checkbox"
+                                    id="forAdoption"
+                                    name="forAdoption"
+                                    checked={formData.forAdoption || false}
+                                    onChange={handleInputChange}
+                                />
+                                מודעה לאימוץ
+                            </label>
+                        </div>
                     </div>
                 )}
 
@@ -590,7 +611,8 @@ const UpdateAd = () => {
                 {((formData.category === "סוסים") ||
                     (formData.category === "זרע") ||
                     (formData.category === "אביזרים") ||
-                    isPetMarketplaceCategory(formData.category)) && (
+                    isPetMarketplaceCategory(formData.category)) &&
+                !formData.forAdoption && (
                         <div className='update-ad-form'>
                             <label htmlFor="price">מחיר</label>
                             <input

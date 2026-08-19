@@ -17,6 +17,7 @@ import './Profile.css';
 import Modal from '@components/utils/modal/Modal';
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from '@components/utils/constants/Functions';
 import { AD_STATUS, AD_STATUS_LABELS, getAdStatus } from '@/helpers/ad-approval';
+import { isAdoptionListing } from '@/data/pets';
 import * as Sentry from "@sentry/react";
 
 const getAdTitle = (ad) =>
@@ -145,7 +146,9 @@ const Profile = () => {
     }
 
     const handleRenewButton = async (ad) => {
-        if (!currentUser?.isAdmin && currentUser.numberOfAds <= 0) {
+        const isFreeAdoptionRenew = isAdoptionListing(ad);
+
+        if (!currentUser?.isAdmin && currentUser.numberOfAds <= 0 && !isFreeAdoptionRenew) {
             navigate('/subscribe');
             return;
         }
