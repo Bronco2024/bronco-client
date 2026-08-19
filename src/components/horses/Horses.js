@@ -11,14 +11,15 @@ import {
     endBefore,
     where,
 } from "firebase/firestore";
-import { useNavigate } from 'react-router-dom';
-import { db } from '@/firebase';
-import { mapApprovedAdsFromSnapshot } from '@/helpers/ad-approval';
-import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
+import { useNavigate } from "react-router-dom";
+import { db } from "@/firebase";
+import { mapApprovedAdsFromSnapshot } from "@/helpers/ad-approval";
+import { ADS_PER_PAGE, BREEDS } from "@components/utils/constants/Constants";
 import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
-import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
-import HorseFilters from "@components/utils/filters/HorseFilters";
+import { AdGridCard } from "@/components/listings/ServicePage";
+import CitySelect from "@/components/pets/CitySelect";
 import Paganation from "@components/utils/paganation/Paganation";
+import "@/components/pets/CategoryListings.css";
 
 const parseNumericPrice = (price) => {
     if (typeof price === "number") return price;
@@ -60,17 +61,11 @@ const Horses = () => {
     });
 
     const categoryFilter = "סוסים";
-
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
-
 
     const getTotalCount = useCallback(async () => {
         const collectionRef = collection(db, "ads");
-        const q = query(
-            collectionRef,
-            where("category", "==", categoryFilter)
-        );
-
+        const q = query(collectionRef, where("category", "==", categoryFilter));
         const aggregateQuerySnapshot = await getCountFromServer(q);
         setTotalAds(aggregateQuerySnapshot.data().count);
     }, [categoryFilter]);
@@ -83,7 +78,6 @@ const Horses = () => {
             orderBy("createdAt", "desc"),
             limit(ADS_PER_PAGE)
         );
-
         const querySnapshot = await getDocs(q);
         const items = sortHorseAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
@@ -104,7 +98,6 @@ const Horses = () => {
             startAfter(afterThis),
             limit(ADS_PER_PAGE)
         );
-
         const querySnapshot = await getDocs(q);
         const items = sortHorseAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
@@ -122,7 +115,6 @@ const Horses = () => {
             limitToLast(ADS_PER_PAGE),
             endBefore(beforeThis)
         );
-
         const querySnapshot = await getDocs(q);
         const items = sortHorseAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
         setAdList(items);
@@ -148,22 +140,31 @@ const Horses = () => {
         });
     };
 
-    const applyFilters = async () => {
-        if (filters.age === "" &&
+    const applyFilters = async (event) => {
+        event.preventDefault();
+
+        if (
+            filters.age === "" &&
             filters.breed === "" &&
             filters.gender === "" &&
             filters.hasCertificate === "" &&
             filters.location === "" &&
             filters.maxPrice === 999999 &&
             filters.minPrice === 0 &&
-            filters.sortBy === "newest") {
+            filters.sortBy === "newest"
+        ) {
             fetchAds();
             getTotalCount();
             setPage(1);
             return;
         }
 
-        let certificate = filters.hasCertificate === "yes" ? true : filters.hasCertificate === "no" ? false : "";
+        let certificate =
+            filters.hasCertificate === "yes"
+                ? true
+                : filters.hasCertificate === "no"
+                ? false
+                : "";
         setPage(1);
         let ageQueries = [];
         if (filters.age === "foal") {
@@ -180,13 +181,12 @@ const Horses = () => {
         const filterQueries = [
             where("category", "==", categoryFilter),
             ...(filters.gender ? [where("gender", "==", filters.gender)] : []),
-            ...(filters.minPrice ? [where("price", ">=", (filters.minPrice))] : []),
-            ...(filters.maxPrice ? [where("price", "<=", (filters.maxPrice))] : []),
+            ...(filters.minPrice ? [where("price", ">=", filters.minPrice)] : []),
+            ...(filters.maxPrice ? [where("price", "<=", filters.maxPrice)] : []),
             ...(filters.hasCertificate ? [where("hasCertificate", "==", certificate)] : []),
-            // ...(filters.age ? [where("age", "==", parseInt(filters.age))] : []),
             ...(filters.breed ? [where("breed", "==", filters.breed)] : []),
             ...(filters.location ? [where("location", "==", filters.location)] : []),
-            ...ageQueries
+            ...ageQueries,
         ];
 
         const totalCountQuery = query(collectionRef, ...filterQueries);
@@ -220,54 +220,201 @@ const Horses = () => {
             location: "",
             sortBy: "newest",
         });
-    }
+    };
 
     const handleClickOnItem = (ad) => {
-        navigate('/item', { state: { ad } })
-    }
+        navigate("/item", { state: { ad } });
+    };
 
     return (
-        <ServicePage
-            title="סוסים"
-            subtitle="סוסים וסייחים מכל הגזעים"
-            heroImage="/horses.jpg"
-            count={adList.length}
-            filters={
-                <HorseFilters
-                    filters={filters}
-                    handleFilterChange={handleFilterChange}
-                    applyFilters={applyFilters}
-                    resetFilters={resetFilters}
-                />
-            }
-        >
-            {adList.length === 0 ? (
-                <p className="ads-page-empty">לא נמצאו מודעות בקטיגוריה זו</p>
-            ) : (
-                <div className="ads-page-grid">
-                    {adList.map((ad) =>
-                        !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                            <AdGridCard
-                                key={ad.id}
-                                ad={ad}
-                                title={ad.breed}
-                                onClick={handleClickOnItem}
-                                verified={Boolean(ad?.hasCertificate)}
-                            />
-                        )
-                    )}
+        <main className="category-page" dir="rtl">
+            <section
+                className="category-hero"
+                style={{ backgroundImage: `url(/horses.jpg)` }}
+            >
+                <div className="category-hero-overlay">
+                    <button
+                        type="button"
+                        className="category-back"
+                        onClick={() => navigate("/")}
+                    >
+                        ← חזרה לדף הבית
+                    </button>
+                    <h1>סוסים</h1>
+                    <p>סוסים וסייחים מכל הגזעים</p>
                 </div>
-            )}
+            </section>
 
-            <Paganation
-                handleNextPage={handleNextPage}
-                handlePrevPage={handlePrevPage}
-                page={page}
-                adList={adList}
-                afterThis={afterThis}
-                TOTAL_PAGES={TOTAL_PAGES}
-            />
-        </ServicePage>
+            <section className="category-content">
+                <form className="category-search" onSubmit={applyFilters}>
+                    <div className="category-filter-field">
+                        <label htmlFor="category-breed">גזע / סוג</label>
+                        <select
+                            id="category-breed"
+                            name="breed"
+                            value={filters.breed}
+                            onChange={handleFilterChange}
+                        >
+                            <option value="">כל הגזעים</option>
+                            {BREEDS.map((breed) => (
+                                <option key={breed} value={breed}>
+                                    {breed}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="category-filter-field">
+                        <label htmlFor="category-gender">מין</label>
+                        <select
+                            id="category-gender"
+                            name="gender"
+                            value={filters.gender}
+                            onChange={handleFilterChange}
+                        >
+                            <option value="">הכל</option>
+                            <option value="זכר">זכר</option>
+                            <option value="נקבה">נקבה</option>
+                        </select>
+                    </div>
+
+                    <div className="category-filter-field">
+                        <CitySelect
+                            value={filters.location}
+                            onChange={(e) =>
+                                handleFilterChange({ target: { name: "location", value: e.target.value } })
+                            }
+                            required={false}
+                            emptyLabel="כל הערים"
+                            areaValue={filters.district}
+                            onAreaChange={(e) =>
+                                handleFilterChange({ target: { name: "district", value: e.target.value } })
+                            }
+                            enableAreaFilter
+                            areaLabel="אזור"
+                        />
+                    </div>
+
+                    <div className="category-filter-field">
+                        <label htmlFor="category-age">גיל</label>
+                        <select
+                            id="category-age"
+                            name="age"
+                            value={filters.age}
+                            onChange={handleFilterChange}
+                        >
+                            <option value="">הכל</option>
+                            <option value="foal">סייח</option>
+                            <option value="young">צעיר</option>
+                            <option value="adult">בוגר</option>
+                            <option value="senior">מבוגר</option>
+                        </select>
+                    </div>
+
+                    <div className="category-filter-field">
+                        <label htmlFor="category-certificate">תעודה</label>
+                        <select
+                            id="category-certificate"
+                            name="hasCertificate"
+                            value={filters.hasCertificate}
+                            onChange={handleFilterChange}
+                        >
+                            <option value="">הכל</option>
+                            <option value="yes">יש תעודה</option>
+                            <option value="no">ללא תעודה</option>
+                        </select>
+                    </div>
+
+                    <div className="category-filter-field">
+                        <label htmlFor="category-min-price">מחיר מינימלי</label>
+                        <input
+                            id="category-min-price"
+                            type="number"
+                            name="minPrice"
+                            min={0}
+                            value={filters.minPrice || ""}
+                            onChange={handleFilterChange}
+                            placeholder="מ-"
+                        />
+                    </div>
+
+                    <div className="category-filter-field">
+                        <label htmlFor="category-max-price">מחיר מקסימלי</label>
+                        <input
+                            id="category-max-price"
+                            type="number"
+                            name="maxPrice"
+                            min={0}
+                            value={filters.maxPrice === 999999 ? "" : filters.maxPrice}
+                            onChange={handleFilterChange}
+                            placeholder="עד-"
+                        />
+                    </div>
+
+                    <div className="category-filter-field">
+                        <label htmlFor="category-sort">מיון</label>
+                        <select
+                            id="category-sort"
+                            name="sortBy"
+                            value={filters.sortBy}
+                            onChange={handleFilterChange}
+                        >
+                            <option value="newest">הכי חדשים</option>
+                            <option value="priceAsc">מחיר מהנמוך לגבוה</option>
+                            <option value="priceDesc">מחיר מהגבוה לנמוך</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" className="category-submit">
+                        חיפוש
+                    </button>
+                </form>
+
+                <p className="category-count">{adList.length} מודעות</p>
+
+                {adList.length === 0 ? (
+                    <div className="category-empty">
+                        <h3>לא נמצאו מודעות</h3>
+                        <p>נסו לשנות את החיפוש או לבחור עיר אחרת.</p>
+                        <button
+                            type="button"
+                            className="category-reset"
+                            onClick={() => {
+                                resetFilters();
+                                fetchAds();
+                                getTotalCount();
+                                setPage(1);
+                            }}
+                        >
+                            נקה חיפוש
+                        </button>
+                    </div>
+                ) : (
+                    <div className="listings-grid">
+                        {adList.map((ad) =>
+                            !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
+                                <AdGridCard
+                                    key={ad.id}
+                                    ad={ad}
+                                    title={ad.breed}
+                                    onClick={handleClickOnItem}
+                                    verified={Boolean(ad?.hasCertificate)}
+                                />
+                            )
+                        )}
+                    </div>
+                )}
+
+                <Paganation
+                    handleNextPage={handleNextPage}
+                    handlePrevPage={handlePrevPage}
+                    page={page}
+                    adList={adList}
+                    afterThis={afterThis}
+                    TOTAL_PAGES={TOTAL_PAGES}
+                />
+            </section>
+        </main>
     );
 };
 
