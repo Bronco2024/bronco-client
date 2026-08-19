@@ -62,7 +62,7 @@ const ItemPage = () => {
         title: ad ? `${getAdTitle(ad)} | ${SITE_NAME}` : SITE_NAME,
         description: ad?.description
             ? String(ad.description)
-            : "מצאו עוד מודעות ב-Pets & Bones או פרסמו חיה חדשה.",
+            : `מצאו עוד מודעות ב-${SITE_NAME} או פרסמו חיה חדשה.`,
         image: ad ? getAdImage(ad) : "/hero-pets.png",
     });
 
@@ -277,8 +277,8 @@ const ItemPage = () => {
         try {
             if (navigator.share) {
                 await navigator.share({
-                    title: `${title} | Pets & Bones`,
-                    text: 'מודעה מ-Pets & Bones',
+                    title: `${title} | ${SITE_NAME}`,
+                    text: `מודעה מ-${SITE_NAME}`,
                     url: shareUrl,
                 });
                 setShareStatus('המודעה שותפה');

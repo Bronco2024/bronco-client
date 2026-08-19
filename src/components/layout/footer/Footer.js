@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaw } from "@fortawesome/free-solid-svg-icons";
 import { SITE_SERVICES, MARKETPLACE_CATEGORIES } from '@/data/pets';
-import { SITE_NAME } from '@/data/site-config';
+import { SITE_NAME, CONTACT_EMAIL } from '@/data/site-config';
 
 const Footer = () => {
     return (
@@ -57,8 +57,8 @@ const Footer = () => {
                 <div className="footer-section">
                     <h2>צור קשר</h2>
                     <div className="contact-item">
-                        <a className="contact-link" href="mailto:petsbones@gmail.com">
-                            petsbones@gmail.com
+                        <a className="contact-link" href={`mailto:${CONTACT_EMAIL}`}>
+                            {CONTACT_EMAIL}
                         </a>
                         <a href="tel:0547926338" className="contact-link">054-792-6338</a>
                     </div>

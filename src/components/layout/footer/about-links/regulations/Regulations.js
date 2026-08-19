@@ -1,16 +1,17 @@
 import React from 'react';
 import './Regulations.css';
+import { SITE_NAME, CONTACT_EMAIL } from '@/data/site-config';
 
 const Regulations = () => {
     return (
         <div className="regulations-section">
-            <h2 className="regulations-heading">תקנון שימוש לאתר Pets & Bones</h2>
+            <h2 className="regulations-heading">תקנון שימוש לאתר {SITE_NAME}</h2>
             <p className="regulations-date">עדכון אחרון: 08/2026</p>
 
             <div className="regulations-block">
                 <h3>1. מבוא</h3>
                 <p>
-                    ברוכים הבאים ל-Pets & Bones, אתר המאפשר למשתמשים לפרסם ולחפש מודעות של חיות מחמד, אימוץ, אביזרים ושירותים נלווים.
+                    ברוכים הבאים ל-{SITE_NAME}, אתר המאפשר למשתמשים לפרסם ולחפש מודעות של חיות מחמד, אימוץ, אביזרים ושירותים נלווים.
                     השימוש באתר כפוף לתנאים המפורטים בתקנון זה.
                 </p>
             </div>
@@ -100,7 +101,7 @@ const Regulations = () => {
 
             <div className="regulations-block">
                 <h3>11. יצירת קשר</h3>
-                <p>לשאלות: <strong><a href='mailto:petsbones@gmail.com'>petsbones@gmail.com</a></strong></p>
+                <p>לשאלות: <strong><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></strong></p>
             </div>
 
             <div className="regulations-block">

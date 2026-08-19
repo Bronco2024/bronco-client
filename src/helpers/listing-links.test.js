@@ -23,8 +23,8 @@ describe("listing contact and share helpers", () => {
 
   test("builds a shareable listing URL from the ad id", () => {
     expect(getListingPath({ id: "ad-1" })).toBe("/item/ad-1");
-    expect(getListingShareUrl({ id: "ad-1" }, "https://petbones.netlify.app")).toBe(
-      "https://petbones.netlify.app/item/ad-1"
+    expect(getListingShareUrl({ id: "ad-1" }, "https://petzo.co.il")).toBe(
+      "https://petzo.co.il/item/ad-1"
     );
   });
 });

@@ -15,9 +15,9 @@ The values below are aligned with `src/data/site-config.js` and `src/helpers/fir
 
 - **Host:** `smtp.gmail.com`
 - **Port:** `587`
-- **From name:** `Pets & Bones` (or `SITE_NAME`)
-- **From email:** `petsbones@gmail.com` (or `CONTACT_EMAIL`)
-- **Reply-to:** `petsbones@gmail.com` (or `CONTACT_EMAIL`)
+- **From name:** `Petzo` (or `SITE_NAME`)
+- **From email:** `petzo.team@gmail.com` (or `CONTACT_EMAIL`)
+- **Reply-to:** `petzo.team@gmail.com` (or `CONTACT_EMAIL`)
 
 ## After enabling SMTP
 - Test by signing up with a new account and verifying the email.
@@ -29,4 +29,11 @@ The values below are aligned with `src/data/site-config.js` and `src/helpers/fir
 ## Verification link behavior
 This app expects the verification redirect URL to be:
 `/login?verified=1` (configured in `auth-email-helpers.js`).
+
+## Custom domain (`petzo.co.il`)
+- Set **Netlify → Domain management → Add custom domain** to `petzo.co.il`.
+- In **Firebase Console → Authentication → Settings → Authorized domains**, add:
+  - `petzo.co.il`
+  - `www.petzo.co.il` (if you use www)
+- Optional env override for previews: `REACT_APP_SITE_URL=https://petzo.co.il`
 

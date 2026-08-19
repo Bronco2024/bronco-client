@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { SITE_NAME, SITE_URL } from "@/data/site-config";
+import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/data/site-config";
 
 const getAbsoluteUrl = (url) => {
   if (!url) return "";
@@ -34,7 +34,7 @@ const useSeo = ({
 
     const finalDescription = description
       ? String(description)
-      : "Pets & Bones — לוח מודעות לחיות מחמד, אימוץ ושירותים במקום אחד.";
+      : SITE_DESCRIPTION;
 
     const absoluteImage = image ? getAbsoluteUrl(image) : "";
     const absoluteUrl =
