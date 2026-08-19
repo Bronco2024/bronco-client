@@ -452,6 +452,19 @@ const UpdateAd = () => {
                                 />
                             </div>
                         </div>
+
+                        <div className="checkbox-row">
+                            <label htmlFor="hasCertificate">
+                                <input
+                                    type="checkbox"
+                                    id="hasCertificate"
+                                    name="hasCertificate"
+                                    checked={formData?.hasCertificate || false}
+                                    onChange={handleInputChange}
+                                />
+                                עם תעודה
+                            </label>
+                        </div>
                     </div>
                 )}
 
@@ -539,16 +552,6 @@ const UpdateAd = () => {
                         </select>
                     </div>
                 )}
-
-                <label htmlFor="description">תיאור</label>
-                <textarea
-                    id="description"
-                    name="description"
-                    value={formData?.description}
-                    onChange={handleChange}
-                    required
-                    rows={5}
-                />
 
                 <label htmlFor="phoneNumber">שם איש קשר</label>
                 <input
