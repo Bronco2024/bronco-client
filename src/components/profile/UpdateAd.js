@@ -371,6 +371,7 @@ const UpdateAd = () => {
                                     onChange={handleChange}
                                     min={"0"}
                                     max={"11"}
+                                    required={false}
                                     placeholder={' '}
                                 />
                             </div>
@@ -431,6 +432,7 @@ const UpdateAd = () => {
                                     onChange={handleChange}
                                     min={"0"}
                                     max={"11"}
+                                    required={false}
                                     placeholder={' '}
                                 />
                             </div>

@@ -1,7 +1,17 @@
 import React from 'react';
 import './FloatingInput.css';
 
-const FloatingInput = ({ label, value, onChange, type = 'text', placeholder = '', min, max, id }) => {
+const FloatingInput = ({
+    label,
+    value,
+    onChange,
+    type = 'text',
+    placeholder = '',
+    min,
+    max,
+    id,
+    required = true,
+}) => {
 
     return (
         <div className="input-floating">
@@ -13,10 +23,10 @@ const FloatingInput = ({ label, value, onChange, type = 'text', placeholder = ''
                 onChange={onChange}
                 min={min}
                 max={max}
-                required
+                required={required}
                 placeholder={placeholder}
             />
-            <label htmlFor="ageYears">{label}</label>
+            <label htmlFor={id}>{label}</label>
         </div>
     )
 }
