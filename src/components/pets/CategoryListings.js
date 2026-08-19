@@ -3,8 +3,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import PetCard from "./PetCard";
 import Loading from "@/components/loading-screen/Loading";
 import useMarketplaceAds from "@/hooks/useMarketplaceAds";
-import CitySelect from "@/components/pets/CitySelect";
 import { getPetBreeds } from "@/data/pet-breeds";
+import { AREA_OPTIONS, getCitiesByArea } from "@/data/city-areas";
 import {
   getCategoryBySlug,
 } from "@/data/pets";
@@ -55,6 +55,10 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
     );
     return fallbackBreeds.sort((a, b) => a.localeCompare(b, "he"));
   }, [adoptionOnly, category?.name, listings]);
+  const cityOptions = useMemo(
+    () => getCitiesByArea(selectedArea),
+    [selectedArea]
+  );
 
   const filteredListings = useMemo(() => {
     const text = searchText.trim().toLowerCase();
@@ -170,22 +174,6 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
           </div>
 
           <div className="category-filter-field">
-            <CitySelect
-              value={selectedLocation}
-              onChange={(event) => setSelectedLocation(event.target.value)}
-              required={false}
-              emptyLabel="כל הערים"
-              areaValue={selectedArea}
-              onAreaChange={(event) => {
-                setSelectedArea(event.target.value);
-                setSelectedLocation("");
-              }}
-              enableAreaFilter
-              areaLabel="אזור"
-            />
-          </div>
-
-          <div className="category-filter-field">
             <label htmlFor="category-breed">גזע / סוג</label>
             <select
               id="category-breed"
@@ -215,6 +203,40 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
           </div>
 
           <div className="category-filter-field">
+            <label htmlFor="category-area">אזור</label>
+            <select
+              id="category-area"
+              value={selectedArea}
+              onChange={(event) => {
+                setSelectedArea(event.target.value);
+                setSelectedLocation("");
+              }}
+            >
+              {AREA_OPTIONS.map((option) => (
+                <option key={option.value || "all-areas"} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="category-filter-field">
+            <label htmlFor="category-city">עיר</label>
+            <select
+              id="category-city"
+              value={selectedLocation}
+              onChange={(event) => setSelectedLocation(event.target.value)}
+            >
+              <option value="">כל הערים</option>
+              {cityOptions.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="category-filter-field">
             <label htmlFor="category-min-price">מחיר מינימלי</label>
             <input
               id="category-min-price"
@@ -222,7 +244,7 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
               min={0}
               value={minPrice || ""}
               onChange={(event) => setMinPrice(Number(event.target.value) || 0)}
-              placeholder="מ-"
+              placeholder="מינימום"
             />
           </div>
 
@@ -236,11 +258,11 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
               onChange={(event) =>
                 setMaxPrice(Number(event.target.value) || 999999)
               }
-              placeholder="עד-"
+              placeholder="מקסימום"
             />
           </div>
 
-          <div className="category-filter-field">
+          <div className="category-filter-field category-filter-field--wide">
             <label htmlFor="category-sort">מיון</label>
             <select
               id="category-sort"
