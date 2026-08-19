@@ -165,7 +165,7 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
               type="text"
               value={searchText}
               onChange={(event) => setSearchText(event.target.value)}
-              placeholder="חיפוש לפי שם, גזע או עיר"
+              placeholder="מה אתם מחפשים?"
             />
           </div>
 
