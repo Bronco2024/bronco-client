@@ -10,6 +10,7 @@ import Modal from '@components/utils/modal/Modal';
 import * as Sentry from "@sentry/react";
 import { handleGoogleSignupAndSignIn } from '../../helpers/firebase-helpers';
 import { sendSiteEmailVerification } from '../../helpers/auth-email';
+import { SITE_NAME } from '@/data/site-config';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -114,7 +115,7 @@ const Register = () => {
                 <span className="auth-brand-mark" aria-hidden="true">
                     <FontAwesomeIcon icon={faPaw} />
                 </span>
-                <span>Pets & Bones</span>
+                <span>{SITE_NAME}</span>
             </div>
             <h2 className="register-title">הירשם</h2>
             <form className="register-form" onSubmit={handleSubmit}>

@@ -15,9 +15,9 @@ The values below are aligned with `src/data/site-config.js` and `src/helpers/fir
 
 - **Host:** `smtp.gmail.com`
 - **Port:** `587`
-- **From name:** `Pets & Bones` (or `SITE_NAME`)
-- **From email:** `petsbones@gmail.com` (or `CONTACT_EMAIL`)
-- **Reply-to:** `petsbones@gmail.com` (or `CONTACT_EMAIL`)
+- **From name:** `Petzo` (or `SITE_NAME`)
+- **From email:** `petzo.team@gmail.com` (or `CONTACT_EMAIL`)
+- **Reply-to:** `petzo.team@gmail.com` (or `CONTACT_EMAIL`)
 
 ## After enabling SMTP
 - Test by signing up with a new account and verifying the email.

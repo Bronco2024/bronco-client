@@ -1,14 +1,15 @@
 import React from 'react';
 import './PrivacyPolicy.css';
+import { SITE_NAME, CONTACT_EMAIL } from '@/data/site-config';
 
 const PrivacyPolicy = () => {
     return (
         <div className="policy-section">
-            <h2 className="policy-heading">מדיניות פרטיות ל-Pets & Bones</h2>
+            <h2 className="policy-heading">מדיניות פרטיות ל-{SITE_NAME}</h2>
             <p className="policy-date">תאריך עדכון אחרון: 08/2026</p>
 
             <p className="policy-intro">
-                ברוכים הבאים ל-Pets & Bones. אנו מחויבים להגן על הפרטיות ולשמור על המידע שאתה משתף איתנו בעת השימוש באתר שלנו.
+                ברוכים הבאים ל-{SITE_NAME}. אנו מחויבים להגן על הפרטיות ולשמור על המידע שאתה משתף איתנו בעת השימוש באתר שלנו.
                 מדיניות זו מסבירה כיצד אנו אוספים, משתמשים, משתפים ומשמרים את המידע שלך כדי לספק חוויית שירות מקיפה ובטוחה יותר.
             </p>
 
@@ -51,7 +52,7 @@ const PrivacyPolicy = () => {
                     <li>לעיין במידע שנשמר אודותיך.</li>
                     <li>לבקש עדכון, תיקון או מחיקה.</li>
                     <li>לבטל קבלת הודעות שיווקיות.</li>
-                    <li>לפנות אלינו בכתובת: <strong>petsbones@gmail.com</strong>.</li>
+                    <li>לפנות אלינו בכתובת: <strong>{CONTACT_EMAIL}</strong>.</li>
                 </ul>
             </div>
 
@@ -72,7 +73,7 @@ const PrivacyPolicy = () => {
 
             <div className="policy-section-block">
                 <h3>8. יצירת קשר</h3>
-                <p>לשאלות או בקשות: <strong><a href='mailto:petsbones@gmail.com'>petsbones@gmail.com</a></strong></p>
+                <p>לשאלות או בקשות: <strong><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></strong></p>
             </div>
         </div>
     );

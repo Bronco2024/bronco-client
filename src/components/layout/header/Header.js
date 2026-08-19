@@ -17,7 +17,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import useAdminNotifications from '@/hooks/useAdminNotifications';
 import { SITE_SERVICES, MARKETPLACE_CATEGORIES } from '@/data/pets';
-import { SITE_NAME } from '@/data/site-config';
+import { SITE_NAME, SITE_TAGLINE } from '@/data/site-config';
 import Loading from '../../loading-screen/Loading';
 
 const Header = () => {
@@ -106,7 +106,7 @@ const Header = () => {
                     </span>
                     <span className="brand-copy">
                         <span className="brand-text">{SITE_NAME}</span>
-                        <span className="brand-tagline">לוח חיות מחמד</span>
+                        <span className="brand-tagline">{SITE_TAGLINE}</span>
                     </span>
                 </Link>
 

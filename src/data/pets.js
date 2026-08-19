@@ -1,4 +1,5 @@
 import ISRAEL_CITIES from "./israel-cities";
+import { SITE_NAME } from "./site-config";
 
 export const FAVORITES_STORAGE_KEY = "pets_bones_favorites";
 export const FAVORITES_CHANGED_EVENT = "pets-favorites-changed";
@@ -162,7 +163,7 @@ export const SITE_SERVICES = [
 ];
 
 const listing = (data) => ({
-  contact: data.contact || "צוות Pets & Bones",
+  contact: data.contact || `צוות ${SITE_NAME}`,
   phoneNumber: data.phoneNumber || "0547926338",
   photos: data.photos || [data.image],
   title: data.title || data.name,

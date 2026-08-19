@@ -1,3 +1,5 @@
+import { SITE_NAME } from "@/data/site-config";
+
 export const toWhatsAppNumber = (phoneNumber) => {
   if (!phoneNumber) return "";
 
@@ -13,8 +15,8 @@ export const buildWhatsAppLink = ({ phoneNumber, title = "" } = {}) => {
   if (!number) return "";
 
   const text = title
-    ? `שלום, ראיתי את המודעה "${title}" ב-Pets & Bones.`
-    : "שלום, ראיתי מודעה ב-Pets & Bones.";
+    ? `שלום, ראיתי את המודעה "${title}" ב-${SITE_NAME}.`
+    : `שלום, ראיתי מודעה ב-${SITE_NAME}.`;
 
   return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 };

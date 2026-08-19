@@ -13,7 +13,7 @@ import {
 import { getPetBreeds, PET_BREED_OTHER, resolvePetBreed } from "./pet-breeds";
 import ISRAEL_CITIES from "./israel-cities";
 
-describe("Pets & Bones catalog", () => {
+describe("Petzo catalog", () => {
   test("has a route for every animal category", () => {
     expect(PET_CATEGORIES.length).toBe(10);
     expect(getCategoryBySlug("dogs")?.name).toBe("כלבים");

@@ -1,5 +1,6 @@
 import { PET_CATEGORIES } from "@/data/pets";
 import ISRAEL_CITIES from "@/data/israel-cities";
+import { SITE_NAME } from "@/data/site-config";
 
 export { PET_CATEGORIES, ISRAEL_CITIES };
 
@@ -96,7 +97,7 @@ export const ADS_PER_PAGE = 25;
 
 export const CARDS = [
     {
-        title: "ברוכים הבאים ל-Pets & Bones",
+        title: `ברוכים הבאים ל-${SITE_NAME}`,
         text: "המקום שמחבר בין חיות מחמד, אנשים ושירותים — עם חיפוש חכם ומודעות מאושרות"
     },
     {
