@@ -543,18 +543,16 @@ const PublishAd = () => {
                     )
                 }
 
-                {
-                    (formData.category === "סוסים" || formData.category === "זרע") && (
-                        <div className='publish-ad-form'>
-                            <label htmlFor="video">סרטון</label>
-                            <input
-                                type="file"
-                                accept="video/*"
-                                onChange={(e) => setFormData({ ...formData, video: e.target.files[0] })}
-                            />
-                        </div>
-                    )
-                }
+                {formData.category && (
+                    <div className='publish-ad-form'>
+                        <label htmlFor="video">סרטון</label>
+                        <input
+                            type="file"
+                            accept="video/*"
+                            onChange={(e) => setFormData({ ...formData, video: e.target.files[0] })}
+                        />
+                    </div>
+                )}
 
                 <label htmlFor="photos">תמונות</label>
                 <input
