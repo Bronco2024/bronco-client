@@ -202,9 +202,9 @@ const Accessories = () => {
 
     return (
         <ServicePage
-            title="אביזרים"
-            subtitle="ציוד, מזון וכל מה שצריך בבית"
-            heroImage="/services/accessories.jpg"
+            title="אביזרים וציוד"
+            subtitle="מזון, צעצועים, כלובים וכל מה שחיית המחמד צריכה"
+            heroImage="/hero-pets.png"
             count={adList.length}
             filters={
                 <AccessoriesFilters
