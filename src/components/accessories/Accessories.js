@@ -47,6 +47,7 @@ const Accessories = () => {
     const [page, setPage] = useState(1);
     const [afterThis, setAfterThis] = useState(null);
     const [beforeThis, setBeforeThis] = useState(null);
+    const [searchText, setSearchText] = useState("");
 
     const [filters, setFilters] = useState({
         accessory: "",
@@ -58,7 +59,28 @@ const Accessories = () => {
     });
 
     const categoryFilter = "אביזרים";
-    const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
+    const hasSearchText = Boolean(searchText.trim());
+    const TOTAL_PAGES = hasSearchText ? 1 : Math.ceil(totalAds / ADS_PER_PAGE);
+
+    const matchesSearchText = (ad) => {
+        const q = searchText.trim().toLowerCase();
+        if (!q) return true;
+
+        const values = [
+            ad?.name,
+            ad?.title,
+            ad?.category,
+            ad?.location,
+            ad?.breed,
+            ad?.accessory,
+            ad?.type,
+            ad?.description,
+        ].filter(Boolean);
+
+        return values.some((value) =>
+            String(value).toLowerCase().includes(q)
+        );
+    };
 
     const getTotalCount = useCallback(async () => {
         const collectionRef = collection(db, "ads");
@@ -67,7 +89,8 @@ const Accessories = () => {
         setTotalAds(aggregateQuerySnapshot.data().count);
     }, [categoryFilter]);
 
-    const fetchAds = useCallback(async () => {
+    const fetchAds = useCallback(async ({ sortBy } = {}) => {
+        const effectiveSortBy = sortBy ?? filters.sortBy;
         const collectionRef = collection(db, "ads");
         const q = query(
             collectionRef,
@@ -76,9 +99,10 @@ const Accessories = () => {
             limit(ADS_PER_PAGE)
         );
         const querySnapshot = await getDocs(q);
-        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
+        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), effectiveSortBy);
         setAdList(items);
         setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        setBeforeThis(null);
     }, [categoryFilter, filters.sortBy]);
 
     useEffect(() => {
@@ -87,6 +111,7 @@ const Accessories = () => {
     }, [fetchAds, getTotalCount]);
 
     const handleNextPage = async () => {
+        if (hasSearchText) return;
         const collectionRef = collection(db, "ads");
         const q = query(
             collectionRef,
@@ -104,6 +129,7 @@ const Accessories = () => {
     };
 
     const handlePrevPage = async () => {
+        if (hasSearchText) return;
         const collectionRef = collection(db, "ads");
         const q = query(
             collectionRef,
@@ -139,6 +165,7 @@ const Accessories = () => {
 
     const applyFilters = async (event) => {
         event.preventDefault();
+        const hasSearch = Boolean(searchText.trim());
 
         if (
             filters.location === "" &&
@@ -146,6 +173,7 @@ const Accessories = () => {
             filters.minPrice === 0 &&
             filters.accessory === "" &&
             filters.sortBy === "newest"
+            && !hasSearch
         ) {
             fetchAds();
             getTotalCount();
@@ -164,15 +192,26 @@ const Accessories = () => {
             ...(filters.location ? [where("location", "==", filters.location)] : []),
         ];
 
-        const totalCountQuery = query(collectionRef, ...filterQueries);
-        const totalCountSnapshot = await getCountFromServer(totalCountQuery);
-        setTotalAds(totalCountSnapshot.data().count);
+        if (!hasSearch) {
+            const totalCountQuery = query(collectionRef, ...filterQueries);
+            const totalCountSnapshot = await getCountFromServer(totalCountQuery);
+            setTotalAds(totalCountSnapshot.data().count);
+        }
 
         const paginatedQuery = query(collectionRef, ...filterQueries, limit(ADS_PER_PAGE));
         const querySnapshot = await getDocs(paginatedQuery);
         const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
+        const filteredItems = hasSearch ? items.filter(matchesSearchText) : items;
 
-        setAdList(items);
+        setAdList(filteredItems);
+        if (hasSearch) setTotalAds(filteredItems.length);
+
+        if (hasSearch) {
+            // When searching by text we filter client-side, so we don't paginate.
+            setAfterThis(null);
+            setBeforeThis(null);
+            return;
+        }
 
         if (querySnapshot.docs.length > 0) {
             setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
@@ -192,6 +231,7 @@ const Accessories = () => {
             location: "",
             sortBy: "newest",
         });
+        setSearchText("");
     };
 
     const handleClickOnItem = (ad) => {
@@ -202,7 +242,7 @@ const Accessories = () => {
         <main className="category-page" dir="rtl">
             <section
                 className="category-hero"
-                style={{ backgroundImage: `url(/hero-pets.png)` }}
+                style={{ backgroundImage: `url(/accessories-hero.png)` }}
             >
                 <div className="category-hero-overlay">
                     <button
@@ -212,13 +252,24 @@ const Accessories = () => {
                     >
                         ← חזרה לדף הבית
                     </button>
-                    <h1>אביזרים וציוד</h1>
-                    <p>מזון, צעצועים, כלובים וכל מה שחיית המחמד צריכה</p>
+                    <h1>אביזרים</h1>
+                    <p>צעצועים, כלובים וכל מה שחיית המחמד צריכה</p>
                 </div>
             </section>
 
             <section className="category-content">
                 <form className="category-search" onSubmit={applyFilters}>
+                    <div className="category-filter-field category-filter-field--wide">
+                        <label htmlFor="accessories-search-text">חיפוש</label>
+                        <input
+                            id="accessories-search-text"
+                            type="text"
+                            value={searchText}
+                            onChange={(event) => setSearchText(event.target.value)}
+                            placeholder="מה אתם מחפשים?"
+                        />
+                    </div>
+
                     <div className="category-filter-field">
                         <label htmlFor="category-accessory">סוג מוצר</label>
                         <select
@@ -262,7 +313,7 @@ const Accessories = () => {
                             min={0}
                             value={filters.minPrice || ""}
                             onChange={handleFilterChange}
-                            placeholder="מ-"
+                            placeholder="מינימום"
                         />
                     </div>
 
@@ -275,7 +326,7 @@ const Accessories = () => {
                             min={0}
                             value={filters.maxPrice === 999999 ? "" : filters.maxPrice}
                             onChange={handleFilterChange}
-                            placeholder="עד-"
+                            placeholder="מקסימום"
                         />
                     </div>
 
@@ -309,7 +360,7 @@ const Accessories = () => {
                             className="category-reset"
                             onClick={() => {
                                 resetFilters();
-                                fetchAds();
+                                fetchAds({ sortBy: "newest" });
                                 getTotalCount();
                                 setPage(1);
                             }}

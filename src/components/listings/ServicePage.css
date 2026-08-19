@@ -98,7 +98,7 @@
 }
 
 .ads-page-card-image {
-  height: 180px;
+  height: 210px;
   overflow: hidden;
   background: #f3f6f8;
 }
@@ -123,7 +123,7 @@
   display: block;
   margin-bottom: 8px;
   color: var(--color-orange);
-  font-size: 18px;
+  font-size: 22px;
 }
 
 .ads-page-card-body span,

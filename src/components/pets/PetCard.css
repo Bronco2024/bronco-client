@@ -23,7 +23,7 @@
 
 .listing-image {
   position: relative;
-  height: 180px;
+  height: 200px;
   overflow: hidden;
   background: #f3f6f8;
 }
@@ -105,7 +105,7 @@
   display: block;
   margin-top: 13px;
   color: #ff861c;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
 }
 
@@ -128,7 +128,7 @@
   }
 
   .listing-image {
-    height: 150px;
+    height: 165px;
   }
 
   .listing-content {
