@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHeart,
   faMagnifyingGlass,
+  faMapMarkerAlt,
   faPaw,
   faPlus,
-  faShieldHalved,
+  faThLarge,
 } from "@fortawesome/free-solid-svg-icons";
 import PetCard from "@/components/pets/PetCard";
 import ListingMeta from "@/components/pets/ListingMeta";
@@ -24,12 +25,6 @@ import {
 import { getListingPath } from "@/helpers/listing-links";
 import SponsorsStrip from "@/components/homepage/SponsorsStrip";
 import "./Homepage.css";
-
-const HERO_TRUST_ITEMS = [
-  { icon: faPaw, label: "כל סוגי החיות" },
-  { icon: faShieldHalved, label: "אמין ובטוח" },
-  { icon: faHeart, label: "קהילה איכותית" },
-];
 
 const HOW_IT_WORKS = [
   {
@@ -119,39 +114,24 @@ function Homepage() {
         <div className="hero-overlay" aria-hidden="true" />
 
         <div className="hero-inner">
-          <div className="hero-brand">
-            <span className="hero-brand-icon" aria-hidden="true">
-              <FontAwesomeIcon icon={faPaw} />
-            </span>
-            <span>Pets & Bones</span>
+          <div className="hero-logo">
+            <FontAwesomeIcon icon={faPaw} />
+            <span>PETS &<br />BONES</span>
           </div>
 
           <h1 id="hero-heading">
-            כל מה שחיית המחמד שלך
-            <span>צריכה</span>
+            כל מה שחיית המחמד
+            <span>שלכם צריכה</span>
           </h1>
 
           <p className="hero-lead">
-            המקום שמחבר בין חיות מחמד, אנשים ושירותים — עם חיפוש חכם, מודעות
-            מאושרות וקהילה שדואגת לחיות.
+            מרקטפלייס חכם לבעלי חיים ואוהבים
           </p>
 
           <form className="hero-search" onSubmit={handleSearch}>
-            <div className="hero-search-field hero-search-field--wide">
-              <label htmlFor="hero-search-text">חיפוש</label>
-              <input
-                id="hero-search-text"
-                type="text"
-                value={searchText}
-                onChange={(event) => setSearchText(event.target.value)}
-                placeholder="מה אתם מחפשים?"
-              />
-            </div>
-
-            <div className="hero-search-field">
-              <label htmlFor="hero-search-category">קטגוריה</label>
+            <div className="hero-search-row">
+              <FontAwesomeIcon icon={faThLarge} className="hero-search-icon" />
               <select
-                id="hero-search-category"
                 value={selectedCategory}
                 onChange={(event) => setSelectedCategory(event.target.value)}
               >
@@ -164,14 +144,13 @@ function Homepage() {
               </select>
             </div>
 
-            <div className="hero-search-field">
-              <label htmlFor="hero-search-location">עיר</label>
+            <div className="hero-search-row">
+              <FontAwesomeIcon icon={faMapMarkerAlt} className="hero-search-icon" />
               <select
-                id="hero-search-location"
                 value={selectedLocation}
                 onChange={(event) => setSelectedLocation(event.target.value)}
               >
-                <option value="">כל הערים</option>
+                <option value="">כל הארץ</option>
                 {PET_LOCATIONS.map((location) => (
                   <option key={location} value={location}>
                     {location}
@@ -180,65 +159,50 @@ function Homepage() {
               </select>
             </div>
 
+            <div className="hero-search-row">
+              <FontAwesomeIcon icon={faMagnifyingGlass} className="hero-search-icon" />
+              <input
+                type="text"
+                value={searchText}
+                onChange={(event) => setSearchText(event.target.value)}
+                placeholder="חיפוש מוצרים ושירותים..."
+              />
+            </div>
+
             <button className="hero-search-submit" type="submit">
               <FontAwesomeIcon icon={faMagnifyingGlass} />
               <span>חיפוש</span>
             </button>
           </form>
 
-          <ul className="hero-trust">
-            {HERO_TRUST_ITEMS.map((item) => (
-              <li key={item.label}>
-                <FontAwesomeIcon icon={item.icon} />
-                <span>{item.label}</span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="hero-actions">
-            <button
-              className="hero-primary-button"
-              type="button"
-              onClick={() => navigate("/publish_ad")}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-              <span>פרסום מודעה</span>
-            </button>
-            <button
-              className="hero-secondary-button"
-              type="button"
-              onClick={() => navigate("/adoption")}
-            >
-              לאימוץ חיות
-            </button>
-          </div>
+          <button
+            className="hero-publish-button"
+            type="button"
+            onClick={() => navigate("/publish_ad")}
+          >
+            <FontAwesomeIcon icon={faPlus} />
+            <span>פרסם מודעה</span>
+          </button>
         </div>
       </section>
 
       <section className="stats-strip" aria-label="נתוני האתר">
         <div>
-          <strong>{MARKETPLACE_CATEGORIES.length}</strong>
-          <span>קטגוריות</span>
-        </div>
-        <div>
-          <strong>{listings.length}+</strong>
+          <strong>{Math.max(listings.length, 1).toLocaleString()}+</strong>
           <span>מודעות פעילות</span>
         </div>
         <div>
-          <strong>{adoptionListings.length}</strong>
-          <span>חיות לאימוץ</span>
-        </div>
-        <div>
-          <strong>כל הארץ</strong>
-          <span>חיפוש לפי עיר</span>
+          <strong>{MARKETPLACE_CATEGORIES.length}+</strong>
+          <span>קטגוריות</span>
         </div>
       </section>
 
       <section className="categories">
         <div className="section-header">
-          <span className="section-kicker">גלו את העולם שלנו</span>
-          <h2>קטגוריות</h2>
-          <p>בחרו סוג חיה או אביזרים</p>
+          <span className="section-kicker">
+            <FontAwesomeIcon icon={faPaw} />
+            קטגוריות פופולריות
+          </span>
         </div>
 
         <div className="categories-grid">
