@@ -111,114 +111,106 @@ function Homepage() {
 
   return (
     <main className="homepage" dir="rtl">
-      <section className="hero" aria-labelledby="hero-heading">
-        <div className="hero-backdrop" aria-hidden="true">
-          <span className="hero-glow hero-glow--primary" />
-          <span className="hero-glow hero-glow--accent" />
-        </div>
+      <section
+        className="hero"
+        aria-labelledby="hero-heading"
+        style={{ backgroundImage: "url(/hero-pets.png)" }}
+      >
+        <div className="hero-overlay" aria-hidden="true" />
 
         <div className="hero-inner">
-          <div className="hero-content">
-            <div className="hero-brand">
-              <span className="hero-brand-icon" aria-hidden="true">
-                <FontAwesomeIcon icon={faPaw} />
-              </span>
-              <span>Pets & Bones</span>
-            </div>
-
-            <h1 id="hero-heading">
-              כל מה שחיית המחמד שלך
-              <span>צריכה</span>
-            </h1>
-
-            <p className="hero-lead">
-              המקום שמחבר בין חיות מחמד, אנשים ושירותים — עם חיפוש חכם, מודעות
-              מאושרות וקהילה שדואגת לחיות.
-            </p>
-
-            <form className="hero-search" onSubmit={handleSearch}>
-              <div className="hero-search-field hero-search-field--wide">
-                <label htmlFor="hero-search-text">חיפוש</label>
-                <input
-                  id="hero-search-text"
-                  type="text"
-                  value={searchText}
-                  onChange={(event) => setSearchText(event.target.value)}
-                  placeholder="מה אתם מחפשים?"
-                />
-              </div>
-
-              <div className="hero-search-field">
-                <label htmlFor="hero-search-category">קטגוריה</label>
-                <select
-                  id="hero-search-category"
-                  value={selectedCategory}
-                  onChange={(event) => setSelectedCategory(event.target.value)}
-                >
-                  <option value="">כל הקטגוריות</option>
-                  {MARKETPLACE_CATEGORIES.map((category) => (
-                    <option key={category.slug} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="hero-search-field">
-                <label htmlFor="hero-search-location">עיר</label>
-                <select
-                  id="hero-search-location"
-                  value={selectedLocation}
-                  onChange={(event) => setSelectedLocation(event.target.value)}
-                >
-                  <option value="">כל הערים</option>
-                  {PET_LOCATIONS.map((location) => (
-                    <option key={location} value={location}>
-                      {location}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button className="hero-search-submit" type="submit">
-                <FontAwesomeIcon icon={faMagnifyingGlass} />
-                <span>חיפוש</span>
-              </button>
-            </form>
-
-            <ul className="hero-trust">
-              {HERO_TRUST_ITEMS.map((item) => (
-                <li key={item.label}>
-                  <FontAwesomeIcon icon={item.icon} />
-                  <span>{item.label}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div className="hero-actions">
-              <button
-                className="hero-primary-button"
-                type="button"
-                onClick={() => navigate("/publish_ad")}
-              >
-                <FontAwesomeIcon icon={faPlus} />
-                <span>פרסום מודעה</span>
-              </button>
-              <button
-                className="hero-secondary-button"
-                type="button"
-                onClick={() => navigate("/adoption")}
-              >
-                לאימוץ חיות
-              </button>
-            </div>
+          <div className="hero-brand">
+            <span className="hero-brand-icon" aria-hidden="true">
+              <FontAwesomeIcon icon={faPaw} />
+            </span>
+            <span>Pets & Bones</span>
           </div>
 
-          <div className="hero-visual">
-            <div className="hero-visual-frame">
-              <img src="/hero-pets.png" alt="כלב וחתול" />
-              <div className="hero-visual-overlay" aria-hidden="true" />
+          <h1 id="hero-heading">
+            כל מה שחיית המחמד שלך
+            <span>צריכה</span>
+          </h1>
+
+          <p className="hero-lead">
+            המקום שמחבר בין חיות מחמד, אנשים ושירותים — עם חיפוש חכם, מודעות
+            מאושרות וקהילה שדואגת לחיות.
+          </p>
+
+          <form className="hero-search" onSubmit={handleSearch}>
+            <div className="hero-search-field hero-search-field--wide">
+              <label htmlFor="hero-search-text">חיפוש</label>
+              <input
+                id="hero-search-text"
+                type="text"
+                value={searchText}
+                onChange={(event) => setSearchText(event.target.value)}
+                placeholder="מה אתם מחפשים?"
+              />
             </div>
+
+            <div className="hero-search-field">
+              <label htmlFor="hero-search-category">קטגוריה</label>
+              <select
+                id="hero-search-category"
+                value={selectedCategory}
+                onChange={(event) => setSelectedCategory(event.target.value)}
+              >
+                <option value="">כל הקטגוריות</option>
+                {MARKETPLACE_CATEGORIES.map((category) => (
+                  <option key={category.slug} value={category.name}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="hero-search-field">
+              <label htmlFor="hero-search-location">עיר</label>
+              <select
+                id="hero-search-location"
+                value={selectedLocation}
+                onChange={(event) => setSelectedLocation(event.target.value)}
+              >
+                <option value="">כל הערים</option>
+                {PET_LOCATIONS.map((location) => (
+                  <option key={location} value={location}>
+                    {location}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button className="hero-search-submit" type="submit">
+              <FontAwesomeIcon icon={faMagnifyingGlass} />
+              <span>חיפוש</span>
+            </button>
+          </form>
+
+          <ul className="hero-trust">
+            {HERO_TRUST_ITEMS.map((item) => (
+              <li key={item.label}>
+                <FontAwesomeIcon icon={item.icon} />
+                <span>{item.label}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="hero-actions">
+            <button
+              className="hero-primary-button"
+              type="button"
+              onClick={() => navigate("/publish_ad")}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+              <span>פרסום מודעה</span>
+            </button>
+            <button
+              className="hero-secondary-button"
+              type="button"
+              onClick={() => navigate("/adoption")}
+            >
+              לאימוץ חיות
+            </button>
           </div>
         </div>
       </section>
