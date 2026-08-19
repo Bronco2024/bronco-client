@@ -10,6 +10,9 @@ import {
     faHeart,
     faShareNodes,
     faCopy,
+    faXmark,
+    faChevronLeft,
+    faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -53,6 +56,7 @@ const ItemPage = () => {
     const [similarAds, setSimilarAds] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
     const [shareStatus, setShareStatus] = useState('');
+    const [lightboxIndex, setLightboxIndex] = useState(null);
 
     useSeo({
         title: ad ? `${getAdTitle(ad)} | ${SITE_NAME}` : SITE_NAME,
@@ -145,7 +149,26 @@ const ItemPage = () => {
         window.scrollTo(0, 0);
         setActiveIndex(0);
         setShareStatus('');
+        setLightboxIndex(null);
     }, [ad?.id]);
+
+    useEffect(() => {
+        if (lightboxIndex === null) return undefined;
+        const handleEscape = (event) => {
+            if (event.key === 'Escape') setLightboxIndex(null);
+        };
+        window.addEventListener('keydown', handleEscape);
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [lightboxIndex]);
+
+    const openLightbox = useCallback((index) => {
+        setActiveIndex(index);
+        setLightboxIndex(index);
+    }, []);
+
+    const closeLightbox = useCallback(() => {
+        setLightboxIndex(null);
+    }, []);
 
     const mediaItems = useMemo(() => {
         if (!ad) return [];
@@ -156,6 +179,7 @@ const ItemPage = () => {
             items.push({
                 key: 'video',
                 thumb: photos[0] || require('@/assets/no-image.jpg'),
+                kind: 'video',
                 node: (
                     <video key="video" controls className="media-element">
                         <source src={ad.video} type="video/mp4" />
@@ -165,15 +189,26 @@ const ItemPage = () => {
         }
 
         photos.forEach((photo, index) => {
+            const itemIndex = items.length;
             items.push({
                 key: `photo-${index}`,
                 thumb: photo,
+                kind: 'image',
                 node: (
                     <img
                         key={`photo-${index}`}
                         src={photo}
                         alt={`${getAdTitle(ad)} ${index + 1}`}
                         className="media-element"
+                        onClick={() => openLightbox(itemIndex)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                openLightbox(itemIndex);
+                            }
+                        }}
                     />
                 ),
             });
@@ -183,18 +218,48 @@ const ItemPage = () => {
             items.push({
                 key: 'empty',
                 thumb: require('@/assets/no-image.jpg'),
+                kind: 'image',
                 node: (
                     <img
                         src={require('@/assets/no-image.jpg')}
                         alt="empty"
                         className="media-element"
+                        onClick={() => openLightbox(0)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                openLightbox(0);
+                            }
+                        }}
                     />
                 ),
             });
         }
 
         return items;
-    }, [ad]);
+    }, [ad, openLightbox]);
+
+    const showLightboxPrev = () => {
+        if (!mediaItems.length) return;
+        setLightboxIndex((prev) => {
+            const current = prev ?? 0;
+            const next = (current - 1 + mediaItems.length) % mediaItems.length;
+            setActiveIndex(next);
+            return next;
+        });
+    };
+
+    const showLightboxNext = () => {
+        if (!mediaItems.length) return;
+        setLightboxIndex((prev) => {
+            const current = prev ?? 0;
+            const next = (current + 1) % mediaItems.length;
+            setActiveIndex(next);
+            return next;
+        });
+    };
 
     const handleAdClick = (nextAd) => {
         window.scrollTo(0, 0);
@@ -420,6 +485,64 @@ const ItemPage = () => {
                     <p className="date">תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
                 </div>
             </div>
+
+            {lightboxIndex !== null && mediaItems[lightboxIndex] && (
+                <div className="item-lightbox" onClick={closeLightbox} role="presentation">
+                    <button
+                        type="button"
+                        className="item-lightbox-close"
+                        onClick={closeLightbox}
+                        aria-label="סגירה"
+                    >
+                        <FontAwesomeIcon icon={faXmark} />
+                    </button>
+
+                    {mediaItems.length > 1 && (
+                        <>
+                            <button
+                                type="button"
+                                className="item-lightbox-nav item-lightbox-nav--prev"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    showLightboxPrev();
+                                }}
+                                aria-label="הקודם"
+                            >
+                                <FontAwesomeIcon icon={faChevronLeft} />
+                            </button>
+                            <button
+                                type="button"
+                                className="item-lightbox-nav item-lightbox-nav--next"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    showLightboxNext();
+                                }}
+                                aria-label="הבא"
+                            >
+                                <FontAwesomeIcon icon={faChevronRight} />
+                            </button>
+                        </>
+                    )}
+
+                    <div
+                        className="item-lightbox-content"
+                        onClick={(event) => event.stopPropagation()}
+                        role="presentation"
+                    >
+                        {mediaItems[lightboxIndex].kind === 'video' ? (
+                            <video controls className="item-lightbox-media" autoPlay>
+                                <source src={ad.video} type="video/mp4" />
+                            </video>
+                        ) : (
+                            <img
+                                src={mediaItems[lightboxIndex].thumb}
+                                alt={getAdTitle(ad)}
+                                className="item-lightbox-media"
+                            />
+                        )}
+                    </div>
+                </div>
+            )}
 
             {similarAds.length > 0 && (
                 <div className="related-ads-section">
