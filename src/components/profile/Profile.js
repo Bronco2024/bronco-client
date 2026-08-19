@@ -145,7 +145,7 @@ const Profile = () => {
     }
 
     const handleRenewButton = async (ad) => {
-        if (currentUser.numberOfAds <= 0) {
+        if (!currentUser?.isAdmin && currentUser.numberOfAds <= 0) {
             navigate('/subscribe');
             return;
         }
