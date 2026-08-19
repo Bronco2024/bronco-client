@@ -92,10 +92,10 @@ export const PET_CATEGORIES = [
 export const ACCESSORIES_CATEGORY = {
   slug: "accessories",
   path: "/accessories",
-  name: "אביזרים",
+  name: "אביזרים וציוד",
   type: "אביזר",
-  image: "/services/accessories.jpg",
-  subtitle: "ציוד, מזון וכל מה שצריך בבית",
+  image: "/hero-pets.png",
+  subtitle: "מזון, צעצועים, כלובים וכל מה שחיית המחמד צריכה",
   useExistingPage: true,
 };
 
