@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartSolid, faCertificate } from "@fortawesome/free-solid-svg-icons";
 import {
   FAVORITES_CHANGED_EVENT,
   isFavoriteListing,
@@ -67,6 +67,15 @@ const PetCard = ({ listing, showAdoptionBadge = false }) => {
 
         {(showAdoptionBadge || listing.forAdoption) && (
           <span className="listing-adoption-badge">לאימוץ</span>
+        )}
+
+        {listing.hasCertificate && (
+          <span
+            className="listing-certificate-badge"
+            title="חיה עם תעודה מאושרת"
+          >
+            <FontAwesomeIcon icon={faCertificate} />
+          </span>
         )}
       </div>
 

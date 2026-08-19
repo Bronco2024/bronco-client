@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCertificate } from "@fortawesome/free-solid-svg-icons";
 import { FormatDateTimestampToDate } from "@components/utils/constants/Functions";
 import "./ServicePage.css";
 
@@ -47,6 +49,14 @@ export const AdGridCard = ({
     >
       <div className="ads-page-card-image">
         <img src={image} alt={heading} loading="lazy" />
+        {ad.hasCertificate && (
+          <span
+            className="ads-certificate-badge"
+            title="חיה עם תעודה מאושרת"
+          >
+            <FontAwesomeIcon icon={faCertificate} />
+          </span>
+        )}
       </div>
       <div className="ads-page-card-body">
         <h2>{heading}</h2>

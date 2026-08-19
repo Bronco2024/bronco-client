@@ -120,12 +120,13 @@ const PublishAd = () => {
                 if (!adData.price) adData.price = "לאימוץ";
             }
 
-            if (formData.category === "סוסים") {
+            if (formData.category === "סוסים" || isPetMarketplaceCategory(formData.category)) {
                 const totalMonths =
                     (Number(formData.ageYears) || 0) * 12 +
                     (Number(formData.ageMonths) || 0);
 
                 adData.ageInMonths = totalMonths;
+                delete adData.age;
             }
 
             adData.breed = resolvePetBreed(formData.breed, formData.breedCustom);
@@ -354,26 +355,29 @@ const PublishAd = () => {
                             <option value="נקבה">נקבה</option>
                         </select>
 
-                        <label htmlFor="age">גיל</label>
-                        <input
-                            id="age"
-                            name="age"
-                            value={formData.age || ""}
-                            onChange={handleChange}
-                            placeholder="לדוגמה: 3 חודשים"
-                        />
-
-                        <div className="checkbox-row">
-                            <label htmlFor="hasCertificate">
-                                <input
-                                    type="checkbox"
-                                    id="hasCertificate"
-                                    name="hasCertificate"
-                                    checked={formData.hasCertificate || false}
-                                    onChange={handleInputChange}
+                        <div className="publish-ad-form">
+                            <label htmlFor="age">גיל</label>
+                            <div className="age-row">
+                                <FloatingInput
+                                    label={'שנים'}
+                                    type={'number'}
+                                    id={"ageYears"}
+                                    value={formData.ageYears ?? ''}
+                                    onChange={handleChange}
+                                    min={"0"}
+                                    placeholder={' '}
                                 />
-                                עם תעודה
-                            </label>
+                                <FloatingInput
+                                    label={'חודשים'}
+                                    type={'number'}
+                                    id={"ageMonths"}
+                                    value={formData.ageMonths || ''}
+                                    onChange={handleChange}
+                                    min={"0"}
+                                    max={"11"}
+                                    placeholder={' '}
+                                />
+                            </div>
                         </div>
                     </div>
                 )}
