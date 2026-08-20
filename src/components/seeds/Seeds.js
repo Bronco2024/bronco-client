@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { db } from "@/firebase";
 import { mapApprovedAdsFromSnapshot } from "@/helpers/ad-approval";
-import { ADS_PER_PAGE, SEED_ANIMAL_TYPES, SEEDS_TYPES, SEMEN_TYPES } from "@components/utils/constants/Constants";
+import { ADS_PER_PAGE, SEED_ANIMAL_TYPES, SEMEN_TYPES, getSeedTypesByAnimal } from "@components/utils/constants/Constants";
 import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import { AdGridCard } from "@/components/listings/ServicePage";
 import CitySelect from "@/components/pets/CitySelect";
@@ -131,6 +131,9 @@ const Seeds = () => {
         setFilters((prevFilters) => {
             if (name === "district") {
                 return { ...prevFilters, district: value, location: "" };
+            }
+            if (name === "seed_animal") {
+                return { ...prevFilters, seed_animal: value, seed_type: "" };
             }
             if (name === "maxPrice" && normalizedValue === 0) {
                 return { ...prevFilters, maxPrice: 999999 };
@@ -262,7 +265,7 @@ const Seeds = () => {
                             onChange={handleFilterChange}
                         >
                             <option value="">הכל</option>
-                            {SEEDS_TYPES.map((type) => (
+                            {getSeedTypesByAnimal(filters.seed_animal).map((type) => (
                                 <option key={type} value={type}>
                                     {type}
                                 </option>

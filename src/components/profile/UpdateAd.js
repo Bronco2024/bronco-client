@@ -5,7 +5,7 @@ import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'fire
 import { db, storage } from '@/firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
-import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEED_ANIMAL_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES } from "@components/utils/constants/Constants";
+import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEED_ANIMAL_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, getSeedTypesByAnimal } from "@components/utils/constants/Constants";
 import { isPetMarketplaceCategory } from "@/data/pets";
 import BreedSelect from "@/components/pets/BreedSelect";
 import CitySelect from "@/components/pets/CitySelect";
@@ -59,6 +59,10 @@ const UpdateAd = () => {
         const { name, value } = e.target;
         if (name === "district") {
             setFormData({ ...formData, district: value, location: "" });
+            return;
+        }
+        if (name === "seed_animal") {
+            setFormData({ ...formData, seed_animal: value, seed_type: "" });
             return;
         }
         if (name === "price" || name === "ageYears" || name === "ageMonths") {
@@ -518,7 +522,7 @@ const UpdateAd = () => {
                                 required
                             >
                                 <option value="">בחר סוג זרע</option>
-                                {SEEDS_TYPES.map((seed, index) => (
+                                {getSeedTypesByAnimal(formData.seed_animal).map((seed, index) => (
                                     <option key={index} value={seed}>
                                         {seed}
                                     </option>
