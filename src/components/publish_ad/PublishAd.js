@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import Modal from '@components/utils/modal/Modal';
-import { BREEDS, CATEGORIES, SEEDS_TYPES, SEED_ANIMAL_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES } from "@components/utils/constants/Constants";
+import { BREEDS, CATEGORIES, SEED_ANIMAL_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, getSeedTypesByAnimal } from "@components/utils/constants/Constants";
 import { isPetMarketplaceCategory } from "@/data/pets";
 import BreedSelect from "@/components/pets/BreedSelect";
 import CitySelect from "@/components/pets/CitySelect";
@@ -42,6 +42,10 @@ const PublishAd = () => {
         const { name, value } = e.target;
         if (name === "district") {
             setFormData({ ...formData, district: value, location: "" });
+            return;
+        }
+        if (name === "seed_animal") {
+            setFormData({ ...formData, seed_animal: value, seed_type: "" });
             return;
         }
         if (name === "price" || name === "ageYears" || name === "ageMonths") {
@@ -440,7 +444,7 @@ const PublishAd = () => {
                                     required
                                 >
                                     <option value="">בחר סוג זרע</option>
-                                    {SEEDS_TYPES.map((seed, index) => (
+                                    {getSeedTypesByAnimal(formData.seed_animal).map((seed, index) => (
                                         <option key={index} value={seed}>
                                             {seed}
                                         </option>

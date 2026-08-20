@@ -41,18 +41,26 @@ export const EXTENDED_CATEGORIES = [
     { path: '/our-products', label: 'חנות' },
 ]
 
-export const SEEDS_TYPES = [
-    "ערבי מעורב קו",
-    "ערבי מצרי",
-    "אחר"
-];
-
 export const SEED_ANIMAL_TYPES = [
     "סוסים",
     "כלבים",
     "חתולים",
     "חיות משק",
 ];
+
+export const SEED_TYPES_BY_ANIMAL = {
+    "סוסים": ["ערבי מעורב קו", "ערבי מצרי", "אחר"],
+    "כלבים": ["לברדור", "רועה גרמני", "גולדן רטריבר", "פודל", "אחר"],
+    "חתולים": ["בריטי קצר שיער", "סקוטי", "סיאמי", "מיין קון", "אחר"],
+    "חיות משק": ["בקר", "צאן", "עיזים", "אחר"],
+};
+
+export const SEEDS_TYPES = Array.from(
+    new Set(Object.values(SEED_TYPES_BY_ANIMAL).flat())
+);
+
+export const getSeedTypesByAnimal = (animalType) =>
+    SEED_TYPES_BY_ANIMAL[animalType] || SEEDS_TYPES;
 
 export const SEMEN_TYPES = [
     "זרע טרי",
