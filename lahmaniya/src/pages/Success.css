@@ -1,0 +1,43 @@
+.success {
+  padding: 40px 18px 8px;
+  text-align: center;
+}
+
+.success-mark {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 18px;
+  animation: rise 0.5s ease both, floaty 3.5s ease-in-out 0.5s infinite;
+}
+
+.success .section-sub {
+  max-width: 28ch;
+  margin-inline: auto;
+}
+
+.success-card {
+  text-align: right;
+  margin: 22px 0;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 12px;
+}
+
+.success-card p {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.success-card span {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.success .btn {
+  margin-bottom: 10px;
+}
