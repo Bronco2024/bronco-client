@@ -90,6 +90,16 @@ export const PET_CATEGORIES = [
   },
 ];
 
+export const SEEDS_CATEGORY = {
+  slug: "seeds",
+  path: "/seeds",
+  name: "זרע",
+  type: "זרע",
+  image: "/listings/goat.jpg",
+  subtitle: "לגידול מקצועי ומתקדם",
+  useExistingPage: true,
+};
+
 export const ACCESSORIES_CATEGORY = {
   slug: "accessories",
   path: "/accessories",
@@ -102,6 +112,7 @@ export const ACCESSORIES_CATEGORY = {
 
 export const MARKETPLACE_CATEGORIES = [
   ...PET_CATEGORIES,
+  SEEDS_CATEGORY,
   ACCESSORIES_CATEGORY,
 ];
 
@@ -123,12 +134,6 @@ export const SITE_SERVICES = [
     name: "מספרות",
     subtitle: "טיפוח, תספורת וטיפול חיצוני לחיות",
     image: "/services/groomers.jpg",
-  },
-  {
-    path: "/seeds",
-    name: "זרע",
-    subtitle: "לגידול מקצועי ומתקדם",
-    image: "/listings/goat.jpg",
   },
   {
     path: "/exhibitors",
