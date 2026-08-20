@@ -1,0 +1,75 @@
+.checkout {
+  padding: 22px 18px 8px;
+}
+
+.checkout.empty {
+  padding-top: 48px;
+}
+
+.day-pick {
+  border: none;
+  margin: 0 0 18px;
+  padding: 0;
+}
+
+.day-pick legend {
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  color: var(--ink-soft);
+}
+
+.day-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.day-chip {
+  text-align: right;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1.5px solid var(--line);
+  font-weight: 700;
+  color: var(--ink);
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.day-chip:active {
+  transform: scale(0.98);
+}
+
+.day-chip.selected {
+  border-color: var(--brand);
+  background: rgba(20, 53, 47, 0.1);
+  color: var(--brand);
+  box-shadow: inset 0 0 0 1px var(--brand);
+}
+
+.pay-box {
+  margin: 8px 0 16px;
+  padding: 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(20, 53, 47, 0.92), #1f4d44);
+  color: #f4faf7;
+}
+
+.pay-box > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+.pay-box p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.86rem;
+}
+
+.form-error {
+  color: var(--danger);
+  font-weight: 700;
+  margin: 0 0 12px;
+}
