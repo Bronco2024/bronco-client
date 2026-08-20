@@ -2,9 +2,9 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faBriefcase,
   faHeart,
   faMagnifyingGlass,
-  faMapMarkerAlt,
   faPaw,
   faPlus,
   faThLarge,
@@ -15,7 +15,6 @@ import Loading from "@/components/loading-screen/Loading";
 import useMarketplaceAds from "@/hooks/useMarketplaceAds";
 import {
   MARKETPLACE_CATEGORIES,
-  PET_LOCATIONS,
   SITE_SERVICES,
   filterListings,
   isAdoptionListing,
@@ -58,7 +57,7 @@ function Homepage() {
   const navigate = useNavigate();
 
   const [searchText, setSearchText] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedService, setSelectedService] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const { listings, liveAds, loading } = useMarketplaceAds({ limitCount: 40 });
 
@@ -66,10 +65,9 @@ function Homepage() {
     () =>
       filterListings(listings, {
         searchText,
-        location: selectedLocation,
         category: selectedCategory,
       }),
-    [listings, searchText, selectedLocation, selectedCategory]
+    [listings, searchText, selectedCategory]
   );
 
   const featuredListings = filteredListings.slice(0, 10);
@@ -83,14 +81,20 @@ function Homepage() {
   );
 
   const goToSearchResults = () => {
+    const matchedService = SITE_SERVICES.find(
+      (service) => service.path === selectedService
+    );
     const matchedCategory = MARKETPLACE_CATEGORIES.find(
       (category) => category.name === selectedCategory
     );
     const params = new URLSearchParams();
     if (searchText.trim()) params.set("q", searchText.trim());
-    if (selectedLocation) params.set("location", selectedLocation);
     const query = params.toString();
-    const path = matchedCategory ? matchedCategory.path : "/listings";
+    const path = matchedService
+      ? matchedService.path
+      : matchedCategory
+        ? matchedCategory.path
+        : "/listings";
     navigate(`${path}${query ? `?${query}` : ""}`);
   };
 
@@ -146,15 +150,15 @@ function Homepage() {
             </div>
 
             <div className="hero-search-row">
-              <FontAwesomeIcon icon={faMapMarkerAlt} className="hero-search-icon" />
+              <FontAwesomeIcon icon={faBriefcase} className="hero-search-icon" />
               <select
-                value={selectedLocation}
-                onChange={(event) => setSelectedLocation(event.target.value)}
+                value={selectedService}
+                onChange={(event) => setSelectedService(event.target.value)}
               >
-                <option value="">כל הארץ</option>
-                {PET_LOCATIONS.map((location) => (
-                  <option key={location} value={location}>
-                    {location}
+                <option value="">כל השירותים</option>
+                {SITE_SERVICES.map((service) => (
+                  <option key={service.path} value={service.path}>
+                    {service.name}
                   </option>
                 ))}
               </select>
