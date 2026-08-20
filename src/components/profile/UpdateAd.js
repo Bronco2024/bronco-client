@@ -5,7 +5,7 @@ import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'fire
 import { db, storage } from '@/firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
-import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES } from "@components/utils/constants/Constants";
+import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEEDS_TYPES, SEED_ANIMAL_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES } from "@components/utils/constants/Constants";
 import { isPetMarketplaceCategory } from "@/data/pets";
 import BreedSelect from "@/components/pets/BreedSelect";
 import CitySelect from "@/components/pets/CitySelect";
@@ -491,6 +491,22 @@ const UpdateAd = () => {
 
                 {formData.category === "זרע" && (
                     <div className="update-ad-form">
+                        <label htmlFor="seed_animal">סוג בעל חיים</label>
+                        <select
+                            id="seed_animal"
+                            name="seed_animal"
+                            value={formData.seed_animal || ""}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">בחר סוג בעל חיים</option>
+                            {SEED_ANIMAL_TYPES.map((animalType, index) => (
+                                <option key={index} value={animalType}>
+                                    {animalType}
+                                </option>
+                            ))}
+                        </select>
+
                         <label htmlFor="seeds_types">סוג זרע</label>
                         <div className="seed-row">
 

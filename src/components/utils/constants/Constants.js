@@ -47,6 +47,13 @@ export const SEEDS_TYPES = [
     "אחר"
 ];
 
+export const SEED_ANIMAL_TYPES = [
+    "סוסים",
+    "כלבים",
+    "חתולים",
+    "חיות משק",
+];
+
 export const SEMEN_TYPES = [
     "זרע טרי",
     "זרע קפוא"

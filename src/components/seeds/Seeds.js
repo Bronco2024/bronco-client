@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { db } from "@/firebase";
 import { mapApprovedAdsFromSnapshot } from "@/helpers/ad-approval";
-import { ADS_PER_PAGE, SEEDS_TYPES, SEMEN_TYPES } from "@components/utils/constants/Constants";
+import { ADS_PER_PAGE, SEED_ANIMAL_TYPES, SEEDS_TYPES, SEMEN_TYPES } from "@components/utils/constants/Constants";
 import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import { AdGridCard } from "@/components/listings/ServicePage";
 import CitySelect from "@/components/pets/CitySelect";
@@ -50,6 +50,7 @@ const Seeds = () => {
     const [filters, setFilters] = useState({
         minPrice: 0,
         maxPrice: 999999,
+        seed_animal: "",
         seed_type: "",
         semen_type: "",
         hasCertificate: "",
@@ -143,6 +144,7 @@ const Seeds = () => {
 
         if (
             filters.hasCertificate === "" &&
+            filters.seed_animal === "" &&
             filters.seed_type === "" &&
             filters.maxPrice === 999999 &&
             filters.minPrice === 0 &&
@@ -169,6 +171,7 @@ const Seeds = () => {
             where("category", "==", categoryFilter),
             ...(filters.minPrice ? [where("price", ">=", filters.minPrice)] : []),
             ...(filters.maxPrice ? [where("price", "<=", filters.maxPrice)] : []),
+            ...(filters.seed_animal ? [where("seed_animal", "==", filters.seed_animal)] : []),
             ...(filters.seed_type ? [where("seed_type", "==", filters.seed_type)] : []),
             ...(filters.semen_type ? [where("semen_type", "==", filters.semen_type)] : []),
             ...(filters.location ? [where("location", "==", filters.location)] : []),
@@ -198,6 +201,7 @@ const Seeds = () => {
         setFilters({
             minPrice: 0,
             maxPrice: 999999,
+            seed_animal: "",
             seed_type: "",
             semen_type: "",
             hasCertificate: "",
@@ -232,6 +236,23 @@ const Seeds = () => {
 
             <section className="category-content">
                 <form className="category-search" onSubmit={applyFilters}>
+                    <div className="category-filter-field">
+                        <label htmlFor="category-seed-animal">סוג בעל חיים</label>
+                        <select
+                            id="category-seed-animal"
+                            name="seed_animal"
+                            value={filters.seed_animal}
+                            onChange={handleFilterChange}
+                        >
+                            <option value="">הכל</option>
+                            {SEED_ANIMAL_TYPES.map((animalType) => (
+                                <option key={animalType} value={animalType}>
+                                    {animalType}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     <div className="category-filter-field">
                         <label htmlFor="category-seed-type">סוג זרע</label>
                         <select

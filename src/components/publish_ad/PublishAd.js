@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import Modal from '@components/utils/modal/Modal';
-import { BREEDS, CATEGORIES, SEEDS_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES } from "@components/utils/constants/Constants";
+import { BREEDS, CATEGORIES, SEEDS_TYPES, SEED_ANIMAL_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES } from "@components/utils/constants/Constants";
 import { isPetMarketplaceCategory } from "@/data/pets";
 import BreedSelect from "@/components/pets/BreedSelect";
 import CitySelect from "@/components/pets/CitySelect";
@@ -414,6 +414,22 @@ const PublishAd = () => {
                 {
                     formData.category === "זרע" && (
                         <div className="publish-ad-form" >
+                            <label htmlFor="seed_animal">סוג בעל חיים</label>
+                            <select
+                                id="seed_animal"
+                                name="seed_animal"
+                                value={formData.seed_animal || ""}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">בחר סוג בעל חיים</option>
+                                {SEED_ANIMAL_TYPES.map((animalType, index) => (
+                                    <option key={index} value={animalType}>
+                                        {animalType}
+                                    </option>
+                                ))}
+                            </select>
+
                             <label htmlFor="seeds_types">סוג זרע</label>
                             <div className="seed-row">
                                 <select
