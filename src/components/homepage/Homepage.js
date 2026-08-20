@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBriefcase,
-  faHeart,
   faMagnifyingGlass,
   faPaw,
   faPlus,
@@ -285,7 +284,7 @@ function Homepage() {
               type="button"
               onClick={() => {
                 setSearchText("");
-                setSelectedLocation("");
+                setSelectedService("");
                 setSelectedCategory("");
               }}
             >
