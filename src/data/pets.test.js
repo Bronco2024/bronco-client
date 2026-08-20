@@ -47,7 +47,11 @@ describe("Petzo catalog", () => {
       expect.arrayContaining(["/veterinarians", "/boarding", "/groomers"])
     );
     expect(SITE_SERVICES.map((service) => service.path)).not.toContain("/accessories");
+    expect(SITE_SERVICES.map((service) => service.path)).not.toContain("/seeds");
     expect(MARKETPLACE_CATEGORIES.map((category) => category.path)).toContain("/accessories");
+    expect(MARKETPLACE_CATEGORIES.map((category) => category.path)).toContain("/seeds");
+    const categoryPaths = MARKETPLACE_CATEGORIES.map((category) => category.path);
+    expect(categoryPaths.indexOf("/seeds")).toBeLessThan(categoryPaths.indexOf("/accessories"));
   });
 
   test("gives each catalog listing its own photo", () => {
