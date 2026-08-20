@@ -441,6 +441,8 @@ const ItemPage = () => {
                                 )}
                                 {ad.category === "זרע" && (
                                     <>
+                                        <dt>מתאים ל</dt>
+                                        <dd>{ad.seed_animal || "לא צוין"}</dd>
                                         <dt>סוג זרע</dt>
                                         <dd>{ad.seed_type} - {ad.semen_type}</dd>
                                     </>
