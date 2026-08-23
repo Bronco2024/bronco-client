@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
     collection,
     query,
@@ -19,11 +19,18 @@ import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import Paganation from "@components/utils/paganation/Paganation";
+import useServicePageSearch from "@/hooks/useServicePageSearch";
+import { filterAdsBySearch } from "@/helpers/listing-search";
 import { faPhoneAlt, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Veterinarian = () => {
     const navigate = useNavigate();
+    const { searchText, setSearchText } = useServicePageSearch({
+        path: "/veterinarians",
+        pageTitle: "וטרינרים",
+        description: "רופאים וטיפול מקצועי לחיות מחמד",
+    });
     const [adList, setAdList] = useState([]);
     const [totalAds, setTotalAds] = useState(0);
     const [page, setPage] = useState(1);
@@ -100,18 +107,25 @@ const Veterinarian = () => {
         navigate(getListingPath(ad), { state: { ad } })
     }
 
+    const visibleAds = useMemo(
+        () => filterAdsBySearch(adList, searchText),
+        [adList, searchText]
+    );
+
     return (
         <ServicePage
             title="וטרינרים"
             subtitle="רופאים וטיפול מקצועי לחיות מחמד"
             heroImage="/services/veterinarian.jpg"
-            count={adList.length}
+            count={visibleAds.length}
+            searchText={searchText}
+            onSearchChange={setSearchText}
         >
-            {adList.length === 0 ? (
+            {visibleAds.length === 0 ? (
                 <p className="ads-page-empty">לא נמצאו מודעות בקטיגוריה זו</p>
             ) : (
                 <div className="ads-page-grid">
-                    {adList.map((ad) =>
+                    {visibleAds.map((ad) =>
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
                             <AdGridCard
                                 key={ad.id}
