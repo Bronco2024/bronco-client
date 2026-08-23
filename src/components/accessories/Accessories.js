@@ -20,6 +20,9 @@ import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Function
 import { AdGridCard } from "@/components/listings/ServicePage";
 import CitySelect from "@/components/pets/CitySelect";
 import Paganation from "@components/utils/paganation/Paganation";
+import useUrlSearchQuery from "@/hooks/useUrlSearchQuery";
+import useSeo from "@/hooks/useSeo";
+import { SITE_NAME, SITE_URL } from "@/data/site-config";
 import "@/components/pets/CategoryListings.css";
 
 const parseNumericPrice = (price) => {
@@ -43,12 +46,12 @@ const sortAds = (items, sortBy = "newest") => {
 
 const Accessories = () => {
     const navigate = useNavigate();
+    const { searchText, setSearchText, hasSearchText } = useUrlSearchQuery();
     const [adList, setAdList] = useState([]);
     const [totalAds, setTotalAds] = useState(0);
     const [page, setPage] = useState(1);
     const [afterThis, setAfterThis] = useState(null);
     const [beforeThis, setBeforeThis] = useState(null);
-    const [searchText, setSearchText] = useState("");
 
     const [filters, setFilters] = useState({
         accessory: "",
@@ -60,8 +63,13 @@ const Accessories = () => {
     });
 
     const categoryFilter = "אביזרים";
-    const hasSearchText = Boolean(searchText.trim());
     const TOTAL_PAGES = hasSearchText ? 1 : Math.ceil(totalAds / ADS_PER_PAGE);
+
+    useSeo({
+        title: `אביזרים | ${SITE_NAME}`,
+        description: "צעצועים, כלובים וכל מה שחיית המחמד צריכה",
+        url: `${SITE_URL}/accessories`,
+    });
 
     const matchesSearchText = (ad) => {
         const q = searchText.trim().toLowerCase();

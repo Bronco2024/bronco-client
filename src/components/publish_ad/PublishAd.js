@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import Modal from '@components/utils/modal/Modal';
-import { BREEDS, CATEGORIES, SEED_ANIMAL_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, getSeedTypesByAnimal } from "@components/utils/constants/Constants";
+import { BREEDS, CATEGORIES, SEED_ANIMAL_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, getSeedTypesByAnimal, isServiceCategory } from "@components/utils/constants/Constants";
 import { isPetMarketplaceCategory } from "@/data/pets";
 import BreedSelect from "@/components/pets/BreedSelect";
 import CitySelect from "@/components/pets/CitySelect";
@@ -25,6 +25,7 @@ const PublishAd = () => {
     const [pendingApproval, setPendingApproval] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [phoneValid, setPhoneValid] = useState(true);
+    const [photoError, setPhotoError] = useState("");
 
     const [formData, setFormData] = useState({
         contact: '',
@@ -76,6 +77,12 @@ const PublishAd = () => {
         if(phoneValid === false) {
             return;
         }
+
+        if (!formData.photos || formData.photos.length === 0) {
+            setPhotoError("יש להוסיף לפחות תמונה אחת");
+            return;
+        }
+        setPhotoError("");
         setUploading(true);
 
         if ((formData.category === "סוסים" || formData.category === "זרע")
@@ -248,8 +255,21 @@ const PublishAd = () => {
                 </select>
 
 
-                
+                {isServiceCategory(formData.category) && (
+                    <>
+                        <label htmlFor="title">כותרת המודעה</label>
+                        <input
+                            id="title"
+                            name="title"
+                            value={formData.title || ""}
+                            onChange={handleChange}
+                            placeholder="לדוגמה: פנסיון לכלבים בתל אביב"
+                            required
+                        />
+                    </>
+                )}
 
+                
                 {formData.category === "סוסים" && (
                     <div className="publish-ad-form">
                         <label htmlFor="breed">גזע</label>
@@ -591,15 +611,22 @@ const PublishAd = () => {
                     </div>
                 )}
 
-                <label htmlFor="photos">תמונות</label>
+                <label htmlFor="photos">תמונות *</label>
                 <input
                     type="file"
                     id="photos"
                     name="photos"
                     multiple
                     accept="image/*"
-                    onChange={handleFileChange}
+                    onChange={(event) => {
+                        handleFileChange(event);
+                        if (event.target.files?.length) {
+                            setPhotoError("");
+                        }
+                    }}
+                    required
                 />
+                {photoError && <p className="publish-photo-error">{photoError}</p>}
 
                 <button type="submit" className="publish-button" disabled={uploading}>
                     {uploading ? "...מפרסם" : "פרסם מודעה"}

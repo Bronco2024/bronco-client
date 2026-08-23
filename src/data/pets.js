@@ -1,8 +1,9 @@
 import ISRAEL_CITIES from "./israel-cities";
 import { SITE_NAME } from "./site-config";
 
-export const FAVORITES_STORAGE_KEY = "pets_bones_favorites";
-export const FAVORITES_CHANGED_EVENT = "pets-favorites-changed";
+export const FAVORITES_STORAGE_KEY = "petzo_favorites";
+export const FAVORITES_STORAGE_KEY_LEGACY = "pets_bones_favorites";
+export const FAVORITES_CHANGED_EVENT = "petzo-favorites-changed";
 
 export const PET_LOCATIONS = ISRAEL_CITIES;
 
@@ -600,10 +601,23 @@ export const getFavorites = () => {
   if (typeof window === "undefined") return [];
 
   try {
-    const stored = JSON.parse(
-      localStorage.getItem(FAVORITES_STORAGE_KEY) || "[]"
-    );
-    return Array.isArray(stored) ? stored : [];
+    const stored =
+      localStorage.getItem(FAVORITES_STORAGE_KEY) ||
+      localStorage.getItem(FAVORITES_STORAGE_KEY_LEGACY) ||
+      "[]";
+    const parsed = JSON.parse(stored);
+    const favorites = Array.isArray(parsed) ? parsed : [];
+
+    if (
+      favorites.length > 0 &&
+      !localStorage.getItem(FAVORITES_STORAGE_KEY) &&
+      localStorage.getItem(FAVORITES_STORAGE_KEY_LEGACY)
+    ) {
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+      localStorage.removeItem(FAVORITES_STORAGE_KEY_LEGACY);
+    }
+
+    return favorites;
   } catch {
     return [];
   }

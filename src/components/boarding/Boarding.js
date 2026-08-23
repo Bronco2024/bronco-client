@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
     collection,
     query,
@@ -19,9 +19,16 @@ import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
 import Paganation from "@components/utils/paganation/Paganation";
+import useServicePageSearch from "@/hooks/useServicePageSearch";
+import { filterAdsBySearch } from "@/helpers/listing-search";
 
 const Boarding = () => {
     const navigate = useNavigate();
+    const { searchText, setSearchText } = useServicePageSearch({
+        path: "/boarding",
+        pageTitle: "פנסיון",
+        description: "מקומות אמינים לשהייה זמנית לחיות מחמד",
+    });
     const [adList, setAdList] = useState([]);
     const [totalAds, setTotalAds] = useState(0);
     const [page, setPage] = useState(1);
@@ -102,18 +109,25 @@ const Boarding = () => {
         navigate(getListingPath(ad), { state: { ad } })
     }
 
+    const visibleAds = useMemo(
+        () => filterAdsBySearch(adList, searchText),
+        [adList, searchText]
+    );
+
     return (
         <ServicePage
             title="פנסיון"
             subtitle="מקומות אמינים לשהייה זמנית"
             heroImage="/services/boarding.jpg"
-            count={adList.length}
+            count={visibleAds.length}
+            searchText={searchText}
+            onSearchChange={setSearchText}
         >
-            {adList.length === 0 ? (
+            {visibleAds.length === 0 ? (
                 <p className="ads-page-empty">לא נמצאו מודעות בקטיגוריה זו</p>
             ) : (
                 <div className="ads-page-grid">
-                    {adList.map((ad) =>
+                    {visibleAds.map((ad) =>
                         !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
                             <AdGridCard
                                 key={ad.id}

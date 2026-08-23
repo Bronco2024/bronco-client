@@ -21,7 +21,8 @@ import {
   getCatalogPool,
 } from "@/data/pets";
 import { getListingPath } from "@/helpers/listing-links";
-import { SITE_NAME } from "@/data/site-config";
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/data/site-config";
+import useSeo from "@/hooks/useSeo";
 import SponsorsStrip from "@/components/homepage/SponsorsStrip";
 import "./Homepage.css";
 
@@ -59,6 +60,26 @@ function Homepage() {
   const [selectedService, setSelectedService] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const { listings, liveAds, loading } = useMarketplaceAds({ limitCount: 40 });
+
+  useSeo({
+    title: `${SITE_NAME} | לוח חיות מחמד`,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+  });
+
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+    if (event.target.value) {
+      setSelectedService("");
+    }
+  };
+
+  const handleServiceChange = (event) => {
+    setSelectedService(event.target.value);
+    if (event.target.value) {
+      setSelectedCategory("");
+    }
+  };
 
   const filteredListings = useMemo(
     () =>
@@ -137,7 +158,7 @@ function Homepage() {
               <FontAwesomeIcon icon={faThLarge} className="hero-search-icon" />
               <select
                 value={selectedCategory}
-                onChange={(event) => setSelectedCategory(event.target.value)}
+                onChange={handleCategoryChange}
               >
                 <option value="">כל הקטגוריות</option>
                 {MARKETPLACE_CATEGORIES.map((category) => (
@@ -152,7 +173,7 @@ function Homepage() {
               <FontAwesomeIcon icon={faBriefcase} className="hero-search-icon" />
               <select
                 value={selectedService}
-                onChange={(event) => setSelectedService(event.target.value)}
+                onChange={handleServiceChange}
               >
                 <option value="">כל השירותים</option>
                 {SITE_SERVICES.map((service) => (
@@ -187,17 +208,6 @@ function Homepage() {
             <FontAwesomeIcon icon={faPlus} />
             <span>פרסם מודעה</span>
           </button>
-        </div>
-      </section>
-
-      <section className="stats-strip" aria-label="נתוני האתר">
-        <div>
-          <strong>{Math.max(listings.length, 1).toLocaleString()}+</strong>
-          <span>מודעות פעילות</span>
-        </div>
-        <div>
-          <strong>{MARKETPLACE_CATEGORIES.length}+</strong>
-          <span>קטגוריות</span>
         </div>
       </section>
 

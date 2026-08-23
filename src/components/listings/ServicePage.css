@@ -57,6 +57,14 @@
   padding: 36px 0 80px;
 }
 
+.ads-page-filters {
+  margin-bottom: 20px;
+}
+
+.ads-page-search {
+  margin-bottom: 12px;
+}
+
 .ads-page-content .pagination {
   margin-top: 28px;
 }
