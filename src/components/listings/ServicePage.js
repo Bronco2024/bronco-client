@@ -2,24 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCertificate } from "@fortawesome/free-solid-svg-icons";
 import { FormatDateTimestampToDate } from "@components/utils/constants/Functions";
+import { formatListingPrice, isAdoptionListing } from "@/data/pets";
 import "./ServicePage.css";
 
 const fallbackImage = () => require("@/assets/no-image.jpg");
-const formatCardPrice = (price) => {
-  if (price === undefined || price === null || price === "") return "";
-  if (typeof price === "number") return `₪${price.toLocaleString("he-IL")}`;
-  if (typeof price === "string") {
-    const trimmed = price.trim();
-    if (!trimmed) return "";
-    if (trimmed.includes("₪") || trimmed.includes("אימוץ")) return trimmed;
-    const numeric = Number(trimmed.replace(/[^\d.-]/g, ""));
-    if (Number.isFinite(numeric) && numeric > 0) {
-      return `₪${numeric.toLocaleString("he-IL")}`;
-    }
-    return trimmed;
-  }
-  return String(price);
-};
 
 export const AdGridCard = ({
   ad,
@@ -30,6 +16,8 @@ export const AdGridCard = ({
 }) => {
   const image = ad.photos?.[0] || fallbackImage();
   const heading = title || ad.title || ad.name || ad.category;
+  const priceLabel = formatListingPrice(ad);
+  const showAdoption = isAdoptionListing(ad);
 
   const open = () => onClick?.(ad);
 
@@ -52,6 +40,9 @@ export const AdGridCard = ({
         {ad.category && (
           <span className="ads-type-badge">{ad.category}</span>
         )}
+        {showAdoption && (
+          <span className="ads-adoption-badge">לאימוץ</span>
+        )}
         {ad.hasCertificate && (
           <span
             className="ads-certificate-badge"
@@ -63,7 +54,7 @@ export const AdGridCard = ({
       </div>
       <div className="ads-page-card-body">
         <h2>{heading}</h2>
-        {formatCardPrice(ad.price) && <strong>{formatCardPrice(ad.price)}</strong>}
+        {priceLabel && <strong>{priceLabel}</strong>}
         {children}
         <span>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</span>
       </div>

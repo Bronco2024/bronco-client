@@ -22,6 +22,10 @@ import { db } from '@/firebase';
 import {
     getSimilarListings,
     isPetMarketplaceCategory,
+    isAdoptionListing,
+    formatListingAge,
+    formatListingPrice,
+    getAdDisplayName,
     PET_LISTINGS,
 } from '@/data/pets';
 import { filterApprovedAds } from '@/helpers/ad-approval';
@@ -35,16 +39,8 @@ import useSeo from "@/hooks/useSeo";
 
 const ADS_SUGGESTION_LIMIT = 10;
 
-const formatPrice = (price) => {
-    if (price === undefined || price === null || price === '') return '';
-    if (price === 0 || price === '0') return 'לאימוץ';
-    if (typeof price === 'string' && (price.includes('₪') || price.includes('אימוץ'))) {
-        return price;
-    }
-    return `₪${price}`;
-};
-
-const getAdTitle = (ad) => ad.title || ad.name || ad.breed || ad.accessory || 'מודעה';
+const getAdTitle = (ad) =>
+    getAdDisplayName(ad) || ad.title || ad.name || ad.breed || ad.accessory || 'מודעה';
 const getAdImage = (item) => item.photos?.[0] || item.image || require('@/assets/no-image.jpg');
 
 const ItemPage = () => {
@@ -375,7 +371,7 @@ const ItemPage = () => {
 
                     <div className="top-row">
                         <div className="item-badges">
-                            {ad.forAdoption && (
+                            {isAdoptionListing(ad) && (
                                 <span className="item-badge item-badge--adoption">
                                     <FontAwesomeIcon icon={faHeart} />
                                     לאימוץ
@@ -400,7 +396,7 @@ const ItemPage = () => {
                         )}
                     </div>
                     <h1>{getAdTitle(ad)}</h1>
-                    {ad.forAdoption && (
+                    {isAdoptionListing(ad) && (
                         <p className="adoption-note">מודעה לאימוץ — תנו בית חם לחיית מחמד.</p>
                     )}
                     <p className="description">{ad.description}</p>
@@ -415,10 +411,10 @@ const ItemPage = () => {
                                         <dd>{ad.type}</dd>
                                     </>
                                 )}
-                                {ad.age && (
+                                {formatListingAge(ad) && (
                                     <>
                                         <dt>גיל</dt>
-                                        <dd>{ad.age}</dd>
+                                        <dd>{formatListingAge(ad)}</dd>
                                     </>
                                 )}
                                 {ad.breed && (
@@ -448,8 +444,8 @@ const ItemPage = () => {
                                     </>
                                 )}
                             </dl>
-                            {formatPrice(ad.price) && (
-                                <p className="price">{formatPrice(ad.price)}</p>
+                            {formatListingPrice(ad) && (
+                                <p className="price">{formatListingPrice(ad)}</p>
                             )}
                         </div>
                     )}
@@ -565,7 +561,7 @@ const ItemPage = () => {
                                 <div className="related-ad-info">
                                     <h4>{getAdTitle(item)}</h4>
                                     {item.location && <span>{item.location}</span>}
-                                    {formatPrice(item.price) && <p>{formatPrice(item.price)}</p>}
+                                    {formatListingPrice(item) && <p>{formatListingPrice(item)}</p>}
                                 </div>
                             </button>
                         ))}

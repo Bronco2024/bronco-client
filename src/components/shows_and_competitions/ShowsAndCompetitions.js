@@ -12,6 +12,7 @@ import {
     where,
 } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';
+import { getListingPath } from "@/helpers/listing-links";
 import { db } from '@/firebase';
 import { mapApprovedAdsFromSnapshot } from '@/helpers/ad-approval';
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
@@ -27,7 +28,7 @@ const ShowsAndCompetitions = () => {
     const [afterThis, setAfterThis] = useState(null);
     const [beforeThis, setBeforeThis] = useState(null);
 
-    const categoryFilter = "תצוגות ותחריות";
+    const categoryFilter = "תצוגות ותחרויות";
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
 
     const getTotalCount = useCallback(async () => {
@@ -98,7 +99,7 @@ const ShowsAndCompetitions = () => {
     };
 
     const handleClickOnItem = (ad) => {
-        navigate('/item', { state: { ad } })
+        navigate(getListingPath(ad), { state: { ad } })
     }
 
     return (
