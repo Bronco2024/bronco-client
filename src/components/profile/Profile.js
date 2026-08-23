@@ -17,8 +17,8 @@ import './Profile.css';
 import Modal from '@components/utils/modal/Modal';
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from '@components/utils/constants/Functions';
 import { AD_STATUS, AD_STATUS_LABELS, getAdStatus } from '@/helpers/ad-approval';
-import { isAdoptionListing } from '@/data/pets';
 import * as Sentry from "@sentry/react";
+import { getListingPath } from '@/helpers/listing-links';
 
 const getAdTitle = (ad) =>
     ad.title || ad.name || ad.breed || ad.seed_type || ad.accessory || ad.category || "מודעה";
@@ -146,13 +146,7 @@ const Profile = () => {
     }
 
     const handleRenewButton = async (ad) => {
-        const isFreeAdoptionRenew = isAdoptionListing(ad);
-
-        if (!currentUser?.isAdmin && currentUser.numberOfAds <= 0 && !isFreeAdoptionRenew) {
-            navigate('/subscribe');
-            return;
-        }
-
+        // Payments/subscribe are currently closed — renew is free for everyone.
         setIsModalRenewVisible(true);
         setAdToRenew(ad);
     }
@@ -228,7 +222,7 @@ const Profile = () => {
                                     <button
                                         type="button"
                                         className="account-card-image"
-                                        onClick={() => navigate('/item', { state: { ad } })}
+                                        onClick={() => navigate(getListingPath(ad), { state: { ad } })}
                                     >
                                         <img src={image} alt={title} />
                                     </button>

@@ -37,7 +37,7 @@ export const EXTENDED_CATEGORIES = [
     { path: '/breeders', label: 'מפרזילים' },
     { path: '/schools', label: 'בתי ספר' },
     { path: '/trips', label: 'טיולים' },
-    { path: '/shows-and-competitions', label: 'תצוגות ותחריות' },
+    { path: '/shows-and-competitions', label: 'תצוגות ותחרויות' },
     { path: '/our-products', label: 'חנות' },
 ]
 

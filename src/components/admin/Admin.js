@@ -11,6 +11,7 @@ import './Admin.css'
 import { db, storage } from '@/firebase';
 import { collection, getDocs, deleteDoc, doc, where, orderBy, query, updateDoc } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
+import { getListingPath } from "@/helpers/listing-links";
 import Modal from '@components/utils/modal/Modal';
 import { ref, deleteObject, listAll } from "firebase/storage";
 import * as Sentry from "@sentry/react";
@@ -274,7 +275,7 @@ const Admin = () => {
                                 setAdStatusFilter("pending");
                                 const matchedAd = ads.find((ad) => ad.id === notification.adId);
                                 if (matchedAd) {
-                                    navigate('/item', { state: { ad: matchedAd } });
+                                    navigate(getListingPath(matchedAd), { state: { ad: matchedAd } });
                                 }
                             }}
                         >
@@ -381,7 +382,7 @@ const Admin = () => {
                                             <button
                                                 type="button"
                                                 className="account-card-image"
-                                                onClick={() => navigate('/item', { state: { ad } })}
+                                                onClick={() => navigate(getListingPath(ad), { state: { ad } })}
                                             >
                                                 <img src={image} alt={title} />
                                             </button>

@@ -24,7 +24,7 @@ const Footer = () => {
                 <div className="footer-section">
                     <h2>קטגוריות</h2>
                     <div className="footer-links">
-                        {MARKETPLACE_CATEGORIES.slice(0, 6).map((category) => (
+                        {MARKETPLACE_CATEGORIES.map((category) => (
                             <Link key={category.slug} to={category.path} className="about-link">
                                 {category.name}
                             </Link>

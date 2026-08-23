@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getListingPath } from "@/helpers/listing-links";
 import { FormatDateTimestampToDate } from '@components/utils/constants/Functions';
 import './LatestAds.css';
 import { db } from '@/firebase';
@@ -21,7 +22,7 @@ const LatestAds = () => {
     const [latestAds, setLatestAds] = useState([]);
 
     const handleClickOnItem = (ad) => {
-        navigate('/item', {
+        navigate(getListingPath(ad), {
             state: { ad }
         });
     };
