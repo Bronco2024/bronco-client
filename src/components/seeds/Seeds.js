@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
     collection,
     query,
@@ -11,7 +11,7 @@ import {
     endBefore,
     where,
 } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getListingPath } from "@/helpers/listing-links";
 import { db } from "@/firebase";
 import { mapApprovedAdsFromSnapshot } from "@/helpers/ad-approval";
@@ -20,6 +20,10 @@ import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Function
 import { AdGridCard } from "@/components/listings/ServicePage";
 import CitySelect from "@/components/pets/CitySelect";
 import Paganation from "@components/utils/paganation/Paganation";
+import useSeo from "@/hooks/useSeo";
+import { filterAdsBySearch } from "@/helpers/listing-search";
+import ListingSearchField from "@/components/listings/ListingSearchField";
+import { SITE_NAME, SITE_URL } from "@/data/site-config";
 import "@/components/pets/CategoryListings.css";
 
 const parseNumericPrice = (price) => {
@@ -43,6 +47,8 @@ const sortAds = (items, sortBy = "newest") => {
 
 const Seeds = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const [searchText, setSearchText] = useState(searchParams.get("q") || "");
     const [adList, setAdList] = useState([]);
     const [totalAds, setTotalAds] = useState(0);
     const [page, setPage] = useState(1);
@@ -62,6 +68,17 @@ const Seeds = () => {
 
     const categoryFilter = "זרע";
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
+
+    useSeo({
+        title: `זרע | ${SITE_NAME}`,
+        description: "זרע לסוסים, כלבים, חתולים וחיות משק — לגידול מקצועי",
+        url: `${SITE_URL}/seeds`,
+    });
+
+    const visibleAds = useMemo(
+        () => filterAdsBySearch(adList, searchText),
+        [adList, searchText]
+    );
 
     const getTotalCount = useCallback(async () => {
         const collectionRef = collection(db, "ads");
@@ -240,6 +257,12 @@ const Seeds = () => {
 
             <section className="category-content">
                 <form className="category-search" onSubmit={applyFilters}>
+                    <ListingSearchField
+                        id="seeds-search-text"
+                        value={searchText}
+                        onChange={setSearchText}
+                    />
+
                     <div className="category-filter-field">
                         <label htmlFor="category-seed-animal">סוג בעל חיים</label>
                         <select
@@ -309,6 +332,20 @@ const Seeds = () => {
                     </div>
 
                     <div className="category-filter-field">
+                        <label htmlFor="category-certificate">תעודת הרבעה</label>
+                        <select
+                            id="category-certificate"
+                            name="hasCertificate"
+                            value={filters.hasCertificate}
+                            onChange={handleFilterChange}
+                        >
+                            <option value="">הכל</option>
+                            <option value="yes">יש תעודה</option>
+                            <option value="no">ללא תעודה</option>
+                        </select>
+                    </div>
+
+                    <div className="category-filter-field">
                         <label htmlFor="category-min-price">מחיר מינימלי</label>
                         <input
                             id="category-min-price"
@@ -353,9 +390,9 @@ const Seeds = () => {
                     </button>
                 </form>
 
-                <p className="category-count">{adList.length} מודעות</p>
+                <p className="category-count">{visibleAds.length} מודעות</p>
 
-                {adList.length === 0 ? (
+                {visibleAds.length === 0 ? (
                     <div className="category-empty">
                         <h3>לא נמצאו מודעות</h3>
                         <p>נסו לשנות את החיפוש או לבחור עיר אחרת.</p>
@@ -374,7 +411,7 @@ const Seeds = () => {
                     </div>
                 ) : (
                     <div className="listings-grid">
-                        {adList.map((ad) =>
+                        {visibleAds.map((ad) =>
                             !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
                                 <AdGridCard
                                     key={ad.id}

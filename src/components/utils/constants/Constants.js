@@ -28,8 +28,7 @@ export const CATEGORIES = [
     { path: '/accessories', label: 'אביזרים' },
 ];
 
-export const EXTENDED_CATEGORIES = [
-    ...CATEGORIES,
+export const SERVICE_CATEGORIES = [
     { path: '/boarding', label: 'פנסיון' },
     { path: '/groomers', label: 'מספרות' },
     { path: '/veterinarians', label: 'וטרינרים' },
@@ -39,7 +38,17 @@ export const EXTENDED_CATEGORIES = [
     { path: '/trips', label: 'טיולים' },
     { path: '/shows-and-competitions', label: 'תצוגות ותחרויות' },
     { path: '/our-products', label: 'חנות' },
-]
+];
+
+export const EXTENDED_CATEGORIES = [
+    ...CATEGORIES,
+    ...SERVICE_CATEGORIES,
+];
+
+export const SERVICE_CATEGORY_LABELS = SERVICE_CATEGORIES.map(({ label }) => label);
+
+export const isServiceCategory = (categoryName) =>
+    SERVICE_CATEGORY_LABELS.includes(categoryName);
 
 export const SEED_ANIMAL_TYPES = [
     "סוסים",

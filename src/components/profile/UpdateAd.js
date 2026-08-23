@@ -5,7 +5,7 @@ import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'fire
 import { db, storage } from '@/firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
-import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEED_ANIMAL_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, getSeedTypesByAnimal } from "@components/utils/constants/Constants";
+import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEED_ANIMAL_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, getSeedTypesByAnimal, isServiceCategory } from "@components/utils/constants/Constants";
 import { isPetMarketplaceCategory } from "@/data/pets";
 import BreedSelect from "@/components/pets/BreedSelect";
 import CitySelect from "@/components/pets/CitySelect";
@@ -43,6 +43,7 @@ const UpdateAd = () => {
     });
 
     const [phoneValid, setPhoneValid] = useState(true);
+    const [photoError, setPhotoError] = useState("");
 
     useEffect(() => {
         if (ad) {
@@ -171,6 +172,13 @@ const UpdateAd = () => {
         if (phoneValid === false) {
             return;
         }
+
+        const totalPhotos = (formData.photos?.length || 0) + (newPhotos.photos?.length || 0);
+        if (totalPhotos === 0) {
+            setPhotoError("יש להשאיר לפחות תמונה אחת");
+            return;
+        }
+        setPhotoError("");
         let dataToSubmit;
 
         if (!ad?.id) {
@@ -328,6 +336,20 @@ const UpdateAd = () => {
                         ))
                     )}
                 </select>
+
+                {isServiceCategory(formData.category) && (
+                    <>
+                        <label htmlFor="title">כותרת המודעה</label>
+                        <input
+                            id="title"
+                            name="title"
+                            value={formData.title || ""}
+                            onChange={handleChange}
+                            placeholder="לדוגמה: פנסיון לכלבים בתל אביב"
+                            required
+                        />
+                    </>
+                )}
 
                 {formData.category === "סוסים" && (
                     <div className="update-ad-form">
@@ -653,12 +675,11 @@ const UpdateAd = () => {
                     )
                 }
 
-                <label htmlFor="videos">וידאו</label>
+                <label htmlFor="video">סרטון</label>
                 <input
                     type="file"
-                    id="videos"
-                    name="videos"
-                    multiple
+                    id="video"
+                    name="video"
                     accept="video/*"
                     onChange={handleVideoChange}
                 />
@@ -680,15 +701,21 @@ const UpdateAd = () => {
 
 
 
-                <label htmlFor="photos">תמונות</label>
+                <label htmlFor="photos">תמונות *</label>
                 <input
                     type="file"
                     id="photos"
                     name="photos"
                     multiple
                     accept="image/*"
-                    onChange={handleFileChange}
+                    onChange={(event) => {
+                        handleFileChange(event);
+                        if (event.target.files?.length) {
+                            setPhotoError("");
+                        }
+                    }}
                 />
+                {photoError && <p className="publish-photo-error">{photoError}</p>}
 
                 <div className="current-photos">
                     {formData.photos.length > 0 && (

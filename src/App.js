@@ -1,7 +1,8 @@
 import React, { Suspense, lazy } from "react";
 import {
   Route,
-  Routes
+  Routes,
+  Navigate,
 } from "react-router-dom";
 import ProtectedRoute from "@/context/ProtectedRoute";
 import Loading from "./components/loading-screen/Loading";
@@ -159,6 +160,8 @@ function App() {
           </Suspense>
         }
       />
+
+      <Route path="/subscribe/*" element={<Navigate to="/" replace />} />
 
       {/* <Route path="/subscribe"
         element={

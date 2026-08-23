@@ -1,5 +1,10 @@
 import { useEffect } from "react";
-import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "@/data/site-config";
+import {
+  SITE_NAME,
+  SITE_URL,
+  SITE_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+} from "@/data/site-config";
 
 const getAbsoluteUrl = (url) => {
   if (!url) return "";
@@ -20,6 +25,17 @@ const upsertMetaTag = (selector, create, update) => {
   document.head.appendChild(meta);
 };
 
+const upsertLinkTag = (selector, create, update) => {
+  const existing = document.head.querySelector(selector);
+  if (existing) {
+    update(existing);
+    return;
+  }
+
+  const link = create();
+  document.head.appendChild(link);
+};
+
 const useSeo = ({
   title,
   description,
@@ -36,14 +52,13 @@ const useSeo = ({
       ? String(description)
       : SITE_DESCRIPTION;
 
-    const absoluteImage = image ? getAbsoluteUrl(image) : "";
+    const absoluteImage = getAbsoluteUrl(image || DEFAULT_OG_IMAGE);
     const absoluteUrl =
       url ||
       (typeof window !== "undefined"
         ? window.location.href
         : getAbsoluteUrl("/"));
 
-    // Basic description
     upsertMetaTag(
       'meta[name="description"]',
       () => {
@@ -54,7 +69,6 @@ const useSeo = ({
       (el) => el.setAttribute("content", finalDescription)
     );
 
-    // OpenGraph
     upsertMetaTag(
       'meta[property="og:title"]',
       () => {
@@ -95,19 +109,16 @@ const useSeo = ({
       (el) => el.setAttribute("content", absoluteUrl)
     );
 
-    if (absoluteImage) {
-      upsertMetaTag(
-        'meta[property="og:image"]',
-        () => {
-          const el = document.createElement("meta");
-          el.setAttribute("property", "og:image");
-          return el;
-        },
-        (el) => el.setAttribute("content", absoluteImage)
-      );
-    }
+    upsertMetaTag(
+      'meta[property="og:image"]',
+      () => {
+        const el = document.createElement("meta");
+        el.setAttribute("property", "og:image");
+        return el;
+      },
+      (el) => el.setAttribute("content", absoluteImage)
+    );
 
-    // Twitter (best effort)
     upsertMetaTag(
       'meta[name="twitter:card"]',
       () => {
@@ -137,8 +148,27 @@ const useSeo = ({
       },
       (el) => el.setAttribute("content", finalDescription)
     );
+
+    upsertMetaTag(
+      'meta[name="twitter:image"]',
+      () => {
+        const el = document.createElement("meta");
+        el.setAttribute("name", "twitter:image");
+        return el;
+      },
+      (el) => el.setAttribute("content", absoluteImage)
+    );
+
+    upsertLinkTag(
+      'link[rel="canonical"]',
+      () => {
+        const el = document.createElement("link");
+        el.setAttribute("rel", "canonical");
+        return el;
+      },
+      (el) => el.setAttribute("href", absoluteUrl)
+    );
   }, [title, description, image, url]);
 };
 
 export default useSeo;
-

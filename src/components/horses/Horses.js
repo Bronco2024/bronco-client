@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
     collection,
     query,
@@ -11,7 +11,7 @@ import {
     endBefore,
     where,
 } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getListingPath } from "@/helpers/listing-links";
 import { db } from "@/firebase";
 import { mapApprovedAdsFromSnapshot } from "@/helpers/ad-approval";
@@ -20,6 +20,10 @@ import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Function
 import { AdGridCard } from "@/components/listings/ServicePage";
 import CitySelect from "@/components/pets/CitySelect";
 import Paganation from "@components/utils/paganation/Paganation";
+import useSeo from "@/hooks/useSeo";
+import { filterAdsBySearch } from "@/helpers/listing-search";
+import ListingSearchField from "@/components/listings/ListingSearchField";
+import { SITE_NAME, SITE_URL } from "@/data/site-config";
 import "@/components/pets/CategoryListings.css";
 
 const parseNumericPrice = (price) => {
@@ -43,6 +47,8 @@ const sortHorseAds = (items, sortBy = "newest") => {
 
 const Horses = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const [searchText, setSearchText] = useState(searchParams.get("q") || "");
 
     const [adList, setAdList] = useState([]);
     const [totalAds, setTotalAds] = useState(0);
@@ -63,6 +69,17 @@ const Horses = () => {
 
     const categoryFilter = "סוסים";
     const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE);
+
+    useSeo({
+        title: `סוסים | ${SITE_NAME}`,
+        description: "סוסים וסייחים מכל הגזעים",
+        url: `${SITE_URL}/horses`,
+    });
+
+    const visibleAds = useMemo(
+        () => filterAdsBySearch(adList, searchText),
+        [adList, searchText]
+    );
 
     const getTotalCount = useCallback(async () => {
         const collectionRef = collection(db, "ads");
@@ -248,6 +265,12 @@ const Horses = () => {
 
             <section className="category-content">
                 <form className="category-search" onSubmit={applyFilters}>
+                    <ListingSearchField
+                        id="horses-search-text"
+                        value={searchText}
+                        onChange={setSearchText}
+                    />
+
                     <div className="category-filter-field">
                         <label htmlFor="category-breed">גזע / סוג</label>
                         <select
@@ -371,9 +394,9 @@ const Horses = () => {
                     </button>
                 </form>
 
-                <p className="category-count">{adList.length} מודעות</p>
+                <p className="category-count">{visibleAds.length} מודעות</p>
 
-                {adList.length === 0 ? (
+                {visibleAds.length === 0 ? (
                     <div className="category-empty">
                         <h3>לא נמצאו מודעות</h3>
                         <p>נסו לשנות את החיפוש או לבחור עיר אחרת.</p>
@@ -392,7 +415,7 @@ const Horses = () => {
                     </div>
                 ) : (
                     <div className="listings-grid">
-                        {adList.map((ad) =>
+                        {visibleAds.map((ad) =>
                             !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
                                 <AdGridCard
                                     key={ad.id}

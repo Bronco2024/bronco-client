@@ -163,6 +163,13 @@
     cursor: wait;
 }
 
+.publish-photo-error {
+    margin: 6px 0 0;
+    color: #c0392b;
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
 .modal-content-custom-publishad {
     text-align: right;
 }

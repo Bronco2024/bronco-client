@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCertificate } from "@fortawesome/free-solid-svg-icons";
 import { FormatDateTimestampToDate } from "@components/utils/constants/Functions";
 import { formatListingPrice, isAdoptionListing } from "@/data/pets";
+import ListingSearchField from "@/components/listings/ListingSearchField";
 import "./ServicePage.css";
 
 const fallbackImage = () => require("@/assets/no-image.jpg");
@@ -68,6 +69,8 @@ const ServicePage = ({
   heroImage,
   count,
   filters,
+  searchText = "",
+  onSearchChange,
   children,
 }) => {
   const navigate = useNavigate();
@@ -92,7 +95,23 @@ const ServicePage = ({
       </section>
 
       <section className="ads-page-content">
-        {filters}
+        {(filters || onSearchChange) && (
+          <div className="ads-page-filters">
+            {onSearchChange && (
+              <form
+                className="category-search ads-page-search"
+                onSubmit={(event) => event.preventDefault()}
+              >
+                <ListingSearchField
+                  id={`${title}-search`}
+                  value={searchText}
+                  onChange={onSearchChange}
+                />
+              </form>
+            )}
+            {filters}
+          </div>
+        )}
         {typeof count === "number" && (
           <p className="ads-page-count">{count} מודעות</p>
         )}
