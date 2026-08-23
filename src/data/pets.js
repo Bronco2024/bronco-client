@@ -431,7 +431,7 @@ export const getAdDisplayName = (ad) =>
 export const getAdDisplayImage = (ad) =>
   ad?.image || ad?.photos?.[0] || "/hero-pets.png";
 
-/** Adoption listings are always free to publish and renew — never charge for them. */
+/** Adoption listings use forAdoption flag or price label "לאימוץ". */
 export const ADOPTION_IS_ALWAYS_FREE = true;
 
 export const isAdoptionListing = (ad) => {

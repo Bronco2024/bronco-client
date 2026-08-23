@@ -439,6 +439,36 @@
   transform: translateY(-2px);
 }
 
+.adoption-section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.adoption-section-actions .dark-button {
+  margin-top: 0;
+}
+
+.adoption-publish-link {
+  padding: 12px 20px;
+  border: 1.5px solid #1a5c4f;
+  border-radius: 10px;
+  background: transparent;
+  color: #1a5c4f;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.adoption-publish-link:hover {
+  background: #1a5c4f;
+  color: #ffffff;
+}
+
 /* ==================================================
    LATEST
 ================================================== */

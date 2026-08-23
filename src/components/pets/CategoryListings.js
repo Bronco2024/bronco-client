@@ -244,31 +244,35 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
             </select>
           </div>
 
-          <div className="category-filter-field">
-            <label htmlFor="category-min-price">מחיר מינימלי</label>
-            <input
-              id="category-min-price"
-              type="number"
-              min={0}
-              value={minPrice || ""}
-              onChange={(event) => setMinPrice(Number(event.target.value) || 0)}
-              placeholder="מינימום"
-            />
-          </div>
+          {!adoptionOnly && (
+            <>
+              <div className="category-filter-field">
+                <label htmlFor="category-min-price">מחיר מינימלי</label>
+                <input
+                  id="category-min-price"
+                  type="number"
+                  min={0}
+                  value={minPrice || ""}
+                  onChange={(event) => setMinPrice(Number(event.target.value) || 0)}
+                  placeholder="מינימום"
+                />
+              </div>
 
-          <div className="category-filter-field">
-            <label htmlFor="category-max-price">מחיר מקסימלי</label>
-            <input
-              id="category-max-price"
-              type="number"
-              min={0}
-              value={maxPrice === 999999 ? "" : maxPrice}
-              onChange={(event) =>
-                setMaxPrice(Number(event.target.value) || 999999)
-              }
-              placeholder="מקסימום"
-            />
-          </div>
+              <div className="category-filter-field">
+                <label htmlFor="category-max-price">מחיר מקסימלי</label>
+                <input
+                  id="category-max-price"
+                  type="number"
+                  min={0}
+                  value={maxPrice === 999999 ? "" : maxPrice}
+                  onChange={(event) =>
+                    setMaxPrice(Number(event.target.value) || 999999)
+                  }
+                  placeholder="מקסימום"
+                />
+              </div>
+            </>
+          )}
 
           <div className="category-filter-field category-filter-field--wide">
             <label htmlFor="category-sort">מיון</label>
@@ -278,8 +282,12 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
               onChange={(event) => setSortBy(event.target.value)}
             >
               <option value="newest">הכי חדשים</option>
-              <option value="priceAsc">מחיר מהנמוך לגבוה</option>
-              <option value="priceDesc">מחיר מהגבוה לנמוך</option>
+              {!adoptionOnly && (
+                <>
+                  <option value="priceAsc">מחיר מהנמוך לגבוה</option>
+                  <option value="priceDesc">מחיר מהגבוה לנמוך</option>
+                </>
+              )}
             </select>
           </div>
 

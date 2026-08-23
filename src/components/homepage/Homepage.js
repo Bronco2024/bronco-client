@@ -348,13 +348,22 @@ function Homepage() {
           ))}
         </div>
 
-        <button
-          className="dark-button"
-          type="button"
-          onClick={() => navigate("/adoption")}
-        >
-          לכל מודעות האימוץ
-        </button>
+        <div className="adoption-section-actions">
+          <button
+            className="dark-button"
+            type="button"
+            onClick={() => navigate("/adoption")}
+          >
+            לכל מודעות האימוץ
+          </button>
+          <button
+            className="adoption-publish-link"
+            type="button"
+            onClick={() => navigate("/publish_ad")}
+          >
+            יש חיה לאימוץ? פרסמו מודעה
+          </button>
+        </div>
       </section>
 
       <section className="services-section">
@@ -398,7 +407,7 @@ function Homepage() {
       <section className="cta-banner">
         <div>
           <h2>יש לכם חיה למכירה או לאימוץ?</h2>
-          <p>פרסמו מודעה מסודרת עם תמונות, מחיר ופרטי קשר — בחינם.</p>
+          <p>פרסמו מודעה מסודרת עם תמונות, מחיר ופרטי קשר.</p>
         </div>
         <button type="button" onClick={() => navigate("/publish_ad")}>
           פרסום מודעה
