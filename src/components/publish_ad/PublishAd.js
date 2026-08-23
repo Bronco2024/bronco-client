@@ -17,6 +17,8 @@ import FloatingInput from '../../my_components/FloatingInput';
 import { isPhoneNumberIsraeliValid } from '@components/utils/constants/Functions';
 import { getInitialAdStatus, AD_STATUS } from '@/helpers/ad-approval';
 import { createPendingAdNotification } from '@/helpers/admin-notifications';
+import ServiceAnimalSelect from '@/components/services/ServiceAnimalSelect';
+import { getServiceByCategory } from '@/data/services-catalog';
 
 const PublishAd = () => {
     const navigate = useNavigate();
@@ -36,7 +38,8 @@ const PublishAd = () => {
         district: '',
         breedCustom: '',
         photos: [],
-        video: null
+        video: null,
+        service_animals: [],
     });
 
     const handleChange = (e) => {
@@ -47,6 +50,14 @@ const PublishAd = () => {
         }
         if (name === "seed_animal") {
             setFormData({ ...formData, seed_animal: value, seed_type: "" });
+            return;
+        }
+        if (name === "category") {
+            setFormData((prev) => ({
+                ...prev,
+                category: value,
+                service_animals: [],
+            }));
             return;
         }
         if (name === "price" || name === "ageYears" || name === "ageMonths") {
@@ -142,6 +153,10 @@ const PublishAd = () => {
 
             adData.breed = resolvePetBreed(formData.breed, formData.breedCustom);
             delete adData.breedCustom;
+
+            if (!isServiceCategory(formData.category) || !formData.service_animals?.length) {
+                delete adData.service_animals;
+            }
 
             await setDoc(doc(db, "ads", adId), adData);
 
@@ -265,6 +280,18 @@ const PublishAd = () => {
                             onChange={handleChange}
                             placeholder="לדוגמה: פנסיון לכלבים בתל אביב"
                             required
+                        />
+                        <ServiceAnimalSelect
+                            value={formData.service_animals || []}
+                            suggestedAnimals={
+                                getServiceByCategory(formData.category)?.animals || []
+                            }
+                            onChange={(animals) =>
+                                setFormData((prev) => ({
+                                    ...prev,
+                                    service_animals: animals,
+                                }))
+                            }
                         />
                     </>
                 )}

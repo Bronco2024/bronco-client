@@ -29,12 +29,15 @@ export const CATEGORIES = [
 ];
 
 export const SERVICE_CATEGORIES = [
-    { path: '/boarding', label: 'פנסיון' },
-    { path: '/groomers', label: 'מספרות' },
     { path: '/veterinarians', label: 'וטרינרים' },
-    { path: '/exhibitors', label: 'מציגים' },
-    { path: '/breeders', label: 'מפרזילים' },
+    { path: '/transport', label: 'הסעות' },
+    { path: '/boarding', label: 'פנסיון' },
+    { path: '/pet-sitting', label: 'שמירה בבית' },
+    { path: '/groomers', label: 'מספרות' },
+    { path: '/training', label: 'אילוף והתנהגות' },
     { path: '/schools', label: 'בתי ספר' },
+    { path: '/breeders', label: 'מפרזילים' },
+    { path: '/exhibitors', label: 'מציגים' },
     { path: '/trips', label: 'טיולים' },
     { path: '/shows-and-competitions', label: 'תצוגות ותחרויות' },
     { path: '/our-products', label: 'חנות' },

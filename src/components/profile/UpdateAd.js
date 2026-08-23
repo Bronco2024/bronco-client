@@ -18,6 +18,8 @@ import FloatingInput from '../../my_components/FloatingInput';
 import { isPhoneNumberIsraeliValid } from '@components/utils/constants/Functions';
 import { getAdStatusAfterUpdate, AD_STATUS } from '@/helpers/ad-approval';
 import { createPendingAdNotification } from '@/helpers/admin-notifications';
+import ServiceAnimalSelect from '@/components/services/ServiceAnimalSelect';
+import { getServiceByCategory } from '@/data/services-catalog';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -213,6 +215,10 @@ const UpdateAd = () => {
         dataToSubmit.breed = resolvePetBreed(formData.breed, formData.breedCustom);
         delete dataToSubmit.breedCustom;
 
+        if (!isServiceCategory(formData.category) || !formData.service_animals?.length) {
+            delete dataToSubmit.service_animals;
+        }
+
         if (formData.forAdoption) {
             dataToSubmit.forAdoption = true;
             dataToSubmit.price = "לאימוץ";
@@ -347,6 +353,18 @@ const UpdateAd = () => {
                             onChange={handleChange}
                             placeholder="לדוגמה: פנסיון לכלבים בתל אביב"
                             required
+                        />
+                        <ServiceAnimalSelect
+                            value={formData.service_animals || []}
+                            suggestedAnimals={
+                                getServiceByCategory(formData.category)?.animals || []
+                            }
+                            onChange={(animals) =>
+                                setFormData((prev) => ({
+                                    ...prev,
+                                    service_animals: animals,
+                                }))
+                            }
                         />
                     </>
                 )}

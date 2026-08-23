@@ -16,10 +16,14 @@ export const matchesListingSearch = (ad, searchText = "") => {
   const query = String(searchText || "").trim().toLowerCase();
   if (!query) return true;
 
+  const serviceAnimals = Array.isArray(ad?.service_animals)
+    ? ad.service_animals.join(" ")
+    : "";
+
   return SEARCH_FIELDS.some((field) => {
     const value = ad?.[field];
     return value != null && String(value).toLowerCase().includes(query);
-  });
+  }) || serviceAnimals.toLowerCase().includes(query);
 };
 
 export const filterAdsBySearch = (ads, searchText = "") => {

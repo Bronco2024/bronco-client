@@ -36,7 +36,8 @@ const Footer = () => {
                 <div className="footer-section">
                     <h2>שירותים</h2>
                     <div className="footer-links">
-                        {SITE_SERVICES.slice(0, 6).map((service) => (
+                        <Link to="/services" className="about-link">כל השירותים</Link>
+                        {SITE_SERVICES.slice(0, 5).map((service) => (
                             <Link key={service.path} to={service.path} className="about-link">
                                 {service.name}
                             </Link>

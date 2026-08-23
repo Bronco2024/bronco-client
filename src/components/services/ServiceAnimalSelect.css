@@ -1,0 +1,44 @@
+.service-animal-select {
+  margin: 12px 0 4px;
+}
+
+.service-animal-select-label {
+  margin: 0 0 10px;
+  color: #173b5e;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.service-animal-select-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.service-animal-select-chip {
+  padding: 8px 14px;
+  border: 1.5px solid #dbe4ec;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #173b5e;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.service-animal-select-chip:hover {
+  border-color: #ff861c;
+}
+
+.service-animal-select-chip.active {
+  border-color: #173b5e;
+  background: #173b5e;
+  color: #ffffff;
+}
+
+.service-animal-select-hint {
+  margin: 10px 0 0;
+  color: #64748b;
+  font-size: 12px;
+}

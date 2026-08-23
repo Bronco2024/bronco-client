@@ -32,6 +32,10 @@ const Breeders = lazy(() => import("./components/breeders/Breeders"))
 const Schools = lazy(() => import("./components/schools/Schools"))
 const Trips = lazy(() => import("./components/trips/Trips"))
 const ShowsAndCompetitions = lazy(() => import("./components/shows_and_competitions/ShowsAndCompetitions"))
+const ServicesHub = lazy(() => import("./components/services/ServicesHub"))
+const Transport = lazy(() => import("./components/transport/Transport"))
+const PetSitting = lazy(() => import("./components/pet-sitting/PetSitting"))
+const Training = lazy(() => import("./components/training/Training"))
 const CategoryListings = lazy(() => import("./components/pets/CategoryListings"));
 const Favorites = lazy(() => import("./components/pets/Favorites"));
 
@@ -292,6 +296,17 @@ function App() {
       />
 
       <Route
+        path="/services"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Layout>
+              <ServicesHub />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route
         path="/boarding"
         element={
           <Suspense fallback={<Loading />}>
@@ -341,6 +356,39 @@ function App() {
           <Suspense fallback={<Loading />}>
             <Layout>
               <Veterinarian />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route
+        path="/transport"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Layout>
+              <Transport />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route
+        path="/pet-sitting"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Layout>
+              <PetSitting />
+            </Layout>
+          </Suspense>
+        }
+      />
+
+      <Route
+        path="/training"
+        element={
+          <Suspense fallback={<Loading />}>
+            <Layout>
+              <Training />
             </Layout>
           </Suspense>
         }

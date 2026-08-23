@@ -1,8 +1,8 @@
 import CategoryServicePage from "@/components/listings/CategoryServicePage";
 import { getServiceByPath } from "@/data/services-catalog";
 
-const Breeders = () => (
-  <CategoryServicePage service={getServiceByPath("/breeders")} />
+const Transport = () => (
+  <CategoryServicePage service={getServiceByPath("/transport")} />
 );
 
-export default Breeders;
+export default Transport;
