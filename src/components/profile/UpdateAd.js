@@ -518,7 +518,7 @@ const UpdateAd = () => {
                     <div className="publish-ad-option-block">
                         <p className="publish-ad-option-title">אפשרות אימוץ</p>
                         <p className="publish-ad-option-note">
-                          פרסום לאימוץ — ללא תשלום, תמיד. המודעה תופיע במרכז האימוץ.
+                          המודעה תופיע במרכז האימוץ.
                         </p>
                         <div className="checkbox-row">
                             <label htmlFor="forAdoption">

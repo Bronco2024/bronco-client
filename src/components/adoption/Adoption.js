@@ -53,7 +53,7 @@ const Adoption = () => {
   useSeo({
     title: `אימוץ חיות | ${SITE_NAME}`,
     description:
-      "אמצו חיית מחמד בחינם — כלבים, חתולים ועוד שמחכים לבית חם. אימוץ תמיד ללא תשלום.",
+      "אמצו חיית מחמד — כלבים, חתולים ועוד שמחכים לבית חם.",
     url: `${SITE_URL}/adoption`,
     image: "/listings/adopt-cat.jpg",
   });
@@ -190,7 +190,7 @@ const Adoption = () => {
 
           <span className="adoption-hub-kicker">
             <FontAwesomeIcon icon={faHeart} />
-            אימוץ תמיד בחינם
+            מרכז האימוץ
           </span>
 
           <h1>
@@ -199,8 +199,8 @@ const Adoption = () => {
           </h1>
 
           <p>
-            כלבים, חתולים וחיות נוספות שמחפשים משפחה. האימוץ ב-{SITE_NAME}{" "}
-            תמיד ללא תשלום.
+            כלבים, חתולים וחיות נוספות שמחפשים משפחה — מצאו את החבר הבא שלכם
+            ב-{SITE_NAME}.
           </p>
 
           <div className="adoption-hub-hero-actions">
@@ -223,16 +223,16 @@ const Adoption = () => {
       <section className="adoption-hub-promise" aria-label="הבטחת אימוץ">
         <div className="adoption-hub-promise-inner">
           <div>
-            <strong>0 ₪</strong>
-            <span>אימוץ תמיד חינם</span>
-          </div>
-          <div>
             <strong>{Math.max(listings.length, 1)}+</strong>
             <span>חיות מחכות לבית</span>
           </div>
           <div>
             <strong>{PET_CATEGORIES.length}</strong>
             <span>סוגי חיות</span>
+          </div>
+          <div>
+            <strong>אימוץ</strong>
+            <span>אחראי ומסודר</span>
           </div>
         </div>
       </section>
