@@ -301,8 +301,8 @@ function Homepage() {
       <section className="adoption-section">
         <div className="section-header">
           <span className="section-kicker">תנו להם בית</span>
-          <h2>אימוץ חיות</h2>
-          <p>חבר חדש מחכה לכם — אולי זה בדיוק הוא.</p>
+          <h2>אימוץ חיות — תמיד בחינם</h2>
+          <p>חבר חדש מחכה לכם. האימוץ ב-{SITE_NAME} תמיד ללא תשלום.</p>
         </div>
 
         <div className="adoption-grid">
@@ -322,7 +322,7 @@ function Homepage() {
             >
               <div className="adoption-image">
                 <img src={pet.image} alt={pet.name} loading="lazy" />
-                <span className="adoption-badge">לאימוץ</span>
+                <span className="adoption-badge">לאימוץ · חינם</span>
               </div>
 
               <div className="adoption-content">
@@ -348,13 +348,22 @@ function Homepage() {
           ))}
         </div>
 
-        <button
-          className="dark-button"
-          type="button"
-          onClick={() => navigate("/adoption")}
-        >
-          לכל מודעות האימוץ
-        </button>
+        <div className="adoption-section-actions">
+          <button
+            className="dark-button"
+            type="button"
+            onClick={() => navigate("/adoption")}
+          >
+            לכל מודעות האימוץ
+          </button>
+          <button
+            className="adoption-publish-link"
+            type="button"
+            onClick={() => navigate("/publish_ad")}
+          >
+            יש חיה לאימוץ? פרסמו בחינם
+          </button>
+        </div>
       </section>
 
       <section className="services-section">

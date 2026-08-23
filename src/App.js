@@ -38,6 +38,7 @@ const PetSitting = lazy(() => import("./components/pet-sitting/PetSitting"))
 const Training = lazy(() => import("./components/training/Training"))
 const CategoryListings = lazy(() => import("./components/pets/CategoryListings"));
 const Favorites = lazy(() => import("./components/pets/Favorites"));
+const Adoption = lazy(() => import("./components/adoption/Adoption"));
 
 const PET_CATEGORY_ROUTES = [
   "cats",
@@ -245,7 +246,7 @@ function App() {
         element={
           <Suspense fallback={<Loading />}>
             <Layout>
-              <CategoryListings adoptionOnly />
+              <Adoption />
             </Layout>
           </Suspense>
         }
