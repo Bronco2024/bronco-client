@@ -55,6 +55,13 @@ export const AdGridCard = ({
       </div>
       <div className="ads-page-card-body">
         <h2>{heading}</h2>
+        {Array.isArray(ad.service_animals) && ad.service_animals.length > 0 && (
+          <div className="ads-service-animals">
+            {ad.service_animals.slice(0, 3).map((animal) => (
+              <span key={animal}>{animal}</span>
+            ))}
+          </div>
+        )}
         {priceLabel && <strong>{priceLabel}</strong>}
         {children}
         <span>תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</span>

@@ -20,6 +20,7 @@ import {
   mergeMarketplaceListings,
   getCatalogPool,
 } from "@/data/pets";
+import { getFeaturedServices } from "@/data/services-catalog";
 import { getListingPath } from "@/helpers/listing-links";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/data/site-config";
 import useSeo from "@/hooks/useSeo";
@@ -44,14 +45,7 @@ const HOW_IT_WORKS = [
   },
 ];
 
-const HOMEPAGE_SERVICES = [
-  {
-    path: "/adoption",
-    name: "אימוץ",
-    subtitle: "חיות שמחכות לבית חם",
-  },
-  ...SITE_SERVICES.slice(0, 3),
-];
+const FEATURED_SERVICES = getFeaturedServices().slice(0, 6);
 
 function Homepage() {
   const navigate = useNavigate();
@@ -366,23 +360,37 @@ function Homepage() {
       <section className="services-section">
         <div className="section-header">
           <span className="section-kicker">מעבר למודעות</span>
-          <h2>שירותים מסביב לחיות</h2>
-          <p>כל מה שצריך אחרי שמצאתם חבר חדש</p>
+          <h2>שירותים לכל סוגי החיות</h2>
+          <p>וטרינרים, פנסיון, הסעות, אילוף — מסודר לפי מה שמתאים לכם</p>
         </div>
-        <div className="services-grid">
-          {HOMEPAGE_SERVICES.map((service) => (
+        <div className="services-grid services-grid--featured">
+          {FEATURED_SERVICES.map((service) => (
             <button
               key={service.path}
               type="button"
-              className="service-card"
+              className="service-card service-card--featured"
+              style={{ "--service-accent": service.accent }}
               onClick={() => navigate(service.path)}
             >
+              {service.isNew && <span className="service-card-badge">חדש</span>}
               <h3>{service.name}</h3>
               <p>{service.subtitle}</p>
+              <div className="service-card-animals">
+                {service.animals.slice(0, 3).map((animal) => (
+                  <span key={animal}>{animal}</span>
+                ))}
+              </div>
               <span>לפרטים ←</span>
             </button>
           ))}
         </div>
+        <button
+          className="services-hub-link"
+          type="button"
+          onClick={() => navigate("/services")}
+        >
+          לכל השירותים — מרכז השירותים ←
+        </button>
       </section>
 
       <SponsorsStrip />

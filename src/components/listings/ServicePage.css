@@ -168,6 +168,22 @@
   font-size: 16px;
 }
 
+.ads-service-animals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.ads-service-animals span {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #eef2f7;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 700;
+}
+
 .ads-page-card-body strong {
   display: block;
   margin-bottom: 8px;

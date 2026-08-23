@@ -42,9 +42,16 @@ describe("Petzo catalog", () => {
   });
 
   test("exposes service routes used in the header", () => {
-    expect(SITE_SERVICES.length).toBeGreaterThanOrEqual(6);
+    expect(SITE_SERVICES.length).toBeGreaterThanOrEqual(10);
     expect(SITE_SERVICES.map((service) => service.path)).toEqual(
-      expect.arrayContaining(["/veterinarians", "/boarding", "/groomers"])
+      expect.arrayContaining([
+        "/veterinarians",
+        "/boarding",
+        "/groomers",
+        "/transport",
+        "/pet-sitting",
+        "/training",
+      ])
     );
     expect(SITE_SERVICES.map((service) => service.path)).not.toContain("/accessories");
     expect(SITE_SERVICES.map((service) => service.path)).not.toContain("/seeds");

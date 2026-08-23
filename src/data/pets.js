@@ -1,5 +1,8 @@
 import ISRAEL_CITIES from "./israel-cities";
 import { SITE_NAME } from "./site-config";
+import { SITE_SERVICES_FROM_CATALOG } from "./services-catalog";
+
+export { SITE_SERVICES_FROM_CATALOG as SITE_SERVICES };
 
 export const FAVORITES_STORAGE_KEY = "petzo_favorites";
 export const FAVORITES_STORAGE_KEY_LEGACY = "pets_bones_favorites";
@@ -115,57 +118,6 @@ export const MARKETPLACE_CATEGORIES = [
   ...PET_CATEGORIES,
   SEEDS_CATEGORY,
   ACCESSORIES_CATEGORY,
-];
-
-export const SITE_SERVICES = [
-  {
-    path: "/veterinarians",
-    name: "וטרינרים",
-    subtitle: "רופאים וטיפול מקצועי לחיות מחמד",
-    image: "/services/veterinarian.jpg",
-  },
-  {
-    path: "/boarding",
-    name: "פנסיון",
-    subtitle: "מקומות אמינים לשהייה זמנית",
-    image: "/services/boarding.jpg",
-  },
-  {
-    path: "/groomers",
-    name: "מספרות",
-    subtitle: "טיפוח, תספורת וטיפול חיצוני לחיות",
-    image: "/services/groomers.jpg",
-  },
-  {
-    path: "/exhibitors",
-    name: "מציגים",
-    subtitle: "אנשי מקצוע מהתחום",
-    image: "/listings/arabian-horse.jpg",
-  },
-  {
-    path: "/breeders",
-    name: "מפרזילים",
-    subtitle: "טיפול ואיזון מקצועי",
-    image: "/listings/arabian-horse.jpg",
-  },
-  {
-    path: "/schools",
-    name: "בתי ספר",
-    subtitle: "לימוד ואימון לכל הרמות",
-    image: "/services/school.jpg",
-  },
-  {
-    path: "/trips",
-    name: "טיולים",
-    subtitle: "חוויות עם חיות בטבע",
-    image: "/listings/goat.jpg",
-  },
-  {
-    path: "/shows-and-competitions",
-    name: "תצוגות ותחרויות",
-    subtitle: "אירועים קרובים להשתתף ולהתרגש",
-    image: "/listings/arabian-horse.jpg",
-  },
 ];
 
 const listing = (data) => ({

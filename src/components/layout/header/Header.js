@@ -95,7 +95,7 @@ const Header = () => {
     );
     const isServiceActive = SITE_SERVICES.some(
         (service) => location.pathname === service.path
-    );
+    ) || location.pathname === "/services";
 
     return (
         <nav className="navbar" ref={headerRef}>
@@ -165,6 +165,16 @@ const Header = () => {
 
                         {showServices && (
                             <div className="categories-panel services-panel" role="menu">
+                                <Link
+                                    to="/services"
+                                    className="categories-panel-item categories-panel-item--hub"
+                                    onClick={closeMenus}
+                                >
+                                    <span>
+                                        <strong>כל השירותים</strong>
+                                        <small>מרכז שירותים לכל סוגי החיות</small>
+                                    </span>
+                                </Link>
                                 {SITE_SERVICES.map((service) => (
                                     <Link
                                         key={service.path}
@@ -334,6 +344,7 @@ const Header = () => {
                     </div>
                     <p className="mobile-menu-label">שירותים</p>
                     <div className="mobile-categories">
+                        <Link to="/services" onClick={closeMenus}>כל השירותים</Link>
                         {SITE_SERVICES.map((service) => (
                             <Link
                                 key={service.path}
