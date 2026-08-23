@@ -95,8 +95,8 @@ export const SEEDS_CATEGORY = {
   path: "/seeds",
   name: "זרע",
   type: "זרע",
-  image: "/listings/goat.jpg",
-  subtitle: "לגידול מקצועי ומתקדם",
+  image: "/listings/arabian-horse.jpg",
+  subtitle: "סוסים, כלבים, חתולים וחיות משק",
   useExistingPage: true,
 };
 

@@ -222,7 +222,7 @@ const Seeds = () => {
         <main className="category-page" dir="rtl">
             <section
                 className="category-hero"
-                style={{ backgroundImage: `url(/farm-animals.jpg)` }}
+                style={{ backgroundImage: `url(/horses.jpg)` }}
             >
                 <div className="category-hero-overlay">
                     <button
@@ -233,7 +233,7 @@ const Seeds = () => {
                         ← חזרה לדף הבית
                     </button>
                     <h1>זרע</h1>
-                    <p>לגידול מקצועי ומתקדם</p>
+                    <p>סוסים, כלבים, חתולים וחיות משק — לגידול מקצועי</p>
                 </div>
             </section>
 

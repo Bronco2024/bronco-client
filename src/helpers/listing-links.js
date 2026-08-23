@@ -1,4 +1,4 @@
-import { SITE_NAME } from "@/data/site-config";
+import { SITE_NAME } from "../data/site-config";
 
 export const toWhatsAppNumber = (phoneNumber) => {
   if (!phoneNumber) return "";
