@@ -1,1 +1,5 @@
+# Firebase Auth handler (must be before SPA catch-all — otherwise Google login breaks)
+/__/auth/*  https://bronco-65aaf.firebaseapp.com/__/auth/:splat  200
+
+# SPA
 /*    /index.html   200

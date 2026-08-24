@@ -56,11 +56,12 @@ const Login = () => {
         const checkRedirectResult = async () => {
 
             try {
-
+                setGoogleLoading(true);
                 const result = await getRedirectResult(auth);
 
                 if (result?.user) {
                     navigate('/');
+                    return;
                 }
 
             } catch (error) {
@@ -78,6 +79,8 @@ const Login = () => {
                         method: 'GoogleRedirect'
                     }
                 });
+            } finally {
+                setGoogleLoading(false);
             }
         };
 
@@ -203,7 +206,10 @@ const Login = () => {
             const result = await handleGoogleSignupAndSignIn();
             if (result?.user) {
                 navigate('/');
+                return;
             }
+            // Redirect started — keep loading until the browser leaves this page.
+            return;
 
         } catch (error) {
 
@@ -220,7 +226,6 @@ const Login = () => {
                     method: 'GoogleSignin'
                 }
             });
-        } finally {
             setGoogleLoading(false);
         }
     };
