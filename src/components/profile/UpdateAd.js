@@ -22,6 +22,7 @@ import ServiceAnimalSelect from '@/components/services/ServiceAnimalSelect';
 import { getServiceByCategory } from '@/data/services-catalog';
 import PublishCategorySelect from '@/components/publish_ad/PublishCategorySelect';
 import { getServicePublishCopy } from '@/helpers/publish-categories';
+import { omitUndefinedFields } from '@/helpers/firestore-safe';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -220,13 +221,18 @@ const UpdateAd = () => {
 
             dataToSubmit.ageInMonths = totalMonths;
             delete dataToSubmit.age;
+            dataToSubmit.breed = resolvePetBreed(formData.breed, formData.breedCustom);
+        } else {
+            delete dataToSubmit.breed;
         }
-
-        dataToSubmit.breed = resolvePetBreed(formData.breed, formData.breedCustom);
         delete dataToSubmit.breedCustom;
 
         if (!isServiceCategory(formData.category) || !formData.service_animals?.length) {
             delete dataToSubmit.service_animals;
+        }
+
+        if (isServiceCategory(formData.category)) {
+            dataToSubmit.listingKind = "service";
         }
 
         if (formData.forAdoption) {
@@ -237,6 +243,7 @@ const UpdateAd = () => {
         }
 
         dataToSubmit = DeletedAttributesAfterUpdateForm(dataToSubmit);
+        dataToSubmit = omitUndefinedFields(dataToSubmit);
 
         const adRef = doc(db, "ads", ad.id);
 

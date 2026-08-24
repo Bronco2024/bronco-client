@@ -10,13 +10,24 @@ export const toWhatsAppNumber = (phoneNumber) => {
   return digits;
 };
 
-export const buildWhatsAppLink = ({ phoneNumber, title = "" } = {}) => {
+export const buildWhatsAppLink = ({
+  phoneNumber,
+  title = "",
+  isService = false,
+} = {}) => {
   const number = toWhatsAppNumber(phoneNumber);
   if (!number) return "";
 
-  const text = title
-    ? `שלום, ראיתי את המודעה "${title}" ב-${SITE_NAME}.`
-    : `שלום, ראיתי מודעה ב-${SITE_NAME}.`;
+  let text;
+  if (isService) {
+    text = title
+      ? `שלום, ראיתי את השירות "${title}" ב-${SITE_NAME}.`
+      : `שלום, ראיתי שירות ב-${SITE_NAME}.`;
+  } else {
+    text = title
+      ? `שלום, ראיתי את המודעה "${title}" ב-${SITE_NAME}.`
+      : `שלום, ראיתי מודעה ב-${SITE_NAME}.`;
+  }
 
   return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
 };

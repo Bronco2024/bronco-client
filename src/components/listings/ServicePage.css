@@ -235,3 +235,171 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.ads-page--services {
+  background:
+    linear-gradient(180deg, #f3faf8 0%, #fff 220px);
+}
+
+.ads-page-kicker {
+  margin: 0 0 8px;
+  color: #9fd8cf;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.service-listings-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.service-listing-card {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #d7e6e2;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 118, 110, 0.06);
+  cursor: pointer;
+  text-align: right;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.service-listing-card:hover,
+.service-listing-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--service-accent, #0f766e);
+  box-shadow: 0 12px 28px rgba(15, 118, 110, 0.12);
+}
+
+.service-listing-card-media {
+  position: relative;
+  min-height: 148px;
+  background: #e8f3f0;
+}
+
+.service-listing-card-media::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--service-accent, #0f766e);
+}
+
+.service-listing-card-media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.service-listing-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+}
+
+.service-listing-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.service-listing-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--service-accent, #0f766e) 14%, #fff);
+  color: var(--service-accent, #0f766e);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.service-listing-category {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.service-listing-card-body h2 {
+  margin: 0;
+  color: #0f2f3a;
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.service-listing-animals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.service-listing-animals span {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #eef6f4;
+  color: #335e57;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.service-listing-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.service-listing-card-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.service-listing-card-facts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.service-listing-rate {
+  color: #0f766e;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.service-listing-rate--ask {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .service-listing-card {
+    grid-template-columns: 1fr;
+  }
+
+  .service-listing-card-media {
+    height: 170px;
+  }
+
+  .service-listing-card-media::after {
+    inset: auto 0 0 0;
+    width: auto;
+    height: 4px;
+  }
+}

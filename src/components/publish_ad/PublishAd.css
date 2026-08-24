@@ -40,10 +40,21 @@
     flex-direction: column;
     gap: 6px;
     margin: 8px 0 4px;
-    padding: 14px;
-    border: 1px solid #e2ebe7;
-    border-radius: 14px;
-    background: #f7faf8;
+    padding: 16px;
+    border: 1px solid #c5ddd6;
+    border-radius: 16px;
+    background:
+        linear-gradient(165deg, rgba(15, 118, 110, 0.08), transparent 55%),
+        #f4faf8;
+}
+
+.publish-service-kicker {
+    margin: 0;
+    color: #0f766e;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 .publish-service-hint {
@@ -52,6 +63,20 @@
     font-size: 0.92rem;
     font-weight: 600;
     line-height: 1.5;
+}
+
+.publish-ad-container--service {
+    border-color: #c5ddd6;
+    background:
+        linear-gradient(180deg, #f7fbfa 0%, #fff 42%);
+}
+
+.publish-ad-container--service .publish-button {
+    background: #0f766e;
+}
+
+.publish-ad-container--service .publish-button:hover:not(:disabled) {
+    background: #0d9488;
 }
 
 .publish-ad-form {
