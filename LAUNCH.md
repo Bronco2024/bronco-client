@@ -32,41 +32,20 @@
 
 ---
 
-## 3) إيميلات التحقق / نسيت كلمة السر (Gmail SMTP)
+## 3) إيميلات التحقق / نسيت كلمة السر (Petzo)
 
-Firebase يرسل إيميل التحقق وإيميل إعادة التعيين. عشان يوصل من `petzo.team@gmail.com` ومش Spam:
+قوالب Firebase عندك مقفولة وفيها Horsehub.  
+**الحل في الكود:** إيميلات مخصصة عبر Netlify Functions باسم Petzo.
 
-### أ) App Password من Google
-1. ادخل حساب `petzo.team@gmail.com`
-2. [Google Account → Security](https://myaccount.google.com/security)
-3. فعّل **2-Step Verification**
-4. أنشئ **App password** اسمه مثلاً `Petzo Firebase`
-5. انسخ الباسورد (16 حرف) — ما بنحطه بالكود، بس بـ Firebase
+اتبع الملف: **`CUSTOM_AUTH_EMAILS.md`**
 
-### ب) Firebase SMTP
-1. Firebase → **Authentication → Templates** (أو Email / SMTP حسب الواجهة)
-2. فعّل SMTP المخصص:
-   - Host: `smtp.gmail.com`
-   - Port: `587`
-   - Username: `petzo.team@gmail.com`
-   - Password: الـ App Password
-   - From name: `Petzo`
-   - From email: `petzo.team@gmail.com`
+باختصار:
+1. Firebase → Service accounts → Generate private key  
+2. Netlify env: `FIREBASE_SERVICE_ACCOUNT` + `SMTP_PASS` (+ باقي المتغيرات في الملف)  
+3. Redeploy  
+4. سجّل حساب جديد → لازم يجي ميل `Petzo` مش Horsehub
 
-### ج) قوالب الإيميل
-عدّل قوالب:
-- **Email address verification** — اسم المرسل Petzo
-- **Password reset**
-
-رابط التحقق في الكود يوجّه لـ: `/login?verified=1`
-
-### د) تجربة
-1. سجّل حساب جديد بإيميل حقيقي  
-2. وصّل إيميل التحقق (افحص Spam)  
-3. اضغط الرابط → لازم تفتح صفحة الدخول مع رسالة نجاح  
-4. جرّب «שכחתי סיסמה»
-
-تفاصيل إضافية: `FIREBASE_SMTP_SETUP.md`
+بديل مؤقت (Firebase SMTP فقط): انظر `FIREBASE_SMTP_SETUP.md` — بس النص قد يبقى Horsehub طالما القوالب مقفولة.
 
 ---
 
