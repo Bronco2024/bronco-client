@@ -49,4 +49,4 @@ Build output goes to `build/`. Netlify uses `public/_redirects` for SPA routing.
 
 ## Launch checklist
 
-Before public launch (Google login + verification emails): see **`LAUNCH.md`** and **`FIREBASE_SMTP_SETUP.md`**.
+Before public launch (Google login + verification emails): see **`LAUNCH.md`**, **`FIREBASE_SMTP_SETUP.md`**, and **`CUSTOM_AUTH_EMAILS.md`** (Petzo-branded emails via Netlify Functions).
