@@ -5,11 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { auth } from '@/firebase';
-import { createUserWithEmailAndPassword, signOut, getRedirectResult} from "firebase/auth";
+import { createUserWithEmailAndPassword, signOut, getRedirectResult } from "firebase/auth";
 import Modal from '@components/utils/modal/Modal';
 import * as Sentry from "@sentry/react";
 import { handleGoogleSignupAndSignIn } from '../../helpers/firebase-helpers';
 import { sendSiteEmailVerification } from '../../helpers/auth-email';
+import { getAuthErrorMessage } from '../../helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
 
 const Register = () => {
@@ -22,6 +23,7 @@ const Register = () => {
     const [error, setError] = useState('');
     const [agreed, setAgreed] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
 
     useEffect(() => {
         getRedirectResult(auth)
@@ -31,6 +33,7 @@ const Register = () => {
             }
           })
           .catch((error) => {
+            setError(getAuthErrorMessage(error?.code, 'שגיאה בהרשמה עם Google'));
             console.error(error);
           });
       }, [navigate]);
@@ -51,44 +54,28 @@ const Register = () => {
         }
         setError('');
 
-        if (password === verifyPassword) {
-            try {
-                await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
-                    const user = userCredential.user;
-                    sendSiteEmailVerification(user).then(async () => {
-                        await signOut(auth);
-                        setShowModal(true);
-                    })
-                })
-
-                // await setDoc(doc(db, "users", user.uid), {
-                //     email: user.email,
-                //     subscribedUntil: null,
-                //     numberOfAds: 1
-                // })
-
-                // navigate('/');
-            } catch (error) {
-                const errorCode = error.code;
-                const errorCodeAndMessage = `${errorCode} - ${error}`;
-
-                if (errorCode === "auth/email-already-in-use") {
-                    setError("אימייל זה כבר רשום");
-
-                } else {
-                    setError("שגיאה לא צפויה, נסה שוב");
-                    Sentry.captureException(`Error in register`, {
-                        tags: {
-                            component: "Register"
-                        },
-                        extra: {
-                            info: errorCodeAndMessage
-                        }
-                    });
-                }
-            }
-        } else {
+        if (password !== verifyPassword) {
             setError("סיסמאות לא זהות");
+            return;
+        }
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                email.trim(),
+                password
+            );
+            await sendSiteEmailVerification(userCredential.user);
+            await signOut(auth);
+            setShowModal(true);
+        } catch (error) {
+            setError(getAuthErrorMessage(error?.code, "שגיאה לא צפויה, נסה שוב"));
+            if (error?.code !== "auth/email-already-in-use") {
+                Sentry.captureException(error, {
+                    tags: { component: "Register" },
+                    extra: { info: `${error?.code} - ${error?.message}` },
+                });
+            }
         }
     };
 
@@ -99,13 +86,24 @@ const Register = () => {
 
 
     const handleGoogleSignup = async () => {
+        if (!agreed) {
+            setError('אנא אשר את תנאי השימוש לפני ההרשמה עם Google');
+            return;
+        }
         try {
-            await handleGoogleSignupAndSignIn();
+            setError('');
+            setGoogleLoading(true);
+            const result = await handleGoogleSignupAndSignIn();
+            if (result?.user) {
+                navigate('/');
+            }
         } catch (error) {
-            setError("שגיאה בהרשמה עם Google");
+            setError(getAuthErrorMessage(error?.code, "שגיאה בהרשמה עם Google"));
             Sentry.captureException(error, {
                 tags: { component: "Register", method: "GoogleSignup" }
             });
+        } finally {
+            setGoogleLoading(false);
         }
     };
 
@@ -187,8 +185,13 @@ const Register = () => {
                 <button type="submit" className="register-button">הרשמה</button>
 
                 <div className="google-signup">
-                    <button type="button" onClick={handleGoogleSignup} className="google-button">
-                        הירשם עם Google
+                    <button
+                        type="button"
+                        onClick={handleGoogleSignup}
+                        className="google-button"
+                        disabled={googleLoading}
+                    >
+                        {googleLoading ? 'מתחבר…' : 'הירשם עם Google'}
                         <FontAwesomeIcon icon={faGoogle} className="google-icon" />
                     </button>
                 </div>
@@ -201,7 +204,7 @@ const Register = () => {
 
             <Modal isVisible={showModal} title="נשלח מייל אימות" onClose={closeModal}>
                 <div className="modal-content-custom-register">
-                    <p>שלחנו אליכם מייל לאימות החשבון.</p>
+                    <p>שלחנו אליכם מייל לאימות החשבון מ־{SITE_NAME}.</p>
                     <p className="verification-hint">
                         אם המייל לא מופיע בתיבת הדואר, בדקו גם בתיקיית הספאם / דואר זבל
                         וסמנו אותו כ־לא ספאם.

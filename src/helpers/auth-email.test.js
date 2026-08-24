@@ -1,4 +1,8 @@
-import { getEmailVerificationSettings, getSiteOrigin } from "./auth-email-helpers";
+import {
+  getEmailVerificationSettings,
+  getPasswordResetSettings,
+  getSiteOrigin,
+} from "./auth-email-helpers";
 import { SITE_URL } from "../data/site-config";
 
 describe("Auth verification email settings", () => {
@@ -7,6 +11,11 @@ describe("Auth verification email settings", () => {
 
     expect(settings.url).toBe(`${getSiteOrigin()}/login?verified=1`);
     expect(settings.handleCodeInApp).toBe(false);
+  });
+
+  test("points password reset back to login", () => {
+    const settings = getPasswordResetSettings();
+    expect(settings.url).toBe(`${getSiteOrigin()}/login`);
   });
 
   test("falls back to the public site URL outside the browser", () => {

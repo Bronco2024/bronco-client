@@ -11,3 +11,8 @@ export const getEmailVerificationSettings = () => ({
   url: `${getSiteOrigin()}/login?verified=1`,
   handleCodeInApp: false,
 });
+
+export const getPasswordResetSettings = () => ({
+  url: `${getSiteOrigin()}/login`,
+  handleCodeInApp: false,
+});

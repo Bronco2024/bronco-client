@@ -27,6 +27,7 @@ import {
     handleGoogleSignupAndSignIn
 } from '../../helpers/firebase-helpers';
 import { sendSiteEmailVerification } from '../../helpers/auth-email';
+import { getAuthErrorMessage } from '../../helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
 
 
@@ -41,6 +42,7 @@ const Login = () => {
     const [error, setError] = useState('');
     const [needsVerification, setNeedsVerification] = useState(false);
     const [resendStatus, setResendStatus] = useState('');
+    const [googleLoading, setGoogleLoading] = useState(false);
 
     const { logout } = useAuth();
 
@@ -68,7 +70,7 @@ const Login = () => {
                     error
                 );
 
-                setError('שגיאה בחיבור עם Google');
+                setError(getAuthErrorMessage(error?.code, 'שגיאה בחיבור עם Google'));
 
                 Sentry.captureException(error, {
                     tags: {
@@ -109,53 +111,6 @@ const Login = () => {
 
 
     /* ================================
-       Firebase Error Messages
-    ================================= */
-
-    const getLoginErrorMessage = (errorCode) => {
-
-        switch (errorCode) {
-
-            case 'auth/invalid-credential':
-                return 'האימייל או הסיסמה לא נכונים';
-
-            case 'auth/invalid-email':
-                return 'כתובת האימייל אינה תקינה';
-
-            case 'auth/user-not-found':
-                return 'לא נמצא משתמש עם כתובת האימייל הזאת';
-
-            case 'auth/wrong-password':
-                return 'הסיסמה לא נכונה';
-
-            case 'auth/user-disabled':
-                return 'החשבון הזה נחסם';
-
-            case 'auth/too-many-requests':
-                return 'בוצעו יותר מדי ניסיונות. נסה שוב מאוחר יותר';
-
-            case 'auth/network-request-failed':
-                return 'יש בעיה בחיבור לאינטרנט';
-
-            case 'auth/operation-not-allowed':
-                return 'התחברות עם אימייל וסיסמה אינה מופעלת ב-Firebase';
-
-            case 'auth/invalid-api-key':
-                return 'יש בעיה בהגדרות Firebase';
-
-            case 'auth/app-not-authorized':
-                return 'האתר אינו מורשה להשתמש ב-Firebase';
-
-            case 'auth/unauthorized-domain':
-                return 'הדומיין של האתר אינו מורשה ב-Firebase';
-
-            default:
-                return 'אירעה שגיאה. נסה שוב';
-        }
-    };
-
-
-    /* ================================
        Email / Password Login
     ================================= */
 
@@ -174,20 +129,12 @@ const Login = () => {
 
         try {
 
-            console.log('Trying Firebase login...');
-
             const userCredential =
                 await signInWithEmailAndPassword(
                     auth,
                     cleanEmail,
                     password
                 );
-
-            console.log(
-                'Firebase login successful:',
-                userCredential.user
-            );
-
 
             /* Reload user information */
 
@@ -224,23 +171,7 @@ const Login = () => {
                 error
             );
 
-            console.error(
-                'LOGIN ERROR CODE:',
-                error?.code
-            );
-
-            console.error(
-                'LOGIN ERROR MESSAGE:',
-                error?.message
-            );
-
-
-            const errorCode = error?.code;
-
-            const errorMessage =
-                getLoginErrorMessage(errorCode);
-
-            setError(errorMessage);
+            setError(getAuthErrorMessage(error?.code));
 
 
             Sentry.captureException(error, {
@@ -249,7 +180,7 @@ const Login = () => {
                     method: 'EmailLogin'
                 },
                 extra: {
-                    errorCode: errorCode,
+                    errorCode: error?.code,
                     errorMessage: error?.message,
                     email: cleanEmail
                 }
@@ -267,8 +198,12 @@ const Login = () => {
         try {
 
             setError('');
+            setGoogleLoading(true);
 
-            await handleGoogleSignupAndSignIn();
+            const result = await handleGoogleSignupAndSignIn();
+            if (result?.user) {
+                navigate('/');
+            }
 
         } catch (error) {
 
@@ -277,7 +212,7 @@ const Login = () => {
                 error
             );
 
-            setError('שגיאה בחיבור עם Google');
+            setError(getAuthErrorMessage(error?.code, 'שגיאה בחיבור עם Google'));
 
             Sentry.captureException(error, {
                 tags: {
@@ -285,6 +220,8 @@ const Login = () => {
                     method: 'GoogleSignin'
                 }
             });
+        } finally {
+            setGoogleLoading(false);
         }
     };
 
@@ -320,7 +257,7 @@ const Login = () => {
                 'מייל אימות נשלח שוב. בדקו את תיבת הדואר וגם את תיקיית הספאם.'
             );
         } catch (error) {
-            setError('לא הצלחנו לשלוח שוב את מייל האימות. נסו שוב.');
+            setError(getAuthErrorMessage(error?.code, 'לא הצלחנו לשלוח שוב את מייל האימות. נסו שוב.'));
             Sentry.captureException(error, {
                 tags: {
                     component: 'Login',
@@ -462,9 +399,10 @@ const Login = () => {
                         type="button"
                         onClick={handleGoogleSignin}
                         className="google-button"
+                        disabled={googleLoading}
                     >
 
-                        התחבר עם Google
+                        {googleLoading ? 'מתחבר…' : 'התחבר עם Google'}
 
                         <FontAwesomeIcon
                             icon={faGoogle}
