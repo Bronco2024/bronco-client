@@ -269,6 +269,24 @@
   font-weight: 800;
 }
 
+.services-hub-card-publish {
+  margin-top: 10px;
+  align-self: flex-start;
+  padding: 8px 12px;
+  border: 1.5px solid var(--service-accent, #173b5e);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--service-accent, #173b5e);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.services-hub-card-publish:hover {
+  background: var(--service-accent, #173b5e);
+  color: #ffffff;
+}
+
 .services-hub-empty {
   padding: 60px 24px;
   text-align: center;
