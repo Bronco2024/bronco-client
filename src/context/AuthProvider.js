@@ -27,7 +27,11 @@ export const AuthProvider = ({ children }) => {
         await reload(user);
         await user.getIdToken(true);
 
-        if (!user.emailVerified) {
+        const signedInWithGoogle = user.providerData?.some(
+          (p) => p.providerId === "google.com"
+        );
+        // Google accounts are trusted; email/password still requires verification.
+        if (!user.emailVerified && !signedInWithGoogle) {
           setCurrentUser(null);
           dispatch(clearCart());
           return;
@@ -72,9 +76,23 @@ export const AuthProvider = ({ children }) => {
           dispatch(loadCart(cart));
         }
       } catch (e) {
-        // Fallback: keep user signed out on error
-        setCurrentUser(null);
-        dispatch(clearCart());
+        console.error("AuthProvider profile load failed", e);
+        // Auth succeeded but profile read/write failed — keep a minimal session
+        // so Google / email login is not stuck as "signed out".
+        if (user?.emailVerified) {
+          setCurrentUser({
+            uid: user.uid,
+            email: user.email,
+            subscribedUntil: null,
+            numberOfAds: Number.MAX_VALUE,
+            cart: [],
+            isAdmin: isSiteAdminEmail(user.email),
+          });
+          dispatch(loadCart([]));
+        } else {
+          setCurrentUser(null);
+          dispatch(clearCart());
+        }
       } finally {
         setLoading(false);
       }

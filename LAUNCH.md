@@ -30,6 +30,9 @@
 
 بعد تفعيل Google، جرّب من الموقع: **התחבר עם Google**.
 
+> ملاحظة تقنية: الموقع يستخدم redirect لـ Google على الموبايل/Safari، وpopup على سطح المكتب مع fallback.  
+> لازم يبقى `/__/auth/*` يوجّه لـ Firebase (موجود في `netlify.toml` و`public/_redirects`) — بدونها Google ينكسر.
+
 ---
 
 ## 3) إيميلات التحقق / نسيت كلمة السر (Gmail SMTP)
