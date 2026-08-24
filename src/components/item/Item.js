@@ -59,7 +59,7 @@ const ItemPage = () => {
         description: ad?.description
             ? String(ad.description)
             : `מצאו עוד מודעות ב-${SITE_NAME} או פרסמו חיה חדשה.`,
-        image: ad ? getAdImage(ad) : "/hero-pets.png",
+        image: ad ? getAdImage(ad) : "/hero-pets.jpg",
     });
 
     useEffect(() => {

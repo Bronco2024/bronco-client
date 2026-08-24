@@ -8,7 +8,7 @@ const NotFound = () => {
     useSeo({
         title: `404 | ${SITE_NAME}`,
         description: "העמוד לא נמצא — בדקו את הקישור או חזרו לדף הבית.",
-        image: "/hero-pets.png",
+        image: "/hero-pets.jpg",
     });
 
     return (

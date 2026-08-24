@@ -25,7 +25,7 @@ const Favorites = () => {
 
   return (
     <main className="category-page" dir="rtl">
-      <section className="category-hero" style={{ backgroundImage: "url(/hero-pets.png)" }}>
+      <section className="category-hero" style={{ backgroundImage: "url(/hero-pets.jpg)" }}>
         <div className="category-hero-overlay">
           <button
             type="button"

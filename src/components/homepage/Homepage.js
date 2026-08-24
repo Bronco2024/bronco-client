@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { lazy, Suspense, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -24,8 +24,9 @@ import { getFeaturedServices } from "@/data/services-catalog";
 import { getListingPath } from "@/helpers/listing-links";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/data/site-config";
 import useSeo from "@/hooks/useSeo";
-import SponsorsStrip from "@/components/homepage/SponsorsStrip";
 import "./Homepage.css";
+
+const SponsorsStrip = lazy(() => import("@/components/homepage/SponsorsStrip"));
 
 const HOW_IT_WORKS = [
   {
@@ -53,7 +54,7 @@ function Homepage() {
   const [searchText, setSearchText] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const { listings, liveAds, loading } = useMarketplaceAds({ limitCount: 40 });
+  const { listings, liveAds, loading } = useMarketplaceAds({ limitCount: 20 });
 
   useSeo({
     title: `${SITE_NAME} | לוח חיות מחמד`,
@@ -128,7 +129,7 @@ function Homepage() {
       <section
         className="hero"
         aria-labelledby="hero-heading"
-        style={{ backgroundImage: "url(/hero-pets.png)" }}
+        style={{ backgroundImage: "url(/hero-pets.jpg)" }}
       >
         <div className="hero-overlay" aria-hidden="true" />
 
@@ -402,8 +403,9 @@ function Homepage() {
         </button>
       </section>
 
-      <SponsorsStrip />
-
+      <Suspense fallback={null}>
+        <SponsorsStrip />
+      </Suspense>
       <section className="cta-banner">
         <div>
           <h2>יש לכם חיה למכירה או לאימוץ?</h2>

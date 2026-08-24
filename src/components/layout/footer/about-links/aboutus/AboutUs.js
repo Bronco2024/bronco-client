@@ -32,7 +32,7 @@ const AboutUs = () => {
     title: `אודותינו | ${SITE_NAME}`,
     description: `${SITE_NAME} — לוח מודעות לחיות מחמד, אימוץ ושירותים בישראל.`,
     url: `${SITE_URL}/about-us`,
-    image: "/hero-pets.png",
+    image: "/hero-pets.jpg",
   });
 
   return (
@@ -44,7 +44,7 @@ const AboutUs = () => {
       <article className="info-page-card">
         <div className="info-page-about-lead">
           <figure className="info-page-about-image">
-            <img src="/hero-pets.png" alt={SITE_NAME} loading="lazy" />
+            <img src="/hero-pets.jpg" alt={SITE_NAME} loading="lazy" />
           </figure>
           <div className="info-page-about-copy">
             <h2>{SITE_NAME} – הבית של חיות המחמד</h2>
