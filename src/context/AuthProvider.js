@@ -4,6 +4,7 @@ import { onAuthStateChanged, signOut, reload } from 'firebase/auth';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { clearCart, loadCart } from '@/redux/cartSlice';
 import { useDispatch } from 'react-redux';
+import { isSiteAdminEmail } from '@/helpers/site-admin';
 
 const AuthContext = createContext();
 
@@ -34,6 +35,7 @@ export const AuthProvider = ({ children }) => {
 
         const userRef = doc(db, 'users', user.uid);
         const snap = await getDoc(userRef);
+        const siteAdmin = isSiteAdminEmail(user.email);
 
         if (!snap.exists()) {
           const defaultProfile = {
@@ -44,22 +46,29 @@ export const AuthProvider = ({ children }) => {
              * Change to 1 when payments return
              */
             numberOfAds: Number.MAX_VALUE,
-            cart: []
+            cart: [],
+            isAdmin: siteAdmin,
           };
           await setDoc(userRef, defaultProfile);
 
-          // ✅ IMPORTANT: set currentUser even when we just created the doc
           setCurrentUser({ uid: user.uid, ...defaultProfile });
           dispatch(loadCart([]));
         } else {
           const data = snap.data();
+          if (siteAdmin && !data.isAdmin) {
+            await setDoc(userRef, { isAdmin: true, email: user.email }, { merge: true });
+          }
           const rawCart = data.cart || [];
           const cart = rawCart.map(item => ({
             ...item,
             availableUntil: item.availableUntil?.toDate?.() || null,
             createdAt: item.createdAt?.toDate?.() || null,
           }));
-          setCurrentUser({ uid: user.uid, ...data });
+          setCurrentUser({
+            uid: user.uid,
+            ...data,
+            isAdmin: Boolean(data.isAdmin) || siteAdmin,
+          });
           dispatch(loadCart(cart));
         }
       } catch (e) {
