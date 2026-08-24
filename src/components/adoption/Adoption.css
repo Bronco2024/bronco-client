@@ -227,10 +227,11 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .adoption-hub-search .category-filter-field--wide {
-  grid-column: span 2;
+  grid-column: 1 / -1;
 }
 
 .adoption-hub-search label {
@@ -242,7 +243,9 @@
 .adoption-hub-search input,
 .adoption-hub-search select {
   width: 100%;
-  padding: 10px 12px;
+  min-width: 0;
+  height: 48px;
+  padding: 0 12px;
   border: 1.5px solid #dbe4ec;
   border-radius: 10px;
   background: #fff;
@@ -252,7 +255,8 @@
 
 .adoption-hub-submit {
   align-self: end;
-  padding: 12px 18px;
+  height: 48px;
+  padding: 0 18px;
   border: 0;
   border-radius: 10px;
   background: #1a5c4f;
@@ -313,8 +317,9 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .adoption-hub-search .category-filter-field--wide {
-    grid-column: span 2;
+  .adoption-hub-search .category-filter-field--wide,
+  .adoption-hub-submit {
+    grid-column: 1 / -1;
   }
 }
 
@@ -343,11 +348,13 @@
     flex-shrink: 0;
   }
 
+  /* Keep filters side-by-side like other category pages */
   .adoption-hub-search {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .adoption-hub-search .category-filter-field--wide {
-    grid-column: span 1;
+  .adoption-hub-search .category-filter-field--wide,
+  .adoption-hub-submit {
+    grid-column: 1 / -1;
   }
 }
