@@ -15,7 +15,7 @@ const STORE_CATEGORY = { path: "/our-products", label: "חנות" };
 const SERVICE_LABELS = SERVICES_CATALOG.map((service) => service.category);
 
 export const isPublishServiceCategory = (categoryName) =>
-  SERVICE_LABELS.includes(categoryName) || categoryName === "חנות";
+  SERVICE_LABELS.includes(categoryName);
 
 /** Service labels every verified publisher can use (not admin-only store). */
 export const PUBLIC_SERVICE_CATEGORIES = SERVICES_CATALOG.map((service) => ({
@@ -23,12 +23,8 @@ export const PUBLIC_SERVICE_CATEGORIES = SERVICES_CATALOG.map((service) => ({
   label: service.category,
 }));
 
-export const getPublishCategoryGroups = (isAdmin = false) => {
-  const products = isAdmin
-    ? [...PRODUCT_CATEGORIES, STORE_CATEGORY]
-    : PRODUCT_CATEGORIES;
-
-  const serviceGroups = SERVICE_GROUPS.map((group) => ({
+const getServicePublishGroups = () =>
+  SERVICE_GROUPS.map((group) => ({
     id: `service-${group.id}`,
     label: `שירותים · ${group.label}`,
     options: SERVICES_CATALOG.filter((service) => service.group === group.id).map(
@@ -38,6 +34,14 @@ export const getPublishCategoryGroups = (isAdmin = false) => {
       })
     ),
   })).filter((group) => group.options.length > 0);
+
+export const getPublishCategoryGroups = (isAdmin = false, { servicesOnly = false } = {}) => {
+  const serviceGroups = getServicePublishGroups();
+  if (servicesOnly) return serviceGroups;
+
+  const products = isAdmin
+    ? [...PRODUCT_CATEGORIES, STORE_CATEGORY]
+    : PRODUCT_CATEGORIES;
 
   return [
     {
@@ -57,13 +61,20 @@ export const getPublishCategoryGroups = (isAdmin = false) => {
   ];
 };
 
-export const resolvePublishCategoryFromQuery = ({ category, slug } = {}) => {
+export const resolvePublishCategoryFromQuery = ({
+  category,
+  slug,
+  type,
+} = {}) => {
   if (slug) {
     const fromSlug = SERVICES_CATALOG.find((service) => service.slug === slug);
     if (fromSlug) return fromSlug.category;
   }
 
-  if (!category) return "";
+  if (!category) {
+    // type=service only opens service-mode publish (no default category).
+    return type === "service" ? "" : "";
+  }
 
   const decoded = decodeURIComponent(String(category)).trim();
   if (isPublishServiceCategory(decoded) || getServiceByCategory(decoded)) {
@@ -76,6 +87,18 @@ export const resolvePublishCategoryFromQuery = ({ category, slug } = {}) => {
   if (["זרע", "אביזרים", "חנות"].includes(decoded)) return decoded;
 
   return "";
+};
+
+export const isServicePublishMode = ({ type, category, slug } = {}) => {
+  if (type === "service") return true;
+  if (slug && SERVICES_CATALOG.some((service) => service.slug === slug)) {
+    return true;
+  }
+  if (category) {
+    const decoded = decodeURIComponent(String(category)).trim();
+    return isPublishServiceCategory(decoded);
+  }
+  return false;
 };
 
 export const getServicePublishCopy = (categoryName) => {

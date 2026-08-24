@@ -251,6 +251,31 @@ img.media-element {
     color: #fff;
 }
 
+.item-badge--service {
+    background: #0f766e;
+    border-color: #0f766e;
+    color: #fff;
+}
+
+.service-note {
+    margin: 0 0 12px;
+    color: #0f766e;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.item-page-wrapper--service .more-details--service {
+    border-color: #c5ddd6;
+    background: #f4faf8;
+}
+
+.price--ask {
+    color: #64748b !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+}
+
 .item-badge--verified {
     background: #e9f2ff;
     border-color: #245178;

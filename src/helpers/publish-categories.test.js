@@ -4,6 +4,7 @@ import {
   resolvePublishCategoryFromQuery,
   getServicePublishCopy,
   isPublishServiceCategory,
+  isServicePublishMode,
 } from "./publish-categories";
 
 describe("publish categories", () => {
@@ -34,10 +35,27 @@ describe("publish categories", () => {
     expect(resolvePublishCategoryFromQuery({ category: "כלבים" })).toBe("כלבים");
   });
 
+  test("service publish mode from type=service", () => {
+    expect(isServicePublishMode({ type: "service" })).toBe(true);
+    expect(isServicePublishMode({ slug: "boarding" })).toBe(true);
+    expect(isServicePublishMode({ category: "כלבים" })).toBe(false);
+  });
+
+  test("servicesOnly groups exclude pets and products", () => {
+    const groups = getPublishCategoryGroups(false, { servicesOnly: true });
+    const labels = groups.flatMap((group) =>
+      group.options.map((option) => option.label)
+    );
+    expect(labels).toContain("וטרינרים");
+    expect(labels).not.toContain("כלבים");
+    expect(labels).not.toContain("זרע");
+  });
+
   test("service publish copy is branded per category", () => {
     const copy = getServicePublishCopy("וטרינרים");
     expect(copy.titlePlaceholder).toContain("וטרינרים");
     expect(copy.hint).toBeTruthy();
     expect(isPublishServiceCategory("וטרינרים")).toBe(true);
+    expect(isPublishServiceCategory("חנות")).toBe(false);
   });
 });

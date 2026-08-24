@@ -17,7 +17,7 @@ import { db } from "@/firebase";
 import { mapApprovedAdsFromSnapshot } from "@/helpers/ad-approval";
 import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
-import ServicePage, { AdGridCard } from "@/components/listings/ServicePage";
+import ServicePage, { ServiceListingCard } from "@/components/listings/ServicePage";
 import ServiceAnimalFilter from "@/components/services/ServiceAnimalFilter";
 import Paganation from "@components/utils/paganation/Paganation";
 import useServicePageFilters from "@/hooks/useServicePageFilters";
@@ -129,21 +129,21 @@ const CategoryServicePage = ({ service }) => {
       subtitle={service.subtitle}
       heroImage={service.image}
       count={visibleAds.length}
+      countLabel="שירותים"
       searchText={searchText}
       onSearchChange={setSearchText}
       filters={animalFilter}
     >
       {visibleAds.length === 0 ? (
-        <p className="ads-page-empty">לא נמצאו מודעות בקטגוריה זו</p>
+        <p className="ads-page-empty">לא נמצאו שירותים בקטגוריה זו</p>
       ) : (
-        <div className="ads-page-grid">
+        <div className="service-listings-stack">
           {visibleAds.map(
             (ad) =>
               !IsDateNowGreaterThanAdDate(ad.availableUntil) && (
-                <AdGridCard
+                <ServiceListingCard
                   key={ad.id}
                   ad={ad}
-                  title={ad.title}
                   onClick={handleClickOnItem}
                 />
               )

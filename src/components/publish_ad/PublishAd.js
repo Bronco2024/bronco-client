@@ -22,8 +22,10 @@ import { getServiceByCategory } from '@/data/services-catalog';
 import PublishCategorySelect from '@/components/publish_ad/PublishCategorySelect';
 import {
     getServicePublishCopy,
+    isServicePublishMode,
     resolvePublishCategoryFromQuery,
 } from '@/helpers/publish-categories';
+import { omitUndefinedFields } from '@/helpers/firestore-safe';
 
 const PublishAd = () => {
     const navigate = useNavigate();
@@ -34,6 +36,13 @@ const PublishAd = () => {
     const [uploading, setUploading] = useState(false);
     const [phoneValid, setPhoneValid] = useState(true);
     const [photoError, setPhotoError] = useState("");
+    const [submitError, setSubmitError] = useState("");
+
+    const serviceMode = isServicePublishMode({
+        type: searchParams.get("type") || "",
+        category: searchParams.get("category") || "",
+        slug: searchParams.get("slug") || "",
+    });
 
     const [formData, setFormData] = useState({
         contact: '',
@@ -54,6 +63,7 @@ const PublishAd = () => {
         const fromQuery = resolvePublishCategoryFromQuery({
             category: searchParams.get("category") || "",
             slug: searchParams.get("slug") || "",
+            type: searchParams.get("type") || "",
         });
         if (!fromQuery) return;
         setFormData((prev) =>
@@ -113,6 +123,7 @@ const PublishAd = () => {
             return;
         }
         setPhotoError("");
+        setSubmitError("");
         setUploading(true);
 
         if ((formData.category === "סוסים" || formData.category === "זרע")
@@ -146,6 +157,11 @@ const PublishAd = () => {
 
             date.setMonth(date.getMonth() + 1);
 
+            const isService = isServiceCategory(formData.category);
+            const isPetLike =
+                formData.category === "סוסים" ||
+                isPetMarketplaceCategory(formData.category);
+
             let adData = {
                 ...formData,
                 photos: photoURLs,
@@ -154,6 +170,7 @@ const PublishAd = () => {
                 createdAt: new Date(),
                 availableUntil: date,
                 status: getInitialAdStatus(currentUser?.isAdmin),
+                listingKind: isService ? "service" : "ad",
             };
 
             if (formData.forAdoption) {
@@ -161,21 +178,39 @@ const PublishAd = () => {
                 if (!adData.price) adData.price = "לאימוץ";
             }
 
-            if (formData.category === "סוסים" || isPetMarketplaceCategory(formData.category)) {
+            if (isPetLike) {
                 const totalMonths =
                     (Number(formData.ageYears) || 0) * 12 +
                     (Number(formData.ageMonths) || 0);
 
                 adData.ageInMonths = totalMonths;
                 delete adData.age;
+                adData.breed = resolvePetBreed(formData.breed, formData.breedCustom);
+            } else {
+                delete adData.breed;
+                delete adData.ageYears;
+                delete adData.ageMonths;
+                delete adData.age;
+                delete adData.gender;
+                delete adData.hasCertificate;
+                delete adData.forAdoption;
             }
-
-            adData.breed = resolvePetBreed(formData.breed, formData.breedCustom);
             delete adData.breedCustom;
 
-            if (!isServiceCategory(formData.category) || !formData.service_animals?.length) {
+            if (!isService || !formData.service_animals?.length) {
                 delete adData.service_animals;
             }
+
+            if (!isService) {
+                delete adData.title;
+            }
+
+            // Empty optional price → omit (Firestore rejects undefined; empty string is ok but nullish is cleaner)
+            if (adData.price === "" || adData.price === null || adData.price === undefined) {
+                delete adData.price;
+            }
+
+            adData = omitUndefinedFields(adData);
 
             await setDoc(doc(db, "ads", adId), adData);
 
@@ -208,7 +243,13 @@ const PublishAd = () => {
                 phoneNumber: '',
                 location: '',
                 photos: [],
-                video: null
+                video: null,
+                service_animals: [],
+                title: '',
+                price: '',
+                contact: '',
+                district: '',
+                breedCustom: '',
             });
 
             setShowModal(true);
@@ -216,6 +257,11 @@ const PublishAd = () => {
 
         } catch (error) {
             console.error("Error publishing ad:", error);
+            setSubmitError(
+                isServiceCategory(formData.category)
+                    ? "פרסום השירות נכשל. בדקו את הפרטים ונסו שוב."
+                    : "פרסום המודעה נכשל. בדקו את הפרטים ונסו שוב."
+            );
             Sentry.captureException(`Error publishing ad`, {
                 tags: {
                     component: "PublishAd"
@@ -256,12 +302,14 @@ const PublishAd = () => {
     const isOtherHorseBreed =
         formData.category === "סוסים" && formData.breed === PET_BREED_OTHER;
 
+    const publishingService =
+        serviceMode || isServiceCategory(formData.category);
     const selectedService = isServiceCategory(formData.category)
         ? getServiceByCategory(formData.category)
         : null;
     const serviceCopy = selectedService
         ? getServicePublishCopy(formData.category)
-        : null;
+        : getServicePublishCopy("");
 
     const showPriceField =
         !formData.forAdoption &&
@@ -276,11 +324,12 @@ const PublishAd = () => {
         );
 
     return (
-        <div className="publish-ad-container">
-            <h1>פרסם מודעה</h1>
+        <div className={`publish-ad-container ${publishingService ? "publish-ad-container--service" : ""}`}>
+            <h1>{publishingService ? "פרסום שירות" : "פרסם מודעה"}</h1>
             <p className="publish-ad-lead">
-                מלאו את הפרטים לפי סוג המודעה (חיה, מוצר או שירות), הוסיפו תמונות ברורות,
-                והמודעה תופיע באתר לאחר אישור מנהל.
+                {publishingService
+                    ? "כאן מפרסמים שירות מקצועי (וטרינר, פנסיון, הסעות וכו') — לא מודעת מכירה של חיה. מלאו כותרת, תחום ותמונות ברורות."
+                    : "מלאו את הפרטים לפי סוג המודעה (חיה, מוצר או שירות), הוסיפו תמונות ברורות, והמודעה תופיע באתר לאחר אישור מנהל."}
             </p>
             <form onSubmit={handleSubmit} className="publish-ad-form">
 
@@ -288,10 +337,12 @@ const PublishAd = () => {
                     value={formData.category}
                     onChange={handleChange}
                     isAdmin={Boolean(currentUser?.isAdmin)}
+                    servicesOnly={serviceMode}
                 />
 
                 {isServiceCategory(formData.category) && (
                     <div className="publish-service-block">
+                        <p className="publish-service-kicker">פרטי השירות</p>
                         {serviceCopy?.hint && (
                             <p className="publish-service-hint">{serviceCopy.hint}</p>
                         )}
@@ -678,22 +729,35 @@ const PublishAd = () => {
                     required
                 />
                 {photoError && <p className="publish-photo-error">{photoError}</p>}
+                {submitError && <p className="publish-photo-error">{submitError}</p>}
 
                 <button type="submit" className="publish-button" disabled={uploading}>
-                    {uploading ? "...מפרסם" : "פרסם מודעה"}
+                    {uploading
+                        ? "...מפרסם"
+                        : publishingService
+                            ? "פרסם שירות"
+                            : "פרסם מודעה"}
                 </button>
             </form >
 
             <Modal
                 isVisible={showModal}
-                title={pendingApproval ? "המודעה נשלחה לאישור" : "מודעה פורסמה"}
+                title={
+                    pendingApproval
+                        ? (publishingService ? "השירות נשלח לאישור" : "המודעה נשלחה לאישור")
+                        : (publishingService ? "השירות פורסם" : "מודעה פורסמה")
+                }
                 onClose={closeModal}
             >
                 <div className="modal-content-custom-publishad">
                     <p>
                         {pendingApproval
-                            ? "המודעה נשמרה בהצלחה ותוצג באתר לאחר אישור מנהל."
-                            : "המודעה פורסמה בהצלחה!"}
+                            ? (publishingService
+                                ? "השירות נשמר בהצלחה ויופיע באתר לאחר אישור מנהל."
+                                : "המודעה נשמרה בהצלחה ותוצג באתר לאחר אישור מנהל.")
+                            : (publishingService
+                                ? "השירות פורסם בהצלחה!"
+                                : "המודעה פורסמה בהצלחה!")}
                     </p>
                     <div className="modal-buttons-custom-publishad">
                         <button className="close-button-publishad" onClick={closeModal}>סגור</button>
