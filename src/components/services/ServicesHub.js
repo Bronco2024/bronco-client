@@ -100,7 +100,7 @@ const ServicesHub = () => {
           <button
             type="button"
             className="services-hub-publish"
-            onClick={() => navigate("/publish_ad")}
+            onClick={() => navigate("/publish_ad?type=service")}
           >
             <FontAwesomeIcon icon={faPlus} />
             <span>פרסמו שירות</span>
@@ -176,6 +176,16 @@ const ServicesHub = () => {
                     </div>
 
                     <span className="services-hub-card-cta">לפרטים ←</span>
+                    <button
+                      type="button"
+                      className="services-hub-card-publish"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        navigate(`/publish_ad?slug=${encodeURIComponent(service.slug)}`);
+                      }}
+                    >
+                      פרסמו שירות זה
+                    </button>
                   </article>
                 );
               })}
