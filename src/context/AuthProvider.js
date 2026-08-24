@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '@/firebase';
-import { onAuthStateChanged, signOut, reload } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { clearCart, loadCart } from '@/redux/cartSlice';
 import { useDispatch } from 'react-redux';
@@ -22,10 +22,8 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        // Always force-refresh user & token (emailVerified might be stale)
-        await reload(user);
-        await user.getIdToken(true);
-
+        // Avoid forced reload/token refresh on every page load — that was
+        // adding multi-second delay for signed-in users.
         if (!user.emailVerified) {
           setCurrentUser(null);
           dispatch(clearCart());
@@ -48,7 +46,6 @@ export const AuthProvider = ({ children }) => {
           };
           await setDoc(userRef, defaultProfile);
 
-          // ✅ IMPORTANT: set currentUser even when we just created the doc
           setCurrentUser({ uid: user.uid, ...defaultProfile });
           dispatch(loadCart([]));
         } else {
@@ -63,7 +60,6 @@ export const AuthProvider = ({ children }) => {
           dispatch(loadCart(cart));
         }
       } catch (e) {
-        // Fallback: keep user signed out on error
         setCurrentUser(null);
         dispatch(clearCart());
       } finally {
