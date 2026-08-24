@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '@/firebase';
-import { sendPasswordResetEmail } from 'firebase/auth';
 import './ForgotPassword.css'
 import Modal from '@components/utils/modal/Modal';
 import * as Sentry from "@sentry/react";
+import { sendSitePasswordReset } from '@/helpers/auth-email';
+import { getAuthErrorMessage } from '@/helpers/auth-errors';
+import { SITE_NAME } from '@/data/site-config';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
+    const [error, setError] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const closeModal = () => {
         setIsModalVisible(false);
@@ -18,25 +21,27 @@ const ForgotPassword = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const cleanEmail = email.trim();
+        if (!cleanEmail) {
+            setError('נא להזין כתובת אימייל');
+            return;
+        }
 
-        await sendPasswordResetEmail(auth, email)
-            .then(() => {
-                setIsModalVisible(true);
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                const errorCodeAndMessage = `${errorCode} - ${errorMessage}`;
-                console.error(errorCodeAndMessage)
-                Sentry.captureException(`Error send password reset email`, {
-                    tags: {
-                        component: "ForgotPassword"
-                    },
-                    extra: {
-                        info: errorCodeAndMessage
-                    }
-                });
+        setLoading(true);
+        setError('');
+
+        try {
+            await sendSitePasswordReset(cleanEmail);
+            setIsModalVisible(true);
+        } catch (err) {
+            setError(getAuthErrorMessage(err?.code, 'לא הצלחנו לשלוח קישור לאיפוס סיסמה'));
+            Sentry.captureException(err, {
+                tags: { component: "ForgotPassword" },
+                extra: { info: `${err?.code} - ${err?.message}` },
             });
+        } finally {
+            setLoading(false);
+        }
     }
 
     const handleRegisterRedirect = () => {
@@ -46,7 +51,7 @@ const ForgotPassword = () => {
     return (
         <div className="forgot-password-container">
             <h2 className="forgot-password-title">חידוש סיסמה</h2>
-            <form className="forgot-password-form">
+            <form className="forgot-password-form" onSubmit={handleSubmit}>
                 <label htmlFor="email">מייל</label>
                 <input
                     type="email"
@@ -58,7 +63,11 @@ const ForgotPassword = () => {
                     onChange={(e) => setEmail(e.target.value)}
                 />
 
-                <button type="submit" className="forgot-password-button" onClick={handleSubmit}>שלח קוד</button>
+                {error && <p className="error-message">{error}</p>}
+
+                <button type="submit" className="forgot-password-button" disabled={loading}>
+                    {loading ? 'שולח…' : 'שלח קישור לאיפוס'}
+                </button>
             </form>
             <p className="register-text">
                 אין לך חשבון? <span onClick={handleRegisterRedirect} className="register-link">להרשמה</span>
@@ -66,7 +75,8 @@ const ForgotPassword = () => {
 
             <Modal isVisible={isModalVisible} title="לינק נשלח" onClose={closeModal}>
                 <div className="modal-content-custom">
-                    <p>לינק נשלח למייל שהוכנס</p>
+                    <p>שלחנו קישור לאיפוס סיסמה מ־{SITE_NAME} למייל שהוזן.</p>
+                    <p>בדקו גם בתיקיית הספאם אם המייל לא מופיע.</p>
                     <div className="modal-buttons-custom">
                         <button className="close-button-forgot-password" onClick={closeModal}>סגור</button>
                     </div>
