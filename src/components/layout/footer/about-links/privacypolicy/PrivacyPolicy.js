@@ -1,82 +1,184 @@
-import React from 'react';
-import './PrivacyPolicy.css';
-import { SITE_NAME, CONTACT_EMAIL } from '@/data/site-config';
+import React from "react";
+import { Link } from "react-router-dom";
+import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from "@/data/site-config";
+import useSeo from "@/hooks/useSeo";
+import InfoPageShell from "../InfoPageShell";
+
+const LAST_UPDATED = "08/2026";
+
+const TOC = [
+  { id: "collect", label: "אילו נתונים נאספים" },
+  { id: "purpose", label: "למה אוספים" },
+  { id: "share", label: "שיתוף מידע" },
+  { id: "public", label: "מידע במודעות" },
+  { id: "cookies", label: "עוגיות וטכנולוגיות" },
+  { id: "rights", label: "זכויותיך" },
+  { id: "retention", label: "שמירת מידע" },
+  { id: "security", label: "אבטחה" },
+  { id: "minors", label: "קטינים" },
+  { id: "changes", label: "שינויים במדיניות" },
+  { id: "contact", label: "יצירת קשר" },
+];
 
 const PrivacyPolicy = () => {
-    return (
-        <div className="policy-section">
-            <h2 className="policy-heading">מדיניות פרטיות ל-{SITE_NAME}</h2>
-            <p className="policy-date">תאריך עדכון אחרון: 08/2026</p>
+  useSeo({
+    title: `מדיניות פרטיות | ${SITE_NAME}`,
+    description: `מדיניות הפרטיות של ${SITE_NAME} — כיצד אנו אוספים ומשתמשים במידע.`,
+    url: `${SITE_URL}/privacy-policy`,
+  });
 
-            <p className="policy-intro">
-                ברוכים הבאים ל-{SITE_NAME}. אנו מחויבים להגן על הפרטיות ולשמור על המידע שאתה משתף איתנו בעת השימוש באתר שלנו.
-                מדיניות זו מסבירה כיצד אנו אוספים, משתמשים, משתפים ומשמרים את המידע שלך כדי לספק חוויית שירות מקיפה ובטוחה יותר.
+  return (
+    <InfoPageShell
+      title="מדיניות פרטיות"
+      subtitle={`איך ${SITE_NAME} אוסף, משתמש ושומר על המידע שלך.`}
+      updatedAt={LAST_UPDATED}
+      currentPath="/privacy-policy"
+    >
+      <article className="info-page-card">
+        <p className="info-page-intro">
+          ברוכים הבאים ל-{SITE_NAME}. אנו מחויבים להגן על פרטיותך ולשמור על המידע
+          שאתה משתף איתנו בעת השימוש באתר. מדיניות זו מסבירה כיצד אנו אוספים,
+          משתמשים, משתפים ומשמרים מידע — בהתאם לחוק הגנת הפרטיות, התשמ״א-1981
+          ולדין החל בישראל. השימוש באתר כפוף גם ל־
+          <Link to="/regulations">תקנון השימוש</Link>.
+        </p>
+
+        <nav className="info-page-toc" aria-label="תוכן עניינים">
+          <strong>תוכן עניינים</strong>
+          <ol>
+            {TOC.map((item, index) => (
+              <li key={item.id}>
+                <a href={`#${item.id}`}>
+                  {index + 1}. {item.label}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        <section className="info-page-section" id="collect">
+          <h2>1. אילו סוגי נתונים אנו אוספים?</h2>
+          <ul>
+            <li>
+              <strong>מידע חשבון:</strong> שם, כתובת דוא״ל, וסיסמה מוצפנת
+              (באמצעות ספקי אימות כגון Firebase Authentication).
+            </li>
+            <li>
+              <strong>מידע במודעות:</strong> תיאורים, תמונות/וידאו, מיקום/עיר,
+              מחיר, פרטי קשר וטלפון שתבחרו לפרסם.
+            </li>
+            <li>
+              <strong>מידע טכני:</strong> כתובת IP, סוג דפדפן ומכשיר, ודפוסי
+              שימוש בסיסיים לצורך תפעול ואבטחה.
+            </li>
+            <li>
+              <strong>התחברות עם Google:</strong> אם תבחרו להתחבר באמצעות Google,
+              נקבל פרטים בסיסיים מהחשבון (כגון דוא״ל ושם) בהתאם להרשאות שתאשרו.
+            </li>
+          </ul>
+        </section>
+
+        <section className="info-page-section" id="purpose">
+          <h2>2. למטרות מה אנחנו אוספים את המידע?</h2>
+          <ul>
+            <li>לאפשר הרשמה, אימות דוא״ל וניהול חשבון.</li>
+            <li>לאפשר פרסום, חיפוש ואישור מודעות (כולל אימוץ ושירותים).</li>
+            <li>לספק תמיכה ולטפל בפניות.</li>
+            <li>לשלוח הודעות תפעוליות חשובות (למשל אימות או עדכון מודעה).</li>
+            <li>לשפר את האתר, למנוע הונאה ולעמוד בדרישות חוק.</li>
+          </ul>
+        </section>
+
+        <section className="info-page-section" id="share">
+          <h2>3. עם מי משתפים את המידע?</h2>
+          <ul>
+            <li>
+              ספקי תשתית ושירות (למשל Firebase / Google Cloud, אחסון, דוא״ל
+              ופריסה) — רק במידה הנדרשת להפעלת האתר.
+            </li>
+            <li>כאשר החוק מחייב, או לפי צו שיפוטי.</li>
+            <li>במקרה של מיזוג, רכישה או העברת פעילות האתר — בכפוף להגנות מתאימות.</li>
+            <li>אין אנו מוכרים את המידע האישי שלך לצדדים שלישיים.</li>
+          </ul>
+        </section>
+
+        <section className="info-page-section" id="public">
+          <h2>4. מידע שמופיע במודעות</h2>
+          <p>
+            פרטים שתבחרו לכלול במודעה (למשל טלפון, עיר, תמונות ותיאור) עשויים
+            להיות גלויים לקהל הרחב. אנא אל תפרסמו מידע רגיש שאינו נחוץ ליצירת
+            קשר או לעסקה.
+          </p>
+        </section>
+
+        <section className="info-page-section" id="cookies">
+          <h2>5. עוגיות וטכנולוגיות דומות</h2>
+          <p>
+            האתר עשוי להשתמש בעוגיות (Cookies) ובאחסון מקומי לצורך התחברות,
+            העדפות משתמש ותפעול תקין. ניתן לנהל עוגיות דרך הגדרות הדפדפן; חסימה
+            מלאה עלולה לפגוע בחלק מהפונקציות.
+          </p>
+        </section>
+
+        <section className="info-page-section" id="rights">
+          <h2>6. זכויותיך</h2>
+          <ul>
+            <li>לעיין במידע שנשמר אודותיך.</li>
+            <li>לבקש עדכון, תיקון או מחיקה של מידע, בכפוף לדין ולצרכים תפעוליים.</li>
+            <li>לבטל קבלת הודעות שיווקיות (אם יישלחו).</li>
+            <li>
+              לפנות אלינו בכתובת:{" "}
+              <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+            </li>
+          </ul>
+        </section>
+
+        <section className="info-page-section" id="retention">
+          <h2>7. שמירת המידע</h2>
+          <p>
+            המידע יישמר כל עוד החשבון פעיל, כל עוד נדרש להפעלת השירות, או לפי
+            דרישות חוק (למשל שמירת רשומות). מודעות שהוסרו עשויות להישמר לפרק זמן
+            סביר לצורכי אבטחה ובקרה.
+          </p>
+        </section>
+
+        <section className="info-page-section" id="security">
+          <h2>8. אבטחת המידע</h2>
+          <p>
+            ננקטים אמצעי אבטחה סבירים (כולל הצפנת תעבורה והגנות מצד ספקי
+            התשתית), אך לא ניתן להבטיח אבטחה מוחלטת. האחריות לשמירת סיסמה
+            והתקן הגישה שלך היא עליך.
+          </p>
+        </section>
+
+        <section className="info-page-section" id="minors">
+          <h2>9. קטינים</h2>
+          <p>
+            השירות מיועד למשתמשים בגירים (מעל גיל 18). איננו אוספים ביודעין מידע
+            מקטינים. אם התגלה מידע כזה — נפעל למחיקתו.
+          </p>
+        </section>
+
+        <section className="info-page-section" id="changes">
+          <h2>10. שינויים במדיניות</h2>
+          <p>
+            מדיניות זו עשויה להשתנות מעת לעת. תאריך העדכון יופיע בראש העמוד.
+            המשך השימוש באתר לאחר השינוי מהווה הסכמה למדיניות המעודכנת.
+          </p>
+        </section>
+
+        <section className="info-page-section" id="contact">
+          <h2>11. יצירת קשר</h2>
+          <div className="info-page-contact">
+            <p>
+              לשאלות או בקשות בנושא פרטיות:{" "}
+              <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
             </p>
-
-            <div className="policy-section-block">
-                <h3>1. מהם סוגי הנתונים שאנו אוספים?</h3>
-                <ul>
-                    <li><strong>מידע טכני:</strong> כתובת IP, סוג דפדפן, מכשיר, מיקום גאוגרפי, דפוסי גלישה, פעולות שבוצעו באתר.</li>
-                    <li><strong>מידע אישי:</strong> שם, טלפון, דוא"ל, כתובת מגורים, תיאורי פרסום ותמונות של חיות מחמד.</li>
-                    <li><strong>שירותי צד שלישי:</strong> לדוגמה התחברות עם פייסבוק או Google.</li>
-                    <li><strong>מידע מצדדים שלישיים:</strong> לצורכי שיווק ותפעול האתר.</li>
-                </ul>
-            </div>
-
-            <div className="policy-section-block">
-                <h3>2. למטרות מה אנחנו אוספים את המידע?</h3>
-                <ul>
-                    <li>לסייע בפרסום ובמכירה של חיות מחמד, אימוץ, אביזרים ושירותים נלווים.</li>
-                    <li>לנהל חשבונות ותשלומים.</li>
-                    <li>לספק שירות לקוחות ותמיכה.</li>
-                    <li>לשלוח עדכונים ומבצעים.</li>
-                    <li>לנתח תנועות גלישה ולפתח תכנים מותאמים.</li>
-                    <li>לעמוד בדרישות חוקיות.</li>
-                </ul>
-            </div>
-
-            <div className="policy-section-block">
-                <h3>3. עם מי משתפים את המידע שלך?</h3>
-                <ul>
-                    <li>ספקי שירותים חיצוניים לאחסון, עיבוד ואבטחת מידע.</li>
-                    <li>שותפי פרסום וקידום מכירות.</li>
-                    <li>צדדים שמעורבים במכירות ופעילות האתר.</li>
-                    <li>במקרה של מיזוג, רכישה או מכירה של האתר.</li>
-                    <li>כאשר החוק מחייב.</li>
-                </ul>
-            </div>
-
-            <div className="policy-section-block">
-                <h3>4. זכויותיך והגנות על הפרטיות שלך</h3>
-                <ul>
-                    <li>לעיין במידע שנשמר אודותיך.</li>
-                    <li>לבקש עדכון, תיקון או מחיקה.</li>
-                    <li>לבטל קבלת הודעות שיווקיות.</li>
-                    <li>לפנות אלינו בכתובת: <strong>{CONTACT_EMAIL}</strong>.</li>
-                </ul>
-            </div>
-
-            <div className="policy-section-block">
-                <h3>5. שמירת המידע</h3>
-                <p>המידע יישמר בהתאם לצורך או לפי דרישות חוקיות.</p>
-            </div>
-
-            <div className="policy-section-block">
-                <h3>6. אבטחת המידע</h3>
-                <p>ננקטים אמצעי אבטחה סבירים אך לא ניתן להבטיח אבטחה מוחלטת. האחריות לשמירת סיסמאות היא שלך.</p>
-            </div>
-
-            <div className="policy-section-block">
-                <h3>7. שינויים במדיניות</h3>
-                <p>מדיניות זו עשויה להשתנות מעת לעת. המשך השימוש באתר מהווה הסכמה לתנאים המעודכנים.</p>
-            </div>
-
-            <div className="policy-section-block">
-                <h3>8. יצירת קשר</h3>
-                <p>לשאלות או בקשות: <strong><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></strong></p>
-            </div>
-        </div>
-    );
+          </div>
+        </section>
+      </article>
+    </InfoPageShell>
+  );
 };
 
 export default PrivacyPolicy;

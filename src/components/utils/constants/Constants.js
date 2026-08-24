@@ -161,13 +161,13 @@ export const ABOUTUS_FEATURES = [
         icon: "heart",
     },
     {
-        title: "אבזרים וציוד",
+        title: "אביזרים וציוד",
         subtitle: "מזון, צעצועים וציוד לכל חיה",
         icon: "box",
     },
     {
-        title: "וטרינרים מומלצים",
-        subtitle: "שירותים רפואיים מקצועיים לחיות מחמד",
+        title: "וטרינרים ושירותים",
+        subtitle: "וטרינריה, פנסיון, אילוף, הובלה ועוד",
         icon: "stethoscope",
     },
     {
@@ -186,8 +186,8 @@ export const ABOUTUS_FEATURES = [
         icon: "plus",
     },
     {
-        title: "חנות ושירותים",
-        subtitle: "כל מה שצריך אחרי שמצאתם חבר חדש",
+        title: "מרכז שירותים",
+        subtitle: "כל מה שצריך אחרי שמצאתם חבר חדש — במקום אחד",
         icon: "store",
     }
 ];
