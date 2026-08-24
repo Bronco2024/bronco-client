@@ -308,7 +308,7 @@ const ItemPage = () => {
             <div className="item-page-wrapper" dir="rtl">
                 <div className="item-info">
                     <h1>המודעה לא נמצאה</h1>
-                    <p className="description">חזרו לדף הבית ובחרו מודעה מהרשימה.</p>
+                    <p className="description">ייתכן שהמודעה נמחקה או שכבר אינה זמינה.</p>
                     <button className="item-back" type="button" onClick={() => navigate("/")}>
                         חזרה לדף הבית
                     </button>

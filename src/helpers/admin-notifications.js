@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   getDocs,
   limit,
   orderBy,
@@ -12,6 +13,7 @@ import { db } from "@/firebase";
 import {
   ADMIN_NOTIFICATION_TYPES,
   getNotificationTitle,
+  getOrphanAdminNotifications,
 } from "@/helpers/admin-notification-helpers";
 import { sendPendingAdEmailToAdmin } from "@/helpers/admin-email";
 
@@ -19,6 +21,7 @@ export {
   ADMIN_NOTIFICATION_TYPES,
   getNotificationTitle,
   shouldNotifyAdminForAd,
+  getOrphanAdminNotifications,
 } from "@/helpers/admin-notification-helpers";
 
 export const createPendingAdNotification = async ({ adId, ad }) => {
@@ -37,9 +40,33 @@ export const createPendingAdNotification = async ({ adId, ad }) => {
   try {
     await sendPendingAdEmailToAdmin({ adId, ad });
   } catch (error) {
-    // Keep notification flow resilient if email provider is misconfigured.
     console.warn("Failed to send pending ad email to admin", error);
   }
+};
+
+const markNotificationDocs = async (snapshot) => {
+  await Promise.all(
+    snapshot.docs.map(async (docSnap) => {
+      try {
+        await deleteDoc(docSnap.ref);
+      } catch {
+        await updateDoc(docSnap.ref, {
+          read: true,
+          readAt: new Date(),
+          adMissing: true,
+        }).catch(() => null);
+      }
+    })
+  );
+};
+
+export const dismissAdminNotificationsForAd = async (adId) => {
+  if (!adId) return;
+
+  const notificationsRef = collection(db, "adminNotifications");
+  const relatedQuery = query(notificationsRef, where("adId", "==", adId));
+  const snapshot = await getDocs(relatedQuery);
+  await markNotificationDocs(snapshot);
 };
 
 export const markAdNotificationsRead = async (adId) => {
@@ -61,6 +88,19 @@ export const markAdNotificationsRead = async (adId) => {
   );
 
   await Promise.all(updates);
+};
+
+export const cleanupOrphanAdminNotifications = async (
+  notifications = [],
+  ads = []
+) => {
+  const orphans = getOrphanAdminNotifications(notifications, ads);
+  await Promise.all(
+    orphans.map((notification) =>
+      dismissAdminNotificationsForAd(notification.adId).catch(() => null)
+    )
+  );
+  return orphans;
 };
 
 export const fetchUnreadAdminNotifications = async (limitCount = 20) => {

@@ -2,6 +2,7 @@ import {
   ADMIN_NOTIFICATION_TYPES,
   getNotificationTitle,
   shouldNotifyAdminForAd,
+  getOrphanAdminNotifications,
 } from "./admin-notification-helpers";
 import { AD_STATUS } from "./ad-approval";
 
@@ -22,5 +23,16 @@ describe("Admin notifications", () => {
 
   test("uses a stable pending-ad notification type", () => {
     expect(ADMIN_NOTIFICATION_TYPES.PENDING_AD).toBe("pending_ad");
+  });
+
+  test("treats notifications without a matching ad as orphans", () => {
+    const orphans = getOrphanAdminNotifications(
+      [
+        { id: "n1", adId: "gone" },
+        { id: "n2", adId: "keep" },
+      ],
+      [{ id: "keep" }]
+    );
+    expect(orphans.map((item) => item.id)).toEqual(["n1"]);
   });
 });

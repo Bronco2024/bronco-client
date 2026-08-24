@@ -17,6 +17,7 @@ import './Profile.css';
 import Modal from '@components/utils/modal/Modal';
 import { FormatDateTimestampToDate, IsDateNowGreaterThanAdDate } from '@components/utils/constants/Functions';
 import { AD_STATUS, AD_STATUS_LABELS, getAdStatus } from '@/helpers/ad-approval';
+import { dismissAdminNotificationsForAd } from '@/helpers/admin-notifications';
 import * as Sentry from "@sentry/react";
 import { getListingPath } from '@/helpers/listing-links';
 
@@ -101,9 +102,9 @@ const Profile = () => {
         setAdToRenew(null);
     };
 
-    const handleDeleteButtonModal = () => {
+    const handleDeleteButtonModal = async () => {
         try {
-            deleteAdFromFirebase(adToDelete?.id)
+            await deleteAdFromFirebase(adToDelete?.id)
             setRefresh(prev => !prev);
         } catch (err) {
             console.log(err)
@@ -115,6 +116,7 @@ const Profile = () => {
         try {
             const adDocRef = doc(db, 'ads', adId);
             await deleteDoc(adDocRef);
+            await dismissAdminNotificationsForAd(adId).catch(() => null);
 
             const imagesRef = ref(storage, `ads/${adId}`);
 

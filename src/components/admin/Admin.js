@@ -9,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import './Admin.css'
 import { db, storage } from '@/firebase';
-import { collection, getDocs, deleteDoc, doc, where, orderBy, query, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc, orderBy, query, updateDoc } from 'firebase/firestore';
 import { useNavigate } from "react-router-dom";
 import { getListingPath } from "@/helpers/listing-links";
 import Modal from '@components/utils/modal/Modal';
@@ -21,7 +21,8 @@ import {
     getAdStatus,
     isAdPending,
 } from '@/helpers/ad-approval';
-import { markAdNotificationsRead } from '@/helpers/admin-notifications';
+import { markAdNotificationsRead, dismissAdminNotificationsForAd, cleanupOrphanAdminNotifications } from '@/helpers/admin-notifications';
+import { getOrphanAdminNotifications } from '@/helpers/admin-notification-helpers';
 import useAdminNotifications from '@/hooks/useAdminNotifications';
 
 const SPONSOR_LABELS = {
@@ -41,7 +42,7 @@ const Admin = () => {
     const [activeTab, setActiveTab] = useState("ads");
     const [ads, setAds] = useState([])
     const [adStatusFilter, setAdStatusFilter] = useState("pending")
-    const { notifications: adminNotifications, unreadCount: unreadNotificationCount } =
+    const { notifications: adminNotifications } =
         useAdminNotifications(true);
 
     useEffect(() => {
@@ -73,8 +74,7 @@ const Admin = () => {
         const fetchAds = async () => {
             try {
                 const adsRef = collection(db, "ads");
-                const filterQuery = where("availableUntil", ">", new Date());
-                const q = query(adsRef, filterQuery, orderBy("createdAt", "desc"));
+                const q = query(adsRef, orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
 
                 const fetchedAds = querySnapshot.docs.map((docSnap) => ({
@@ -111,6 +111,25 @@ const Admin = () => {
         [ads]
     );
 
+    const visibleNotifications = useMemo(
+        () =>
+            adminNotifications.filter(
+                (notification) =>
+                    !getOrphanAdminNotifications([notification], ads).length
+            ),
+        [adminNotifications, ads]
+    );
+
+    const visibleNotificationCount = visibleNotifications.length;
+
+    useEffect(() => {
+        if (!ads.length && !adminNotifications.length) return undefined;
+        const orphans = getOrphanAdminNotifications(adminNotifications, ads);
+        if (!orphans.length) return undefined;
+        cleanupOrphanAdminNotifications(adminNotifications, ads).catch(() => null);
+        return undefined;
+    }, [ads, adminNotifications]);
+
     const deleteSponsorFromFirebase = async (sponsorId) => {
         try {
             const adDocRef = doc(db, 'sponsors', sponsorId);
@@ -136,6 +155,7 @@ const Admin = () => {
         try {
             const adDocRef = doc(db, 'ads', adId);
             await deleteDoc(adDocRef);
+            await dismissAdminNotificationsForAd(adId);
 
             const imagesRef = ref(storage, `ads/${adId}`);
 
@@ -197,15 +217,15 @@ const Admin = () => {
         closeModal()
     }
 
-    const handleDeleteAdButtonModal = () => {
+    const handleDeleteAdButtonModal = async () => {
         try {
-            deleteAdFromFirebase(adToDelete?.id)
+            await deleteAdFromFirebase(adToDelete?.id)
             setRefresh(prev => !prev);
         } catch (err) {
             console.log(err)
         }
         closeModalDeleteAd()
-    }
+    };
 
     const handleDeleteButton = (sponsor) => {
         setIsModalVisible(true)
@@ -250,7 +270,7 @@ const Admin = () => {
                     <span>מודעות פעילות</span>
                 </div>
                 <div>
-                    <strong>{unreadNotificationCount}</strong>
+                    <strong>{visibleNotificationCount}</strong>
                     <span>התראות חדשות</span>
                 </div>
                 <div>
@@ -259,13 +279,13 @@ const Admin = () => {
                 </div>
             </section>
 
-            {unreadNotificationCount > 0 && (
+            {visibleNotificationCount > 0 && (
                 <section className="admin-notifications-panel">
                     <h2>
                         <FontAwesomeIcon icon={faBell} />
-                        התראות חדשות ({unreadNotificationCount})
+                        התראות חדשות ({visibleNotificationCount})
                     </h2>
-                    {adminNotifications.map((notification) => (
+                    {visibleNotifications.map((notification) => (
                         <button
                             key={notification.id}
                             type="button"
@@ -276,7 +296,9 @@ const Admin = () => {
                                 const matchedAd = ads.find((ad) => ad.id === notification.adId);
                                 if (matchedAd) {
                                     navigate(getListingPath(matchedAd), { state: { ad: matchedAd } });
+                                    return;
                                 }
+                                dismissAdminNotificationsForAd(notification.adId).catch(() => null);
                             }}
                         >
                             <strong>{notification.title}</strong>

@@ -12,3 +12,10 @@ export const getNotificationTitle = (ad = {}) =>
   "מודעה חדשה";
 
 export const shouldNotifyAdminForAd = (status) => status === AD_STATUS.PENDING;
+
+export const getOrphanAdminNotifications = (notifications = [], ads = []) => {
+  const existingIds = new Set(ads.map((ad) => ad.id).filter(Boolean));
+  return notifications.filter(
+    (notification) => notification.adId && !existingIds.has(notification.adId)
+  );
+};
