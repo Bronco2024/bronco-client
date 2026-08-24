@@ -58,19 +58,20 @@ const Adoption = () => {
     image: "/listings/adopt-cat.jpg",
   });
 
+  // Breed filter only when a specific animal is selected — mixed breeds
+  // across "all animals" is confusing (dogs + cats + birds in one list).
   const breedOptions = useMemo(() => {
-    if (selectedAnimal !== "all") {
-      return getPetBreeds(selectedAnimal).filter((breed) => breed !== "אחר");
-    }
-    return Array.from(
-      new Set(listings.map((item) => item.breed).filter(Boolean))
-    ).sort((a, b) => a.localeCompare(b, "he"));
-  }, [selectedAnimal, listings]);
+    if (selectedAnimal === "all") return [];
+    return getPetBreeds(selectedAnimal).filter((breed) => breed !== "אחר");
+  }, [selectedAnimal]);
 
   const cityOptions = useMemo(
     () => getCitiesByArea(selectedArea),
     [selectedArea]
   );
+
+  // When browsing all animals, breed filter is hidden — ignore any leftover breed value
+  const effectiveBreed = selectedAnimal === "all" ? "" : selectedBreed;
 
   const filteredListings = useMemo(() => {
     const text = searchText.trim().toLowerCase();
@@ -87,7 +88,7 @@ const Adoption = () => {
       const matchesGender = !selectedGender || item.gender === selectedGender;
       const matchesLocation =
         !selectedLocation || item.location === selectedLocation;
-      const matchesBreed = !selectedBreed || item.breed === selectedBreed;
+      const matchesBreed = !effectiveBreed || item.breed === effectiveBreed;
       const matchesCertificate =
         certificateFilter === ""
           ? true
@@ -121,7 +122,7 @@ const Adoption = () => {
     selectedAnimal,
     selectedGender,
     selectedLocation,
-    selectedBreed,
+    effectiveBreed,
     certificateFilter,
     sortBy,
   ]);
@@ -145,7 +146,9 @@ const Adoption = () => {
     if (next.gender) params.gender = next.gender;
     if (next.area) params.area = next.area;
     if (next.location) params.location = next.location;
-    if (next.breed) params.breed = next.breed;
+    if (next.breed && next.animal && next.animal !== "all") {
+      params.breed = next.breed;
+    }
     if (next.certificate) params.certificate = next.certificate;
     if (next.sortBy && next.sortBy !== "newest") params.sortBy = next.sortBy;
     setSearchParams(params);
@@ -270,21 +273,23 @@ const Adoption = () => {
             />
           </div>
 
-          <div className="category-filter-field">
-            <label htmlFor="adoption-breed">גזע</label>
-            <select
-              id="adoption-breed"
-              value={selectedBreed}
-              onChange={(event) => setSelectedBreed(event.target.value)}
-            >
-              <option value="">הכל</option>
-              {breedOptions.map((breed) => (
-                <option key={breed} value={breed}>
-                  {breed}
-                </option>
-              ))}
-            </select>
-          </div>
+          {selectedAnimal !== "all" && (
+            <div className="category-filter-field">
+              <label htmlFor="adoption-breed">גזע</label>
+              <select
+                id="adoption-breed"
+                value={selectedBreed}
+                onChange={(event) => setSelectedBreed(event.target.value)}
+              >
+                <option value="">הכל</option>
+                {breedOptions.map((breed) => (
+                  <option key={breed} value={breed}>
+                    {breed}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="category-filter-field">
             <label htmlFor="adoption-gender">מין</label>
