@@ -132,9 +132,9 @@ const ItemPage = () => {
                     .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
             );
 
-            setSimilarAds(filtered.length > 0 ? filtered : getSimilarListings(ad));
+            setSimilarAds(filtered);
         } catch {
-            setSimilarAds(getSimilarListings(ad));
+            setSimilarAds([]);
         }
     }, [ad]);
 
@@ -413,6 +413,11 @@ const ItemPage = () => {
                             כרטיס שירות מקצועי — לתיאום פרטים צרו קשר ישירות עם הספק.
                         </p>
                     )}
+                    {ad.source === "catalog" && (
+                        <p className="service-note">
+                            מודעת דוגמה לתצוגה בלבד — אינה מודעה חיה באתר.
+                        </p>
+                    )}
                     <p className="description">{ad.description}</p>
 
                     {isServiceAd && (
@@ -490,6 +495,7 @@ const ItemPage = () => {
                         </div>
                     )}
 
+                    {ad.source !== "catalog" && (
                     <div className="contact-box">
                         <span className="contact-person">
                             <strong>איש קשר:</strong> {ad.contact || 'לא צוין'}
@@ -501,9 +507,10 @@ const ItemPage = () => {
                             </a>
                         )}
                     </div>
+                    )}
 
                     <div className="item-actions">
-                        {whatsappLink && (
+                        {ad.source !== "catalog" && whatsappLink && (
                             <a
                                 className="whatsapp-link"
                                 href={whatsappLink}

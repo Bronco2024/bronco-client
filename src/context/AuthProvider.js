@@ -79,7 +79,10 @@ export const AuthProvider = ({ children }) => {
         console.error("AuthProvider profile load failed", e);
         // Auth succeeded but profile read/write failed — keep a minimal session
         // so Google / email login is not stuck as "signed out".
-        if (user?.emailVerified) {
+        const signedInWithGoogle = user?.providerData?.some(
+          (p) => p.providerId === "google.com"
+        );
+        if (user?.emailVerified || signedInWithGoogle) {
           setCurrentUser({
             uid: user.uid,
             email: user.email,

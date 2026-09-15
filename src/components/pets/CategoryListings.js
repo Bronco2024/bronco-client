@@ -316,8 +316,15 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
           </div>
         ) : (
           <div className="category-empty">
-            <h3>לא נמצאו מודעות</h3>
-            <p>נסו לשנות את החיפוש או לבחור עיר אחרת.</p>
+            <h3>עדיין אין מודעות בקטגוריה זו</h3>
+            <p>פרסמו מודעה אמיתית — היא תופיע כאן אחרי אישור מנהל.</p>
+            <button
+              type="button"
+              className="category-reset"
+              onClick={() => navigate("/publish_ad")}
+            >
+              פרסמו מודעה
+            </button>
             <button
               type="button"
               className="category-reset"

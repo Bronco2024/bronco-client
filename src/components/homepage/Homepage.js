@@ -17,8 +17,6 @@ import {
   SITE_SERVICES,
   filterListings,
   isAdoptionListing,
-  mergeMarketplaceListings,
-  getCatalogPool,
 } from "@/data/pets";
 import { getFeaturedServices } from "@/data/services-catalog";
 import { getListingPath } from "@/helpers/listing-links";
@@ -86,11 +84,7 @@ function Homepage() {
 
   const featuredListings = filteredListings.slice(0, 10);
   const adoptionListings = useMemo(
-    () =>
-      mergeMarketplaceListings(
-        liveAds.filter(isAdoptionListing),
-        getCatalogPool({ adoptionOnly: true })
-      ).slice(0, 4),
+    () => liveAds.filter(isAdoptionListing).slice(0, 4),
     [liveAds]
   );
 
@@ -281,19 +275,28 @@ function Homepage() {
           </div>
         ) : (
           <div className="no-results">
-            <h3>לא נמצאו מודעות</h3>
-            <p>נסו לשנות את החיפוש או לבחור קטגוריה אחרת.</p>
-            <button
-              className="dark-button"
-              type="button"
-              onClick={() => {
-                setSearchText("");
-                setSelectedService("");
-                setSelectedCategory("");
-              }}
-            >
-              נקה חיפוש
-            </button>
+            <h3>עדיין אין מודעות כאן</h3>
+            <p>זה הזמן לפרסם את המודעה הראשונה — חיות, אימוץ או שירותים.</p>
+            <div className="no-results-actions">
+              <button
+                className="dark-button"
+                type="button"
+                onClick={() => navigate("/publish_ad")}
+              >
+                פרסמו מודעה
+              </button>
+              <button
+                className="ghost-button"
+                type="button"
+                onClick={() => {
+                  setSearchText("");
+                  setSelectedService("");
+                  setSelectedCategory("");
+                }}
+              >
+                נקה חיפוש
+              </button>
+            </div>
           </div>
         )}
       </section>
