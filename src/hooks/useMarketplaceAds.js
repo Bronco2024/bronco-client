@@ -5,10 +5,16 @@ import {
 } from "@/data/pets";
 import { fetchMarketplaceAds } from "@/helpers/marketplace-ads";
 
+/**
+ * Live marketplace ads from Firestore.
+ * Catalog demo pets are OFF by default for public launch —
+ * pass includeCatalog: true only for local demos.
+ */
 const useMarketplaceAds = ({
   categoryName,
   adoptionOnly = false,
   limitCount = 40,
+  includeCatalog = false,
 } = {}) => {
   const [liveAds, setLiveAds] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,10 +45,10 @@ const useMarketplaceAds = ({
     };
   }, [categoryName, adoptionOnly, limitCount]);
 
-  const catalogAds = useMemo(
-    () => getCatalogPool({ categoryName, adoptionOnly }),
-    [categoryName, adoptionOnly]
-  );
+  const catalogAds = useMemo(() => {
+    if (!includeCatalog) return [];
+    return getCatalogPool({ categoryName, adoptionOnly });
+  }, [categoryName, adoptionOnly, includeCatalog]);
 
   const listings = useMemo(
     () => mergeMarketplaceListings(liveAds, catalogAds),

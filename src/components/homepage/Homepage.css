@@ -1253,6 +1253,14 @@
   margin-top: 0;
 }
 
+.no-results-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
 @media (max-width: 850px) {
   .stats-strip,
   .steps-grid,

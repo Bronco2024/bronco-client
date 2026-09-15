@@ -581,6 +581,7 @@ const PublishAd = () => {
                                     onChange={handleChange}
                                     required
                                 >
+                                    <option value="">בחר סוג זרע</option>
                                     {SEMEN_TYPES.map((semen, index) => (
                                         <option key={index} value={semen}>
                                             {semen}
