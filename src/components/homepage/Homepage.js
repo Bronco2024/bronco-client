@@ -380,19 +380,26 @@ function Homepage() {
             <button
               key={service.path}
               type="button"
-              className="service-card service-card--featured"
+              className="service-card service-card--featured service-card--photo"
               style={{ "--service-accent": service.accent }}
               onClick={() => navigate(service.path)}
             >
-              {service.isNew && <span className="service-card-badge">חדש</span>}
-              <h3>{service.name}</h3>
-              <p>{service.subtitle}</p>
-              <div className="service-card-animals">
-                {service.animals.slice(0, 3).map((animal) => (
-                  <span key={animal}>{animal}</span>
-                ))}
+              <div
+                className="service-card-photo"
+                style={{ backgroundImage: `url(${service.image})` }}
+                aria-hidden="true"
+              />
+              <div className="service-card-content">
+                {service.isNew && <span className="service-card-badge">חדש</span>}
+                <h3>{service.name}</h3>
+                <p>{service.subtitle}</p>
+                <div className="service-card-animals">
+                  {service.animals.slice(0, 3).map((animal) => (
+                    <span key={animal}>{animal}</span>
+                  ))}
+                </div>
+                <span className="service-card-cta">לפרטים ←</span>
               </div>
-              <span>לפרטים ←</span>
             </button>
           ))}
         </div>
