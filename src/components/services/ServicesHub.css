@@ -191,6 +191,36 @@
     border-color 0.25s ease;
 }
 
+.services-hub-card--photo {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.services-hub-card-photo {
+  height: 148px;
+  background-size: cover;
+  background-position: center;
+  background-color: #e8eef3;
+}
+
+.services-hub-card-body {
+  padding: 18px 20px 18px;
+}
+
+.services-hub-card--photo .services-hub-badge-new {
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+}
+
+.services-hub-card--photo .services-hub-card-icon {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 10px;
+  font-size: 1.05rem;
+}
+
 .services-hub-card::before {
   content: "";
   position: absolute;
