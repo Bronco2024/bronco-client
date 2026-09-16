@@ -31,17 +31,27 @@
 بعد تفعيل Google، جرّب من الموقع: **התחבר עם Google**.
 
 > ملاحظة تقنية: الموقع يستخدم **redirect** لـ Google (موثوق أكثر من popup).  
-> `authDomain` على `petzo.co.il` عبر بروكسي `/__/auth/*` (في `netlify.toml` و`public/_redirects`).
+> `authDomain` الافتراضي: `bronco-65aaf.firebaseapp.com` (مسجّل عند Google).  
+> بروكسي `/__/auth/*` موجود في `netlify.toml` و`public/_redirects`.
 
-### مهم جداً — نشر تطبيق Google OAuth
-إذا Google يفتح وبعد اختيار الحساب يظهر **Access blocked** أو التطبيق في وضع Testing:
+### إذا ظهر: Error 400: redirect_uri_mismatch
+معناه Google ما عنده رابط الرجوع. الحل السريع بالكود: خليه على `bronco-65aaf.firebaseapp.com`.
 
-1. افتح [Google Cloud Console](https://console.cloud.google.com/) → نفس مشروع Firebase (`bronco-65aaf`)
-2. **APIs & Services → OAuth consent screen**
-3. Publishing status → **Publish app** (Production)
-4. أو أضف إيميلك كـ **Test user** إذا بقيت Testing مؤقتاً
+عشان تستخدم `petzo.co.il` لاحقاً:
+1. [Google Cloud Console](https://console.cloud.google.com/) → مشروع `bronco-65aaf`
+2. **APIs & Services → Credentials**
+3. افتح **OAuth 2.0 Client ID** (نوع Web client / Auto-created by Google Service)
+4. **Authorized redirect URIs** → أضف بالضبط:
+   - `https://petzo.co.il/__/auth/handler`
+   - `https://bronco-65aaf.firebaseapp.com/__/auth/handler` (خليه موجود)
+5. Save
+6. بعدها فقط غيّر Netlify env: `REACT_APP_FIREBASE_AUTH_DOMAIN=petzo.co.il` واعمل Redeploy
 
-بدون Publish، بس الحسابات المضافة كـ test users بتقدر تدخل.
+### مهم — نشر تطبيق Google OAuth
+إذا ظهر **Access blocked** والتطبيق Testing:
+1. **APIs & Services → OAuth consent screen**
+2. **Publish app** (Production)
+3. أو أضف إيميلك كـ Test user
 
 ---
 

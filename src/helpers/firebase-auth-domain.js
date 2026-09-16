@@ -1,19 +1,12 @@
 /**
- * Firebase authDomain for this page.
- * On custom domains, use the page hostname (with Netlify /__/auth proxy)
- * so Google OAuth is first-party and not blocked by third-party cookies.
+ * Firebase authDomain.
+ * Keep the Firebase default (`*.firebaseapp.com`) unless Netlify env
+ * explicitly sets a custom domain that is also registered in Google Cloud
+ * OAuth client redirect URIs (`https://DOMAIN/__/auth/handler`).
+ *
+ * Using petzo.co.il before that URI is registered causes:
+ * Error 400: redirect_uri_mismatch
  */
 export const resolveFirebaseAuthDomain = ({
-  hostname = "",
   envAuthDomain = "",
-} = {}) => {
-  const host = String(hostname || "").toLowerCase();
-  const customHosts = new Set([
-    "petzo.co.il",
-    "www.petzo.co.il",
-    "petbones.netlify.app",
-  ]);
-
-  if (customHosts.has(host)) return host;
-  return envAuthDomain || "bronco-65aaf.firebaseapp.com";
-};
+} = {}) => envAuthDomain || "bronco-65aaf.firebaseapp.com";
