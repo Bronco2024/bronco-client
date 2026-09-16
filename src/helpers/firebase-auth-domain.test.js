@@ -1,30 +1,25 @@
 import { resolveFirebaseAuthDomain } from "./firebase-auth-domain";
 
 describe("resolveFirebaseAuthDomain", () => {
-  test("uses petzo.co.il on the live site", () => {
+  test("uses env authDomain when provided", () => {
     expect(
       resolveFirebaseAuthDomain({
-        hostname: "petzo.co.il",
-        envAuthDomain: "bronco-65aaf.firebaseapp.com",
-      })
-    ).toBe("petzo.co.il");
-  });
-
-  test("uses www.petzo.co.il when present", () => {
-    expect(
-      resolveFirebaseAuthDomain({
-        hostname: "www.petzo.co.il",
-        envAuthDomain: "bronco-65aaf.firebaseapp.com",
-      })
-    ).toBe("www.petzo.co.il");
-  });
-
-  test("falls back to env authDomain on localhost", () => {
-    expect(
-      resolveFirebaseAuthDomain({
-        hostname: "localhost",
         envAuthDomain: "bronco-65aaf.firebaseapp.com",
       })
     ).toBe("bronco-65aaf.firebaseapp.com");
+  });
+
+  test("falls back to Firebase hosting domain", () => {
+    expect(resolveFirebaseAuthDomain({})).toBe(
+      "bronco-65aaf.firebaseapp.com"
+    );
+  });
+
+  test("allows explicit custom domain from env after Google Cloud is ready", () => {
+    expect(
+      resolveFirebaseAuthDomain({
+        envAuthDomain: "petzo.co.il",
+      })
+    ).toBe("petzo.co.il");
   });
 });
