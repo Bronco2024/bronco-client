@@ -1,3 +1,14 @@
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Force apex host (works once www is attached in Netlify Domain settings).
+[[redirects]]
+  from = "https://www.petzo.co.il/*"
+  to = "https://petzo.co.il/:splat"
+  status = 301
+  force = true
+
 # Firebase Auth handler for Google / OAuth (must stay above the SPA rule).
 # public/_redirects mirrors this — Netlify checks _redirects first.
 [[redirects]]
