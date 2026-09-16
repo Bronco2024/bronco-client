@@ -50,4 +50,5 @@ Build output goes to `build/`. Netlify uses `public/_redirects` for SPA routing.
 ## Launch checklist
 
 Before public launch (publish real ads): see **`FINISH.md`**.  
+Google login console steps: **`GOOGLE_LOGIN_FIX.md`**.  
 Auth / SMTP details: **`LAUNCH.md`** and **`FIREBASE_SMTP_SETUP.md`**.

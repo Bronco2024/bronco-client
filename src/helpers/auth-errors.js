@@ -39,7 +39,14 @@ export const getAuthErrorMessage = (errorCode, fallback = "אירעה שגיאה
       return "שגיאה פנימית בהתחברות Google. נסו שוב או השתמשו באימייל וסיסמה.";
     case "auth/web-storage-unsupported":
       return "הדפדפן חוסם אחסון מקומי. אפשרו cookies ונסו שוב.";
+    case "auth/redirect-cancelled-by-user":
+      return "ההתחברות עם Google בוטלה";
+    case "auth/missing-or-invalid-nonce":
+      return "בקשת Google נכשלה. נסו שוב.";
     default:
+      if (String(errorCode || "").includes("redirect_uri")) {
+        return "הגדרות Google לא שלמות (redirect_uri). עדכנו ב-Google Cloud לפי GOOGLE_LOGIN_FIX.md";
+      }
       return fallback;
   }
 };
