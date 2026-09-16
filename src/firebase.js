@@ -5,16 +5,23 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore"; // Import Firestore
 import { getStorage } from "firebase/storage";
 import { GoogleAuthProvider } from "firebase/auth";
+import { resolveFirebaseAuthDomain } from "@/helpers/firebase-auth-domain";
 
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
+const runtimeHostname =
+  typeof window !== "undefined" ? window.location.hostname : "";
+
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+    authDomain: resolveFirebaseAuthDomain({
+      hostname: runtimeHostname,
+      envAuthDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+    }),
     projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
     storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
@@ -31,5 +38,7 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
+googleProvider.addScope("email");
+googleProvider.addScope("profile");
 
 export { app, auth, db, storage, googleProvider};

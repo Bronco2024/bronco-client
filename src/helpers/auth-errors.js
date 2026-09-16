@@ -35,6 +35,10 @@ export const getAuthErrorMessage = (errorCode, fallback = "אירעה שגיאה
       return "יש בעיה בהגדרות Firebase";
     case "auth/app-not-authorized":
       return "האתר אינו מורשה להשתמש ב-Firebase";
+    case "auth/internal-error":
+      return "שגיאה פנימית בהתחברות Google. נסו שוב או השתמשו באימייל וסיסמה.";
+    case "auth/web-storage-unsupported":
+      return "הדפדפן חוסם אחסון מקומי. אפשרו cookies ונסו שוב.";
     default:
       return fallback;
   }
