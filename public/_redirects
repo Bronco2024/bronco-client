@@ -1,3 +1,6 @@
+# Apex preferred — works once www is attached in Netlify Domain settings.
+https://www.petzo.co.il/*  https://petzo.co.il/:splat  301!
+
 # Firebase Auth handler (must be before SPA catch-all — otherwise Google login breaks)
 /__/auth/*  https://bronco-65aaf.firebaseapp.com/__/auth/:splat  200
 
