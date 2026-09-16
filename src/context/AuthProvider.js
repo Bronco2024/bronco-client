@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '@/firebase';
-import { onAuthStateChanged, signOut, reload } from 'firebase/auth';
+import { onAuthStateChanged, signOut, reload, getRedirectResult } from 'firebase/auth';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { clearCart, loadCart } from '@/redux/cartSlice';
 import { useDispatch } from 'react-redux';
@@ -14,7 +14,15 @@ export const AuthProvider = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    let cancelled = false;
+
+    // Complete Google redirect on ANY page (not only /login).
+    getRedirectResult(auth).catch((error) => {
+      console.warn("Google redirect result:", error?.code || error);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (cancelled) return;
       setLoading(true);
       try {
         if (!user) {
@@ -97,11 +105,14 @@ export const AuthProvider = ({ children }) => {
           dispatch(clearCart());
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, [dispatch]);
 
   const logout = async () => {
