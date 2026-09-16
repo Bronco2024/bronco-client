@@ -44,6 +44,7 @@
 |-----|------|
 | Authorized domains فيها `petzo.co.il` | ✅ |
 | Email/Password + Google مفعّلين | ✅ |
+| Google OAuth consent screen = **Published** (أو إيميلك Test user) | ✅ لازم |
 | SMTP إيميلات التحقق شغال (اختياري للإطلاق إذا بتستخدم Google) | مفضّل |
 
 ---

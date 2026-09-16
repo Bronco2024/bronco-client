@@ -30,8 +30,18 @@
 
 بعد تفعيل Google، جرّب من الموقع: **התחבר עם Google**.
 
-> ملاحظة تقنية: الموقع يستخدم redirect لـ Google على الموبايل/Safari، وpopup على سطح المكتب مع fallback.  
-> لازم يبقى `/__/auth/*` يوجّه لـ Firebase (موجود في `netlify.toml` و`public/_redirects`) — بدونها Google ينكسر.
+> ملاحظة تقنية: الموقع يستخدم **redirect** لـ Google (موثوق أكثر من popup).  
+> `authDomain` على `petzo.co.il` عبر بروكسي `/__/auth/*` (في `netlify.toml` و`public/_redirects`).
+
+### مهم جداً — نشر تطبيق Google OAuth
+إذا Google يفتح وبعد اختيار الحساب يظهر **Access blocked** أو التطبيق في وضع Testing:
+
+1. افتح [Google Cloud Console](https://console.cloud.google.com/) → نفس مشروع Firebase (`bronco-65aaf`)
+2. **APIs & Services → OAuth consent screen**
+3. Publishing status → **Publish app** (Production)
+4. أو أضف إيميلك كـ **Test user** إذا بقيت Testing مؤقتاً
+
+بدون Publish، بس الحسابات المضافة كـ test users بتقدر تدخل.
 
 ---
 
