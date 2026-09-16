@@ -122,7 +122,7 @@ export const MARKETPLACE_CATEGORIES = [
 
 const listing = (data) => ({
   contact: data.contact || `צוות ${SITE_NAME}`,
-  phoneNumber: data.phoneNumber || "0547926338",
+  phoneNumber: data.phoneNumber || "0527502292",
   photos: data.photos || [data.image],
   title: data.title || data.name,
   source: "catalog",
