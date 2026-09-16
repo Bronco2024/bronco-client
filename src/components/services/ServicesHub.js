@@ -100,11 +100,6 @@ const ServicesHub = () => {
           <a
             className="services-hub-publish"
             href="/publish_ad?type=service"
-            onClick={(event) => {
-              event.preventDefault();
-              navigate("/publish_ad?type=service");
-              window.location.assign("/publish_ad?type=service");
-            }}
           >
             <FontAwesomeIcon icon={faPlus} />
             <span>פרסמו שירות</span>
@@ -192,10 +187,6 @@ const ServicesHub = () => {
                         href={`/publish_ad?slug=${encodeURIComponent(service.slug)}`}
                         onClick={(event) => {
                           event.stopPropagation();
-                          event.preventDefault();
-                          const target = `/publish_ad?slug=${encodeURIComponent(service.slug)}`;
-                          navigate(target);
-                          window.location.assign(target);
                         }}
                       >
                         פרסמו שירות זה
