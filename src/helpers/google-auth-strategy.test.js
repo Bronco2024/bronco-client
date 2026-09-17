@@ -4,6 +4,9 @@ import {
   isInAppBrowser,
   getExternalBrowserOpenUrl,
   IN_APP_BROWSER_AUTH_CODE,
+  consumeGoogleRedirectError,
+  stashGoogleRedirectError,
+  GOOGLE_REDIRECT_ERROR_KEY,
 } from "./google-auth-strategy";
 
 describe("google auth strategy", () => {
@@ -47,6 +50,14 @@ describe("google auth strategy", () => {
     ).toBe(true);
   });
 
+  test("prefers popup on Android Chrome (redirect loses result across domains)", () => {
+    expect(
+      shouldPreferGoogleRedirect(
+        "Mozilla/5.0 (Linux; Android 14; SM-A256E) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
+      )
+    ).toBe(false);
+  });
+
   test("allows popup on Chrome desktop", () => {
     expect(
       shouldPreferGoogleRedirect(
@@ -78,5 +89,12 @@ describe("google auth strategy", () => {
 
   test("exports in-app auth code", () => {
     expect(IN_APP_BROWSER_AUTH_CODE).toBe("auth/in-app-browser");
+  });
+
+  test("stashes and consumes redirect errors", () => {
+    sessionStorage.removeItem(GOOGLE_REDIRECT_ERROR_KEY);
+    stashGoogleRedirectError("auth/network-request-failed");
+    expect(consumeGoogleRedirectError()).toBe("auth/network-request-failed");
+    expect(consumeGoogleRedirectError()).toBe("");
   });
 });

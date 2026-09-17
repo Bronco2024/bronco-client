@@ -5,6 +5,7 @@ import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { clearCart, loadCart } from '@/redux/cartSlice';
 import { useDispatch } from 'react-redux';
 import { isSiteAdminEmail } from '@/helpers/site-admin';
+import { stashGoogleRedirectError } from '@/helpers/google-auth-strategy';
 
 const AuthContext = createContext();
 
@@ -16,10 +17,21 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     let cancelled = false;
 
-    // Complete Google redirect on ANY page (not only /login).
-    getRedirectResult(auth).catch((error) => {
-      console.warn("Google redirect result:", error?.code || error);
-    });
+    // Complete Google redirect once app-wide (Login/Register navigate via currentUser).
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          try {
+            sessionStorage.removeItem("petzo_google_auth_error");
+          } catch (_error) {
+            // ignore
+          }
+        }
+      })
+      .catch((error) => {
+        console.warn("Google redirect result:", error?.code || error);
+        stashGoogleRedirectError(error?.code || "auth/unknown");
+      });
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (cancelled) return;

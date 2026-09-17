@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faPaw } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { auth } from '@/firebase';
-import { createUserWithEmailAndPassword, signOut, getRedirectResult } from "firebase/auth";
+import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import Modal from '@components/utils/modal/Modal';
 import * as Sentry from "@sentry/react";
 import { handleGoogleSignupAndSignIn } from '../../helpers/firebase-helpers';
@@ -13,10 +13,15 @@ import { sendSiteEmailVerification } from '../../helpers/auth-email';
 import { getAuthErrorMessage } from '../../helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
 import InAppBrowserNotice from '../auth/InAppBrowserNotice';
-import { IN_APP_BROWSER_AUTH_CODE } from '../../helpers/google-auth-strategy';
+import {
+    IN_APP_BROWSER_AUTH_CODE,
+    consumeGoogleRedirectError,
+} from '../../helpers/google-auth-strategy';
+import { useAuth } from '@/context/AuthProvider';
 
 const Register = () => {
     const navigate = useNavigate();
+    const { currentUser, loading: authLoading } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [verifyPassword, setVerifyPassword] = useState('');
@@ -28,28 +33,17 @@ const Register = () => {
     const [googleLoading, setGoogleLoading] = useState(false);
 
     useEffect(() => {
-        let cancelled = false;
-        setGoogleLoading(true);
-        getRedirectResult(auth)
-          .then((result) => {
-            if (cancelled) return;
-            if (result?.user) {
-              navigate('/');
-              return;
-            }
-          })
-          .catch((error) => {
-            if (cancelled) return;
-            setError(getAuthErrorMessage(error?.code, 'שגיאה בהרשמה עם Google'));
-            console.error(error);
-          })
-          .finally(() => {
-            if (!cancelled) setGoogleLoading(false);
-          });
-        return () => {
-          cancelled = true;
-        };
-      }, [navigate]);
+        if (!authLoading && currentUser) {
+            navigate('/', { replace: true });
+        }
+    }, [authLoading, currentUser, navigate]);
+
+    useEffect(() => {
+        const redirectError = consumeGoogleRedirectError();
+        if (redirectError) {
+            setError(getAuthErrorMessage(redirectError, 'שגיאה בהרשמה עם Google'));
+        }
+    }, []);
 
     const handleLoginRedirect = () => {
         navigate('/login');

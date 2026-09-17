@@ -5,6 +5,8 @@ export const GOOGLE_POPUP_HANG_MS = 25_000;
 /** Custom code when Google OAuth cannot run inside an in-app WebView. */
 export const IN_APP_BROWSER_AUTH_CODE = "auth/in-app-browser";
 
+export const GOOGLE_REDIRECT_ERROR_KEY = "petzo_google_auth_error";
+
 /**
  * Facebook / Instagram / TikTok / etc. embedded browsers.
  * Google blocks OAuth inside these WebViews → auth/network-request-failed.
@@ -16,14 +18,20 @@ export const isInAppBrowser = (userAgent = "") => {
   );
 };
 
+/**
+ * Prefer full-page redirect only where popups are known-broken (WebKit).
+ * Android Chrome should use popup — redirect often loses the result when
+ * authDomain is *.firebaseapp.com and the site is petzo.co.il.
+ */
 export const shouldPreferGoogleRedirect = (userAgent = "") => {
   const ua = userAgent || "";
-  // Mobile + in-app browsers: popups are unreliable / blocked.
-  if (/Android|iPhone|iPad|iPod|Mobile|Instagram|FBAN|FBAV|Line\//i.test(ua)) {
-    return true;
-  }
-  // Safari (desktop): popup + storage partitioning often breaks Firebase Auth.
-  if (/Safari/i.test(ua) && !/Chrome|Chromium|Edg|OPR\//i.test(ua)) {
+  // All iOS browsers share WebKit popup / storage limitations.
+  if (/iPhone|iPad|iPod/i.test(ua)) return true;
+  // Desktop Safari (exclude Chrome/Edge/Firefox/Opera).
+  if (
+    /Safari/i.test(ua) &&
+    !/Chrome|Chromium|Edg|OPR|Firefox/i.test(ua)
+  ) {
     return true;
   }
   return false;
@@ -67,4 +75,27 @@ export const createInAppBrowserAuthError = () => {
   );
   error.code = IN_APP_BROWSER_AUTH_CODE;
   return error;
+};
+
+export const stashGoogleRedirectError = (errorCode) => {
+  try {
+    if (typeof sessionStorage === "undefined") return;
+    sessionStorage.setItem(
+      GOOGLE_REDIRECT_ERROR_KEY,
+      String(errorCode || "auth/unknown")
+    );
+  } catch (_error) {
+    // ignore quota / private mode
+  }
+};
+
+export const consumeGoogleRedirectError = () => {
+  try {
+    if (typeof sessionStorage === "undefined") return "";
+    const code = sessionStorage.getItem(GOOGLE_REDIRECT_ERROR_KEY) || "";
+    if (code) sessionStorage.removeItem(GOOGLE_REDIRECT_ERROR_KEY);
+    return code;
+  } catch (_error) {
+    return "";
+  }
 };
