@@ -78,7 +78,7 @@ const Header = () => {
     const handlePublishAd = () => {
         closeMenus();
         if (currentUser === null) {
-            navigate('/login');
+            navigate('/login?next=/publish_ad');
         } else {
             navigate('/publish_ad');
         }

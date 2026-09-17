@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import './Register.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faPaw } from '@fortawesome/free-solid-svg-icons';
@@ -18,10 +18,16 @@ import {
     consumeGoogleRedirectError,
 } from '../../helpers/google-auth-strategy';
 import { useAuth } from '@/context/AuthProvider';
+import {
+    resolveAuthReturnTo,
+    stashAuthReturnTo,
+} from '@/helpers/auth-return';
 
 const Register = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { currentUser, loading: authLoading } = useAuth();
+    const didRedirectRef = useRef(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [verifyPassword, setVerifyPassword] = useState('');
@@ -32,11 +38,27 @@ const Register = () => {
     const [showModal, setShowModal] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
 
+    const goAfterAuth = () => {
+        if (didRedirectRef.current) return;
+        didRedirectRef.current = true;
+        const next = resolveAuthReturnTo({
+            searchNext: searchParams.get("next") || "",
+            fallback: "/",
+        });
+        navigate(next, { replace: true });
+    };
+
+    useEffect(() => {
+        const next = searchParams.get("next");
+        if (next) stashAuthReturnTo(next);
+    }, [searchParams]);
+
     useEffect(() => {
         if (!authLoading && currentUser) {
-            navigate('/', { replace: true });
+            goAfterAuth();
         }
-    }, [authLoading, currentUser, navigate]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [authLoading, currentUser, navigate, searchParams]);
 
     useEffect(() => {
         const redirectError = consumeGoogleRedirectError();
@@ -46,7 +68,8 @@ const Register = () => {
     }, []);
 
     const handleLoginRedirect = () => {
-        navigate('/login');
+        const next = searchParams.get("next");
+        navigate(next ? `/login?next=${encodeURIComponent(next)}` : "/login");
     };
 
     const handleCheckboxChange = (e) => {
@@ -102,7 +125,7 @@ const Register = () => {
             setGoogleLoading(true);
             const result = await handleGoogleSignupAndSignIn();
             if (result?.user) {
-                navigate('/');
+                goAfterAuth();
                 return;
             }
             // Redirect started — keep loading until navigation.
