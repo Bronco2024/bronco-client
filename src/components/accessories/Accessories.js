@@ -251,7 +251,7 @@ const Accessories = () => {
         <main className="category-page" dir="rtl">
             <section
                 className="category-hero"
-                style={{ backgroundImage: `url(/accessories-hero.png)` }}
+                style={{ backgroundImage: `url(/accessories-hero.jpg)` }}
             >
                 <div className="category-hero-overlay">
                     <button

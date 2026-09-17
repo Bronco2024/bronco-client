@@ -20,7 +20,7 @@ export const CONTACT_WHATSAPP_URL = `https://wa.me/972527502293?text=${encodeURI
 export const SITE_URL =
   process.env.REACT_APP_SITE_URL || "https://petzo.co.il";
 
-export const DEFAULT_OG_IMAGE = "/hero-pets.png";
+export const DEFAULT_OG_IMAGE = "/hero-pets.jpg";
 
 export const FIREBASE_SMTP_FROM_NAME = SITE_NAME;
 export const FIREBASE_SMTP_FROM_EMAIL = CONTACT_EMAIL;

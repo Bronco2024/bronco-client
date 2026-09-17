@@ -17,23 +17,31 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://petzo.co.il/" />
-    <meta property="og:image" content="https://petzo.co.il/hero-pets.png" />
+    <meta property="og:image" content="https://petzo.co.il/hero-pets.jpg" />
     <link rel="canonical" href="https://petzo.co.il/" />
+    <link rel="preload" as="image" href="%PUBLIC_URL%/hero-pets.jpg" fetchpriority="high" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800&display=swap"
       rel="stylesheet"
     />
     <title>Petzo | לוח חיות מחמד</title>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SNSKQ3MYND"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-SNSKQ3MYND');
+      window.addEventListener('load', function () {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-SNSKQ3MYND';
+        s.onload = function () {
+          gtag('js', new Date());
+          gtag('config', 'G-SNSKQ3MYND');
+        };
+        document.head.appendChild(s);
+      });
     </script>
   </head>
   <body>

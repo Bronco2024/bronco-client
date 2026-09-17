@@ -126,7 +126,7 @@ const CategoryListings = ({ slug, adoptionOnly = false }) => {
     : category?.subtitle || "כל המודעות הזמינות באתר";
   const heroImage = adoptionOnly
     ? "/listings/adopt-cat.jpg"
-    : category?.image || "/hero-pets.png";
+    : category?.image || "/hero-pets.jpg";
 
   useSeo({
     title: `${title} | ${SITE_NAME}`,

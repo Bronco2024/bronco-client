@@ -1,18 +1,11 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"; // Import Firestore
+import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { GoogleAuthProvider } from "firebase/auth";
 import { resolveFirebaseAuthDomain } from "@/helpers/firebase-auth-domain";
 
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     // Must match an Authorized redirect URI on the Google OAuth web client.
@@ -29,9 +22,7 @@ const firebaseConfig = {
     measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth(app);
 auth.languageCode = "he";
 const db = getFirestore(app);
@@ -41,4 +32,23 @@ googleProvider.setCustomParameters({ prompt: "select_account" });
 googleProvider.addScope("email");
 googleProvider.addScope("profile");
 
-export { app, auth, db, storage, googleProvider};
+// Analytics is heavy — load after first paint, only in the browser.
+if (typeof window !== "undefined" && firebaseConfig.measurementId) {
+  const bootAnalytics = () => {
+    import("firebase/analytics")
+      .then(({ getAnalytics, isSupported }) =>
+        isSupported().then((ok) => {
+          if (ok) getAnalytics(app);
+        })
+      )
+      .catch(() => {});
+  };
+
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(bootAnalytics, { timeout: 4000 });
+  } else {
+    window.setTimeout(bootAnalytics, 2500);
+  }
+}
+
+export { app, auth, db, storage, googleProvider };

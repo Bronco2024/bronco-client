@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '@/firebase';
-import { onAuthStateChanged, signOut, reload, getRedirectResult } from 'firebase/auth';
+import { onAuthStateChanged, signOut, getRedirectResult } from 'firebase/auth';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { clearCart, loadCart } from '@/redux/cartSlice';
 import { useDispatch } from 'react-redux';
@@ -31,10 +31,8 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        // Always force-refresh user & token (emailVerified might be stale)
-        await reload(user);
-        await user.getIdToken(true);
-
+        // Skip forced reload()/getIdToken(true) on every page — that added
+        // multi-second delay. Auth state already carries emailVerified.
         const signedInWithGoogle = user.providerData?.some(
           (p) => p.providerId === "google.com"
         );

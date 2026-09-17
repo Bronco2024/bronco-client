@@ -109,7 +109,7 @@ export const ACCESSORIES_CATEGORY = {
   path: "/accessories",
   name: "אביזרים",
   type: "אביזר",
-  image: "/accessories-hero.png",
+  image: "/accessories-hero.jpg",
   subtitle: "צעצועים, כלובים וכל מה שחיית המחמד צריכה",
   useExistingPage: true,
 };
@@ -429,7 +429,7 @@ export const getAdDisplayName = (ad) =>
   "מודעה";
 
 export const getAdDisplayImage = (ad) =>
-  ad?.image || ad?.photos?.[0] || "/hero-pets.png";
+  ad?.image || ad?.photos?.[0] || "/hero-pets.jpg";
 
 /** Adoption listings use forAdoption flag or price label "לאימוץ". */
 export const ADOPTION_IS_ALWAYS_FREE = true;
