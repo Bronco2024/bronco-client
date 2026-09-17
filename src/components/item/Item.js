@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
@@ -52,8 +52,9 @@ const ItemPage = () => {
     const [loadingAd, setLoadingAd] = useState(!location.state?.ad && Boolean(adId));
     const [similarAds, setSimilarAds] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
-    const [shareStatus, setShareStatus] = useState('');
     const [lightboxIndex, setLightboxIndex] = useState(null);
+    const carouselRef = useRef(null);
+    const [shareStatus, setShareStatus] = useState('');
 
     useSeo({
         title: ad ? `${getAdTitle(ad)} | ${SITE_NAME}` : SITE_NAME,
@@ -170,21 +171,10 @@ const ItemPage = () => {
     const mediaItems = useMemo(() => {
         if (!ad) return [];
         const photos = ad.photos?.length ? ad.photos : (ad.image ? [ad.image] : []);
+        const cover = photos[0] || require('@/assets/no-image.jpg');
         const items = [];
 
-        if (ad.video) {
-            items.push({
-                key: 'video',
-                thumb: photos[0] || require('@/assets/no-image.jpg'),
-                kind: 'video',
-                node: (
-                    <video key="video" controls className="media-element">
-                        <source src={ad.video} type="video/mp4" />
-                    </video>
-                ),
-            });
-        }
-
+        // Photos first — cover (photos[0]) is the default display, not an empty video frame.
         photos.forEach((photo, index) => {
             const itemIndex = items.length;
             items.push({
@@ -210,6 +200,28 @@ const ItemPage = () => {
                 ),
             });
         });
+
+        if (ad.video) {
+            const itemIndex = items.length;
+            items.push({
+                key: 'video',
+                thumb: cover,
+                kind: 'video',
+                node: (
+                    <video
+                        key="video"
+                        controls
+                        playsInline
+                        preload="metadata"
+                        poster={cover}
+                        className="media-element"
+                        onClick={() => openLightbox(itemIndex)}
+                    >
+                        <source src={ad.video} type="video/mp4" />
+                    </video>
+                ),
+            });
+        }
 
         if (items.length === 0) {
             items.push({
@@ -237,6 +249,18 @@ const ItemPage = () => {
 
         return items;
     }, [ad, openLightbox]);
+
+    useEffect(() => {
+        setActiveIndex(0);
+        carouselRef.current?.slideTo?.(0);
+    }, [ad?.id]);
+
+    const goToSlide = useCallback((index) => {
+        if (index < 0 || index >= mediaItems.length) return;
+        setActiveIndex(index);
+        // AliceCarousel often ignores controlled activeIndex alone — slideTo syncs the UI.
+        carouselRef.current?.slideTo?.(index);
+    }, [mediaItems.length]);
 
     const showLightboxPrev = () => {
         if (!mediaItems.length) return;
@@ -338,6 +362,7 @@ const ItemPage = () => {
             <div className={`item-page-wrapper ${isServiceAd ? "item-page-wrapper--service" : ""}`}>
                 <div className="item-media">
                     <AliceCarousel
+                        ref={carouselRef}
                         mouseTracking
                         items={mediaItems.map((item) => item.node)}
                         infinite={mediaItems.length > 1}
@@ -353,10 +378,20 @@ const ItemPage = () => {
                                 <button
                                     key={item.key}
                                     type="button"
-                                    className={`item-thumb ${activeIndex === index ? "active" : ""}`}
-                                    onClick={() => setActiveIndex(index)}
+                                    className={`item-thumb ${activeIndex === index ? "active" : ""} ${item.kind === "video" ? "item-thumb--video" : ""}`}
+                                    onClick={() => goToSlide(index)}
+                                    aria-label={
+                                        item.kind === "video"
+                                            ? "סרטון"
+                                            : `תמונה ${index + 1}`
+                                    }
                                 >
                                     <img src={item.thumb} alt="" />
+                                    {item.kind === "video" && (
+                                        <span className="item-thumb-play" aria-hidden="true">
+                                            ▶
+                                        </span>
+                                    )}
                                 </button>
                             ))}
                         </div>
@@ -575,7 +610,13 @@ const ItemPage = () => {
                         role="presentation"
                     >
                         {mediaItems[lightboxIndex].kind === 'video' ? (
-                            <video controls className="item-lightbox-media" autoPlay>
+                            <video
+                                controls
+                                playsInline
+                                className="item-lightbox-media"
+                                autoPlay
+                                poster={mediaItems[lightboxIndex].thumb}
+                            >
                                 <source src={ad.video} type="video/mp4" />
                             </video>
                         ) : (

@@ -1,6 +1,8 @@
 import {
   appendPublishPhotos,
   removePublishPhotoAt,
+  clampCoverPhotoIndex,
+  orderPhotosWithCoverFirst,
   MAX_PUBLISH_PHOTOS,
 } from "./publish-photos";
 
@@ -25,5 +27,17 @@ describe("publish photos helpers", () => {
       "a.jpg",
       "c.jpg",
     ]);
+  });
+
+  test("clamps cover index", () => {
+    expect(clampCoverPhotoIndex(5, 3)).toBe(2);
+    expect(clampCoverPhotoIndex(-1, 3)).toBe(0);
+    expect(clampCoverPhotoIndex(1, 0)).toBe(0);
+  });
+
+  test("orders chosen cover photo first", () => {
+    const photos = ["a", "b", "c"];
+    expect(orderPhotosWithCoverFirst(photos, 2)).toEqual(["c", "a", "b"]);
+    expect(orderPhotosWithCoverFirst(photos, 0)).toEqual(["a", "b", "c"]);
   });
 });
