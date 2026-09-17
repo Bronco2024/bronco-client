@@ -29,8 +29,12 @@ export const AuthProvider = ({ children }) => {
         }
       })
       .catch((error) => {
-        console.warn("Google redirect result:", error?.code || error);
-        stashGoogleRedirectError(error?.code || "auth/unknown");
+        // Safari can throw TypeError (not FirebaseError) inside the auth SDK.
+        const code =
+          error?.code ||
+          (error instanceof TypeError ? "auth/network-request-failed" : "auth/unknown");
+        console.warn("Google redirect result:", code, error);
+        stashGoogleRedirectError(code);
       });
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
