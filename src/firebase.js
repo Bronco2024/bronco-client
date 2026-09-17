@@ -56,13 +56,16 @@ googleProvider.addScope("email");
 googleProvider.addScope("profile");
 
 // Analytics is heavy — load after first paint, only in the browser.
+// This is the sole gtag entry point (do not also inject gtag in index.html).
 if (typeof window !== "undefined" && firebaseConfig.measurementId) {
   const bootAnalytics = () => {
     import("firebase/analytics")
       .then(({ getAnalytics, isSupported }) =>
-        isSupported().then((ok) => {
-          if (ok) getAnalytics(app);
-        })
+        isSupported()
+          .then((ok) => {
+            if (ok) getAnalytics(app);
+          })
+          .catch(() => {})
       )
       .catch(() => {});
   };

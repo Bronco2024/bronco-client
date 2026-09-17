@@ -29,20 +29,10 @@
       rel="stylesheet"
     />
     <title>Petzo | לוח חיות מחמד</title>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.addEventListener('load', function () {
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-SNSKQ3MYND';
-        s.onload = function () {
-          gtag('js', new Date());
-          gtag('config', 'G-SNSKQ3MYND');
-        };
-        document.head.appendChild(s);
-      });
-    </script>
+    <!-- Analytics: loaded once via Firebase Analytics (src/firebase.js).
+         Do not also inject googletagmanager gtag/js here — dual load causes
+         TypeError: Cannot read properties of undefined (reading 'is_legacy_loaded')
+         on Chrome Mobile. -->
   </head>
   <body>
     <noscript>יש להפעיל JavaScript כדי להשתמש באתר Petzo.</noscript>
