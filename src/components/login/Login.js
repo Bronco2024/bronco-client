@@ -29,6 +29,8 @@ import {
 import { sendSiteEmailVerification } from '../../helpers/auth-email';
 import { getAuthErrorMessage } from '../../helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
+import InAppBrowserNotice from '../auth/InAppBrowserNotice';
+import { IN_APP_BROWSER_AUTH_CODE } from '../../helpers/google-auth-strategy';
 
 
 const Login = () => {
@@ -220,12 +222,15 @@ const Login = () => {
 
             setError(getAuthErrorMessage(error?.code, 'שגיאה בחיבור עם Google'));
 
-            Sentry.captureException(error, {
-                tags: {
-                    component: 'Login',
-                    method: 'GoogleSignin'
-                }
-            });
+            // Expected in Facebook/Instagram WebViews — don't flood Sentry.
+            if (error?.code !== IN_APP_BROWSER_AUTH_CODE) {
+                Sentry.captureException(error, {
+                    tags: {
+                        component: 'Login',
+                        method: 'GoogleSignin'
+                    }
+                });
+            }
             setGoogleLoading(false);
         }
     };
@@ -287,6 +292,8 @@ const Login = () => {
             <h2 className="login-title">
                 היי, טוב לראות אותך
             </h2>
+
+            <InAppBrowserNotice />
 
 
             <form

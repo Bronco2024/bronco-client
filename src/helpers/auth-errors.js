@@ -14,7 +14,9 @@ export const getAuthErrorMessage = (errorCode, fallback = "אירעה שגיאה
     case "auth/too-many-requests":
       return "בוצעו יותר מדי ניסיונות. נסו שוב מאוחר יותר";
     case "auth/network-request-failed":
-      return "יש בעיה בחיבור לאינטרנט";
+      return "יש בעיה בחיבור. אם פתחתם מפייסבוק/אינסטגרם — פתחו את האתר ב-Chrome או Safari ונסו שוב.";
+    case "auth/in-app-browser":
+      return "התחברות עם Google לא עובדת בדפדפן של פייסבוק/אינסטגרם. פתחו את Petzo ב-Chrome או Safari.";
     case "auth/operation-not-allowed":
       return "שיטת ההתחברות אינה מופעלת ב-Firebase. הפעילו Email/Password או Google ב-Console.";
     case "auth/unauthorized-domain":
