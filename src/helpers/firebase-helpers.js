@@ -4,6 +4,9 @@ import { signInWithPopup, signInWithRedirect } from "firebase/auth";
 import {
   GOOGLE_POPUP_HANG_MS,
   shouldFallbackGooglePopupToRedirect,
+  shouldPreferGoogleRedirect,
+  isInAppBrowser,
+  createInAppBrowserAuthError,
 } from "./google-auth-strategy";
 
 export const updateUserCart = async (uid, cartItems) => {
@@ -33,12 +36,24 @@ const withPopupTimeout = (promise, ms) =>
   });
 
 /**
- * Google sign-in — popup first (OAuth stays on *.firebaseapp.com so no
- * redirect_uri_mismatch on petzo.co.il), then full-page redirect fallback.
+ * Google sign-in — skip OAuth inside in-app WebViews (Facebook etc.),
+ * prefer redirect on mobile/Safari, otherwise popup with redirect fallback.
  * @returns {Promise<import('firebase/auth').UserCredential | null>}
  */
 export const handleGoogleSignupAndSignIn = async () => {
   googleProvider.setCustomParameters({ prompt: "select_account" });
+
+  const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+
+  // Google blocks OAuth inside Facebook/Instagram WebViews.
+  if (isInAppBrowser(ua)) {
+    throw createInAppBrowserAuthError();
+  }
+
+  if (shouldPreferGoogleRedirect(ua)) {
+    await signInWithRedirect(auth, googleProvider);
+    return null;
+  }
 
   try {
     return await withPopupTimeout(

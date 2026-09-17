@@ -1,0 +1,36 @@
+.in-app-browser-notice {
+  width: 100%;
+  margin: 0 0 1.25rem;
+  padding: 14px 16px;
+  border: 1px solid #f0c28a;
+  border-radius: 12px;
+  background: #fff8f0;
+  color: var(--color-navy, #173b5e);
+  text-align: right;
+}
+
+.in-app-browser-notice p {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.in-app-browser-open-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 10px;
+  background: #ff861c;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.in-app-browser-open-btn:hover {
+  filter: brightness(0.96);
+}
