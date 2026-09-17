@@ -8,12 +8,12 @@ import { resolveFirebaseAuthDomain } from "@/helpers/firebase-auth-domain";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-    // Must match an Authorized redirect URI on the Google OAuth web client.
-    // Default: bronco-65aaf.firebaseapp.com (Firebase-managed).
-    // Only set REACT_APP_FIREBASE_AUTH_DOMAIN=petzo.co.il AFTER adding
-    // https://petzo.co.il/__/auth/handler in Google Cloud credentials.
+    // On petzo.co.il this resolves to petzo.co.il (same-site OAuth for Safari).
+    // Requires Google Cloud redirect URI: https://petzo.co.il/__/auth/handler
+    // Localhost keeps bronco-65aaf.firebaseapp.com unless env overrides.
     authDomain: resolveFirebaseAuthDomain({
       envAuthDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+      hostname: typeof window !== "undefined" ? window.location.hostname : "",
     }),
     projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
     storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,

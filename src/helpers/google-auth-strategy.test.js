@@ -34,18 +34,35 @@ describe("google auth strategy", () => {
     ).toBe(false);
   });
 
-  test("prefers redirect on iPhone", () => {
+  test("prefers popup on Safari when authDomain is same-origin", () => {
     expect(
       shouldPreferGoogleRedirect(
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15"
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Version/17.0 Safari/604.1",
+        { authDomain: "petzo.co.il", hostname: "petzo.co.il" }
+      )
+    ).toBe(false);
+  });
+
+  test("prefers redirect on iPhone when authDomain is cross-site", () => {
+    expect(
+      shouldPreferGoogleRedirect(
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15",
+        {
+          authDomain: "bronco-65aaf.firebaseapp.com",
+          hostname: "petzo.co.il",
+        }
       )
     ).toBe(true);
   });
 
-  test("prefers redirect on desktop Safari", () => {
+  test("prefers redirect on desktop Safari when authDomain is cross-site", () => {
     expect(
       shouldPreferGoogleRedirect(
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+        {
+          authDomain: "bronco-65aaf.firebaseapp.com",
+          hostname: "petzo.co.il",
+        }
       )
     ).toBe(true);
   });

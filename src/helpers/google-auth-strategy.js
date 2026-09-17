@@ -1,5 +1,7 @@
 /** Pure helpers for Google sign-in strategy (no Firebase imports). */
 
+import { isSameOriginAuthDomain } from "./firebase-auth-domain";
+
 export const GOOGLE_POPUP_HANG_MS = 25_000;
 
 /** Custom code when Google OAuth cannot run inside an in-app WebView. */
@@ -19,11 +21,19 @@ export const isInAppBrowser = (userAgent = "") => {
 };
 
 /**
- * Prefer full-page redirect only where popups are known-broken (WebKit).
- * Android Chrome should use popup — redirect often loses the result when
- * authDomain is *.firebaseapp.com and the site is petzo.co.il.
+ * Prefer full-page redirect only where popups are known-broken (WebKit)
+ * AND authDomain is cross-site (Safari loses redirect results across sites).
+ * When authDomain is same-origin (petzo.co.il), popup is preferred everywhere.
  */
-export const shouldPreferGoogleRedirect = (userAgent = "") => {
+export const shouldPreferGoogleRedirect = (
+  userAgent = "",
+  { authDomain = "", hostname = "" } = {}
+) => {
+  // Same-origin auth handler → popup works (including Safari).
+  if (isSameOriginAuthDomain(authDomain, hostname)) {
+    return false;
+  }
+
   const ua = userAgent || "";
   // All iOS browsers share WebKit popup / storage limitations.
   if (/iPhone|iPad|iPod/i.test(ua)) return true;

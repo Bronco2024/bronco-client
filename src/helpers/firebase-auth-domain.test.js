@@ -1,4 +1,7 @@
-import { resolveFirebaseAuthDomain } from "./firebase-auth-domain";
+import {
+  resolveFirebaseAuthDomain,
+  isSameOriginAuthDomain,
+} from "./firebase-auth-domain";
 
 describe("resolveFirebaseAuthDomain", () => {
   test("uses env authDomain when provided", () => {
@@ -9,17 +12,31 @@ describe("resolveFirebaseAuthDomain", () => {
     ).toBe("bronco-65aaf.firebaseapp.com");
   });
 
-  test("falls back to Firebase hosting domain", () => {
+  test("uses petzo.co.il on the production site host", () => {
+    expect(
+      resolveFirebaseAuthDomain({ hostname: "petzo.co.il" })
+    ).toBe("petzo.co.il");
+    expect(
+      resolveFirebaseAuthDomain({ hostname: "www.petzo.co.il" })
+    ).toBe("petzo.co.il");
+  });
+
+  test("falls back to Firebase hosting domain off-site", () => {
     expect(resolveFirebaseAuthDomain({})).toBe(
       "bronco-65aaf.firebaseapp.com"
     );
+    expect(
+      resolveFirebaseAuthDomain({ hostname: "localhost" })
+    ).toBe("bronco-65aaf.firebaseapp.com");
   });
 
-  test("allows explicit custom domain from env after Google Cloud is ready", () => {
+  test("detects same-origin auth domain", () => {
+    expect(isSameOriginAuthDomain("petzo.co.il", "petzo.co.il")).toBe(true);
+    expect(isSameOriginAuthDomain("petzo.co.il", "www.petzo.co.il")).toBe(
+      true
+    );
     expect(
-      resolveFirebaseAuthDomain({
-        envAuthDomain: "petzo.co.il",
-      })
-    ).toBe("petzo.co.il");
+      isSameOriginAuthDomain("bronco-65aaf.firebaseapp.com", "petzo.co.il")
+    ).toBe(false);
   });
 });
