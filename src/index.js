@@ -19,14 +19,29 @@ Sentry.init({
     const message = String(
       (error && error.message) || event?.exception?.values?.[0]?.value || ""
     );
+    const frames =
+      event?.exception?.values?.[0]?.stacktrace?.frames || [];
+    const fromGtag = frames.some((frame) =>
+      String(frame?.filename || frame?.abs_path || "").includes("gtag/js")
+    );
+
     // Known noisy WebKit/Firebase Auth internal TypeError during Google OAuth.
-    // We harden auth init separately; still drop this mangled noise from alerts.
     if (
       message.includes("undefined is not an object") &&
       (/\[.*\.Pd\]/.test(message) || message.includes("Firebase"))
     ) {
       return null;
     }
+
+    // Google Analytics / gtag race (legacy dual-load noise).
+    if (
+      fromGtag ||
+      message.includes("is_legacy_loaded") ||
+      (message.includes("gtag") && message.includes("undefined"))
+    ) {
+      return null;
+    }
+
     return event;
   },
 });
