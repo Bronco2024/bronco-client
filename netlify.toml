@@ -1,3 +1,16 @@
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Force apex host (works once www is attached in Netlify Domain settings).
+[[redirects]]
+  from = "https://www.petzo.co.il/*"
+  to = "https://petzo.co.il/:splat"
+  status = 301
+  force = true
+
+# Firebase Auth handler for Google / OAuth (must stay above the SPA rule).
+# public/_redirects mirrors this — Netlify checks _redirects first.
 [[redirects]]
   from = "/__/auth/*"
   to = "https://bronco-65aaf.firebaseapp.com/__/auth/:splat"
@@ -8,3 +21,10 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Allow Firebase Auth popups to talk to the opener (Chrome COOP).
+# Without this, Google sign-in can open then hang forever on "מתחבר…".
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"

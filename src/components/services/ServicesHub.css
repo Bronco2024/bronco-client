@@ -81,6 +81,7 @@
 }
 
 .services-hub-publish {
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -191,6 +192,36 @@
     border-color 0.25s ease;
 }
 
+.services-hub-card--photo {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.services-hub-card-photo {
+  height: 148px;
+  background-size: cover;
+  background-position: center;
+  background-color: #e8eef3;
+}
+
+.services-hub-card-body {
+  padding: 18px 20px 18px;
+}
+
+.services-hub-card--photo .services-hub-badge-new {
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+}
+
+.services-hub-card--photo .services-hub-card-icon {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 10px;
+  font-size: 1.05rem;
+}
+
 .services-hub-card::before {
   content: "";
   position: absolute;
@@ -267,6 +298,25 @@
   color: var(--service-accent, #173b5e);
   font-size: 13px;
   font-weight: 800;
+}
+
+.services-hub-card-publish {
+  text-decoration: none;
+  margin-top: 10px;
+  align-self: flex-start;
+  padding: 8px 12px;
+  border: 1.5px solid var(--service-accent, #173b5e);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--service-accent, #173b5e);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.services-hub-card-publish:hover {
+  background: var(--service-accent, #173b5e);
+  color: #ffffff;
 }
 
 .services-hub-empty {

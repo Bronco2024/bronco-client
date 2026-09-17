@@ -4,9 +4,12 @@ import { faCertificate } from "@fortawesome/free-solid-svg-icons";
 import { FormatDateTimestampToDate } from "@components/utils/constants/Functions";
 import { formatListingPrice, isAdoptionListing } from "@/data/pets";
 import ListingSearchField from "@/components/listings/ListingSearchField";
+import { ServiceListingCard } from "@/components/listings/ServiceListingCard";
 import "./ServicePage.css";
 
 const fallbackImage = () => require("@/assets/no-image.jpg");
+
+export { ServiceListingCard };
 
 export const AdGridCard = ({
   ad,
@@ -79,11 +82,12 @@ const ServicePage = ({
   searchText = "",
   onSearchChange,
   children,
+  countLabel = "מודעות",
 }) => {
   const navigate = useNavigate();
 
   return (
-    <main className="ads-page" dir="rtl">
+    <main className="ads-page ads-page--services" dir="rtl">
       <section
         className="ads-page-hero"
         style={{ backgroundImage: `url(${heroImage})` }}
@@ -92,10 +96,11 @@ const ServicePage = ({
           <button
             type="button"
             className="ads-page-back"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/services")}
           >
-            ← חזרה לדף הבית
+            ← חזרה לשירותים
           </button>
+          <p className="ads-page-kicker">מרכז השירותים</p>
           <h1>{title}</h1>
           {subtitle && <p>{subtitle}</p>}
         </div>
@@ -113,6 +118,7 @@ const ServicePage = ({
                   id={`${title}-search`}
                   value={searchText}
                   onChange={onSearchChange}
+                  placeholder="חיפוש שירות, אזור או ספק…"
                 />
               </form>
             )}
@@ -120,7 +126,9 @@ const ServicePage = ({
           </div>
         )}
         {typeof count === "number" && (
-          <p className="ads-page-count">{count} מודעות</p>
+          <p className="ads-page-count">
+            {count} {countLabel}
+          </p>
         )}
         {children}
       </section>

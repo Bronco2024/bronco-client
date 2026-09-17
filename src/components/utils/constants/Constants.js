@@ -1,6 +1,7 @@
 import { PET_CATEGORIES } from "@/data/pets";
 import ISRAEL_CITIES from "@/data/israel-cities";
 import { SITE_NAME } from "@/data/site-config";
+import { SERVICES_CATALOG } from "@/data/services-catalog";
 
 export { PET_CATEGORIES, ISRAEL_CITIES };
 
@@ -28,24 +29,18 @@ export const CATEGORIES = [
     { path: '/accessories', label: 'אביזרים' },
 ];
 
-export const SERVICE_CATEGORIES = [
-    { path: '/veterinarians', label: 'וטרינרים' },
-    { path: '/transport', label: 'הסעות' },
-    { path: '/boarding', label: 'פנסיון' },
-    { path: '/pet-sitting', label: 'שמירה בבית' },
-    { path: '/groomers', label: 'מספרות' },
-    { path: '/training', label: 'אילוף והתנהגות' },
-    { path: '/schools', label: 'בתי ספר' },
-    { path: '/breeders', label: 'מפרזילים' },
-    { path: '/exhibitors', label: 'מציגים' },
-    { path: '/trips', label: 'טיולים' },
-    { path: '/shows-and-competitions', label: 'תצוגות ותחרויות' },
-    { path: '/our-products', label: 'חנות' },
-];
+/** Real service listings only (not the admin store). Synced with services-catalog. */
+export const SERVICE_CATEGORIES = SERVICES_CATALOG.map(({ path, category }) => ({
+    path,
+    label: category,
+}));
+
+export const STORE_CATEGORY = { path: "/our-products", label: "חנות" };
 
 export const EXTENDED_CATEGORIES = [
     ...CATEGORIES,
     ...SERVICE_CATEGORIES,
+    STORE_CATEGORY,
 ];
 
 export const SERVICE_CATEGORY_LABELS = SERVICE_CATEGORIES.map(({ label }) => label);

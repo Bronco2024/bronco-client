@@ -19,6 +19,18 @@ describe("listing contact and share helpers", () => {
 
     expect(link).toContain("https://wa.me/972547926338");
     expect(decodeURIComponent(link)).toContain("גור לברדור");
+    expect(decodeURIComponent(link)).toContain("המודעה");
+  });
+
+  test("builds a WhatsApp deep link for services", () => {
+    const link = buildWhatsAppLink({
+      phoneNumber: "0547926338",
+      title: "וטרינר חירום",
+      isService: true,
+    });
+
+    expect(decodeURIComponent(link)).toContain("השירות");
+    expect(decodeURIComponent(link)).toContain("וטרינר חירום");
   });
 
   test("builds a shareable listing URL from the ad id", () => {

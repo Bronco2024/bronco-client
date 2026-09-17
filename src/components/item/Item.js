@@ -34,6 +34,7 @@ import {
     getListingPath,
     getListingShareUrl,
 } from '@/helpers/listing-links';
+import { isServiceCategory } from '@components/utils/constants/Constants';
 import { SITE_NAME, SITE_URL } from '@/data/site-config';
 import useSeo from "@/hooks/useSeo";
 
@@ -131,9 +132,9 @@ const ItemPage = () => {
                     .map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }))
             );
 
-            setSimilarAds(filtered.length > 0 ? filtered : getSimilarListings(ad));
+            setSimilarAds(filtered);
         } catch {
-            setSimilarAds(getSimilarListings(ad));
+            setSimilarAds([]);
         }
     }, [ad]);
 
@@ -308,7 +309,7 @@ const ItemPage = () => {
             <div className="item-page-wrapper" dir="rtl">
                 <div className="item-info">
                     <h1>המודעה לא נמצאה</h1>
-                    <p className="description">חזרו לדף הבית ובחרו מודעה מהרשימה.</p>
+                    <p className="description">ייתכן שהמודעה נמחקה או שכבר אינה זמינה.</p>
                     <button className="item-back" type="button" onClick={() => navigate("/")}>
                         חזרה לדף הבית
                     </button>
@@ -318,6 +319,8 @@ const ItemPage = () => {
     }
 
     const isPetAd = isPetMarketplaceCategory(ad.category) || Boolean(ad.type);
+    const isServiceAd =
+        isServiceCategory(ad.category) || ad.listingKind === "service";
     const showDetails =
         isPetAd ||
         ad.category === "סוסים" ||
@@ -327,11 +330,12 @@ const ItemPage = () => {
     const whatsappLink = buildWhatsAppLink({
         phoneNumber: ad.phoneNumber,
         title: getAdTitle(ad),
+        isService: isServiceAd,
     });
 
     return (
         <>
-            <div className="item-page-wrapper">
+            <div className={`item-page-wrapper ${isServiceAd ? "item-page-wrapper--service" : ""}`}>
                 <div className="item-media">
                     <AliceCarousel
                         mouseTracking
@@ -371,6 +375,11 @@ const ItemPage = () => {
 
                     <div className="top-row">
                         <div className="item-badges">
+                            {isServiceAd && (
+                                <span className="item-badge item-badge--service">
+                                    שירות
+                                </span>
+                            )}
                             {isAdoptionListing(ad) && (
                                 <span className="item-badge item-badge--adoption">
                                     <FontAwesomeIcon icon={faHeart} />
@@ -399,7 +408,43 @@ const ItemPage = () => {
                     {isAdoptionListing(ad) && (
                         <p className="adoption-note">מודעה לאימוץ — תנו בית חם לחיית מחמד.</p>
                     )}
+                    {isServiceAd && (
+                        <p className="service-note">
+                            כרטיס שירות מקצועי — לתיאום פרטים צרו קשר ישירות עם הספק.
+                        </p>
+                    )}
+                    {ad.source === "catalog" && (
+                        <p className="service-note">
+                            מודעת דוגמה לתצוגה בלבד — אינה מודעה חיה באתר.
+                        </p>
+                    )}
                     <p className="description">{ad.description}</p>
+
+                    {isServiceAd && (
+                        <div className="more-details more-details--service">
+                            <h3>פרטי השירות</h3>
+                            <dl className="item-details-grid">
+                                {Array.isArray(ad.service_animals) &&
+                                    ad.service_animals.length > 0 && (
+                                    <>
+                                        <dt>מתאים ל</dt>
+                                        <dd>{ad.service_animals.join(" · ")}</dd>
+                                    </>
+                                )}
+                                {ad.location && (
+                                    <>
+                                        <dt>אזור</dt>
+                                        <dd>{ad.location}</dd>
+                                    </>
+                                )}
+                            </dl>
+                            {formatListingPrice(ad) ? (
+                                <p className="price">{formatListingPrice(ad)}</p>
+                            ) : (
+                                <p className="price price--ask">לתיאום מחיר</p>
+                            )}
+                        </div>
+                    )}
 
                     {showDetails && (
                         <div className="more-details">
@@ -450,6 +495,7 @@ const ItemPage = () => {
                         </div>
                     )}
 
+                    {ad.source !== "catalog" && (
                     <div className="contact-box">
                         <span className="contact-person">
                             <strong>איש קשר:</strong> {ad.contact || 'לא צוין'}
@@ -461,9 +507,10 @@ const ItemPage = () => {
                             </a>
                         )}
                     </div>
+                    )}
 
                     <div className="item-actions">
-                        {whatsappLink && (
+                        {ad.source !== "catalog" && whatsappLink && (
                             <a
                                 className="whatsapp-link"
                                 href={whatsappLink}
@@ -476,7 +523,7 @@ const ItemPage = () => {
                         )}
                         <button type="button" className="share-link" onClick={handleShare}>
                             <FontAwesomeIcon icon={shareStatus ? faCopy : faShareNodes} />
-                            {shareStatus || "שיתוף מודעה"}
+                            {shareStatus || (isServiceAd ? "שיתוף שירות" : "שיתוף מודעה")}
                         </button>
                     </div>
 
@@ -544,7 +591,9 @@ const ItemPage = () => {
 
             {similarAds.length > 0 && (
                 <div className="related-ads-section">
-                    <h2 className="related-ads-title">מודעות דומות</h2>
+                    <h2 className="related-ads-title">
+                        {isServiceAd ? "שירותים דומים" : "מודעות דומות"}
+                    </h2>
                     <div className="related-ads-grid">
                         {similarAds.slice(0, 8).map((item) => (
                             <button

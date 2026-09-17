@@ -14,7 +14,9 @@ export const getAuthErrorMessage = (errorCode, fallback = "אירעה שגיאה
     case "auth/too-many-requests":
       return "בוצעו יותר מדי ניסיונות. נסו שוב מאוחר יותר";
     case "auth/network-request-failed":
-      return "יש בעיה בחיבור לאינטרנט";
+      return "יש בעיה בחיבור. אם פתחתם מפייסבוק/אינסטגרם — פתחו את האתר ב-Chrome או Safari ונסו שוב.";
+    case "auth/in-app-browser":
+      return "התחברות עם Google לא עובדת בדפדפן של פייסבוק/אינסטגרם. פתחו את Petzo ב-Chrome או Safari.";
     case "auth/operation-not-allowed":
       return "שיטת ההתחברות אינה מופעלת ב-Firebase. הפעילו Email/Password או Google ב-Console.";
     case "auth/unauthorized-domain":
@@ -35,7 +37,18 @@ export const getAuthErrorMessage = (errorCode, fallback = "אירעה שגיאה
       return "יש בעיה בהגדרות Firebase";
     case "auth/app-not-authorized":
       return "האתר אינו מורשה להשתמש ב-Firebase";
+    case "auth/internal-error":
+      return "שגיאה פנימית בהתחברות Google. נסו שוב או השתמשו באימייל וסיסמה.";
+    case "auth/web-storage-unsupported":
+      return "הדפדפן חוסם אחסון מקומי. אפשרו cookies ונסו שוב.";
+    case "auth/redirect-cancelled-by-user":
+      return "ההתחברות עם Google בוטלה";
+    case "auth/missing-or-invalid-nonce":
+      return "בקשת Google נכשלה. נסו שוב.";
     default:
+      if (String(errorCode || "").includes("redirect_uri")) {
+        return "הגדרות Google לא שלמות (redirect_uri). עדכנו ב-Google Cloud לפי GOOGLE_LOGIN_FIX.md";
+      }
       return fallback;
   }
 };

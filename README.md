@@ -45,8 +45,12 @@ Contact: `petzo.team@gmail.com`
 
 ## Deployment
 
-Build output goes to `build/`. Netlify uses `public/_redirects` for SPA routing. Point custom domain `petzo.co.il` in Netlify and add it to Firebase authorized domains.
+Build output goes to `build/`. Netlify uses `public/_redirects` for SPA routing. Point custom domain `petzo.co.il` **and** `www.petzo.co.il` in Netlify Domain management, and add both to Firebase authorized domains.
 
 ## Launch checklist
 
-Before public launch (Google login + verification emails): see **`LAUNCH.md`** and **`FIREBASE_SMTP_SETUP.md`**.
+Before public launch (publish real ads): see **`FINISH.md`**.  
+Google login console steps: **`GOOGLE_LOGIN_FIX.md`**.  
+Auth / SMTP details: **`LAUNCH.md`** and **`FIREBASE_SMTP_SETUP.md`**.  
+Petzo-branded verification emails (no Horsehub): **`CUSTOM_AUTH_EMAILS.md`**.  
+WWW domain: **`WWW_DOMAIN_SETUP.md`**.

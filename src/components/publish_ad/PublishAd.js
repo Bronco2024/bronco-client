@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './PublishAd.css';
 import { db, storage } from '@/firebase';
-import { doc, setDoc, updateDoc, increment } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '@/context/AuthProvider';
 import { v4 as uuidv4 } from 'uuid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Modal from '@components/utils/modal/Modal';
-import { BREEDS, CATEGORIES, SEED_ANIMAL_TYPES, SEMEN_TYPES, EXTENDED_CATEGORIES, ACCESSORIES_TPYES, getSeedTypesByAnimal, isServiceCategory } from "@components/utils/constants/Constants";
+import { BREEDS, SEED_ANIMAL_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, getSeedTypesByAnimal, isServiceCategory } from "@components/utils/constants/Constants";
 import { isPetMarketplaceCategory } from "@/data/pets";
 import BreedSelect from "@/components/pets/BreedSelect";
 import CitySelect from "@/components/pets/CitySelect";
@@ -19,15 +19,37 @@ import { getInitialAdStatus, AD_STATUS } from '@/helpers/ad-approval';
 import { createPendingAdNotification } from '@/helpers/admin-notifications';
 import ServiceAnimalSelect from '@/components/services/ServiceAnimalSelect';
 import { getServiceByCategory } from '@/data/services-catalog';
+import PublishCategorySelect from '@/components/publish_ad/PublishCategorySelect';
+import {
+    getServicePublishCopy,
+    isServicePublishMode,
+    resolvePublishCategoryFromQuery,
+} from '@/helpers/publish-categories';
+import { omitUndefinedFields } from '@/helpers/firestore-safe';
+import {
+    appendPublishPhotos,
+    removePublishPhotoAt,
+    MAX_PUBLISH_PHOTOS,
+} from '@/helpers/publish-photos';
 
 const PublishAd = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { currentUser, setCurrentUser } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [pendingApproval, setPendingApproval] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [phoneValid, setPhoneValid] = useState(true);
     const [photoError, setPhotoError] = useState("");
+    const [submitError, setSubmitError] = useState("");
+    const [previewUrls, setPreviewUrls] = useState([]);
+    const photosInputRef = useRef(null);
+    const videoInputRef = useRef(null);
+    const serviceMode = isServicePublishMode({
+        type: searchParams.get("type") || "",
+        category: searchParams.get("category") || "",
+        slug: searchParams.get("slug") || "",
+    });
 
     const [formData, setFormData] = useState({
         contact: '',
@@ -40,7 +62,21 @@ const PublishAd = () => {
         photos: [],
         video: null,
         service_animals: [],
+        title: '',
+        price: '',
     });
+
+    useEffect(() => {
+        const fromQuery = resolvePublishCategoryFromQuery({
+            category: searchParams.get("category") || "",
+            slug: searchParams.get("slug") || "",
+            type: searchParams.get("type") || "",
+        });
+        if (!fromQuery) return;
+        setFormData((prev) =>
+            prev.category ? prev : { ...prev, category: fromQuery, service_animals: [] }
+        );
+    }, [searchParams]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -80,8 +116,53 @@ const PublishAd = () => {
     };
 
     const handleFileChange = (e) => {
-        setFormData({ ...formData, photos: Array.from(e.target.files) });
+        const incoming = Array.from(e.target.files || []);
+        setFormData((prev) => ({
+            ...prev,
+            photos: appendPublishPhotos(prev.photos, incoming),
+        }));
+        if (incoming.length) {
+            setPhotoError("");
+        }
+        // Allow picking the same file again after remove.
+        if (photosInputRef.current) {
+            photosInputRef.current.value = "";
+        }
     };
+
+    const handleRemovePhoto = (index) => {
+        setFormData((prev) => ({
+            ...prev,
+            photos: removePublishPhotoAt(prev.photos, index),
+        }));
+    };
+
+    const handleVideoChange = (e) => {
+        const file = e.target.files?.[0] || null;
+        setFormData((prev) => ({ ...prev, video: file }));
+        if (videoInputRef.current) {
+            videoInputRef.current.value = "";
+        }
+    };
+
+    const handleRemoveVideo = () => {
+        setFormData((prev) => ({ ...prev, video: null }));
+        if (videoInputRef.current) {
+            videoInputRef.current.value = "";
+        }
+    };
+
+    useEffect(() => {
+        const urls = (formData.photos || []).map((file) =>
+            file ? URL.createObjectURL(file) : ""
+        );
+        setPreviewUrls(urls);
+        return () => {
+            urls.forEach((url) => {
+                if (url) URL.revokeObjectURL(url);
+            });
+        };
+    }, [formData.photos]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -94,6 +175,7 @@ const PublishAd = () => {
             return;
         }
         setPhotoError("");
+        setSubmitError("");
         setUploading(true);
 
         if ((formData.category === "סוסים" || formData.category === "זרע")
@@ -127,6 +209,11 @@ const PublishAd = () => {
 
             date.setMonth(date.getMonth() + 1);
 
+            const isService = isServiceCategory(formData.category);
+            const isPetLike =
+                formData.category === "סוסים" ||
+                isPetMarketplaceCategory(formData.category);
+
             let adData = {
                 ...formData,
                 photos: photoURLs,
@@ -135,6 +222,7 @@ const PublishAd = () => {
                 createdAt: new Date(),
                 availableUntil: date,
                 status: getInitialAdStatus(currentUser?.isAdmin),
+                listingKind: isService ? "service" : "ad",
             };
 
             if (formData.forAdoption) {
@@ -142,21 +230,39 @@ const PublishAd = () => {
                 if (!adData.price) adData.price = "לאימוץ";
             }
 
-            if (formData.category === "סוסים" || isPetMarketplaceCategory(formData.category)) {
+            if (isPetLike) {
                 const totalMonths =
                     (Number(formData.ageYears) || 0) * 12 +
                     (Number(formData.ageMonths) || 0);
 
                 adData.ageInMonths = totalMonths;
                 delete adData.age;
+                adData.breed = resolvePetBreed(formData.breed, formData.breedCustom);
+            } else {
+                delete adData.breed;
+                delete adData.ageYears;
+                delete adData.ageMonths;
+                delete adData.age;
+                delete adData.gender;
+                delete adData.hasCertificate;
+                delete adData.forAdoption;
             }
-
-            adData.breed = resolvePetBreed(formData.breed, formData.breedCustom);
             delete adData.breedCustom;
 
-            if (!isServiceCategory(formData.category) || !formData.service_animals?.length) {
+            if (!isService || !formData.service_animals?.length) {
                 delete adData.service_animals;
             }
+
+            if (!isService) {
+                delete adData.title;
+            }
+
+            // Empty optional price → omit (Firestore rejects undefined; empty string is ok but nullish is cleaner)
+            if (adData.price === "" || adData.price === null || adData.price === undefined) {
+                delete adData.price;
+            }
+
+            adData = omitUndefinedFields(adData);
 
             await setDoc(doc(db, "ads", adId), adData);
 
@@ -189,14 +295,27 @@ const PublishAd = () => {
                 phoneNumber: '',
                 location: '',
                 photos: [],
-                video: null
+                video: null,
+                service_animals: [],
+                title: '',
+                price: '',
+                contact: '',
+                district: '',
+                breedCustom: '',
             });
+            if (photosInputRef.current) photosInputRef.current.value = "";
+            if (videoInputRef.current) videoInputRef.current.value = "";
 
             setShowModal(true);
             setPendingApproval(!currentUser?.isAdmin);
 
         } catch (error) {
             console.error("Error publishing ad:", error);
+            setSubmitError(
+                isServiceCategory(formData.category)
+                    ? "פרסום השירות נכשל. בדקו את הפרטים ונסו שוב."
+                    : "פרסום המודעה נכשל. בדקו את הפרטים ונסו שוב."
+            );
             Sentry.captureException(`Error publishing ad`, {
                 tags: {
                     component: "PublishAd"
@@ -237,54 +356,63 @@ const PublishAd = () => {
     const isOtherHorseBreed =
         formData.category === "סוסים" && formData.breed === PET_BREED_OTHER;
 
+    const publishingService =
+        serviceMode || isServiceCategory(formData.category);
+    const selectedService = isServiceCategory(formData.category)
+        ? getServiceByCategory(formData.category)
+        : null;
+    const serviceCopy = selectedService
+        ? getServicePublishCopy(formData.category)
+        : getServicePublishCopy("");
+
+    const showPriceField =
+        !formData.forAdoption &&
+        Boolean(formData.category) &&
+        (
+            formData.category === "סוסים" ||
+            formData.category === "זרע" ||
+            formData.category === "אביזרים" ||
+            formData.category === "חנות" ||
+            isPetMarketplaceCategory(formData.category) ||
+            isServiceCategory(formData.category)
+        );
+
     return (
-        <div className="publish-ad-container">
-            <h1>פרסם מודעה</h1>
+        <div className={`publish-ad-container ${publishingService ? "publish-ad-container--service" : ""}`}>
+            <h1>{publishingService ? "פרסום שירות" : "פרסם מודעה"}</h1>
             <p className="publish-ad-lead">
-                מלאו את הפרטים, הוסיפו תמונות ברורות, והמודעה תופיע באתר לאחר אישור מנהל.
+                {publishingService
+                    ? "כאן מפרסמים שירות מקצועי (וטרינר, פנסיון, הסעות וכו') — לא מודעת מכירה של חיה. מלאו כותרת, תחום ותמונות ברורות."
+                    : "מלאו את הפרטים לפי סוג המודעה (חיה, מוצר או שירות), הוסיפו תמונות ברורות, והמודעה תופיע באתר לאחר אישור מנהל."}
             </p>
             <form onSubmit={handleSubmit} className="publish-ad-form">
 
-                <label htmlFor="category"> קטגוריה</label>
-                <select
-                    id="category"
-                    name="category"
+                <PublishCategorySelect
                     value={formData.category}
                     onChange={handleChange}
-                    required
-                >
-                    <option value="">בחר קטגוריה</option>
-                    {currentUser?.isAdmin ? (
-                        EXTENDED_CATEGORIES.map((cat, index) => (
-                            <option key={index} value={cat.label}>
-                                {cat.label}
-                            </option>
-                        ))
-                    ) : (
-                        CATEGORIES.map((cat, index) => (
-                            <option key={index} value={cat.label}>
-                                {cat.label}
-                            </option>
-                        ))
-                    )}
-                </select>
-
+                    isAdmin={Boolean(currentUser?.isAdmin)}
+                    servicesOnly={serviceMode}
+                />
 
                 {isServiceCategory(formData.category) && (
-                    <>
-                        <label htmlFor="title">כותרת המודעה</label>
+                    <div className="publish-service-block">
+                        <p className="publish-service-kicker">פרטי השירות</p>
+                        {serviceCopy?.hint && (
+                            <p className="publish-service-hint">{serviceCopy.hint}</p>
+                        )}
+                        <label htmlFor="title">כותרת השירות</label>
                         <input
                             id="title"
                             name="title"
                             value={formData.title || ""}
                             onChange={handleChange}
-                            placeholder="לדוגמה: פנסיון לכלבים בתל אביב"
+                            placeholder={serviceCopy?.titlePlaceholder || "כותרת השירות"}
                             required
                         />
                         <ServiceAnimalSelect
                             value={formData.service_animals || []}
                             suggestedAnimals={
-                                getServiceByCategory(formData.category)?.animals || []
+                                selectedService?.animals || []
                             }
                             onChange={(animals) =>
                                 setFormData((prev) => ({
@@ -293,7 +421,7 @@ const PublishAd = () => {
                                 }))
                             }
                         />
-                    </>
+                    </div>
                 )}
 
                 
@@ -507,6 +635,7 @@ const PublishAd = () => {
                                     onChange={handleChange}
                                     required
                                 >
+                                    <option value="">בחר סוג זרע</option>
                                     {SEMEN_TYPES.map((semen, index) => (
                                         <option key={index} value={semen}>
                                             {semen}
@@ -603,14 +732,13 @@ const PublishAd = () => {
                 />
 
                 {
-                    ((formData.category === "סוסים") ||
-                        (formData.category === "זרע") ||
-                        (formData.category === "אביזרים") ||
-                        (formData.category === "חנות") ||
-                        isPetMarketplaceCategory(formData.category)) &&
-                    !formData.forAdoption && (
+                    showPriceField && (
                         <div className='publish-ad-form'>
-                            <label htmlFor="price">מחיר</label>
+                            <label htmlFor="price">
+                                {isServiceCategory(formData.category)
+                                    ? (serviceCopy?.priceLabel || "מחיר / תעריף (אופציונלי)")
+                                    : "מחיר"}
+                            </label>
                             <input
                                 type="number"
                                 id="price"
@@ -633,45 +761,94 @@ const PublishAd = () => {
                     <div className='publish-ad-form'>
                         <label htmlFor="video">סרטון</label>
                         <input
+                            ref={videoInputRef}
+                            id="video"
                             type="file"
                             accept="video/*"
-                            onChange={(e) => setFormData({ ...formData, video: e.target.files[0] })}
+                            onChange={handleVideoChange}
                         />
+                        {formData.video && (
+                            <div className="publish-media-preview publish-video-preview">
+                                <span className="publish-media-name">{formData.video.name}</span>
+                                <button
+                                    type="button"
+                                    className="publish-remove-media"
+                                    onClick={handleRemoveVideo}
+                                >
+                                    הסר
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
 
                 <label htmlFor="photos">תמונות *</label>
+                <p className="publish-photos-hint">
+                    אפשר להוסיף עד {MAX_PUBLISH_PHOTOS} תמונות, למחוק ולהחליף לפני הפרסום.
+                </p>
                 <input
+                    ref={photosInputRef}
                     type="file"
                     id="photos"
                     name="photos"
                     multiple
                     accept="image/*"
-                    onChange={(event) => {
-                        handleFileChange(event);
-                        if (event.target.files?.length) {
-                            setPhotoError("");
-                        }
-                    }}
-                    required
+                    onChange={handleFileChange}
                 />
+                {formData.photos?.length > 0 && (
+                    <div className="publish-photos-grid" aria-label="תצוגה מקדימה של תמונות">
+                        {formData.photos.map((file, index) => (
+                            <div key={`${file.name}-${file.size}-${index}`} className="publish-photo-item">
+                                <img
+                                    src={previewUrls[index]}
+                                    alt={file.name || `תמונה ${index + 1}`}
+                                />
+                                <button
+                                    type="button"
+                                    className="publish-remove-media"
+                                    onClick={() => handleRemovePhoto(index)}
+                                >
+                                    הסר
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+                {formData.photos?.length > 0 && formData.photos.length < MAX_PUBLISH_PHOTOS && (
+                    <p className="publish-photos-count">
+                        {formData.photos.length}/{MAX_PUBLISH_PHOTOS} — בחרו שוב כדי להוסיף עוד
+                    </p>
+                )}
                 {photoError && <p className="publish-photo-error">{photoError}</p>}
+                {submitError && <p className="publish-photo-error">{submitError}</p>}
 
                 <button type="submit" className="publish-button" disabled={uploading}>
-                    {uploading ? "...מפרסם" : "פרסם מודעה"}
+                    {uploading
+                        ? "...מפרסם"
+                        : publishingService
+                            ? "פרסם שירות"
+                            : "פרסם מודעה"}
                 </button>
             </form >
 
             <Modal
                 isVisible={showModal}
-                title={pendingApproval ? "המודעה נשלחה לאישור" : "מודעה פורסמה"}
+                title={
+                    pendingApproval
+                        ? (publishingService ? "השירות נשלח לאישור" : "המודעה נשלחה לאישור")
+                        : (publishingService ? "השירות פורסם" : "מודעה פורסמה")
+                }
                 onClose={closeModal}
             >
                 <div className="modal-content-custom-publishad">
                     <p>
                         {pendingApproval
-                            ? "המודעה נשמרה בהצלחה ותוצג באתר לאחר אישור מנהל."
-                            : "המודעה פורסמה בהצלחה!"}
+                            ? (publishingService
+                                ? "השירות נשמר בהצלחה ויופיע באתר לאחר אישור מנהל."
+                                : "המודעה נשמרה בהצלחה ותוצג באתר לאחר אישור מנהל.")
+                            : (publishingService
+                                ? "השירות פורסם בהצלחה!"
+                                : "המודעה פורסמה בהצלחה!")}
                     </p>
                     <div className="modal-buttons-custom-publishad">
                         <button className="close-button-publishad" onClick={closeModal}>סגור</button>

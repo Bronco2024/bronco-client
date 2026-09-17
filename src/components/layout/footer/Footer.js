@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaw } from "@fortawesome/free-solid-svg-icons";
 import { SITE_SERVICES, MARKETPLACE_CATEGORIES } from '@/data/pets';
-import { SITE_NAME, CONTACT_EMAIL } from '@/data/site-config';
+import {
+    SITE_NAME,
+    CONTACT_EMAIL,
+    CONTACT_PHONE_DISPLAY,
+    CONTACT_WHATSAPP_URL,
+} from '@/data/site-config';
 
 const Footer = () => {
     return (
@@ -61,7 +66,15 @@ const Footer = () => {
                         <a className="contact-link" href={`mailto:${CONTACT_EMAIL}`}>
                             {CONTACT_EMAIL}
                         </a>
-                        <a href="tel:0547926338" className="contact-link">054-792-6338</a>
+                        <a
+                            href={CONTACT_WHATSAPP_URL}
+                            className="contact-link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`WhatsApp ${CONTACT_PHONE_DISPLAY}`}
+                        >
+                            {CONTACT_PHONE_DISPLAY}
+                        </a>
                     </div>
                 </div>
             </div>

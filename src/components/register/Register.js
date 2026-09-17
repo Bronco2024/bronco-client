@@ -12,6 +12,8 @@ import { handleGoogleSignupAndSignIn } from '../../helpers/firebase-helpers';
 import { sendSiteEmailVerification } from '../../helpers/auth-email';
 import { getAuthErrorMessage } from '../../helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
+import InAppBrowserNotice from '../auth/InAppBrowserNotice';
+import { IN_APP_BROWSER_AUTH_CODE } from '../../helpers/google-auth-strategy';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -26,16 +28,27 @@ const Register = () => {
     const [googleLoading, setGoogleLoading] = useState(false);
 
     useEffect(() => {
+        let cancelled = false;
+        setGoogleLoading(true);
         getRedirectResult(auth)
           .then((result) => {
+            if (cancelled) return;
             if (result?.user) {
               navigate('/');
+              return;
             }
           })
           .catch((error) => {
+            if (cancelled) return;
             setError(getAuthErrorMessage(error?.code, 'שגיאה בהרשמה עם Google'));
             console.error(error);
+          })
+          .finally(() => {
+            if (!cancelled) setGoogleLoading(false);
           });
+        return () => {
+          cancelled = true;
+        };
       }, [navigate]);
 
     const handleLoginRedirect = () => {
@@ -96,13 +109,17 @@ const Register = () => {
             const result = await handleGoogleSignupAndSignIn();
             if (result?.user) {
                 navigate('/');
+                return;
             }
+            // Redirect started — keep loading until navigation.
+            return;
         } catch (error) {
             setError(getAuthErrorMessage(error?.code, "שגיאה בהרשמה עם Google"));
-            Sentry.captureException(error, {
-                tags: { component: "Register", method: "GoogleSignup" }
-            });
-        } finally {
+            if (error?.code !== IN_APP_BROWSER_AUTH_CODE) {
+                Sentry.captureException(error, {
+                    tags: { component: "Register", method: "GoogleSignup" }
+                });
+            }
             setGoogleLoading(false);
         }
     };
@@ -116,6 +133,7 @@ const Register = () => {
                 <span>{SITE_NAME}</span>
             </div>
             <h2 className="register-title">הירשם</h2>
+            <InAppBrowserNotice />
             <form className="register-form" onSubmit={handleSubmit}>
                 <label htmlFor="email">מייל</label>
                 <input

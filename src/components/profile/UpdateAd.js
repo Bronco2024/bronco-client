@@ -5,7 +5,7 @@ import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'fire
 import { db, storage } from '@/firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
-import { BREEDS, CATEGORIES, EXTENDED_CATEGORIES, SEED_ANIMAL_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, getSeedTypesByAnimal, isServiceCategory } from "@components/utils/constants/Constants";
+import { BREEDS, SEED_ANIMAL_TYPES, SEMEN_TYPES, ACCESSORIES_TPYES, getSeedTypesByAnimal, isServiceCategory } from "@components/utils/constants/Constants";
 import { isPetMarketplaceCategory } from "@/data/pets";
 import BreedSelect from "@/components/pets/BreedSelect";
 import CitySelect from "@/components/pets/CitySelect";
@@ -20,6 +20,9 @@ import { getAdStatusAfterUpdate, AD_STATUS } from '@/helpers/ad-approval';
 import { createPendingAdNotification } from '@/helpers/admin-notifications';
 import ServiceAnimalSelect from '@/components/services/ServiceAnimalSelect';
 import { getServiceByCategory } from '@/data/services-catalog';
+import PublishCategorySelect from '@/components/publish_ad/PublishCategorySelect';
+import { getServicePublishCopy } from '@/helpers/publish-categories';
+import { omitUndefinedFields } from '@/helpers/firestore-safe';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -66,6 +69,14 @@ const UpdateAd = () => {
         }
         if (name === "seed_animal") {
             setFormData({ ...formData, seed_animal: value, seed_type: "" });
+            return;
+        }
+        if (name === "category") {
+            setFormData((prev) => ({
+                ...prev,
+                category: value,
+                service_animals: [],
+            }));
             return;
         }
         if (name === "price" || name === "ageYears" || name === "ageMonths") {
@@ -210,13 +221,18 @@ const UpdateAd = () => {
 
             dataToSubmit.ageInMonths = totalMonths;
             delete dataToSubmit.age;
+            dataToSubmit.breed = resolvePetBreed(formData.breed, formData.breedCustom);
+        } else {
+            delete dataToSubmit.breed;
         }
-
-        dataToSubmit.breed = resolvePetBreed(formData.breed, formData.breedCustom);
         delete dataToSubmit.breedCustom;
 
         if (!isServiceCategory(formData.category) || !formData.service_animals?.length) {
             delete dataToSubmit.service_animals;
+        }
+
+        if (isServiceCategory(formData.category)) {
+            dataToSubmit.listingKind = "service";
         }
 
         if (formData.forAdoption) {
@@ -227,6 +243,7 @@ const UpdateAd = () => {
         }
 
         dataToSubmit = DeletedAttributesAfterUpdateForm(dataToSubmit);
+        dataToSubmit = omitUndefinedFields(dataToSubmit);
 
         const adRef = doc(db, "ads", ad.id);
 
@@ -314,51 +331,53 @@ const UpdateAd = () => {
     const isOtherHorseBreed =
         formData.category === "סוסים" && formData.breed === PET_BREED_OTHER;
 
+    const selectedService = isServiceCategory(formData.category)
+        ? getServiceByCategory(formData.category)
+        : null;
+    const serviceCopy = selectedService
+        ? getServicePublishCopy(formData.category)
+        : null;
+
+    const showPriceField =
+        !formData.forAdoption &&
+        Boolean(formData.category) &&
+        (
+            formData.category === "סוסים" ||
+            formData.category === "זרע" ||
+            formData.category === "אביזרים" ||
+            formData.category === "חנות" ||
+            isPetMarketplaceCategory(formData.category) ||
+            isServiceCategory(formData.category)
+        );
+
     return (
         <div className="update-ad-container">
             <h1>עדכון מודעה</h1>
             <form className="update-ad-form" onSubmit={handleSubmit}>
 
-                <label htmlFor="category"> קטגוריה</label>
-                <select
-                    id="category"
-                    name="category"
+                <PublishCategorySelect
                     value={formData.category}
                     onChange={handleChange}
-                    required
-                >
-                    <option value="">בחר קטגוריה</option>
-                    {currentUser?.isAdmin ? (
-                        EXTENDED_CATEGORIES.map((cat, index) => (
-                            <option key={index} value={cat.label}>
-                                {cat.label}
-                            </option>
-                        ))
-                    ) : (
-                        CATEGORIES.map((cat, index) => (
-                            <option key={index} value={cat.label}>
-                                {cat.label}
-                            </option>
-                        ))
-                    )}
-                </select>
+                    isAdmin={Boolean(currentUser?.isAdmin)}
+                />
 
                 {isServiceCategory(formData.category) && (
-                    <>
-                        <label htmlFor="title">כותרת המודעה</label>
+                    <div className="publish-service-block">
+                        {serviceCopy?.hint && (
+                            <p className="publish-service-hint">{serviceCopy.hint}</p>
+                        )}
+                        <label htmlFor="title">כותרת השירות</label>
                         <input
                             id="title"
                             name="title"
                             value={formData.title || ""}
                             onChange={handleChange}
-                            placeholder="לדוגמה: פנסיון לכלבים בתל אביב"
+                            placeholder={serviceCopy?.titlePlaceholder || "כותרת השירות"}
                             required
                         />
                         <ServiceAnimalSelect
                             value={formData.service_animals || []}
-                            suggestedAnimals={
-                                getServiceByCategory(formData.category)?.animals || []
-                            }
+                            suggestedAnimals={selectedService?.animals || []}
                             onChange={(animals) =>
                                 setFormData((prev) => ({
                                     ...prev,
@@ -366,7 +385,7 @@ const UpdateAd = () => {
                                 }))
                             }
                         />
-                    </>
+                    </div>
                 )}
 
                 {formData.category === "סוסים" && (
@@ -670,13 +689,13 @@ const UpdateAd = () => {
                     enableAreaFilter
                 />
 
-                {((formData.category === "סוסים") ||
-                    (formData.category === "זרע") ||
-                    (formData.category === "אביזרים") ||
-                    isPetMarketplaceCategory(formData.category)) &&
-                !formData.forAdoption && (
+                {showPriceField && (
                         <div className='update-ad-form'>
-                            <label htmlFor="price">מחיר</label>
+                            <label htmlFor="price">
+                                {isServiceCategory(formData.category)
+                                    ? (serviceCopy?.priceLabel || "מחיר / תעריף (אופציונלי)")
+                                    : "מחיר"}
+                            </label>
                             <input
                                 type="number"
                                 id="price"

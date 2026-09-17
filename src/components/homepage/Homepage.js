@@ -17,8 +17,6 @@ import {
   SITE_SERVICES,
   filterListings,
   isAdoptionListing,
-  mergeMarketplaceListings,
-  getCatalogPool,
 } from "@/data/pets";
 import { getFeaturedServices } from "@/data/services-catalog";
 import { getListingPath } from "@/helpers/listing-links";
@@ -87,11 +85,7 @@ function Homepage() {
 
   const featuredListings = filteredListings.slice(0, 10);
   const adoptionListings = useMemo(
-    () =>
-      mergeMarketplaceListings(
-        liveAds.filter(isAdoptionListing),
-        getCatalogPool({ adoptionOnly: true })
-      ).slice(0, 4),
+    () => liveAds.filter(isAdoptionListing).slice(0, 4),
     [liveAds]
   );
 
@@ -282,19 +276,28 @@ function Homepage() {
           </div>
         ) : (
           <div className="no-results">
-            <h3>לא נמצאו מודעות</h3>
-            <p>נסו לשנות את החיפוש או לבחור קטגוריה אחרת.</p>
-            <button
-              className="dark-button"
-              type="button"
-              onClick={() => {
-                setSearchText("");
-                setSelectedService("");
-                setSelectedCategory("");
-              }}
-            >
-              נקה חיפוש
-            </button>
+            <h3>עדיין אין מודעות כאן</h3>
+            <p>זה הזמן לפרסם את המודעה הראשונה — חיות, אימוץ או שירותים.</p>
+            <div className="no-results-actions">
+              <button
+                className="dark-button"
+                type="button"
+                onClick={() => navigate("/publish_ad")}
+              >
+                פרסמו מודעה
+              </button>
+              <button
+                className="ghost-button"
+                type="button"
+                onClick={() => {
+                  setSearchText("");
+                  setSelectedService("");
+                  setSelectedCategory("");
+                }}
+              >
+                נקה חיפוש
+              </button>
+            </div>
           </div>
         )}
       </section>
@@ -378,19 +381,26 @@ function Homepage() {
             <button
               key={service.path}
               type="button"
-              className="service-card service-card--featured"
+              className="service-card service-card--featured service-card--photo"
               style={{ "--service-accent": service.accent }}
               onClick={() => navigate(service.path)}
             >
-              {service.isNew && <span className="service-card-badge">חדש</span>}
-              <h3>{service.name}</h3>
-              <p>{service.subtitle}</p>
-              <div className="service-card-animals">
-                {service.animals.slice(0, 3).map((animal) => (
-                  <span key={animal}>{animal}</span>
-                ))}
+              <div
+                className="service-card-photo"
+                style={{ backgroundImage: `url(${service.image})` }}
+                aria-hidden="true"
+              />
+              <div className="service-card-content">
+                {service.isNew && <span className="service-card-badge">חדש</span>}
+                <h3>{service.name}</h3>
+                <p>{service.subtitle}</p>
+                <div className="service-card-animals">
+                  {service.animals.slice(0, 3).map((animal) => (
+                    <span key={animal}>{animal}</span>
+                  ))}
+                </div>
+                <span className="service-card-cta">לפרטים ←</span>
               </div>
-              <span>לפרטים ←</span>
             </button>
           ))}
         </div>

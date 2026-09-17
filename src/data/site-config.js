@@ -10,6 +10,13 @@ export const ADMIN_EMAIL =
 
 export const CONTACT_EMAIL = "petzo.team@gmail.com";
 
+/** Site contact phone (display + WhatsApp). */
+export const CONTACT_PHONE = "0527502293";
+export const CONTACT_PHONE_DISPLAY = "052-750-2293";
+export const CONTACT_WHATSAPP_URL = `https://wa.me/972527502293?text=${encodeURIComponent(
+  "שלום, הגעתי מאתר Petzo."
+)}`;
+
 export const SITE_URL =
   process.env.REACT_APP_SITE_URL || "https://petzo.co.il";
 

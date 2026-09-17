@@ -12,7 +12,13 @@ import {
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { ABOUTUS_FEATURES } from "@components/utils/constants/Constants";
-import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from "@/data/site-config";
+import {
+  CONTACT_EMAIL,
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_WHATSAPP_URL,
+  SITE_NAME,
+  SITE_URL,
+} from "@/data/site-config";
 import useSeo from "@/hooks/useSeo";
 import InfoPageShell from "../InfoPageShell";
 
@@ -94,6 +100,16 @@ const AboutUs = () => {
             <p>
               לשאלות או שיתופי פעולה:{" "}
               <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+            </p>
+            <p>
+              WhatsApp:{" "}
+              <a
+                href={CONTACT_WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {CONTACT_PHONE_DISPLAY}
+              </a>
             </p>
           </div>
         </div>

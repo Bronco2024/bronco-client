@@ -97,14 +97,13 @@ const ServicesHub = () => {
             ועוד.
           </p>
 
-          <button
-            type="button"
+          <a
             className="services-hub-publish"
-            onClick={() => navigate("/publish_ad")}
+            href="/publish_ad?type=service"
           >
             <FontAwesomeIcon icon={faPlus} />
             <span>פרסמו שירות</span>
-          </button>
+          </a>
         </div>
       </section>
 
@@ -140,7 +139,7 @@ const ServicesHub = () => {
                 return (
                   <article
                     key={service.slug}
-                    className="services-hub-card"
+                    className="services-hub-card services-hub-card--photo"
                     style={{ "--service-accent": service.accent }}
                     onClick={() => openService(service)}
                     onKeyDown={(event) => {
@@ -157,25 +156,42 @@ const ServicesHub = () => {
                     )}
 
                     <div
-                      className="services-hub-card-icon"
+                      className="services-hub-card-photo"
+                      style={{ backgroundImage: `url(${service.image})` }}
                       aria-hidden="true"
-                    >
-                      <FontAwesomeIcon icon={icon} />
+                    />
+
+                    <div className="services-hub-card-body">
+                      <div
+                        className="services-hub-card-icon"
+                        aria-hidden="true"
+                      >
+                        <FontAwesomeIcon icon={icon} />
+                      </div>
+
+                      <h3>{service.name}</h3>
+                      <p>{service.subtitle}</p>
+
+                      <div className="services-hub-card-animals">
+                        {service.animals.slice(0, 4).map((animal) => (
+                          <span key={animal}>{animal}</span>
+                        ))}
+                        {service.animals.length > 4 && (
+                          <span>+{service.animals.length - 4}</span>
+                        )}
+                      </div>
+
+                      <span className="services-hub-card-cta">לפרטים ←</span>
+                      <a
+                        className="services-hub-card-publish"
+                        href={`/publish_ad?slug=${encodeURIComponent(service.slug)}`}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                        }}
+                      >
+                        פרסמו שירות זה
+                      </a>
                     </div>
-
-                    <h3>{service.name}</h3>
-                    <p>{service.subtitle}</p>
-
-                    <div className="services-hub-card-animals">
-                      {service.animals.slice(0, 4).map((animal) => (
-                        <span key={animal}>{animal}</span>
-                      ))}
-                      {service.animals.length > 4 && (
-                        <span>+{service.animals.length - 4}</span>
-                      )}
-                    </div>
-
-                    <span className="services-hub-card-cta">לפרטים ←</span>
                   </article>
                 );
               })}

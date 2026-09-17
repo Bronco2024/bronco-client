@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '@/firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut, getRedirectResult } from 'firebase/auth';
 import { getDoc, doc, setDoc } from 'firebase/firestore';
 import { clearCart, loadCart } from '@/redux/cartSlice';
 import { useDispatch } from 'react-redux';
+import { isSiteAdminEmail } from '@/helpers/site-admin';
 
 const AuthContext = createContext();
 
@@ -13,7 +14,15 @@ export const AuthProvider = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    let cancelled = false;
+
+    // Complete Google redirect on ANY page (not only /login).
+    getRedirectResult(auth).catch((error) => {
+      console.warn("Google redirect result:", error?.code || error);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (cancelled) return;
       setLoading(true);
       try {
         if (!user) {
@@ -22,9 +31,13 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        // Avoid forced reload/token refresh on every page load — that was
-        // adding multi-second delay for signed-in users.
-        if (!user.emailVerified) {
+        // Skip forced reload()/getIdToken(true) on every page — that added
+        // multi-second delay. Auth state already carries emailVerified.
+        const signedInWithGoogle = user.providerData?.some(
+          (p) => p.providerId === "google.com"
+        );
+        // Google accounts are trusted; email/password still requires verification.
+        if (!user.emailVerified && !signedInWithGoogle) {
           setCurrentUser(null);
           dispatch(clearCart());
           return;
@@ -32,6 +45,7 @@ export const AuthProvider = ({ children }) => {
 
         const userRef = doc(db, 'users', user.uid);
         const snap = await getDoc(userRef);
+        const siteAdmin = isSiteAdminEmail(user.email);
 
         if (!snap.exists()) {
           const defaultProfile = {
@@ -42,7 +56,8 @@ export const AuthProvider = ({ children }) => {
              * Change to 1 when payments return
              */
             numberOfAds: Number.MAX_VALUE,
-            cart: []
+            cart: [],
+            isAdmin: siteAdmin,
           };
           await setDoc(userRef, defaultProfile);
 
@@ -50,24 +65,52 @@ export const AuthProvider = ({ children }) => {
           dispatch(loadCart([]));
         } else {
           const data = snap.data();
+          if (siteAdmin && !data.isAdmin) {
+            await setDoc(userRef, { isAdmin: true, email: user.email }, { merge: true });
+          }
           const rawCart = data.cart || [];
           const cart = rawCart.map(item => ({
             ...item,
             availableUntil: item.availableUntil?.toDate?.() || null,
             createdAt: item.createdAt?.toDate?.() || null,
           }));
-          setCurrentUser({ uid: user.uid, ...data });
+          setCurrentUser({
+            uid: user.uid,
+            ...data,
+            isAdmin: Boolean(data.isAdmin) || siteAdmin,
+          });
           dispatch(loadCart(cart));
         }
       } catch (e) {
-        setCurrentUser(null);
-        dispatch(clearCart());
+        console.error("AuthProvider profile load failed", e);
+        // Auth succeeded but profile read/write failed — keep a minimal session
+        // so Google / email login is not stuck as "signed out".
+        const signedInWithGoogle = user?.providerData?.some(
+          (p) => p.providerId === "google.com"
+        );
+        if (user?.emailVerified || signedInWithGoogle) {
+          setCurrentUser({
+            uid: user.uid,
+            email: user.email,
+            subscribedUntil: null,
+            numberOfAds: Number.MAX_VALUE,
+            cart: [],
+            isAdmin: isSiteAdminEmail(user.email),
+          });
+          dispatch(loadCart([]));
+        } else {
+          setCurrentUser(null);
+          dispatch(clearCart());
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, [dispatch]);
 
   const logout = async () => {
