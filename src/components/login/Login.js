@@ -15,8 +15,7 @@ import { auth } from '@/firebase';
 
 import {
     signInWithEmailAndPassword,
-    reload,
-    getRedirectResult
+    reload
 } from 'firebase/auth';
 
 import { useAuth } from '@/context/AuthProvider';
@@ -30,7 +29,10 @@ import { sendSiteEmailVerification } from '../../helpers/auth-email';
 import { getAuthErrorMessage } from '../../helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
 import InAppBrowserNotice from '../auth/InAppBrowserNotice';
-import { IN_APP_BROWSER_AUTH_CODE } from '../../helpers/google-auth-strategy';
+import {
+    IN_APP_BROWSER_AUTH_CODE,
+    consumeGoogleRedirectError,
+} from '../../helpers/google-auth-strategy';
 
 
 const Login = () => {
@@ -46,49 +48,25 @@ const Login = () => {
     const [resendStatus, setResendStatus] = useState('');
     const [googleLoading, setGoogleLoading] = useState(false);
 
-    const { logout } = useAuth();
+    const { currentUser, loading: authLoading, logout } = useAuth();
 
 
     /* ================================
-       Google Redirect Result
+       Already signed in / Google redirect finished
     ================================= */
 
     useEffect(() => {
+        if (!authLoading && currentUser) {
+            navigate('/', { replace: true });
+        }
+    }, [authLoading, currentUser, navigate]);
 
-        const checkRedirectResult = async () => {
-
-            try {
-                setGoogleLoading(true);
-                const result = await getRedirectResult(auth);
-
-                if (result?.user) {
-                    navigate('/');
-                    return;
-                }
-
-            } catch (error) {
-
-                console.error(
-                    'Google redirect error:',
-                    error
-                );
-
-                setError(getAuthErrorMessage(error?.code, 'שגיאה בחיבור עם Google'));
-
-                Sentry.captureException(error, {
-                    tags: {
-                        component: 'Login',
-                        method: 'GoogleRedirect'
-                    }
-                });
-            } finally {
-                setGoogleLoading(false);
-            }
-        };
-
-        checkRedirectResult();
-
-    }, [navigate]);
+    useEffect(() => {
+        const redirectError = consumeGoogleRedirectError();
+        if (redirectError) {
+            setError(getAuthErrorMessage(redirectError, 'שגיאה בחיבור עם Google'));
+        }
+    }, []);
 
     useEffect(() => {
         if (searchParams.get('verified') === '1') {
