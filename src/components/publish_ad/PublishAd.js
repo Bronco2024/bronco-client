@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './PublishAd.css';
 import { db, storage } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
@@ -26,6 +26,11 @@ import {
     resolvePublishCategoryFromQuery,
 } from '@/helpers/publish-categories';
 import { omitUndefinedFields } from '@/helpers/firestore-safe';
+import {
+    appendPublishPhotos,
+    removePublishPhotoAt,
+    MAX_PUBLISH_PHOTOS,
+} from '@/helpers/publish-photos';
 
 const PublishAd = () => {
     const navigate = useNavigate();
@@ -37,7 +42,9 @@ const PublishAd = () => {
     const [phoneValid, setPhoneValid] = useState(true);
     const [photoError, setPhotoError] = useState("");
     const [submitError, setSubmitError] = useState("");
-
+    const [previewUrls, setPreviewUrls] = useState([]);
+    const photosInputRef = useRef(null);
+    const videoInputRef = useRef(null);
     const serviceMode = isServicePublishMode({
         type: searchParams.get("type") || "",
         category: searchParams.get("category") || "",
@@ -109,8 +116,53 @@ const PublishAd = () => {
     };
 
     const handleFileChange = (e) => {
-        setFormData({ ...formData, photos: Array.from(e.target.files) });
+        const incoming = Array.from(e.target.files || []);
+        setFormData((prev) => ({
+            ...prev,
+            photos: appendPublishPhotos(prev.photos, incoming),
+        }));
+        if (incoming.length) {
+            setPhotoError("");
+        }
+        // Allow picking the same file again after remove.
+        if (photosInputRef.current) {
+            photosInputRef.current.value = "";
+        }
     };
+
+    const handleRemovePhoto = (index) => {
+        setFormData((prev) => ({
+            ...prev,
+            photos: removePublishPhotoAt(prev.photos, index),
+        }));
+    };
+
+    const handleVideoChange = (e) => {
+        const file = e.target.files?.[0] || null;
+        setFormData((prev) => ({ ...prev, video: file }));
+        if (videoInputRef.current) {
+            videoInputRef.current.value = "";
+        }
+    };
+
+    const handleRemoveVideo = () => {
+        setFormData((prev) => ({ ...prev, video: null }));
+        if (videoInputRef.current) {
+            videoInputRef.current.value = "";
+        }
+    };
+
+    useEffect(() => {
+        const urls = (formData.photos || []).map((file) =>
+            file ? URL.createObjectURL(file) : ""
+        );
+        setPreviewUrls(urls);
+        return () => {
+            urls.forEach((url) => {
+                if (url) URL.revokeObjectURL(url);
+            });
+        };
+    }, [formData.photos]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -251,6 +303,8 @@ const PublishAd = () => {
                 district: '',
                 breedCustom: '',
             });
+            if (photosInputRef.current) photosInputRef.current.value = "";
+            if (videoInputRef.current) videoInputRef.current.value = "";
 
             setShowModal(true);
             setPendingApproval(!currentUser?.isAdmin);
@@ -707,28 +761,64 @@ const PublishAd = () => {
                     <div className='publish-ad-form'>
                         <label htmlFor="video">סרטון</label>
                         <input
+                            ref={videoInputRef}
+                            id="video"
                             type="file"
                             accept="video/*"
-                            onChange={(e) => setFormData({ ...formData, video: e.target.files[0] })}
+                            onChange={handleVideoChange}
                         />
+                        {formData.video && (
+                            <div className="publish-media-preview publish-video-preview">
+                                <span className="publish-media-name">{formData.video.name}</span>
+                                <button
+                                    type="button"
+                                    className="publish-remove-media"
+                                    onClick={handleRemoveVideo}
+                                >
+                                    הסר
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
 
                 <label htmlFor="photos">תמונות *</label>
+                <p className="publish-photos-hint">
+                    אפשר להוסיף עד {MAX_PUBLISH_PHOTOS} תמונות, למחוק ולהחליף לפני הפרסום.
+                </p>
                 <input
+                    ref={photosInputRef}
                     type="file"
                     id="photos"
                     name="photos"
                     multiple
                     accept="image/*"
-                    onChange={(event) => {
-                        handleFileChange(event);
-                        if (event.target.files?.length) {
-                            setPhotoError("");
-                        }
-                    }}
-                    required
+                    onChange={handleFileChange}
                 />
+                {formData.photos?.length > 0 && (
+                    <div className="publish-photos-grid" aria-label="תצוגה מקדימה של תמונות">
+                        {formData.photos.map((file, index) => (
+                            <div key={`${file.name}-${file.size}-${index}`} className="publish-photo-item">
+                                <img
+                                    src={previewUrls[index]}
+                                    alt={file.name || `תמונה ${index + 1}`}
+                                />
+                                <button
+                                    type="button"
+                                    className="publish-remove-media"
+                                    onClick={() => handleRemovePhoto(index)}
+                                >
+                                    הסר
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+                {formData.photos?.length > 0 && formData.photos.length < MAX_PUBLISH_PHOTOS && (
+                    <p className="publish-photos-count">
+                        {formData.photos.length}/{MAX_PUBLISH_PHOTOS} — בחרו שוב כדי להוסיף עוד
+                    </p>
+                )}
                 {photoError && <p className="publish-photo-error">{photoError}</p>}
                 {submitError && <p className="publish-photo-error">{submitError}</p>}
 
