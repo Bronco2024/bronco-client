@@ -174,12 +174,36 @@
     margin-bottom: 12px;
 }
 
+.photo-item--cover {
+    padding: 8px;
+    border: 1px solid #ff861c;
+    border-radius: 12px;
+    background: #fff8f0;
+}
+
 .photo-item img {
     width: 92px;
     height: 72px;
     object-fit: cover;
     border: 1px solid var(--color-line);
     border-radius: 10px;
+}
+
+.set-cover-button {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 1px solid #d5dee6;
+    background: #fff;
+    color: var(--color-navy);
+}
+
+.set-cover-button.is-active {
+    border-color: #ff861c;
+    background: #fff4e8;
+    color: #b85a00;
 }
 
 .del-photo-button {

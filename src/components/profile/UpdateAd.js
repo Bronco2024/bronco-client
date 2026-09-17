@@ -154,6 +154,23 @@ const UpdateAd = () => {
         }
     };
 
+    const handleSetCoverPhoto = async (photoUrl) => {
+        const current = formData.photos || [];
+        if (!photoUrl || current[0] === photoUrl) return;
+        const next = [photoUrl, ...current.filter((url) => url !== photoUrl)];
+        setFormData((prev) => ({ ...prev, photos: next }));
+        try {
+            const adRef = doc(db, "ads", ad.id);
+            await updateDoc(adRef, { photos: next });
+        } catch (error) {
+            console.error("Error setting cover photo:", error);
+            Sentry.captureException(`Error setting cover photo`, {
+                tags: { component: "UpdateAd" },
+                extra: { info: error },
+            });
+        }
+    };
+
     const handleDeleteVideo = async (videoUrl) => {
         const storageRef = ref(storage, `ads/${ad.id}/${videoUrl.split('%2F')[2].split('?')[0]}`);
 
@@ -760,9 +777,22 @@ const UpdateAd = () => {
                     {formData.photos.length > 0 && (
                         <div>
                             <h3>תמונות קיימות</h3>
+                            <p className="publish-photos-hint">
+                                בחרו <strong>תמונת תצוגה</strong> — היא תופיע ראשונה במודעה ובכרטיסים.
+                            </p>
                             {formData.photos.map((photoUrl, index) => (
-                                <div key={index} className="photo-item">
+                                <div
+                                    key={index}
+                                    className={`photo-item ${index === 0 ? "photo-item--cover" : ""}`}
+                                >
                                     <img src={photoUrl} alt={`Ad ${index + 1}`} />
+                                    <button
+                                        type="button"
+                                        className={`set-cover-button ${index === 0 ? "is-active" : ""}`}
+                                        onClick={() => handleSetCoverPhoto(photoUrl)}
+                                    >
+                                        {index === 0 ? "תמונת תצוגה ✓" : "בחר לתצוגה"}
+                                    </button>
                                     <button type="button" className='del-photo-button' onClick={() => handleDeletePhoto(photoUrl)}>מחק</button>
                                 </div>
                             ))}

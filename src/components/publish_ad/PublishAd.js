@@ -29,6 +29,8 @@ import { omitUndefinedFields } from '@/helpers/firestore-safe';
 import {
     appendPublishPhotos,
     removePublishPhotoAt,
+    clampCoverPhotoIndex,
+    orderPhotosWithCoverFirst,
     MAX_PUBLISH_PHOTOS,
 } from '@/helpers/publish-photos';
 
@@ -43,6 +45,7 @@ const PublishAd = () => {
     const [photoError, setPhotoError] = useState("");
     const [submitError, setSubmitError] = useState("");
     const [previewUrls, setPreviewUrls] = useState([]);
+    const [coverPhotoIndex, setCoverPhotoIndex] = useState(0);
     const photosInputRef = useRef(null);
     const videoInputRef = useRef(null);
     const serviceMode = isServicePublishMode({
@@ -117,10 +120,13 @@ const PublishAd = () => {
 
     const handleFileChange = (e) => {
         const incoming = Array.from(e.target.files || []);
-        setFormData((prev) => ({
-            ...prev,
-            photos: appendPublishPhotos(prev.photos, incoming),
-        }));
+        setFormData((prev) => {
+            const photos = appendPublishPhotos(prev.photos, incoming);
+            setCoverPhotoIndex((cover) =>
+                clampCoverPhotoIndex(cover, photos.length)
+            );
+            return { ...prev, photos };
+        });
         if (incoming.length) {
             setPhotoError("");
         }
@@ -131,10 +137,16 @@ const PublishAd = () => {
     };
 
     const handleRemovePhoto = (index) => {
-        setFormData((prev) => ({
-            ...prev,
-            photos: removePublishPhotoAt(prev.photos, index),
-        }));
+        setFormData((prev) => {
+            const photos = removePublishPhotoAt(prev.photos, index);
+            setCoverPhotoIndex((cover) => {
+                if (photos.length === 0) return 0;
+                if (index === cover) return 0;
+                if (index < cover) return cover - 1;
+                return clampCoverPhotoIndex(cover, photos.length);
+            });
+            return { ...prev, photos };
+        });
     };
 
     const handleVideoChange = (e) => {
@@ -192,8 +204,13 @@ const PublishAd = () => {
                 adId: adId
             };
 
+            const orderedPhotos = orderPhotosWithCoverFirst(
+                formData.photos,
+                coverPhotoIndex
+            );
+
             const photoURLs = await Promise.all(
-                formData.photos.map(async (photo) => {
+                orderedPhotos.map(async (photo) => {
                     const photoRef = ref(storage, `ads/${adId}/${uuidv4()}`);
                     await uploadBytes(photoRef, photo, metadata);
                     return await getDownloadURL(photoRef);
@@ -305,6 +322,7 @@ const PublishAd = () => {
             });
             if (photosInputRef.current) photosInputRef.current.value = "";
             if (videoInputRef.current) videoInputRef.current.value = "";
+            setCoverPhotoIndex(0);
 
             setShowModal(true);
             setPendingApproval(!currentUser?.isAdmin);
@@ -784,7 +802,9 @@ const PublishAd = () => {
 
                 <label htmlFor="photos">תמונות *</label>
                 <p className="publish-photos-hint">
-                    אפשר להוסיף עד {MAX_PUBLISH_PHOTOS} תמונות, למחוק ולהחליף לפני הפרסום.
+                    אפשר להוסיף עד {MAX_PUBLISH_PHOTOS} תמונות. לחצו על{" "}
+                    <strong>תמונת תצוגה</strong> כדי לבחור מה יופיע ראשון במודעה
+                    (גם כפוסטר לסרטון).
                 </p>
                 <input
                     ref={photosInputRef}
@@ -798,11 +818,29 @@ const PublishAd = () => {
                 {formData.photos?.length > 0 && (
                     <div className="publish-photos-grid" aria-label="תצוגה מקדימה של תמונות">
                         {formData.photos.map((file, index) => (
-                            <div key={`${file.name}-${file.size}-${index}`} className="publish-photo-item">
+                            <div
+                                key={`${file.name}-${file.size}-${index}`}
+                                className={`publish-photo-item ${
+                                    index === coverPhotoIndex
+                                        ? "publish-photo-item--cover"
+                                        : ""
+                                }`}
+                            >
                                 <img
                                     src={previewUrls[index]}
                                     alt={file.name || `תמונה ${index + 1}`}
                                 />
+                                <button
+                                    type="button"
+                                    className={`publish-cover-btn ${
+                                        index === coverPhotoIndex ? "is-active" : ""
+                                    }`}
+                                    onClick={() => setCoverPhotoIndex(index)}
+                                >
+                                    {index === coverPhotoIndex
+                                        ? "תמונת תצוגה ✓"
+                                        : "בחר לתצוגה"}
+                                </button>
                                 <button
                                     type="button"
                                     className="publish-remove-media"
