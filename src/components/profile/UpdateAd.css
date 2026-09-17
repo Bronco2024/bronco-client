@@ -167,6 +167,13 @@
     direction: rtl;
 }
 
+.current-photos .publish-photos-hint {
+    margin: 0 0 12px;
+    color: #5b6b7c;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
 .photo-item {
     display: flex;
     align-items: center;
