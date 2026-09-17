@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Login.css';
 
@@ -33,6 +33,10 @@ import {
     IN_APP_BROWSER_AUTH_CODE,
     consumeGoogleRedirectError,
 } from '../../helpers/google-auth-strategy';
+import {
+    resolveAuthReturnTo,
+    stashAuthReturnTo,
+} from '@/helpers/auth-return';
 
 
 const Login = () => {
@@ -49,6 +53,17 @@ const Login = () => {
     const [googleLoading, setGoogleLoading] = useState(false);
 
     const { currentUser, loading: authLoading, logout } = useAuth();
+    const didRedirectRef = useRef(false);
+
+    const goAfterAuth = () => {
+        if (didRedirectRef.current) return;
+        didRedirectRef.current = true;
+        const next = resolveAuthReturnTo({
+            searchNext: searchParams.get("next") || "",
+            fallback: "/",
+        });
+        navigate(next, { replace: true });
+    };
 
 
     /* ================================
@@ -56,10 +71,17 @@ const Login = () => {
     ================================= */
 
     useEffect(() => {
+        // Persist next= for Google redirect round-trips.
+        const next = searchParams.get("next");
+        if (next) stashAuthReturnTo(next);
+    }, [searchParams]);
+
+    useEffect(() => {
         if (!authLoading && currentUser) {
-            navigate('/', { replace: true });
+            goAfterAuth();
         }
-    }, [authLoading, currentUser, navigate]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [authLoading, currentUser, navigate, searchParams]);
 
     useEffect(() => {
         const redirectError = consumeGoogleRedirectError();
@@ -144,7 +166,7 @@ const Login = () => {
 
             /* Login successful */
 
-            navigate('/');
+            goAfterAuth();
 
 
         } catch (error) {
@@ -185,7 +207,7 @@ const Login = () => {
 
             const result = await handleGoogleSignupAndSignIn();
             if (result?.user) {
-                navigate('/');
+                goAfterAuth();
                 return;
             }
             // Redirect started — keep loading until the browser leaves this page.
@@ -413,7 +435,14 @@ const Login = () => {
                 אין לך חשבון?
 
                 <span
-                    onClick={handleRegisterRedirect}
+                    onClick={() => {
+                        const next = searchParams.get("next");
+                        navigate(
+                            next
+                                ? `/register?next=${encodeURIComponent(next)}`
+                                : "/register"
+                        );
+                    }}
                     className="register-link"
                 >
                     להרשמה
