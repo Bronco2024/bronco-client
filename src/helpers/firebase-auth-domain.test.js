@@ -4,10 +4,11 @@ import {
 } from "./firebase-auth-domain";
 
 describe("resolveFirebaseAuthDomain", () => {
-  test("uses env authDomain when provided", () => {
+  test("uses env authDomain when provided off-site", () => {
     expect(
       resolveFirebaseAuthDomain({
         envAuthDomain: "bronco-65aaf.firebaseapp.com",
+        hostname: "localhost",
       })
     ).toBe("bronco-65aaf.firebaseapp.com");
   });
@@ -18,6 +19,15 @@ describe("resolveFirebaseAuthDomain", () => {
     ).toBe("petzo.co.il");
     expect(
       resolveFirebaseAuthDomain({ hostname: "www.petzo.co.il" })
+    ).toBe("petzo.co.il");
+  });
+
+  test("ignores firebaseapp env override on petzo.co.il (Safari fix)", () => {
+    expect(
+      resolveFirebaseAuthDomain({
+        envAuthDomain: "bronco-65aaf.firebaseapp.com",
+        hostname: "petzo.co.il",
+      })
     ).toBe("petzo.co.il");
   });
 
