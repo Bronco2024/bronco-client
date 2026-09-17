@@ -32,7 +32,11 @@
     overflow: hidden;
     border-radius: 18px;
 
-    background: #f4f6f8;
+    background: #eef2f5;
+}
+
+.item-media .alice-carousel__stage-item {
+    text-align: center;
 }
 
 .item-thumbs {
@@ -694,7 +698,7 @@ img.media-element {
     }
 
     .media-element {
-        height: 320px;
+        height: 360px;
     }
 
     .item-info h1 {
@@ -807,7 +811,7 @@ img.media-element {
     }
 
     .media-element {
-        height: 250px;
+        height: 280px;
     }
 
     .item-info h1 {
