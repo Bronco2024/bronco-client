@@ -24,26 +24,13 @@ import useSeo from "@/hooks/useSeo";
 import { filterAdsBySearch } from "@/helpers/listing-search";
 import ListingSearchField from "@/components/listings/ListingSearchField";
 import { SITE_NAME, SITE_URL } from "@/data/site-config";
+import {
+    filterSeedAds,
+    sortAdsByPreference,
+} from "@/helpers/category-client-filters";
 import "@/components/pets/CategoryListings.css";
 
-const parseNumericPrice = (price) => {
-    if (typeof price === "number") return price;
-    if (typeof price === "string") {
-        const normalized = Number(price.replace(/[^\d.-]/g, ""));
-        return Number.isFinite(normalized) ? normalized : Number.MAX_SAFE_INTEGER;
-    }
-    return Number.MAX_SAFE_INTEGER;
-};
-
-const sortAds = (items, sortBy = "newest") => {
-    const sorted = [...items];
-    if (sortBy === "priceAsc") {
-        sorted.sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
-    } else if (sortBy === "priceDesc") {
-        sorted.sort((a, b) => parseNumericPrice(b.price) - parseNumericPrice(a.price));
-    }
-    return sorted;
-};
+const SEEDS_FILTER_FETCH_LIMIT = 400;
 
 const Seeds = () => {
     const navigate = useNavigate();
@@ -54,6 +41,7 @@ const Seeds = () => {
     const [page, setPage] = useState(1);
     const [afterThis, setAfterThis] = useState(null);
     const [beforeThis, setBeforeThis] = useState(null);
+    const [filterError, setFilterError] = useState("");
     const [filters, setFilters] = useState({
         minPrice: 0,
         maxPrice: 999999,
@@ -81,24 +69,38 @@ const Seeds = () => {
     );
 
     const getTotalCount = useCallback(async () => {
-        const collectionRef = collection(db, "ads");
-        const q = query(collectionRef, where("category", "==", categoryFilter));
-        const aggregateQuerySnapshot = await getCountFromServer(q);
-        setTotalAds(aggregateQuerySnapshot.data().count);
+        try {
+            const collectionRef = collection(db, "ads");
+            const q = query(collectionRef, where("category", "==", categoryFilter));
+            const aggregateQuerySnapshot = await getCountFromServer(q);
+            setTotalAds(aggregateQuerySnapshot.data().count);
+        } catch (error) {
+            console.error("Seeds getTotalCount failed", error);
+        }
     }, [categoryFilter]);
 
     const fetchAds = useCallback(async () => {
-        const collectionRef = collection(db, "ads");
-        const q = query(
-            collectionRef,
-            where("category", "==", categoryFilter),
-            orderBy("createdAt", "desc"),
-            limit(ADS_PER_PAGE)
-        );
-        const querySnapshot = await getDocs(q);
-        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
-        setAdList(items);
-        setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
+        try {
+            setFilterError("");
+            const collectionRef = collection(db, "ads");
+            const q = query(
+                collectionRef,
+                where("category", "==", categoryFilter),
+                orderBy("createdAt", "desc"),
+                limit(ADS_PER_PAGE)
+            );
+            const querySnapshot = await getDocs(q);
+            const items = sortAdsByPreference(
+                mapApprovedAdsFromSnapshot(querySnapshot),
+                filters.sortBy
+            );
+            setAdList(items);
+            setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1] || null);
+        } catch (error) {
+            console.error("Seeds fetchAds failed", error);
+            setAdList([]);
+            setFilterError("טעינת המודעות נכשלה. נסו לרענן.");
+        }
     }, [categoryFilter, filters.sortBy]);
 
     useEffect(() => {
@@ -107,37 +109,51 @@ const Seeds = () => {
     }, [fetchAds, getTotalCount]);
 
     const handleNextPage = async () => {
-        const collectionRef = collection(db, "ads");
-        const q = query(
-            collectionRef,
-            where("category", "==", categoryFilter),
-            orderBy("createdAt", "desc"),
-            startAfter(afterThis),
-            limit(ADS_PER_PAGE)
-        );
-        const querySnapshot = await getDocs(q);
-        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
-        setAdList(items);
-        setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        setBeforeThis(querySnapshot.docs[0]);
-        setPage((prevPage) => prevPage + 1);
+        try {
+            const collectionRef = collection(db, "ads");
+            const q = query(
+                collectionRef,
+                where("category", "==", categoryFilter),
+                orderBy("createdAt", "desc"),
+                startAfter(afterThis),
+                limit(ADS_PER_PAGE)
+            );
+            const querySnapshot = await getDocs(q);
+            const items = sortAdsByPreference(
+                mapApprovedAdsFromSnapshot(querySnapshot),
+                filters.sortBy
+            );
+            setAdList(items);
+            setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1] || null);
+            setBeforeThis(querySnapshot.docs[0] || null);
+            setPage((prevPage) => prevPage + 1);
+        } catch (error) {
+            console.error("Seeds next page failed", error);
+        }
     };
 
     const handlePrevPage = async () => {
-        const collectionRef = collection(db, "ads");
-        const q = query(
-            collectionRef,
-            where("category", "==", categoryFilter),
-            orderBy("createdAt", "desc"),
-            limitToLast(ADS_PER_PAGE),
-            endBefore(beforeThis)
-        );
-        const querySnapshot = await getDocs(q);
-        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
-        setAdList(items);
-        setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        setBeforeThis(querySnapshot.docs[0]);
-        setPage((prevPage) => prevPage - 1);
+        try {
+            const collectionRef = collection(db, "ads");
+            const q = query(
+                collectionRef,
+                where("category", "==", categoryFilter),
+                orderBy("createdAt", "desc"),
+                limitToLast(ADS_PER_PAGE),
+                endBefore(beforeThis)
+            );
+            const querySnapshot = await getDocs(q);
+            const items = sortAdsByPreference(
+                mapApprovedAdsFromSnapshot(querySnapshot),
+                filters.sortBy
+            );
+            setAdList(items);
+            setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1] || null);
+            setBeforeThis(querySnapshot.docs[0] || null);
+            setPage((prevPage) => prevPage - 1);
+        } catch (error) {
+            console.error("Seeds prev page failed", error);
+        }
     };
 
     const handleFilterChange = (e) => {
@@ -179,42 +195,32 @@ const Seeds = () => {
             return;
         }
         setPage(1);
+        setFilterError("");
 
-        let certificate =
-            filters.hasCertificate === "yes"
-                ? true
-                : filters.hasCertificate === "no"
-                ? false
-                : "";
+        try {
+            // Query only by category (+ createdAt). Extra filters run client-side
+            // so we don't need a new Firestore composite index for every combo.
+            const collectionRef = collection(db, "ads");
+            const q = query(
+                collectionRef,
+                where("category", "==", categoryFilter),
+                orderBy("createdAt", "desc"),
+                limit(SEEDS_FILTER_FETCH_LIMIT)
+            );
+            const querySnapshot = await getDocs(q);
+            let items = mapApprovedAdsFromSnapshot(querySnapshot);
+            items = filterSeedAds(items, filters);
+            items = sortAdsByPreference(items, filters.sortBy);
 
-        const collectionRef = collection(db, "ads");
-        const filterQueries = [
-            where("category", "==", categoryFilter),
-            ...(filters.minPrice ? [where("price", ">=", filters.minPrice)] : []),
-            ...(filters.maxPrice ? [where("price", "<=", filters.maxPrice)] : []),
-            ...(filters.seed_animal ? [where("seed_animal", "==", filters.seed_animal)] : []),
-            ...(filters.seed_type ? [where("seed_type", "==", filters.seed_type)] : []),
-            ...(filters.semen_type ? [where("semen_type", "==", filters.semen_type)] : []),
-            ...(filters.location ? [where("location", "==", filters.location)] : []),
-            ...(filters.hasCertificate ? [where("hasCertificate", "==", certificate)] : []),
-        ];
-
-        const totalCountQuery = query(collectionRef, ...filterQueries);
-        const totalCountSnapshot = await getCountFromServer(totalCountQuery);
-        setTotalAds(totalCountSnapshot.data().count);
-
-        const paginatedQuery = query(collectionRef, ...filterQueries, limit(ADS_PER_PAGE));
-        const querySnapshot = await getDocs(paginatedQuery);
-        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
-
-        setAdList(items);
-
-        if (querySnapshot.docs.length > 0) {
-            setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
-            setBeforeThis(querySnapshot.docs[0]);
-        } else {
+            setTotalAds(items.length);
+            setAdList(items.slice(0, ADS_PER_PAGE));
             setAfterThis(null);
             setBeforeThis(null);
+        } catch (error) {
+            console.error("Seeds applyFilters failed", error);
+            setAdList([]);
+            setTotalAds(0);
+            setFilterError("סינון המודעות נכשל. נסו שוב או אפסו מסננים.");
         }
     };
 
@@ -391,6 +397,11 @@ const Seeds = () => {
                 </form>
 
                 <p className="category-count">{visibleAds.length} מודעות</p>
+                {filterError ? (
+                    <p className="category-count" style={{ color: "#c0392b" }}>
+                        {filterError}
+                    </p>
+                ) : null}
 
                 {visibleAds.length === 0 ? (
                     <div className="category-empty">

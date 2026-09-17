@@ -192,28 +192,34 @@ const Accessories = () => {
 
         setPage(1);
 
+        try {
         const collectionRef = collection(db, "ads");
-        const filterQueries = [
+        // Keep query to category only — secondary filters below are applied
+        // client-side to avoid missing Firestore composite indexes.
+        const baseQuery = query(
+            collectionRef,
             where("category", "==", categoryFilter),
-            ...(filters.minPrice ? [where("price", ">=", filters.minPrice)] : []),
-            ...(filters.maxPrice ? [where("price", "<=", filters.maxPrice)] : []),
-            ...(filters.accessory ? [where("accessory", "==", filters.accessory)] : []),
-            ...(filters.location ? [where("location", "==", filters.location)] : []),
-        ];
-
-        if (!hasSearch) {
-            const totalCountQuery = query(collectionRef, ...filterQueries);
-            const totalCountSnapshot = await getCountFromServer(totalCountQuery);
-            setTotalAds(totalCountSnapshot.data().count);
-        }
-
-        const paginatedQuery = query(collectionRef, ...filterQueries, limit(ADS_PER_PAGE));
-        const querySnapshot = await getDocs(paginatedQuery);
-        const items = sortAds(mapApprovedAdsFromSnapshot(querySnapshot), filters.sortBy);
+            orderBy("createdAt", "desc"),
+            limit(400)
+        );
+        const querySnapshot = await getDocs(baseQuery);
+        let items = mapApprovedAdsFromSnapshot(querySnapshot);
+        items = items.filter((ad) => {
+            const price =
+                typeof ad.price === "number"
+                    ? ad.price
+                    : Number(String(ad.price || "").replace(/[^\d.-]/g, "")) || 0;
+            if (filters.minPrice && price < filters.minPrice) return false;
+            if (filters.maxPrice < 999999 && price > filters.maxPrice) return false;
+            if (filters.accessory && ad.accessory !== filters.accessory) return false;
+            if (filters.location && ad.location !== filters.location) return false;
+            return true;
+        });
+        items = sortAds(items, filters.sortBy);
         const filteredItems = hasSearch ? items.filter(matchesSearchText) : items;
 
-        setAdList(filteredItems);
-        if (hasSearch) setTotalAds(filteredItems.length);
+        setAdList(hasSearch ? filteredItems : filteredItems.slice(0, ADS_PER_PAGE));
+        setTotalAds(filteredItems.length);
 
         if (hasSearch) {
             // When searching by text we filter client-side, so we don't paginate.
@@ -222,12 +228,12 @@ const Accessories = () => {
             return;
         }
 
-        if (querySnapshot.docs.length > 0) {
-            setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1]);
-            setBeforeThis(querySnapshot.docs[0]);
-        } else {
-            setAfterThis(null);
-            setBeforeThis(null);
+        setAfterThis(null);
+        setBeforeThis(null);
+        } catch (error) {
+            console.error("Accessories applyFilters failed", error);
+            setAdList([]);
+            setTotalAds(0);
         }
     };
 
