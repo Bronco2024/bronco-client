@@ -87,9 +87,10 @@ video.media-element {
 
     display: block;
 
-    object-fit: cover;
+    /* Show the full photo — cover was cropping faces/bodies on mobile. */
+    object-fit: contain;
 
-    background: #f4f6f8;
+    background: #eef2f5;
 }
 
 img.media-element {
