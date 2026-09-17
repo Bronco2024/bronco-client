@@ -64,6 +64,10 @@ export const handleGoogleSignupAndSignIn = async () => {
       GOOGLE_POPUP_HANG_MS
     );
   } catch (error) {
+    // Safari/WebKit sometimes throws a raw TypeError inside Firebase Auth.
+    if (error instanceof TypeError && !error?.code) {
+      error.code = "auth/network-request-failed";
+    }
     if (
       shouldFallbackGooglePopupToRedirect(error?.code) ||
       error?.code === "auth/popup-blocked"

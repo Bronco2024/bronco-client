@@ -28,3 +28,10 @@
   for = "/*"
   [headers.values]
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+
+# Do NOT apply COOP to Firebase auth handler/iframe — Safari throws
+# TypeError inside the auth SDK when the proxied /__/auth pages inherit COOP.
+[[headers]]
+  for = "/__/auth/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "unsafe-none"

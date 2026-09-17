@@ -14,6 +14,21 @@ Sentry.init({
   sendDefaultPii: true,
   // Keep startup light — sample less noisy traffic.
   tracesSampleRate: 0,
+  beforeSend(event, hint) {
+    const error = hint?.originalException;
+    const message = String(
+      (error && error.message) || event?.exception?.values?.[0]?.value || ""
+    );
+    // Known noisy WebKit/Firebase Auth internal TypeError during Google OAuth.
+    // We harden auth init separately; still drop this mangled noise from alerts.
+    if (
+      message.includes("undefined is not an object") &&
+      (/\[.*\.Pd\]/.test(message) || message.includes("Firebase"))
+    ) {
+      return null;
+    }
+    return event;
+  },
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
