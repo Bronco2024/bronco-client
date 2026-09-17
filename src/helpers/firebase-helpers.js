@@ -44,13 +44,16 @@ export const handleGoogleSignupAndSignIn = async () => {
   googleProvider.setCustomParameters({ prompt: "select_account" });
 
   const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  const hostname =
+    typeof window !== "undefined" ? window.location.hostname : "";
+  const authDomain = auth?.config?.authDomain || "";
 
   // Google blocks OAuth inside Facebook/Instagram WebViews.
   if (isInAppBrowser(ua)) {
     throw createInAppBrowserAuthError();
   }
 
-  if (shouldPreferGoogleRedirect(ua)) {
+  if (shouldPreferGoogleRedirect(ua, { authDomain, hostname })) {
     await signInWithRedirect(auth, googleProvider);
     return null;
   }
