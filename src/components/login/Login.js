@@ -28,7 +28,9 @@ import {
 import { sendSiteEmailVerification } from '../../helpers/auth-email';
 import { getAuthErrorMessage } from '../../helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
-import InAppBrowserNotice from '../auth/InAppBrowserNotice';
+import InAppBrowserNotice, {
+    openInSystemBrowser,
+} from '../auth/InAppBrowserNotice';
 import {
     IN_APP_BROWSER_AUTH_CODE,
     consumeGoogleRedirectError,
@@ -213,8 +215,10 @@ const Login = () => {
 
             setError(getAuthErrorMessage(error?.code, 'שגיאה בחיבור עם Google'));
 
-            // Expected in Facebook/Instagram WebViews — don't flood Sentry.
-            if (error?.code !== IN_APP_BROWSER_AUTH_CODE) {
+            // Expected in Facebook/Instagram WebViews — open Chrome/Safari instead.
+            if (error?.code === IN_APP_BROWSER_AUTH_CODE) {
+                openInSystemBrowser();
+            } else {
                 Sentry.captureException(error, {
                     tags: {
                         component: 'Login',

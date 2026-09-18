@@ -3,6 +3,7 @@ import {
   shouldFallbackGooglePopupToRedirect,
   isInAppBrowser,
   getExternalBrowserOpenUrl,
+  getExternalBrowserCtaLabel,
   IN_APP_BROWSER_AUTH_CODE,
   consumeGoogleRedirectError,
   stashGoogleRedirectError,
@@ -102,6 +103,27 @@ describe("google auth strategy", () => {
     );
     expect(url).toContain("intent://petzo.co.il/login");
     expect(url).toContain("package=com.android.chrome");
+  });
+
+  test("builds iOS Safari deep link", () => {
+    const url = getExternalBrowserOpenUrl(
+      "https://petzo.co.il/login",
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Instagram 312.0.0"
+    );
+    expect(url).toBe("x-safari-https://petzo.co.il/login");
+  });
+
+  test("labels CTA Chrome on Android and Safari on iOS", () => {
+    expect(
+      getExternalBrowserCtaLabel(
+        "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Facebook 578.0.0"
+      )
+    ).toBe("פתח ב-Chrome");
+    expect(
+      getExternalBrowserCtaLabel(
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Instagram 312.0.0"
+      )
+    ).toBe("פתח ב-Safari");
   });
 
   test("exports in-app auth code", () => {

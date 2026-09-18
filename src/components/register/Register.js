@@ -12,7 +12,9 @@ import { handleGoogleSignupAndSignIn } from '../../helpers/firebase-helpers';
 import { sendSiteEmailVerification } from '../../helpers/auth-email';
 import { getAuthErrorMessage } from '../../helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
-import InAppBrowserNotice from '../auth/InAppBrowserNotice';
+import InAppBrowserNotice, {
+    openInSystemBrowser,
+} from '../auth/InAppBrowserNotice';
 import {
     IN_APP_BROWSER_AUTH_CODE,
     consumeGoogleRedirectError,
@@ -132,7 +134,9 @@ const Register = () => {
             return;
         } catch (error) {
             setError(getAuthErrorMessage(error?.code, "שגיאה בהרשמה עם Google"));
-            if (error?.code !== IN_APP_BROWSER_AUTH_CODE) {
+            if (error?.code === IN_APP_BROWSER_AUTH_CODE) {
+                openInSystemBrowser();
+            } else {
                 Sentry.captureException(error, {
                     tags: { component: "Register", method: "GoogleSignup" }
                 });
