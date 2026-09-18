@@ -54,7 +54,8 @@ export const shouldFallbackGooglePopupToRedirect = (errorCode) =>
 
 /**
  * Best-effort URL to escape an in-app WebView into Chrome / Safari.
- * Callers should still show a manual “open in browser” hint.
+ * Prefer navigating via <a href> — Intent / x-safari schemes work more
+ * reliably from a user gesture on an anchor than from location.href alone.
  */
 export const getExternalBrowserOpenUrl = (
   pageUrl = "",
@@ -77,6 +78,14 @@ export const getExternalBrowserOpenUrl = (
   }
 
   return url;
+};
+
+/** Hebrew CTA label: Chrome on Android, Safari on iOS. */
+export const getExternalBrowserCtaLabel = (userAgent = "") => {
+  const ua = userAgent || "";
+  if (/Android/i.test(ua)) return "פתח ב-Chrome";
+  if (/iPhone|iPad|iPod/i.test(ua)) return "פתח ב-Safari";
+  return "פתח בדפדפן";
 };
 
 export const createInAppBrowserAuthError = () => {
