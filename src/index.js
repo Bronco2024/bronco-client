@@ -14,6 +14,11 @@ Sentry.init({
   sendDefaultPii: true,
   // Keep startup light — sample less noisy traffic.
   tracesSampleRate: 0,
+  ignoreErrors: [
+    // Facebook/Instagram Android in-app WebView native bridge teardown.
+    /Java object is gone/i,
+    /Error invoking postMessage: Java/i,
+  ],
   beforeSend(event, hint) {
     const error = hint?.originalException;
     const message = String(
@@ -21,8 +26,12 @@ Sentry.init({
     );
     const frames =
       event?.exception?.values?.[0]?.stacktrace?.frames || [];
-    const fromGtag = frames.some((frame) =>
-      String(frame?.filename || frame?.abs_path || "").includes("gtag/js")
+    const frameFiles = frames.map((frame) =>
+      String(frame?.filename || frame?.abs_path || "")
+    );
+    const fromGtag = frameFiles.some((file) => file.includes("gtag/js"));
+    const fromFbAndroidBridge = frameFiles.some((file) =>
+      file.includes("navigation_performance_logger_android")
     );
 
     // Known noisy WebKit/Firebase Auth internal TypeError during Google OAuth.
@@ -38,6 +47,16 @@ Sentry.init({
       fromGtag ||
       message.includes("is_legacy_loaded") ||
       (message.includes("gtag") && message.includes("undefined"))
+    ) {
+      return null;
+    }
+
+    // Facebook/Instagram Android WebView injected logger calls a destroyed
+    // Java bridge during navigation/teardown — not app code.
+    if (
+      fromFbAndroidBridge ||
+      message.includes("Java object is gone") ||
+      /Error invoking \w+: Java object is gone/i.test(message)
     ) {
       return null;
     }
