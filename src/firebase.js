@@ -34,11 +34,21 @@ const app = initializeApp(firebaseConfig);
  * Safari / WebKit needs an explicit popup/redirect resolver + persistence.
  * Plain getAuth() can throw TypeError inside Firebase during Google sign-in
  * when the resolver/persistence graph is incomplete.
+ *
+ * On iPhone/iPad, prefer localStorage first — IndexedDB is often wiped by
+ * WKWebView / ITP ("Database deleted by request of the user").
  */
 const createAuth = () => {
+  const preferLocalStorage =
+    typeof navigator !== "undefined" &&
+    /iPhone|iPad|iPod/i.test(navigator.userAgent || "");
+  const persistence = preferLocalStorage
+    ? [browserLocalPersistence, indexedDBLocalPersistence]
+    : [indexedDBLocalPersistence, browserLocalPersistence];
+
   try {
     return initializeAuth(app, {
-      persistence: [indexedDBLocalPersistence, browserLocalPersistence],
+      persistence,
       popupRedirectResolver: browserPopupRedirectResolver,
     });
   } catch (_error) {
