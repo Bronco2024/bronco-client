@@ -265,7 +265,7 @@
 
 .service-listing-card-media {
   position: relative;
-  min-height: 148px;
+  min-height: 200px;
   background: #e8f3f0;
 }
 
@@ -374,7 +374,8 @@
   }
 
   .service-listing-card-media {
-    height: 170px;
+    height: auto;
+    min-height: 220px;
   }
 
   .service-listing-card-media::after {

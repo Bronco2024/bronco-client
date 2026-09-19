@@ -1,8 +1,9 @@
 .listing-card-media {
   position: relative;
-  aspect-ratio: 4 / 3;
+  /* Portrait frame matches typical phone pet photos → nearly fills without crop. */
+  aspect-ratio: 3 / 4;
   width: 100%;
-  min-height: 160px;
+  min-height: 220px;
   overflow: hidden;
   background: #dfe6ec;
 }
@@ -15,9 +16,9 @@
   display: block;
   object-fit: cover;
   object-position: center;
-  filter: blur(22px);
-  transform: scale(1.18);
-  opacity: 0.92;
+  filter: blur(18px);
+  transform: scale(1.12);
+  opacity: 0.88;
   pointer-events: none;
 }
 
@@ -43,6 +44,6 @@
 
 @media (max-width: 650px) {
   .listing-card-media {
-    min-height: 140px;
+    min-height: 200px;
   }
 }
