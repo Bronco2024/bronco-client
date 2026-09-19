@@ -18,6 +18,9 @@ Sentry.init({
     // Facebook/Instagram Android in-app WebView native bridge teardown.
     /Java object is gone/i,
     /Error invoking postMessage: Java/i,
+    // Safari / WKWebView IndexedDB eviction (ITP, private mode, in-app browsers).
+    /Database deleted by request of the user/i,
+    /Connection to Indexed Database server lost/i,
   ],
   beforeSend(event, hint) {
     const error = hint?.originalException;
@@ -57,6 +60,16 @@ Sentry.init({
       fromFbAndroidBridge ||
       message.includes("Java object is gone") ||
       /Error invoking \w+: Java object is gone/i.test(message)
+    ) {
+      return null;
+    }
+
+    // Safari / iOS WKWebView clears IndexedDB (privacy / storage pressure).
+    // Firebase Auth then rejects; not an app bug.
+    if (
+      message.includes("Database deleted by request of the user") ||
+      message.includes("Connection to Indexed Database server lost") ||
+      (/Indexed Database/i.test(message) && /UnknownError|Internal error/i.test(message))
     ) {
       return null;
     }
