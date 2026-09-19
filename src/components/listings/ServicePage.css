@@ -156,7 +156,8 @@
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 
 .ads-page-card-body {
@@ -295,7 +296,8 @@
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 
 .service-listing-card-body {

@@ -262,7 +262,9 @@
 .publish-photo-item img {
     width: 100%;
     height: 96px;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
+    background: #f3f6f8;
     border-radius: 8px;
 }
 
