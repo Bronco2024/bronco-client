@@ -9,6 +9,7 @@ import {
 } from "@/data/pets";
 import { getListingPath } from "@/helpers/listing-links";
 import ListingMeta from "./ListingMeta";
+import ListingCardMedia from "./ListingCardMedia";
 import "./PetCard.css";
 
 const PetCard = ({ listing, showAdoptionBadge = false }) => {
@@ -37,6 +38,7 @@ const PetCard = ({ listing, showAdoptionBadge = false }) => {
   };
 
   const openListing = () => navigate(getListingPath(listing), { state: { ad: listing } });
+  const imageSrc = listing.image || listing.photos?.[0];
 
   return (
     <article
@@ -51,9 +53,7 @@ const PetCard = ({ listing, showAdoptionBadge = false }) => {
       role="link"
       tabIndex={0}
     >
-      <div className="listing-image">
-        <img src={listing.image || listing.photos?.[0]} alt={listing.name} loading="lazy" />
-
+      <ListingCardMedia src={imageSrc} alt={listing.name} className="listing-image">
         <button
           className={`favorite ${favorited ? "active" : ""}`}
           type="button"
@@ -77,7 +77,7 @@ const PetCard = ({ listing, showAdoptionBadge = false }) => {
             <FontAwesomeIcon icon={faCertificate} /> תעודה
           </span>
         )}
-      </div>
+      </ListingCardMedia>
 
       <div className="listing-content">
         <h3>{listing.name}</h3>

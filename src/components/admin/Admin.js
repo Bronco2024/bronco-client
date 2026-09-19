@@ -24,6 +24,7 @@ import {
 import { markAdNotificationsRead, dismissAdminNotificationsForAd, cleanupOrphanAdminNotifications } from '@/helpers/admin-notifications';
 import { getOrphanAdminNotifications } from '@/helpers/admin-notification-helpers';
 import useAdminNotifications from '@/hooks/useAdminNotifications';
+import ListingCardMedia from '@/components/pets/ListingCardMedia';
 
 const SPONSOR_LABELS = {
     gold: "זהב",
@@ -406,7 +407,7 @@ const Admin = () => {
                                                 className="account-card-image"
                                                 onClick={() => navigate(getListingPath(ad), { state: { ad } })}
                                             >
-                                                <img src={image} alt={title} />
+                                                <ListingCardMedia src={image} alt={title} />
                                             </button>
                                             <div className="account-card-body">
                                                 <span className={`account-status account-status--${status}`}>

@@ -20,6 +20,7 @@ import { AD_STATUS, AD_STATUS_LABELS, getAdStatus } from '@/helpers/ad-approval'
 import { dismissAdminNotificationsForAd } from '@/helpers/admin-notifications';
 import * as Sentry from "@sentry/react";
 import { getListingPath } from '@/helpers/listing-links';
+import ListingCardMedia from '@/components/pets/ListingCardMedia';
 
 const getAdTitle = (ad) =>
     ad.title || ad.name || ad.breed || ad.seed_type || ad.accessory || ad.category || "מודעה";
@@ -226,7 +227,7 @@ const Profile = () => {
                                         className="account-card-image"
                                         onClick={() => navigate(getListingPath(ad), { state: { ad } })}
                                     >
-                                        <img src={image} alt={title} />
+                                        <ListingCardMedia src={image} alt={title} />
                                     </button>
 
                                     <div className="account-card-body">

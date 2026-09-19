@@ -3,6 +3,7 @@ import { faLocationDot, faBriefcase } from "@fortawesome/free-solid-svg-icons";
 import { FormatDateTimestampToDate } from "@components/utils/constants/Functions";
 import { formatListingPrice } from "@/data/pets";
 import { getServiceByCategory } from "@/data/services-catalog";
+import ListingCardMedia from "@/components/pets/ListingCardMedia";
 
 const fallbackImage = () => require("@/assets/no-image.jpg");
 
@@ -34,9 +35,11 @@ export const ServiceListingCard = ({ ad, onClick }) => {
       role={onClick ? "link" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      <div className="service-listing-card-media">
-        <img src={image} alt={heading} loading="lazy" />
-      </div>
+      <ListingCardMedia
+        src={image}
+        alt={heading}
+        className="service-listing-card-media"
+      />
 
       <div className="service-listing-card-body">
         <div className="service-listing-card-meta">
@@ -56,9 +59,7 @@ export const ServiceListingCard = ({ ad, onClick }) => {
             {animals.slice(0, 4).map((animal) => (
               <span key={animal}>{animal}</span>
             ))}
-            {animals.length > 4 && (
-              <span>+{animals.length - 4}</span>
-            )}
+            {animals.length > 4 && <span>+{animals.length - 4}</span>}
           </div>
         )}
 
