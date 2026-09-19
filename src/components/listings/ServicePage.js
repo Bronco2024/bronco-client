@@ -5,6 +5,7 @@ import { FormatDateTimestampToDate } from "@components/utils/constants/Functions
 import { formatListingPrice, isAdoptionListing } from "@/data/pets";
 import ListingSearchField from "@/components/listings/ListingSearchField";
 import { ServiceListingCard } from "@/components/listings/ServiceListingCard";
+import ListingCardMedia from "@/components/pets/ListingCardMedia";
 import "./ServicePage.css";
 
 const fallbackImage = () => require("@/assets/no-image.jpg");
@@ -39,8 +40,11 @@ export const AdGridCard = ({
       role={onClick ? "link" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      <div className="ads-page-card-image">
-        <img src={image} alt={heading} loading="lazy" />
+      <ListingCardMedia
+        src={image}
+        alt={heading}
+        className="ads-page-card-image"
+      >
         {ad.category && (
           <span className="ads-type-badge">{ad.category}</span>
         )}
@@ -55,7 +59,7 @@ export const AdGridCard = ({
             <FontAwesomeIcon icon={faCertificate} /> תעודה
           </span>
         )}
-      </div>
+      </ListingCardMedia>
       <div className="ads-page-card-body">
         <h2>{heading}</h2>
         {Array.isArray(ad.service_animals) && ad.service_animals.length > 0 && (

@@ -105,13 +105,6 @@
   border-color: #245178;
 }
 
-.ads-page-card-image {
-  position: relative;
-  height: 210px;
-  overflow: hidden;
-  background: #f3f6f8;
-}
-
 .ads-type-badge {
   position: absolute;
   right: 9px;
@@ -150,14 +143,6 @@
   color: #ffffff;
   font-size: 11px;
   font-weight: 800;
-}
-
-.ads-page-card-image img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-  object-position: center;
 }
 
 .ads-page-card-body {
@@ -290,14 +275,7 @@
   inset: 0 auto 0 0;
   width: 4px;
   background: var(--service-accent, #0f766e);
-}
-
-.service-listing-card-media img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-  object-position: center;
+  z-index: 3;
 }
 
 .service-listing-card-body {

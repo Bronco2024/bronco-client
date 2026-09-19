@@ -37,6 +37,7 @@ import {
 import { isServiceCategory } from '@components/utils/constants/Constants';
 import { SITE_NAME, SITE_URL } from '@/data/site-config';
 import useSeo from "@/hooks/useSeo";
+import ListingCardMedia from "@/components/pets/ListingCardMedia";
 
 const ADS_SUGGESTION_LIMIT = 10;
 
@@ -643,7 +644,7 @@ const ItemPage = () => {
                                 key={item.id}
                                 onClick={() => handleAdClick(item)}
                             >
-                                <img
+                                <ListingCardMedia
                                     src={getAdImage(item)}
                                     alt={getAdTitle(item)}
                                     className="related-ad-image"

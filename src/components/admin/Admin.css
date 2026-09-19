@@ -106,12 +106,10 @@
     cursor: pointer;
 }
 
-.account-card-image img {
-    width: 100%;
-    height: 128px;
-    display: block;
-    object-fit: contain;
-    object-position: center;
+.account-card-image .listing-card-media {
+    min-height: 128px;
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
 }
 
 .account-card-body h3 {
@@ -355,8 +353,8 @@
         grid-template-columns: 1fr;
     }
 
-    .account-card-image img {
-        height: 180px;
+    .account-card-image .listing-card-media {
+        min-height: 180px;
     }
 
     .account-card-actions {

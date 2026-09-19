@@ -603,14 +603,6 @@ img.media-element {
 
 .related-ad-image {
     width: 100%;
-    height: 190px;
-
-    display: block;
-
-    object-fit: contain;
-    object-position: center;
-
-    background: #f3f6f8;
 }
 
 .related-ad-info {
