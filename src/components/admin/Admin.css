@@ -107,8 +107,8 @@
 }
 
 .account-card-image .listing-card-media {
-    min-height: 128px;
-    aspect-ratio: 4 / 3;
+    min-height: 160px;
+    aspect-ratio: 3 / 4;
     border-radius: 12px;
 }
 
