@@ -2,6 +2,7 @@ import { PET_CATEGORIES } from "@/data/pets";
 import ISRAEL_CITIES from "@/data/israel-cities";
 import { SITE_NAME } from "@/data/site-config";
 import { SERVICES_CATALOG } from "@/data/services-catalog";
+import { PET_BREEDS_BY_CATEGORY } from "@/data/pet-breeds";
 
 export { PET_CATEGORIES, ISRAEL_CITIES };
 
@@ -55,11 +56,12 @@ export const SEED_ANIMAL_TYPES = [
     "חיות משק",
 ];
 
+/** Full breed/type lists for זרע publish + filters (sourced from shared breed data). */
 export const SEED_TYPES_BY_ANIMAL = {
-    "סוסים": ["ערבי מעורב קו", "ערבי מצרי", "אחר"],
-    "כלבים": ["לברדור", "רועה גרמני", "גולדן רטריבר", "פודל", "אחר"],
-    "חתולים": ["בריטי קצר שיער", "סקוטי", "סיאמי", "מיין קון", "אחר"],
-    "חיות משק": ["בקר", "צאן", "עיזים", "אחר"],
+    "סוסים": [...BREEDS],
+    "כלבים": [...PET_BREEDS_BY_CATEGORY.כלבים],
+    "חתולים": [...PET_BREEDS_BY_CATEGORY.חתולים],
+    "חיות משק": [...PET_BREEDS_BY_CATEGORY["חיות משק"]],
 };
 
 export const SEEDS_TYPES = Array.from(
