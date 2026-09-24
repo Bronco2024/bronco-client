@@ -68,6 +68,16 @@ const Profile = () => {
                     ...docSnap.data()
                 }));
                 setUserAds(ads);
+
+                if (ads.some(needsListingDurationExtension)) {
+                    extendAdsToThreeMonthDuration(db, ads)
+                        .then((result) => {
+                            if (result?.updated) setRefresh((prev) => !prev);
+                        })
+                        .catch((error) => {
+                            console.warn("Listing duration migration failed", error);
+                        });
+                }
             } catch (error) {
                 console.error("Error fetching user ads:", error);
                 Sentry.captureException(`Error fetching user ads`, {
