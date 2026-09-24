@@ -20,6 +20,12 @@ import { AD_STATUS, AD_STATUS_LABELS, getAdStatus } from '@/helpers/ad-approval'
 import { dismissAdminNotificationsForAd } from '@/helpers/admin-notifications';
 import * as Sentry from "@sentry/react";
 import { getListingPath } from '@/helpers/listing-links';
+import {
+    AD_LISTING_DURATION_VERSION,
+    getNewListingAvailableUntil,
+    needsListingDurationExtension,
+} from '@/helpers/ad-listing-duration';
+import { extendAdsToThreeMonthDuration } from '@/helpers/ad-listing-duration-migrate';
 import ListingCardMedia from '@/components/pets/ListingCardMedia';
 
 const getAdTitle = (ad) =>
@@ -62,6 +68,16 @@ const Profile = () => {
                     ...docSnap.data()
                 }));
                 setUserAds(ads);
+
+                if (ads.some(needsListingDurationExtension)) {
+                    extendAdsToThreeMonthDuration(db, ads)
+                        .then((result) => {
+                            if (result?.updated) setRefresh((prev) => !prev);
+                        })
+                        .catch((error) => {
+                            console.warn("Listing duration migration failed", error);
+                        });
+                }
             } catch (error) {
                 console.error("Error fetching user ads:", error);
                 Sentry.captureException(`Error fetching user ads`, {
@@ -159,12 +175,10 @@ const Profile = () => {
          * PAYMENTS
          * This is currently closed until customer decides to make payments in the website
          */
-        const dateUntil = new Date()
-        dateUntil.setMonth(dateUntil.getMonth() + 1);
-
         await updateDoc(doc(db, "ads", adToRenew.id), {
             createdAt: new Date(),
-            availableUntil: dateUntil
+            availableUntil: getNewListingAvailableUntil(),
+            listingDurationMonths: AD_LISTING_DURATION_VERSION,
         })
     }
 

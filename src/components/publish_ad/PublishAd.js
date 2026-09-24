@@ -27,6 +27,10 @@ import {
 } from '@/helpers/publish-categories';
 import { omitUndefinedFields } from '@/helpers/firestore-safe';
 import {
+    AD_LISTING_DURATION_VERSION,
+    getNewListingAvailableUntil,
+} from '@/helpers/ad-listing-duration';
+import {
     appendPublishPhotos,
     removePublishPhotoAt,
     clampCoverPhotoIndex,
@@ -198,7 +202,6 @@ const PublishAd = () => {
         }
 
         try {
-            const date = new Date();
             const adId = uuidv4();
             const metadata = {
                 adId: adId
@@ -224,7 +227,7 @@ const PublishAd = () => {
                 videoURL = await getDownloadURL(videoRef);
             }
 
-            date.setMonth(date.getMonth() + 1);
+            const availableUntil = getNewListingAvailableUntil();
 
             const isService = isServiceCategory(formData.category);
             const isPetLike =
@@ -237,7 +240,8 @@ const PublishAd = () => {
                 video: videoURL || null,
                 userId: currentUser.uid,
                 createdAt: new Date(),
-                availableUntil: date,
+                availableUntil,
+                listingDurationMonths: AD_LISTING_DURATION_VERSION,
                 status: getInitialAdStatus(currentUser?.isAdmin),
                 listingKind: isService ? "service" : "ad",
             };
