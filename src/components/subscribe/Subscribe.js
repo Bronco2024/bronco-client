@@ -9,10 +9,10 @@ const Subscribe = () => {
     const [selectedPlan, setSelectedPlan] = useState(null);
 
     const subscriptions = [
-        { id: 1, title: "פרסום אחד בלבד לחודש", description: "פרסום מודעה אחת למשך חודש", cost: 30 },
-        { id: 2, title: "שתי פרסומות לחודש", description: "פרסום שתי מודעות כל אחת למשך חודש", cost: 50 },
-        { id: 3, title: "ארבע פרסומות לחודש", description: "פרסום 4 מודעות כל אחת למשך חודש", cost: 90 },
-        { id: 4, title: "עשר פרסומות לחודש", description: "פרסום 10 מודעות כל אחת למשך חודש", cost: 200 },
+        { id: 1, title: "פרסום אחד בלבד לחודש", description: "פרסום מודעה אחת למשך 3 חודשים", cost: 30 },
+        { id: 2, title: "שתי פרסומות לחודש", description: "פרסום שתי מודעות כל אחת למשך 3 חודשים", cost: 50 },
+        { id: 3, title: "ארבע פרסומות לחודש", description: "פרסום 4 מודעות כל אחת למשך 3 חודשים", cost: 90 },
+        { id: 4, title: "עשר פרסומות לחודש", description: "פרסום 10 מודעות כל אחת למשך 3 חודשים", cost: 200 },
         { id: 5, title: "מנוי שנתי ללא הגבלה", description: "שלם פעם אחת ותוכל לפרסם ללא הגבלה למשך שנה", cost: 1000 },
     ];
 

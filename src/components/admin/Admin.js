@@ -25,6 +25,8 @@ import { markAdNotificationsRead, dismissAdminNotificationsForAd, cleanupOrphanA
 import { getOrphanAdminNotifications } from '@/helpers/admin-notification-helpers';
 import useAdminNotifications from '@/hooks/useAdminNotifications';
 import ListingCardMedia from '@/components/pets/ListingCardMedia';
+import { extendAdsToThreeMonthDuration } from '@/helpers/ad-listing-duration-migrate';
+import { needsListingDurationExtension } from '@/helpers/ad-listing-duration';
 
 const SPONSOR_LABELS = {
     gold: "זהב",
@@ -84,6 +86,17 @@ const Admin = () => {
                 }));
 
                 setAds(fetchedAds);
+
+                // One-shot: extend legacy 1-month listings to 3 months.
+                if (fetchedAds.some(needsListingDurationExtension)) {
+                    extendAdsToThreeMonthDuration(db, fetchedAds)
+                        .then((result) => {
+                            if (result?.updated) setRefresh((prev) => !prev);
+                        })
+                        .catch((error) => {
+                            console.warn("Listing duration migration failed", error);
+                        });
+                }
 
             } catch (error) {
                 console.error("Error fetching ads:", error);
