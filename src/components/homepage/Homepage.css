@@ -19,13 +19,6 @@
   background-repeat: no-repeat;
 }
 
-.hero--combined {
-  padding: 36px 0 28px;
-  min-height: min(58vh, 560px);
-  display: flex;
-  align-items: center;
-}
-
 .hero-overlay {
   position: absolute;
   inset: 0;
@@ -36,12 +29,6 @@
     rgba(15, 43, 69, 0.85) 100%
   );
   pointer-events: none;
-}
-
-.hero-combined {
-  position: relative;
-  z-index: 1;
-  width: 100%;
 }
 
 .hero-inner {
@@ -72,27 +59,6 @@
   line-height: 1.2;
 }
 
-.hero-logo--mark {
-  border: 0;
-  background: transparent;
-  padding: 0;
-  margin-bottom: 14px;
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 3vw, 1.75rem);
-  color: #fff;
-  text-transform: none;
-  letter-spacing: 0.02em;
-}
-
-.hero-logo--mark img {
-  width: 44px;
-  height: auto;
-  object-fit: contain;
-  background: #fff;
-  border-radius: 12px;
-  padding: 4px;
-}
-
 .hero-logo svg {
   font-size: 1.5rem;
 }
@@ -100,9 +66,8 @@
 .hero h1 {
   margin: 0;
   color: #ffffff;
-  font-family: var(--font-display);
-  font-size: clamp(1.7rem, 5vw, 2.55rem);
-  line-height: 1.15;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  line-height: 1.2;
   font-weight: 800;
 }
 
@@ -113,50 +78,10 @@
 }
 
 .hero-lead {
-  margin: 10px 0 18px;
+  margin: 10px 0 22px;
   color: #c8d8e8;
-  font-size: 0.98rem;
-  line-height: 1.6;
-}
-
-.hero-actions {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.hero-store-button,
-.hero-publish-button {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 46px;
-  margin-top: 0;
-  padding: 0 12px;
-  border-radius: 14px;
   font-size: 0.95rem;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.hero-store-button {
-  border: 0;
-  background: var(--color-orange);
-  color: #1a1208;
-}
-
-.hero-store-note {
-  margin: 14px 0 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 0.88rem;
-  font-weight: 600;
+  line-height: 1.6;
 }
 
 /* ==================================================
@@ -242,21 +167,22 @@
   cursor: pointer;
 }
 
-.hero-actions .hero-publish-button {
+.hero-publish-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  margin-top: 10px;
+  padding: 0;
   border: 2px solid #ffffff;
+  border-radius: 14px;
   background: transparent;
   color: #ffffff;
-}
-
-@media (max-width: 520px) {
-  .hero-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .hero--combined {
-    min-height: 0;
-    padding: 28px 0 24px;
-  }
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 /* Legacy search styles used elsewhere */
