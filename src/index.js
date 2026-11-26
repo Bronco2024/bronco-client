@@ -8,6 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from './context/AuthProvider';
 import { Provider } from 'react-redux';
 import { store } from '@/redux/store';
+import { isFirestoreConnectionNoise } from '@/helpers/sentry-noise';
 
 Sentry.init({
   dsn: "https://c5e3bf17fddb68ed25f1fb52b0d0a914@o4509877957689344.ingest.de.sentry.io/4509877959065680",
@@ -24,6 +25,8 @@ Sentry.init({
     // Safari WebKit MediaController bug (NullMedia → EmptyRanges).
     /Can't find variable: EmptyRanges/i,
     /EmptyRanges is not defined/i,
+    // Firestore WebChannel blips on flaky mobile networks.
+    /^FirebaseError:\s*Connection failed\.?$/i,
   ],
   beforeSend(event, hint) {
     const error = hint?.originalException;
@@ -79,6 +82,12 @@ Sentry.init({
 
     // Safari WebKit media controls bug on item pages with video.
     if (/EmptyRanges/i.test(message)) {
+      return null;
+    }
+
+    // Firestore WebChannel "Connection failed" / offline — transient network,
+    // not an app bug (common on mobile 5G/Wi‑Fi handoffs).
+    if (isFirestoreConnectionNoise(error, event)) {
       return null;
     }
 
