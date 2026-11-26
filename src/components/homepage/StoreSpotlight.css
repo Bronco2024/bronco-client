@@ -9,7 +9,7 @@
 
 .store-spotlight-stage {
   position: relative;
-  min-height: min(78vh, 720px);
+  min-height: min(52vh, 480px);
   display: grid;
   align-items: end;
   background-size: cover;
@@ -80,7 +80,7 @@
   z-index: 1;
   width: var(--container, min(1180px, 94%));
   margin: 0 auto;
-  padding: 56px 0 48px;
+  padding: 36px 0 32px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -122,10 +122,10 @@
 .store-spotlight-inner h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2.4rem, 7vw, 4.4rem);
-  line-height: 1.05;
+  font-size: clamp(1.9rem, 5vw, 3.2rem);
+  line-height: 1.08;
   font-weight: 800;
-  max-width: 11ch;
+  max-width: 12ch;
 }
 
 .store-spotlight-inner h2 span {
@@ -259,13 +259,13 @@
   }
 
   .store-spotlight-stage {
-    min-height: min(70vh, 620px);
+    min-height: min(48vh, 420px);
   }
 }
 
 @media (max-width: 560px) {
   .store-spotlight-inner {
-    padding: 40px 0 36px;
+    padding: 28px 0 26px;
   }
 
   .store-spotlight-rail-track {
