@@ -1,25 +1,26 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaw } from "@fortawesome/free-solid-svg-icons";
+import { SITE_NAME } from "@/data/site-config";
 import "./Loading.css";
 
 const Loading = ({ message, size = 250, fullscreen = true }) => {
-  const spinnerSize = fullscreen ? Math.min(size, 72) : Math.min(size, 28);
+  const logoHeight = fullscreen ? Math.min(Math.round(size * 0.38), 88) : 28;
 
   return (
     <div className={fullscreen ? "loading-screen" : "loading-inline"}>
       <div className="loading-content">
-        <span
-          className="loading-mark"
-          aria-hidden="true"
-          style={{
-            width: spinnerSize,
-            height: spinnerSize,
-            fontSize: spinnerSize * 0.42,
-          }}
-        >
-          <FontAwesomeIcon icon={faPaw} />
-        </span>
+        <picture>
+          <source srcSet="/petzo-logo-mark.webp" type="image/webp" />
+          <img
+            className="loading-logo"
+            src="/petzo-logo.jpg"
+            alt=""
+            aria-hidden="true"
+            width={Math.round(logoHeight * 1.08)}
+            height={logoHeight}
+            style={{ height: logoHeight }}
+            decoding="async"
+          />
+        </picture>
 
         <p
           className="loading-text"
@@ -28,7 +29,7 @@ const Loading = ({ message, size = 250, fullscreen = true }) => {
             marginTop: fullscreen ? "16px" : "0",
           }}
         >
-          {message || "טוען..."}
+          {message || `טוען את ${SITE_NAME}...`}
         </p>
       </div>
     </div>

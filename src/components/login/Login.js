@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faEye,
     faEyeSlash,
-    faPaw
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
@@ -278,10 +277,17 @@ const Login = () => {
         <div className="login-container">
 
             <div className="auth-brand">
-                <span className="auth-brand-mark" aria-hidden="true">
-                    <FontAwesomeIcon icon={faPaw} />
-                </span>
-                <span>{SITE_NAME}</span>
+                <picture>
+                    <source srcSet="/petzo-logo-mark.webp" type="image/webp" />
+                    <img
+                        className="auth-brand-logo"
+                        src="/petzo-logo.jpg"
+                        alt={SITE_NAME}
+                        width={200}
+                        height={186}
+                        decoding="async"
+                    />
+                </picture>
             </div>
 
             <h2 className="login-title">

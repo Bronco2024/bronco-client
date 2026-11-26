@@ -44,10 +44,13 @@
     flex-shrink: 0;
 }
 
-.brand-copy {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.15;
+.brand-logo {
+    height: 56px;
+    width: auto;
+    max-width: 160px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
 }
 
 .brand-text {
@@ -308,6 +311,11 @@
     .publish-ad-button {
         padding: 9px 12px;
         font-size: 0.85rem;
+    }
+
+    .brand-logo {
+        height: 46px;
+        max-width: 128px;
     }
 
     .brand-text {
