@@ -46,7 +46,7 @@ const Admin = () => {
     const [isModalDeleteAdVisible, setIsModalDeleteAdVisible] = useState(false);
     const [sponsorToDelete, setSponsorToDelete] = useState(null);
     const [refresh, setRefresh] = useState(false);
-    const [activeTab, setActiveTab] = useState("ads");
+    const [activeTab, setActiveTab] = useState("products");
     const [ads, setAds] = useState([])
     const [adStatusFilter, setAdStatusFilter] = useState("pending")
     const { notifications: adminNotifications } =
@@ -119,22 +119,26 @@ const Admin = () => {
         fetchAds()
     }, [refresh])
 
-    const filteredAds = useMemo(() => {
-        if (adStatusFilter === "store") {
-            return ads.filter((ad) => isStoreListing(ad));
-        }
-        if (adStatusFilter === "all") return ads;
-        return ads.filter((ad) => getAdStatus(ad) === adStatusFilter);
-    }, [ads, adStatusFilter]);
-
-    const storeCount = useMemo(
-        () => ads.filter((ad) => isStoreListing(ad)).length,
+    const marketplaceAds = useMemo(
+        () => ads.filter((ad) => !isStoreListing(ad)),
         [ads]
     );
 
-    const pendingCount = useMemo(
-        () => ads.filter((ad) => isAdPending(ad)).length,
+    const storeProducts = useMemo(
+        () => ads.filter((ad) => isStoreListing(ad)),
         [ads]
+    );
+
+    const filteredAds = useMemo(() => {
+        if (adStatusFilter === "all") return marketplaceAds;
+        return marketplaceAds.filter((ad) => getAdStatus(ad) === adStatusFilter);
+    }, [marketplaceAds, adStatusFilter]);
+
+    const storeCount = storeProducts.length;
+
+    const pendingCount = useMemo(
+        () => marketplaceAds.filter((ad) => isAdPending(ad)).length,
+        [marketplaceAds]
     );
 
     const visibleNotifications = useMemo(
@@ -274,26 +278,30 @@ const Admin = () => {
                 <div className="account-hero-copy">
                     <span className="section-kicker">ניהול האתר</span>
                     <h1>אזור המנהל</h1>
-                    <p>אישור מודעות, הזמנות חנות, מעקב אחרי התראות וניהול ספונסורים במקום אחד.</p>
+                    <p>
+                        המוצרים שלי בחנות, אישור מודעות, הזמנות ומעקב אחרי התראות —
+                        הכל במקום אחד.
+                    </p>
                 </div>
                 <div className="account-hero-actions">
                     <button
                         type="button"
                         className="account-primary-button"
-                        onClick={() => navigate('/admin/all-purchases')}
+                        onClick={() => {
+                            setActiveTab("products");
+                            navigate(`/publish_ad?category=${encodeURIComponent("חנות")}`);
+                        }}
                     >
-                        <FontAwesomeIcon icon={faClipboardList} />
-                        הזמנות חנות
+                        <FontAwesomeIcon icon={faStore} />
+                        הוסף מוצר
                     </button>
                     <button
                         type="button"
                         className="account-secondary-button"
-                        onClick={() =>
-                            navigate(`/publish_ad?category=${encodeURIComponent("חנות")}`)
-                        }
+                        onClick={() => navigate('/admin/all-purchases')}
                     >
-                        <FontAwesomeIcon icon={faStore} />
-                        הוסף מוצר לחנות
+                        <FontAwesomeIcon icon={faClipboardList} />
+                        הזמנות חנות
                     </button>
                     {activeTab === "sponsors" && (
                         <button
@@ -310,20 +318,20 @@ const Admin = () => {
 
             <section className="account-stats" aria-label="סיכום ניהול">
                 <div>
+                    <strong>{storeCount}</strong>
+                    <span>המוצרים שלי</span>
+                </div>
+                <div>
                     <strong>{pendingCount}</strong>
                     <span>ממתינות לאישור</span>
                 </div>
                 <div>
-                    <strong>{ads.length}</strong>
-                    <span>מודעות פעילות</span>
+                    <strong>{marketplaceAds.length}</strong>
+                    <span>מודעות באתר</span>
                 </div>
                 <div>
                     <strong>{visibleNotificationCount}</strong>
                     <span>התראות חדשות</span>
-                </div>
-                <div>
-                    <strong>{sponsors.length}</strong>
-                    <span>ספונסורים</span>
                 </div>
             </section>
 
@@ -362,6 +370,16 @@ const Admin = () => {
                 <div className="admin-tabs">
                     <button
                         type="button"
+                        className={`admin-tab ${activeTab === "products" ? "active" : ""}`}
+                        onClick={() => setActiveTab("products")}
+                    >
+                        המוצרים שלי
+                        {storeCount > 0 && (
+                            <span className="admin-tab-badge">{storeCount}</span>
+                        )}
+                    </button>
+                    <button
+                        type="button"
                         className={`admin-tab ${activeTab === "ads" ? "active" : ""}`}
                         onClick={() => setActiveTab("ads")}
                     >
@@ -377,7 +395,142 @@ const Admin = () => {
                     </button>
                 </div>
 
-                {activeTab === "sponsors" ? (
+                {activeTab === "products" ? (
+                    storeProducts.length > 0 ? (
+                        <div className="account-card-list">
+                            {storeProducts.map((ad) => {
+                                const status = getAdStatus(ad);
+                                const title = getAdCardTitle(ad);
+                                const image =
+                                    ad.photos?.[0] || require("@/assets/no-image.jpg");
+
+                                return (
+                                    <article
+                                        key={ad.id}
+                                        className="account-card account-card--store"
+                                    >
+                                        <button
+                                            type="button"
+                                            className="account-card-image"
+                                            onClick={() =>
+                                                navigate(getListingPath(ad), {
+                                                    state: { ad },
+                                                })
+                                            }
+                                        >
+                                            <ListingCardMedia src={image} alt={title} />
+                                        </button>
+                                        <div className="account-card-body">
+                                            <span className="account-status account-status--store">
+                                                מוצר בחנות
+                                            </span>
+                                            <span
+                                                className={`account-status account-status--${status}`}
+                                            >
+                                                {AD_STATUS_LABELS[status]}
+                                            </span>
+                                            <h3>{title}</h3>
+                                            <p className="account-card-meta">
+                                                {ad.accessory
+                                                    ? `קטגוריה · ${ad.accessory}`
+                                                    : "חנות Petzo"}
+                                            </p>
+                                            {ad.price ? (
+                                                <strong className="account-card-price">
+                                                    ₪{ad.price}
+                                                </strong>
+                                            ) : null}
+                                        </div>
+                                        <div className="account-card-actions">
+                                            {status === AD_STATUS.PENDING && (
+                                                <button
+                                                    type="button"
+                                                    className="account-action account-action--approve"
+                                                    onClick={() =>
+                                                        updateAdStatus(
+                                                            ad.id,
+                                                            AD_STATUS.APPROVED
+                                                        )
+                                                    }
+                                                >
+                                                    <FontAwesomeIcon icon={faCheck} />
+                                                    פרסם בחנות
+                                                </button>
+                                            )}
+                                            {status === AD_STATUS.APPROVED && (
+                                                <button
+                                                    type="button"
+                                                    className="account-action account-action--reject"
+                                                    onClick={() =>
+                                                        updateAdStatus(
+                                                            ad.id,
+                                                            AD_STATUS.REJECTED
+                                                        )
+                                                    }
+                                                >
+                                                    <FontAwesomeIcon icon={faEyeSlash} />
+                                                    הסתר מהחנות
+                                                </button>
+                                            )}
+                                            {status === AD_STATUS.REJECTED && (
+                                                <button
+                                                    type="button"
+                                                    className="account-action account-action--approve"
+                                                    onClick={() =>
+                                                        updateAdStatus(
+                                                            ad.id,
+                                                            AD_STATUS.APPROVED
+                                                        )
+                                                    }
+                                                >
+                                                    <FontAwesomeIcon icon={faCheck} />
+                                                    החזר לחנות
+                                                </button>
+                                            )}
+                                            <button
+                                                type="button"
+                                                className="account-action account-action--update"
+                                                onClick={() =>
+                                                    navigate("/profile/update_ad", {
+                                                        state: { ad },
+                                                    })
+                                                }
+                                            >
+                                                <FontAwesomeIcon icon={faPen} />
+                                                ערוך מוצר
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="account-action account-action--delete"
+                                                onClick={() => handleDeleteAdButton(ad)}
+                                            >
+                                                <FontAwesomeIcon icon={faTrash} />
+                                                מחק מוצר
+                                            </button>
+                                        </div>
+                                    </article>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="account-empty">
+                            <h3>עדיין אין מוצרים בחנות</h3>
+                            <p>הוסיפו את המוצר הראשון — והוא יופיע כאן תחת ״המוצרים שלי״.</p>
+                            <button
+                                type="button"
+                                className="account-primary-button"
+                                onClick={() =>
+                                    navigate(
+                                        `/publish_ad?category=${encodeURIComponent("חנות")}`
+                                    )
+                                }
+                            >
+                                <FontAwesomeIcon icon={faStore} />
+                                הוסף מוצר
+                            </button>
+                        </div>
+                    )
+                ) : activeTab === "sponsors" ? (
                     sponsors.length > 0 ? (
                         <div className="account-card-list">
                             {sponsors.map((sponsor) => (
@@ -425,7 +578,6 @@ const Admin = () => {
                         <div className="admin-filters">
                             {[
                                 { value: "pending", label: `ממתינות (${pendingCount})` },
-                                { value: "store", label: `חנות (${storeCount})` },
                                 { value: "approved", label: "מאושרות" },
                                 { value: "rejected", label: "נדחות" },
                                 { value: "all", label: "הכל" },
@@ -461,16 +613,9 @@ const Admin = () => {
                                                 <span className={`account-status account-status--${status}`}>
                                                     {AD_STATUS_LABELS[status]}
                                                 </span>
-                                                {isStoreListing(ad) && (
-                                                    <span className="account-status account-status--store">
-                                                        מוצר בחנות
-                                                    </span>
-                                                )}
                                                 <h3>{title}</h3>
                                                 <p className="account-card-meta">
-                                                    {isStoreListing(ad)
-                                                        ? (ad.accessory ? `חנות · ${ad.accessory}` : "חנות Petzo")
-                                                        : `${ad.category}${ad.location ? ` · ${ad.location}` : ""}`}
+                                                    {`${ad.category}${ad.location ? ` · ${ad.location}` : ""}`}
                                                 </p>
                                                 {ad.price ? <strong className="account-card-price">₪{ad.price}</strong> : null}
                                             </div>
@@ -515,20 +660,6 @@ const Admin = () => {
                                                         הסתר
                                                     </button>
                                                 )}
-                                                {isStoreListing(ad) && (
-                                                    <button
-                                                        type="button"
-                                                        className="account-action account-action--update"
-                                                        onClick={() =>
-                                                            navigate("/profile/update_ad", {
-                                                                state: { ad },
-                                                            })
-                                                        }
-                                                    >
-                                                        <FontAwesomeIcon icon={faPen} />
-                                                        ערוך מוצר
-                                                    </button>
-                                                )}
                                                 <button
                                                     type="button"
                                                     className="account-action account-action--delete"
@@ -562,9 +693,21 @@ const Admin = () => {
                 </div>
             </Modal>
 
-            <Modal isVisible={isModalDeleteAdVisible} title="מחיקת מודעה" onClose={closeModalDeleteAd}>
+            <Modal
+                isVisible={isModalDeleteAdVisible}
+                title={
+                    isStoreListing(adToDelete)
+                        ? "מחיקת מוצר"
+                        : "מחיקת מודעה"
+                }
+                onClose={closeModalDeleteAd}
+            >
                 <div className="modal-content-custom">
-                    <p>האם אתה בטוח שברצונך למחוק את מודעה זה?</p>
+                    <p>
+                        {isStoreListing(adToDelete)
+                            ? "למחוק את המוצר מהחנות?"
+                            : "האם אתה בטוח שברצונך למחוק את מודעה זה?"}
+                    </p>
                     <div className="modal-buttons-custom">
                         <button className="cancel-button" onClick={closeModalDeleteAd}>ביטול</button>
                         <button className="confirm-delete-button" onClick={handleDeleteAdButtonModal}>מחק</button>
