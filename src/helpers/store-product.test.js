@@ -12,6 +12,8 @@ describe("store-product helpers", () => {
     expect(isStoreListing({ category: "חנות" })).toBe(true);
     expect(isStoreListing({ listingKind: "store" })).toBe(true);
     expect(isStoreListing({ category: "כלבים" })).toBe(false);
+    expect(isStoreListing(null)).toBe(false);
+    expect(isStoreListing(undefined)).toBe(false);
   });
 
   test("builds a long store shelf life", () => {

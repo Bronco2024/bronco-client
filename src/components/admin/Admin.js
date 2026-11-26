@@ -696,7 +696,7 @@ const Admin = () => {
             <Modal
                 isVisible={isModalDeleteAdVisible}
                 title={
-                    isStoreListing(adToDelete)
+                    adToDelete && isStoreListing(adToDelete)
                         ? "מחיקת מוצר"
                         : "מחיקת מודעה"
                 }
@@ -704,7 +704,7 @@ const Admin = () => {
             >
                 <div className="modal-content-custom">
                     <p>
-                        {isStoreListing(adToDelete)
+                        {adToDelete && isStoreListing(adToDelete)
                             ? "למחוק את המוצר מהחנות?"
                             : "האם אתה בטוח שברצונך למחוק את מודעה זה?"}
                     </p>
