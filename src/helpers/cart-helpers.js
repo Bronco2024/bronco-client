@@ -47,5 +47,7 @@ export const recalculateCartTotals = (items = []) => {
   };
 };
 
-export const isStoreProduct = (product = {}) =>
-  product.category === "חנות" || product.listingKind === "store";
+export const isStoreProduct = (product) => {
+  if (!product || typeof product !== "object") return false;
+  return product.category === "חנות" || product.listingKind === "store";
+};

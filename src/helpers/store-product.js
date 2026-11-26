@@ -8,8 +8,10 @@ export const STORE_LISTING_DURATION_MONTHS = 24;
 
 export const isStoreCategory = (category) => category === STORE_CATEGORY_NAME;
 
-export const isStoreListing = (item = {}) =>
-  isStoreProduct(item) || isStoreCategory(item.category);
+export const isStoreListing = (item) => {
+  if (!item || typeof item !== "object") return false;
+  return isStoreProduct(item) || isStoreCategory(item.category);
+};
 
 /** Far-future expiry so store products don't vanish like 3-month ads. */
 export const getStoreListingAvailableUntil = (fromDate = new Date()) =>

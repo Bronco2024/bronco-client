@@ -45,5 +45,7 @@ describe("cart helpers", () => {
   test("detects store products", () => {
     expect(isStoreProduct({ category: "חנות" })).toBe(true);
     expect(isStoreProduct({ category: "אביזרים" })).toBe(false);
+    expect(isStoreProduct(null)).toBe(false);
+    expect(isStoreProduct(undefined)).toBe(false);
   });
 });
