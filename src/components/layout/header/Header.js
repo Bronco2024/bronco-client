@@ -254,8 +254,9 @@ const Header = () => {
                     <button
                         className="publish-ad-button"
                         onClick={handlePublishAd}
+                        aria-label="פרסום מודעה"
                     >
-                        פרסום מודעה
+                        <span>פרסום מודעה</span>
                         <FontAwesomeIcon icon={faPlus} />
                     </button>
 
@@ -270,8 +271,9 @@ const Header = () => {
                                     setShowCategories(false);
                                 }}
                                 aria-expanded={showProfileDropdown}
+                                aria-label="פרופיל"
                             >
-                                פרופיל
+                                <span>פרופיל</span>
                                 <FontAwesomeIcon icon={faUser} />
                             </button>
 
