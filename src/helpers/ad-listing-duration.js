@@ -37,8 +37,11 @@ export const addMonthsToDate = (fromDate = new Date(), months = AD_LISTING_DURAT
 export const getNewListingAvailableUntil = (fromDate = new Date()) =>
   addMonthsToDate(fromDate, AD_LISTING_DURATION_MONTHS);
 
-export const needsListingDurationExtension = (ad = {}) =>
-  Number(ad.listingDurationMonths) !== AD_LISTING_DURATION_VERSION;
+export const needsListingDurationExtension = (ad = {}) => {
+  // Store inventory uses its own long shelf life — skip marketplace migration.
+  if (ad.category === "חנות" || ad.listingKind === "store") return false;
+  return Number(ad.listingDurationMonths) !== AD_LISTING_DURATION_VERSION;
+};
 
 /**
  * Extend a legacy 1-month expiry by the difference (2 months),

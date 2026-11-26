@@ -64,6 +64,26 @@ export const DeletedAttributesAfterUpdateForm = (data) => {
             delete newData.hasCertificate;
             break;
 
+        case 'חנות':
+            // Store products keep title + price; strip marketplace-only fields.
+            delete newData.age;
+            delete newData.ageYears;
+            delete newData.ageMonths;
+            delete newData.ageInMonths;
+            delete newData.gender;
+            delete newData.breed;
+            delete newData.seed_type;
+            delete newData.semen_type;
+            delete newData.hasCertificate;
+            delete newData.forAdoption;
+            delete newData.seed_animal;
+            delete newData.service_animals;
+            delete newData.contact;
+            delete newData.phoneNumber;
+            delete newData.location;
+            delete newData.district;
+            break;
+
         default:
             if (isPetMarketplaceCategory(data.category)) {
                 delete newData.seed_type;

@@ -161,6 +161,12 @@
     color: #1e7a43;
 }
 
+.account-status--store {
+    background: rgba(255, 134, 28, 0.14);
+    color: #b45309;
+    margin-inline-start: 6px;
+}
+
 .account-status--rejected {
     background: #fdecec;
     color: #b42318;
@@ -194,6 +200,11 @@
 .account-action--reject {
     background: #fff4df;
     color: #a66a00;
+}
+
+.account-action--update {
+    background: var(--color-navy);
+    color: #fff;
 }
 
 .account-action--delete {

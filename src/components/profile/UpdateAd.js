@@ -27,6 +27,12 @@ import { toFirestoreTimestamp } from '@/helpers/firestore-timestamp';
 import { withCurrentOption } from '@/helpers/select-options';
 import { getNewListingAvailableUntil } from '@/helpers/ad-listing-duration';
 import { compressImagesForUpload } from '@/helpers/compress-image';
+import {
+    getStoreListingAvailableUntil,
+    isStoreCategory,
+    STORE_LISTING_DURATION_MONTHS,
+    STORE_LISTING_KIND,
+} from '@/helpers/store-product';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -207,9 +213,22 @@ const UpdateAd = () => {
         e.preventDefault();
         setSubmitError("");
 
-        if (phoneValid === false) {
+        const publishingStore = isStoreCategory(formData.category);
+
+        if (!publishingStore && phoneValid === false) {
             setSubmitError("מספר הטלפון אינו תקין");
             return;
+        }
+
+        if (publishingStore) {
+            if (!String(formData.title || "").trim()) {
+                setSubmitError("יש להזין שם מוצר");
+                return;
+            }
+            if (!formData.price && formData.price !== 0) {
+                setSubmitError("יש להזין מחיר למוצר");
+                return;
+            }
         }
 
         const totalPhotos = (formData.photos?.length || 0) + (newPhotos.photos?.length || 0);
@@ -244,7 +263,12 @@ const UpdateAd = () => {
             );
             const availableUntil = toFirestoreTimestamp(
                 formData.availableUntil,
-                () => Timestamp.fromDate(getNewListingAvailableUntil())
+                () =>
+                    Timestamp.fromDate(
+                        publishingStore
+                            ? getStoreListingAvailableUntil()
+                            : getNewListingAvailableUntil()
+                    )
             );
 
             let dataToSubmit = {
@@ -253,6 +277,14 @@ const UpdateAd = () => {
                 userId: formData.userId || currentUser?.uid || ad.userId,
                 createdAt: existingCreatedAt,
                 availableUntil,
+                listingDurationMonths: publishingStore
+                    ? STORE_LISTING_DURATION_MONTHS
+                    : formData.listingDurationMonths,
+                listingKind: publishingStore
+                    ? STORE_LISTING_KIND
+                    : isServiceCategory(formData.category)
+                      ? "service"
+                      : formData.listingKind || "ad",
                 // After any publisher edit (including rejected ads), re-queue for review.
                 status: getAdStatusAfterUpdate(currentUser?.isAdmin),
                 updatedAt: Timestamp.now(),
@@ -279,8 +311,8 @@ const UpdateAd = () => {
                 delete dataToSubmit.service_animals;
             }
 
-            if (isServiceCategory(formData.category)) {
-                dataToSubmit.listingKind = "service";
+            if (publishingStore) {
+                dataToSubmit.title = String(formData.title || "").trim();
             }
 
             if (formData.forAdoption) {
@@ -388,6 +420,7 @@ const UpdateAd = () => {
     const serviceCopy = selectedService
         ? getServicePublishCopy(formData.category)
         : null;
+    const publishingStore = isStoreCategory(formData.category);
 
     const showPriceField =
         !formData.forAdoption &&
@@ -403,7 +436,7 @@ const UpdateAd = () => {
 
     return (
         <div className="update-ad-container">
-            <h1>עדכון מודעה</h1>
+            <h1>{publishingStore ? "עדכון מוצר בחנות" : "עדכון מודעה"}</h1>
             <form className="update-ad-form" onSubmit={handleSubmit}>
 
                 <PublishCategorySelect
@@ -674,15 +707,15 @@ const UpdateAd = () => {
                     </div>
                 )}
 
-                {formData.category === "אביזרים" && (
-                    <div className="update-ad-form" >
+                {(formData.category === "אביזרים" || publishingStore) && (
+                    <div className="update-ad-form">
                         <label htmlFor="accessories_type">סוג מוצר</label>
                         <select
                             id="accessory"
                             name="accessory"
                             value={formData.accessory || ""}
                             onChange={handleChange}
-                            required
+                            required={formData.category === "אביזרים"}
                         >
                             <option value="">בחר סוג מוצר</option>
                             {withCurrentOption(ACCESSORIES_TPYES, formData.accessory).map((accessory, index) => (
@@ -694,6 +727,20 @@ const UpdateAd = () => {
                     </div>
                 )}
 
+                {publishingStore && (
+                    <div className="publish-service-block">
+                        <label htmlFor="title">שם המוצר *</label>
+                        <input
+                            id="title"
+                            name="title"
+                            value={formData.title || ""}
+                            onChange={handleChange}
+                            placeholder="לדוגמה: קולר ניילון כתום"
+                            required
+                        />
+                    </div>
+                )}
+
                 <label htmlFor="description">תיאור</label>
                 <textarea
                     id="description"
@@ -701,72 +748,78 @@ const UpdateAd = () => {
                     value={formData?.description || ""}
                     onChange={handleChange}
                     rows={5}
+                    placeholder={publishingStore ? "פרטים קצרים על המוצר (אופציונלי)" : undefined}
                 />
 
-                <label htmlFor="phoneNumber">שם איש קשר</label>
-                <input
-                    id="contact"
-                    name="contact"
-                    value={formData.contact}
-                    onChange={handleChange}
-                    required
-                />
+                {!publishingStore && (
+                    <>
+                        <label htmlFor="contact">שם איש קשר</label>
+                        <input
+                            id="contact"
+                            name="contact"
+                            value={formData.contact}
+                            onChange={handleChange}
+                            required
+                        />
 
-                <label htmlFor="phoneNumber" className="phone-label">
-                    <span>מספר טלפון</span>
-                    {formData.phoneNumber && (
-                        <span className={`phone-status ${phoneValid ? "is-valid" : "is-invalid"}`}>
-                            {phoneValid ? "מספר תקין" : "מספר לא תקין"}
-                        </span>
-                    )}
-                </label>
-                <input
-                    type="tel"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={formData?.phoneNumber}
-                    onChange={(e) => {
-                        const numericValue = e.target.value.replace(/\D/g, '');
-                        handleChange({ target: { name: 'phoneNumber', value: numericValue } });
-                        setPhoneValid(isPhoneNumberIsraeliValid(numericValue));
-                    }}
-                    required
-                    maxLength={10}
-                    className={phoneValid ? 'valid-phone' : 'invalid-phone'}
+                        <label htmlFor="phoneNumber" className="phone-label">
+                            <span>מספר טלפון</span>
+                            {formData.phoneNumber && (
+                                <span className={`phone-status ${phoneValid ? "is-valid" : "is-invalid"}`}>
+                                    {phoneValid ? "מספר תקין" : "מספר לא תקין"}
+                                </span>
+                            )}
+                        </label>
+                        <input
+                            type="tel"
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            value={formData?.phoneNumber}
+                            onChange={(e) => {
+                                const numericValue = e.target.value.replace(/\D/g, '');
+                                handleChange({ target: { name: 'phoneNumber', value: numericValue } });
+                                setPhoneValid(isPhoneNumberIsraeliValid(numericValue));
+                            }}
+                            required
+                            maxLength={10}
+                            className={phoneValid ? 'valid-phone' : 'invalid-phone'}
+                        />
 
-                />
-
-                <CitySelect
-                    value={formData.location || ""}
-                    onChange={handleChange}
-                    areaValue={formData.district || ""}
-                    enableAreaFilter
-                />
+                        <CitySelect
+                            value={formData.location || ""}
+                            onChange={handleChange}
+                            areaValue={formData.district || ""}
+                            enableAreaFilter
+                        />
+                    </>
+                )}
 
                 {showPriceField && (
-                        <div className='update-ad-form'>
-                            <label htmlFor="price">
-                                {isServiceCategory(formData.category)
-                                    ? (serviceCopy?.priceLabel || "מחיר / תעריף (אופציונלי)")
-                                    : "מחיר"}
-                            </label>
-                            <input
-                                type="number"
-                                id="price"
-                                name="price"
-                                value={formData.price}
-                                onChange={(e) => {
-                                    const numericValue = e.target.value.replace(/\D/g, '');
-                                    handleChange({ target: { name: 'price', value: numericValue } });
-                                }}
-                                min={0}
-                                onInput={(e) => {
-                                    if (e.target.value > 999999) e.target.value = 999999;
-                                }}
-                            />
-                        </div>
-                    )
-                }
+                    <div className="update-ad-form">
+                        <label htmlFor="price">
+                            {publishingStore
+                                ? "מחיר *"
+                                : isServiceCategory(formData.category)
+                                  ? (serviceCopy?.priceLabel || "מחיר / תעריף (אופציונלי)")
+                                  : "מחיר"}
+                        </label>
+                        <input
+                            type="number"
+                            id="price"
+                            name="price"
+                            value={formData.price}
+                            onChange={(e) => {
+                                const numericValue = e.target.value.replace(/\D/g, '');
+                                handleChange({ target: { name: 'price', value: numericValue } });
+                            }}
+                            min={0}
+                            required={publishingStore}
+                            onInput={(e) => {
+                                if (e.target.value > 999999) e.target.value = 999999;
+                            }}
+                        />
+                    </div>
+                )}
 
                 <label htmlFor="video">סרטון</label>
                 <input

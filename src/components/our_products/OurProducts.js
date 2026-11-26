@@ -84,9 +84,20 @@ const OurProducts = () => {
 
   const getTotalCount = useCallback(async () => {
     const collectionRef = collection(db, "ads");
-    const q = query(collectionRef, where("category", "==", categoryFilter));
-    const aggregateQuerySnapshot = await getCountFromServer(q);
-    setTotalAds(aggregateQuerySnapshot.data().count);
+    // Prefer approved-only count when the composite index exists; fall back to category count.
+    try {
+      const approvedQuery = query(
+        collectionRef,
+        where("category", "==", categoryFilter),
+        where("status", "==", "approved")
+      );
+      const aggregateQuerySnapshot = await getCountFromServer(approvedQuery);
+      setTotalAds(aggregateQuerySnapshot.data().count);
+    } catch (_error) {
+      const q = query(collectionRef, where("category", "==", categoryFilter));
+      const aggregateQuerySnapshot = await getCountFromServer(q);
+      setTotalAds(aggregateQuerySnapshot.data().count);
+    }
   }, [categoryFilter]);
 
   const fetchAds = useCallback(async () => {

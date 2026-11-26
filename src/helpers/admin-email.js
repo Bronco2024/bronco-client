@@ -16,22 +16,39 @@ export const canSendAdminEmail = () => Boolean(getAdminEmail());
 export const buildPendingAdEmail = ({ adId, ad = {}, origin = "" } = {}) => {
   const title = getNotificationTitle(ad);
   const adminPath = origin ? `${origin.replace(/\/$/, "")}/admin` : "/admin";
+  const isStore = ad.category === "חנות" || ad.listingKind === "store";
+
+  const lines = isStore
+    ? [
+        "התקבל מוצר חדש לחנות וממתין לאישור מנהל.",
+        "",
+        `מוצר: ${title}`,
+        `קטגוריה: חנות`,
+        ad.accessory ? `סוג מוצר: ${ad.accessory}` : null,
+        `מחיר: ${ad.price || "לא צוין"}`,
+        `מזהה: ${adId || ""}`,
+        "",
+        `לאישור המוצר: ${adminPath}`,
+      ]
+    : [
+        "התקבלה מודעה חדשה וממתינה לאישור מנהל.",
+        "",
+        `כותרת: ${title}`,
+        `קטגוריה: ${ad.category || "לא צוין"}`,
+        `עיר: ${ad.location || "לא צוין"}`,
+        `מחיר: ${ad.price || "לא צוין"}`,
+        `איש קשר: ${ad.contact || "לא צוין"}`,
+        `טלפון: ${ad.phoneNumber || "לא צוין"}`,
+        `מזהה מודעה: ${adId || ""}`,
+        "",
+        `לאישור המודעה: ${adminPath}`,
+      ];
 
   return {
-    subject: `${SITE_NAME}: מודעה ממתינה לאישור — ${title}`,
-    message: [
-      "התקבלה מודעה חדשה וממתינה לאישור מנהל.",
-      "",
-      `כותרת: ${title}`,
-      `קטגוריה: ${ad.category || "לא צוין"}`,
-      `עיר: ${ad.location || "לא צוין"}`,
-      `מחיר: ${ad.price || "לא צוין"}`,
-      `איש קשר: ${ad.contact || "לא צוין"}`,
-      `טלפון: ${ad.phoneNumber || "לא צוין"}`,
-      `מזהה מודעה: ${adId || ""}`,
-      "",
-      `לאישור המודעה: ${adminPath}`,
-    ].join("\n"),
+    subject: isStore
+      ? `${SITE_NAME}: מוצר בחנות ממתין לאישור — ${title}`
+      : `${SITE_NAME}: מודעה ממתינה לאישור — ${title}`,
+    message: lines.filter(Boolean).join("\n"),
   };
 };
 

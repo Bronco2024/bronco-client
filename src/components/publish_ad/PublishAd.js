@@ -38,6 +38,12 @@ import {
     MAX_PUBLISH_PHOTOS,
 } from '@/helpers/publish-photos';
 import { compressImagesForUpload } from '@/helpers/compress-image';
+import {
+    getStoreListingAvailableUntil,
+    isStoreCategory,
+    STORE_LISTING_DURATION_MONTHS,
+    STORE_LISTING_KIND,
+} from '@/helpers/store-product';
 
 const PublishAd = () => {
     const navigate = useNavigate();
@@ -81,10 +87,12 @@ const PublishAd = () => {
             type: searchParams.get("type") || "",
         });
         if (!fromQuery) return;
+        // Store category is admin-only — ignore deep links for regular users.
+        if (isStoreCategory(fromQuery) && !currentUser?.isAdmin) return;
         setFormData((prev) =>
             prev.category ? prev : { ...prev, category: fromQuery, service_animals: [] }
         );
-    }, [searchParams]);
+    }, [searchParams, currentUser?.isAdmin]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -183,8 +191,26 @@ const PublishAd = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(phoneValid === false) {
+        const publishingStore = isStoreCategory(formData.category);
+
+        if (publishingStore && !currentUser?.isAdmin) {
+            setSubmitError("רק מנהל יכול להוסיף מוצרים לחנות.");
             return;
+        }
+
+        if (!publishingStore && phoneValid === false) {
+            return;
+        }
+
+        if (publishingStore) {
+            if (!String(formData.title || "").trim()) {
+                setSubmitError("יש להזין שם מוצר");
+                return;
+            }
+            if (!formData.price && formData.price !== 0) {
+                setSubmitError("יש להזין מחיר למוצר");
+                return;
+            }
         }
 
         if (!formData.photos || formData.photos.length === 0) {
@@ -235,7 +261,9 @@ const PublishAd = () => {
                 videoUploadPromise,
             ]);
 
-            const availableUntil = getNewListingAvailableUntil();
+            const availableUntil = publishingStore
+                ? getStoreListingAvailableUntil()
+                : getNewListingAvailableUntil();
 
             const isService = isServiceCategory(formData.category);
             const isPetLike =
@@ -249,9 +277,15 @@ const PublishAd = () => {
                 userId: currentUser.uid,
                 createdAt: new Date(),
                 availableUntil,
-                listingDurationMonths: AD_LISTING_DURATION_VERSION,
+                listingDurationMonths: publishingStore
+                    ? STORE_LISTING_DURATION_MONTHS
+                    : AD_LISTING_DURATION_VERSION,
                 status: getInitialAdStatus(currentUser?.isAdmin),
-                listingKind: isService ? "service" : "ad",
+                listingKind: publishingStore
+                    ? STORE_LISTING_KIND
+                    : isService
+                      ? "service"
+                      : "ad",
             };
 
             if (formData.forAdoption) {
@@ -282,7 +316,16 @@ const PublishAd = () => {
                 delete adData.service_animals;
             }
 
-            if (!isService) {
+            if (publishingStore) {
+                adData.title = String(formData.title || "").trim();
+                delete adData.contact;
+                delete adData.phoneNumber;
+                delete adData.location;
+                delete adData.district;
+                delete adData.seed_type;
+                delete adData.semen_type;
+                delete adData.seed_animal;
+            } else if (!isService) {
                 delete adData.title;
             }
 
@@ -391,6 +434,7 @@ const PublishAd = () => {
 
     const publishingService =
         serviceMode || isServiceCategory(formData.category);
+    const publishingStore = isStoreCategory(formData.category);
     const selectedService = isServiceCategory(formData.category)
         ? getServiceByCategory(formData.category)
         : null;
@@ -411,12 +455,20 @@ const PublishAd = () => {
         );
 
     return (
-        <div className={`publish-ad-container ${publishingService ? "publish-ad-container--service" : ""}`}>
-            <h1>{publishingService ? "פרסום שירות" : "פרסם מודעה"}</h1>
+        <div className={`publish-ad-container ${publishingService ? "publish-ad-container--service" : ""} ${publishingStore ? "publish-ad-container--store" : ""}`}>
+            <h1>
+                {publishingStore
+                    ? "הוספת מוצר לחנות"
+                    : publishingService
+                      ? "פרסום שירות"
+                      : "פרסם מודעה"}
+            </h1>
             <p className="publish-ad-lead">
-                {publishingService
-                    ? "כאן מפרסמים שירות מקצועי (וטרינר, פנסיון, הסעות וכו') — לא מודעת מכירה של חיה. מלאו כותרת, תחום ותמונות ברורות."
-                    : "מלאו את הפרטים לפי סוג המודעה (חיה, מוצר או שירות), הוסיפו תמונות ברורות, והמודעה תופיע באתר לאחר אישור מנהל."}
+                {publishingStore
+                    ? "מוצר למכירה בחנות Petzo — שם, מחיר ותמונות. בלי טלפון או עיר: הלקוח משלם באתר ומקבל משלוח עד הבית."
+                    : publishingService
+                      ? "כאן מפרסמים שירות מקצועי (וטרינר, פנסיון, הסעות וכו') — לא מודעת מכירה של חיה. מלאו כותרת, תחום ותמונות ברורות."
+                      : "מלאו את הפרטים לפי סוג המודעה (חיה, מוצר או שירות), הוסיפו תמונות ברורות, והמודעה תופיע באתר לאחר אישור מנהל."}
             </p>
             <form onSubmit={handleSubmit} className="publish-ad-form">
 
@@ -693,27 +745,39 @@ const PublishAd = () => {
                     )
                 }
 
-                {
-                    formData.category === "אביזרים" && (
-                        <div className="publish-ad-form" >
-                            <label htmlFor="accessories_type">סוג מוצר</label>
-                            <select
-                                id="accessory"
-                                name="accessory"
-                                value={formData.accessory || ""}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="">בחר סוג מוצר</option>
-                                {ACCESSORIES_TPYES.map((accessory, index) => (
-                                    <option key={index} value={accessory}>
-                                        {accessory}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )
-                }
+                {(formData.category === "אביזרים" || publishingStore) && (
+                    <div className="publish-ad-form">
+                        <label htmlFor="accessories_type">סוג מוצר</label>
+                        <select
+                            id="accessory"
+                            name="accessory"
+                            value={formData.accessory || ""}
+                            onChange={handleChange}
+                            required={formData.category === "אביזרים"}
+                        >
+                            <option value="">בחר סוג מוצר</option>
+                            {ACCESSORIES_TPYES.map((accessory, index) => (
+                                <option key={index} value={accessory}>
+                                    {accessory}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+
+                {publishingStore && (
+                    <div className="publish-service-block">
+                        <label htmlFor="title">שם המוצר *</label>
+                        <input
+                            id="title"
+                            name="title"
+                            value={formData.title || ""}
+                            onChange={handleChange}
+                            placeholder="לדוגמה: קולר ניילון כתום"
+                            required
+                        />
+                    </div>
+                )}
 
                 <label htmlFor="description">תיאור</label>
                 <textarea
@@ -722,73 +786,78 @@ const PublishAd = () => {
                     value={formData.description}
                     onChange={handleChange}
                     rows={5}
+                    placeholder={publishingStore ? "פרטים קצרים על המוצר (אופציונלי)" : undefined}
                 />
 
-                <label htmlFor="phoneNumber">שם איש קשר</label>
-                <input
-                    id="contact"
-                    name="contact"
-                    value={formData.contact}
-                    onChange={handleChange}
-                    required
-                />
+                {!publishingStore && (
+                    <>
+                        <label htmlFor="contact">שם איש קשר</label>
+                        <input
+                            id="contact"
+                            name="contact"
+                            value={formData.contact}
+                            onChange={handleChange}
+                            required
+                        />
 
-                <label htmlFor="phoneNumber" className="phone-label">
-                    <span>מספר טלפון</span>
-                    {formData.phoneNumber && (
-                        <span className={`phone-status ${phoneValid ? "is-valid" : "is-invalid"}`}>
-                            {phoneValid ? "מספר תקין" : "מספר לא תקין"}
-                        </span>
-                    )}
-                </label>
-                <input
-                    type="tel"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={(e) => {
-                        const numericValue = e.target.value.replace(/\D/g, '');
-                        handleChange({ target: { name: 'phoneNumber', value: numericValue } });
-                        setPhoneValid(isPhoneNumberIsraeliValid(numericValue));
-                    }}
-                    required
-                    maxLength={10}
-                    className={phoneValid ? 'valid-phone' : 'invalid-phone'}
-                />
+                        <label htmlFor="phoneNumber" className="phone-label">
+                            <span>מספר טלפון</span>
+                            {formData.phoneNumber && (
+                                <span className={`phone-status ${phoneValid ? "is-valid" : "is-invalid"}`}>
+                                    {phoneValid ? "מספר תקין" : "מספר לא תקין"}
+                                </span>
+                            )}
+                        </label>
+                        <input
+                            type="tel"
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            value={formData.phoneNumber}
+                            onChange={(e) => {
+                                const numericValue = e.target.value.replace(/\D/g, '');
+                                handleChange({ target: { name: 'phoneNumber', value: numericValue } });
+                                setPhoneValid(isPhoneNumberIsraeliValid(numericValue));
+                            }}
+                            required
+                            maxLength={10}
+                            className={phoneValid ? 'valid-phone' : 'invalid-phone'}
+                        />
 
+                        <CitySelect
+                            value={formData.location}
+                            onChange={handleChange}
+                            areaValue={formData.district || ""}
+                            enableAreaFilter
+                        />
+                    </>
+                )}
 
-                <CitySelect
-                    value={formData.location}
-                    onChange={handleChange}
-                    areaValue={formData.district || ""}
-                    enableAreaFilter
-                />
-
-                {
-                    showPriceField && (
-                        <div className='publish-ad-form'>
-                            <label htmlFor="price">
-                                {isServiceCategory(formData.category)
-                                    ? (serviceCopy?.priceLabel || "מחיר / תעריף (אופציונלי)")
-                                    : "מחיר"}
-                            </label>
-                            <input
-                                type="number"
-                                id="price"
-                                name="price"
-                                value={formData.price}
-                                onChange={(e) => {
-                                    const numericValue = e.target.value.replace(/\D/g, '');
-                                    handleChange({ target: { name: 'price', value: numericValue } });
-                                }}
-                                min={0}
-                                onInput={(e) => {
-                                    if (e.target.value > 999999) e.target.value = 999999;
-                                }}
-                            />
-                        </div>
-                    )
-                }
+                {showPriceField && (
+                    <div className="publish-ad-form">
+                        <label htmlFor="price">
+                            {publishingStore
+                                ? "מחיר *"
+                                : isServiceCategory(formData.category)
+                                  ? (serviceCopy?.priceLabel || "מחיר / תעריף (אופציונלי)")
+                                  : "מחיר"}
+                        </label>
+                        <input
+                            type="number"
+                            id="price"
+                            name="price"
+                            value={formData.price}
+                            onChange={(e) => {
+                                const numericValue = e.target.value.replace(/\D/g, '');
+                                handleChange({ target: { name: 'price', value: numericValue } });
+                            }}
+                            min={0}
+                            required={publishingStore}
+                            onInput={(e) => {
+                                if (e.target.value > 999999) e.target.value = 999999;
+                            }}
+                        />
+                    </div>
+                )}
 
                 {formData.category && (
                     <div className='publish-ad-form'>
