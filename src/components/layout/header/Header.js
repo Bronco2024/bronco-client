@@ -233,13 +233,15 @@ const Header = () => {
                         onClick={() =>
                             navigate(currentUser ? "/cart" : "/login")
                         }
-                        aria-label="עגלת קניות"
+                        aria-label={`עגלת קניות${cartQuantity > 0 ? `, ${cartQuantity} פריטים` : ""}`}
                     >
-                        <span>עגלה</span>
-                        <FontAwesomeIcon icon={faShoppingBag} />
-                        {cartQuantity > 0 && (
-                            <span className="cart-badge">{cartQuantity}</span>
-                        )}
+                        <span className="navbar-btn-label">עגלה</span>
+                        <span className="navbar-btn-icon">
+                            <FontAwesomeIcon icon={faShoppingBag} />
+                            {cartQuantity > 0 && (
+                                <span className="cart-badge">{cartQuantity}</span>
+                            )}
+                        </span>
                     </button>
 
                     <button
@@ -247,8 +249,10 @@ const Header = () => {
                         onClick={() => navigate('/favorites')}
                         aria-label="מועדפים"
                     >
-                        <span>מועדפים</span>
-                        <FontAwesomeIcon icon={faHeart} />
+                        <span className="navbar-btn-label">מועדפים</span>
+                        <span className="navbar-btn-icon">
+                            <FontAwesomeIcon icon={faHeart} />
+                        </span>
                     </button>
 
                     <button
