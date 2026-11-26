@@ -1,101 +1,167 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { removeItem, clearCart } from '@/redux/cartSlice';
-import { db } from '@/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowRight,
+  faMinus,
+  faPlus,
+  faTrash,
+  faTruck,
+} from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@/context/AuthProvider";
-import './Cart.css';
-import { useNavigate } from 'react-router-dom';
+import { updateUserCart } from "@/helpers/firebase-helpers";
+import { toCartProduct } from "@/helpers/cart-helpers";
+import {
+  clearCart,
+  decreaseQuantity,
+  increaseQuantity,
+  removeItem,
+} from "@/redux/cartSlice";
+import "./Cart.css";
+
+const formatPrice = (price) =>
+  `₪${Number(price || 0).toLocaleString("he-IL")}`;
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { items, totalQuantity, totalPrice } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const { items, totalQuantity, totalPrice } = useSelector((state) => state.cart);
   const { currentUser } = useAuth();
 
+  const persist = async (nextItems) => {
+    if (!currentUser?.uid) return;
+    await updateUserCart(
+      currentUser.uid,
+      nextItems.map((item) => ({
+        ...toCartProduct(item),
+        quantity: item.quantity,
+      }))
+    );
+  };
+
   const handleRemoveItem = async (itemId) => {
-    if (!currentUser) return;
-
-    const userDocRef = doc(db, 'users', currentUser.uid);
-    const updatedItems = items.filter(item => item.id !== itemId);
-
-    await updateDoc(userDocRef, {
-      cart: updatedItems
-    });
-
+    const nextItems = items.filter((item) => item.id !== itemId);
     dispatch(removeItem(itemId));
+    await persist(nextItems);
+  };
+
+  const handleIncrease = async (itemId) => {
+    dispatch(increaseQuantity(itemId));
+    const nextItems = items.map((item) =>
+      item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+    );
+    await persist(nextItems);
+  };
+
+  const handleDecrease = async (itemId) => {
+    dispatch(decreaseQuantity(itemId));
+    const nextItems = items
+      .map((item) =>
+        item.id === itemId ? { ...item, quantity: item.quantity - 1 } : item
+      )
+      .filter((item) => item.quantity > 0);
+    await persist(nextItems);
   };
 
   const handleClearCart = async () => {
-    if (!currentUser) return;
-
-    const userDocRef = doc(db, 'users', currentUser.uid);
-    await updateDoc(userDocRef, {
-      cart: []
-    });
-
     dispatch(clearCart());
+    await persist([]);
   };
 
-  const handleSubmitCart = () => {
-    navigate('/cart/payment-form', { state: { items: items, totalQuantity: totalQuantity, totalPrice: totalPrice } })
-  }
+  const handleCheckout = () => {
+    navigate("/cart/checkout");
+  };
 
   return (
-    <div className="cart-container">
-      <h2>עגלה מוצרים</h2>
+    <div className="cart-page" dir="rtl">
+      <div className="cart-page-header">
+        <div>
+          <p className="cart-kicker">הזמנה ומשלוח</p>
+          <h1>העגלה שלי</h1>
+        </div>
+        <Link to="/our-products" className="cart-back">
+          <FontAwesomeIcon icon={faArrowRight} />
+          חזרה לחנות
+        </Link>
+      </div>
+
       {items.length === 0 ? (
-        <p className="cart-empty">העגלה שלך ריקה</p>
+        <div className="cart-empty-box">
+          <p>העגלה ריקה כרגע.</p>
+          <Link to="/our-products" className="cart-primary">
+            לכל המוצרים
+          </Link>
+        </div>
       ) : (
-        <>
-          <div className="cart-summary">
-            <p>
-              <strong>מספר פריטים:</strong> {totalQuantity}
-            </p>
-            <p>
-              <strong>סכום כולל:</strong> ₪{totalPrice}
-            </p>
-            <button className="clear-cart-btn" onClick={handleClearCart}>
-              נקה את העגלה
-            </button>
-          </div>
-          <ul className="cart-items">
+        <div className="cart-layout">
+          <ul className="cart-list">
             {items.map((item) => (
-              <li className="cart-item" key={item.id}>
-                <div className="item-info">
-                  <h4>{item.title}</h4>
-                  <p>
-                    מחיר: ₪{item.price} | כמות: {item.quantity}
-                  </p>
-                  <p>
-                    סך הכל: <strong>₪{(item.price * item.quantity)}</strong>
-                  </p>
-                  <div className="item-images">
-                    {item.photos && item.photos.map((photo, index) => (
-                      <img key={index} src={photo} alt={`item-image-${index}`} className="item-image" />
-                    ))}
+              <li key={item.id} className="cart-row">
+                <img
+                  src={item.photos?.[0] || require("@/assets/no-image.jpg")}
+                  alt={item.title}
+                  className="cart-thumb"
+                />
+                <div className="cart-row-info">
+                  <h2>{item.title}</h2>
+                  <p>{formatPrice(item.price)} ליחידה</p>
+                  <div className="cart-row-controls">
+                    <button
+                      type="button"
+                      onClick={() => handleDecrease(item.id)}
+                      aria-label="הפחת"
+                    >
+                      <FontAwesomeIcon icon={faMinus} />
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleIncrease(item.id)}
+                      aria-label="הוסף"
+                    >
+                      <FontAwesomeIcon icon={faPlus} />
+                    </button>
+                    <button
+                      type="button"
+                      className="cart-remove"
+                      onClick={() => handleRemoveItem(item.id)}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                      הסר
+                    </button>
                   </div>
                 </div>
-                <button
-                  className="remove-item-btn"
-                  onClick={() => handleRemoveItem(item.id)}
-                >
-                  הסר
-                </button>
+                <strong className="cart-row-total">
+                  {formatPrice(item.price * item.quantity)}
+                </strong>
               </li>
             ))}
           </ul>
-        </>
-      )}
 
-      {items.length > 0 && (
-        <div className="button-container">
-          <button className="pay-button" type='submit' onClick={handleSubmitCart}>
-            המשך
-          </button>
+          <aside className="cart-summary-card">
+            <h2>סיכום הזמנה</h2>
+            <p>
+              <span>פריטים</span>
+              <strong>{totalQuantity}</strong>
+            </p>
+            <p>
+              <span>סה״כ</span>
+              <strong>{formatPrice(totalPrice)}</strong>
+            </p>
+            <p className="cart-delivery-note">
+              <FontAwesomeIcon icon={faTruck} />
+              משלוח עד הבית · תשלום באתר או במסירה
+            </p>
+            <button type="button" className="cart-primary" onClick={handleCheckout}>
+              המשך למשלוח ותשלום
+            </button>
+            <button type="button" className="cart-clear" onClick={handleClearCart}>
+              נקה עגלה
+            </button>
+          </aside>
         </div>
       )}
-
     </div>
   );
 };

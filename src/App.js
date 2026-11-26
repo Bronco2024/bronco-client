@@ -58,12 +58,12 @@ const PET_CATEGORY_ROUTES = [
 //const Subscribe = lazy(() => import("./components/subscribe/Subscribe"));
 //const Payment = lazy(() => import("./components/payment/Payment"));
 const OurProducts = lazy(() => import("./components/our_products/OurProducts"))
-// const MyPurchases = lazy(() => import("./components/my_purchases/MyPurchases"))
-// const PurchaseDetails = lazy(() => import("./components/my_purchases/PurchaseDetails"))
-// const AllPurchases = lazy(() => import("./components/admin/AllPurchases"))
-// const Cart = lazy(() => import("./components/cart/Cart"));
-// const PaymentForm = lazy(() => import("./components/cart/PaymentForm"));
-//const ThankYou = lazy(() => import("./components/payment/ThankYou"))
+const MyPurchases = lazy(() => import("./components/my_purchases/MyPurchases"))
+const PurchaseDetails = lazy(() => import("./components/my_purchases/PurchaseDetails"))
+const AllPurchases = lazy(() => import("./components/admin/AllPurchases"))
+const Cart = lazy(() => import("./components/cart/Cart"));
+const PaymentForm = lazy(() => import("./components/cart/PaymentForm"));
+const ThankYou = lazy(() => import("./components/payment/ThankYou"))
 
 const AboutUs = lazy(() => import("./components/layout/footer/about-links/aboutus/AboutUs"));
 const Regulations = lazy(() => import("./components/layout/footer/about-links/regulations/Regulations"));
@@ -439,11 +439,8 @@ function App() {
         }
       />
 
-      {/* 
-       *
-       * PAYMENTS
-       * This is currently closed until customer decides to make payments in the website
-      <Route path="/cart"
+      <Route
+        path="/cart"
         element={
           <Suspense fallback={<Loading />}>
             <ProtectedRoute>
@@ -453,13 +450,10 @@ function App() {
             </ProtectedRoute>
           </Suspense>
         }
-      /> */}
+      />
 
-      {/* 
-       *
-       * PAYMENTS
-       * This is currently closed until customer decides to make payments in the website
-      <Route path="/cart/payment-form"
+      <Route
+        path="/cart/checkout"
         element={
           <Suspense fallback={<Loading />}>
             <ProtectedRoute>
@@ -469,7 +463,25 @@ function App() {
             </ProtectedRoute>
           </Suspense>
         }
-      /> */}
+      />
+
+      <Route
+        path="/cart/payment-form"
+        element={<Navigate to="/cart/checkout" replace />}
+      />
+
+      <Route
+        path="/order/thank-you"
+        element={
+          <Suspense fallback={<Loading />}>
+            <ProtectedRoute>
+              <Layout>
+                <ThankYou />
+              </Layout>
+            </ProtectedRoute>
+          </Suspense>
+        }
+      />
 
       <Route
         path="/profile/update_ad"
@@ -497,11 +509,8 @@ function App() {
         }
       />
 
-      {/* 
-       *
-       * PAYMENTS
-       * This is currently closed until customer decides to make payments in the website
-      <Route path="/admin/all-purchases"
+      <Route
+        path="/admin/all-purchases"
         element={
           <Suspense fallback={<Loading />}>
             <ProtectedRoute adminOnly>
@@ -511,7 +520,7 @@ function App() {
             </ProtectedRoute>
           </Suspense>
         }
-      /> */}
+      />
 
       <Route
         path="/admin/add-sponsor"
@@ -548,11 +557,8 @@ function App() {
         }
       />
 
-      {/*
-       *
-       * PAYMENTS
-       * This is currently closed until customer decides to make payments in the website
-      <Route path="/my-purchases"
+      <Route
+        path="/my-purchases"
         element={
           <Suspense fallback={<Loading />}>
             <ProtectedRoute>
@@ -562,13 +568,10 @@ function App() {
             </ProtectedRoute>
           </Suspense>
         }
-      /> */}
+      />
 
-      {/* 
-       *
-       * PAYMENTS
-       * This is currently closed until customer decides to make payments in the website
-      <Route path="/purchase/:id"
+      <Route
+        path="/purchase/:id"
         element={
           <Suspense fallback={<Loading />}>
             <ProtectedRoute>
@@ -578,7 +581,7 @@ function App() {
             </ProtectedRoute>
           </Suspense>
         }
-      /> */}
+      />
 
       <Route
         path="/privacy-policy"

@@ -6,6 +6,7 @@ import {
     faPen,
     faPlus,
     faRotateRight,
+    faShoppingBag,
     faTrash,
     faUser,
 } from '@fortawesome/free-solid-svg-icons';
@@ -196,14 +197,24 @@ const Profile = () => {
                         <span>{currentUser?.email}</span>
                     </div>
                 </div>
-                <button
-                    type="button"
-                    className="account-primary-button"
-                    onClick={() => navigate('/publish_ad')}
-                >
-                    <FontAwesomeIcon icon={faPlus} />
-                    פרסום מודעה
-                </button>
+                <div className="account-hero-actions">
+                    <button
+                        type="button"
+                        className="account-primary-button"
+                        onClick={() => navigate('/publish_ad')}
+                    >
+                        <FontAwesomeIcon icon={faPlus} />
+                        פרסום מודעה
+                    </button>
+                    <button
+                        type="button"
+                        className="account-secondary-button"
+                        onClick={() => navigate('/my-purchases')}
+                    >
+                        <FontAwesomeIcon icon={faShoppingBag} />
+                        ההזמנות שלי
+                    </button>
+                </div>
             </section>
 
             <section className="account-stats" aria-label="סיכום מודעות">

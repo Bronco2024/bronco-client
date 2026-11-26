@@ -84,6 +84,8 @@ const PurchaseDetails = () => {
         switch (status) {
             case 'pending':
                 return 'ממתין לאישור';
+            case 'awaiting_payment':
+                return 'ממתין לתשלום';
             case 'confirmed':
                 return 'מאושר';
             case 'sent':
@@ -104,6 +106,7 @@ const PurchaseDetails = () => {
             <p>סטטוס: 
                 {currentUser?.isAdmin ? (
                     <select value={status} onChange={handleStatusChange}>
+                        <option value="awaiting_payment">ממתין לתשלום</option>
                         <option value="pending">ממתין לאישור</option>
                         <option value="confirmed">מאושר</option>
                         <option value="sent">נשלח</option>
@@ -120,7 +123,20 @@ const PurchaseDetails = () => {
                     <p>שם: {purchase.contactDetails.firstName + ' ' + purchase.contactDetails.lastName}</p>
                     <p>טלפון: {purchase.contactDetails.phone}</p>
                     <p>אימייל: {purchase.email}</p>
-                    <p>כתובת: {purchase.contactDetails.address}</p>
+                    <p>
+                        כתובת:{" "}
+                        {[
+                            purchase.contactDetails.address,
+                            purchase.contactDetails.apartment,
+                            purchase.contactDetails.city,
+                        ]
+                            .filter(Boolean)
+                            .join(", ")}
+                    </p>
+                    {purchase.paymentMethodLabel && (
+                        <p>תשלום: {purchase.paymentMethodLabel}</p>
+                    )}
+                    {purchase.notes && <p>הערות: {purchase.notes}</p>}
                 </div>
             )}
 

@@ -57,8 +57,12 @@ describe("Petzo catalog", () => {
     expect(SITE_SERVICES.map((service) => service.path)).not.toContain("/seeds");
     expect(MARKETPLACE_CATEGORIES.map((category) => category.path)).toContain("/accessories");
     expect(MARKETPLACE_CATEGORIES.map((category) => category.path)).toContain("/seeds");
+    expect(MARKETPLACE_CATEGORIES.map((category) => category.path)).toContain("/our-products");
     const categoryPaths = MARKETPLACE_CATEGORIES.map((category) => category.path);
     expect(categoryPaths.indexOf("/seeds")).toBeLessThan(categoryPaths.indexOf("/accessories"));
+    expect(categoryPaths.indexOf("/accessories")).toBeLessThan(
+      categoryPaths.indexOf("/our-products")
+    );
   });
 
   test("gives each catalog listing its own photo", () => {

@@ -42,6 +42,8 @@ const AllPurchases = () => {
         switch (status) {
             case 'pending':
                 return 'ממתין לאישור';
+            case 'awaiting_payment':
+                return 'ממתין לתשלום';
             case 'confirmed':
                 return 'מאושר';
             case 'sent':
@@ -68,8 +70,8 @@ const AllPurchases = () => {
                         onChange={(e) => setSortDirection(e.target.value)}
 
                     >
-                        <option value="desc">הישנות ביותר</option>
-                        <option value="asc">החדשות ביותר</option>
+                        <option value="desc">החדשות ביותר</option>
+                        <option value="asc">הישנות ביותר</option>
                     </select>
                     <ul className="all-purchase-list">
                         {purchases.map((purchase) => (

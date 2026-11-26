@@ -13,9 +13,11 @@ import {
     faXmark,
     faChevronLeft,
     faChevronRight,
+    faCartPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useDispatch, useSelector } from 'react-redux';
 import { FormatDateTimestampToDate } from '@components/utils/constants/Functions';
 import { collection, doc, getDoc, getDocs, limit, query, where, Timestamp } from 'firebase/firestore';
 import { db } from '@/firebase';
@@ -34,6 +36,10 @@ import {
     getListingPath,
     getListingShareUrl,
 } from '@/helpers/listing-links';
+import { isStoreProduct, toCartProduct } from '@/helpers/cart-helpers';
+import { updateUserCart } from '@/helpers/firebase-helpers';
+import { addItem } from '@/redux/cartSlice';
+import { useAuth } from '@/context/AuthProvider';
 import { isServiceCategory } from '@components/utils/constants/Constants';
 import { SITE_NAME, SITE_URL } from '@/data/site-config';
 import useSeo from "@/hooks/useSeo";
@@ -48,6 +54,9 @@ const getAdImage = (item) => item.photos?.[0] || item.image || require('@/assets
 const ItemPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch = useDispatch();
+    const { currentUser } = useAuth();
+    const cartItems = useSelector((state) => state.cart.items);
     const { adId } = useParams();
     const [ad, setAd] = useState(location.state?.ad || null);
     const [loadingAd, setLoadingAd] = useState(!location.state?.ad && Boolean(adId));
@@ -56,6 +65,7 @@ const ItemPage = () => {
     const [lightboxIndex, setLightboxIndex] = useState(null);
     const carouselRef = useRef(null);
     const [shareStatus, setShareStatus] = useState('');
+    const [cartStatus, setCartStatus] = useState('');
 
     useSeo({
         title: ad ? `${getAdTitle(ad)} | ${SITE_NAME}` : SITE_NAME,
@@ -346,6 +356,7 @@ const ItemPage = () => {
     const isPetAd = isPetMarketplaceCategory(ad.category) || Boolean(ad.type);
     const isServiceAd =
         isServiceCategory(ad.category) || ad.listingKind === "service";
+    const isStoreAd = isStoreProduct(ad);
     const showDetails =
         isPetAd ||
         ad.category === "סוסים" ||
@@ -357,6 +368,34 @@ const ItemPage = () => {
         title: getAdTitle(ad),
         isService: isServiceAd,
     });
+
+    const handleAddStoreToCart = async () => {
+        if (!currentUser) {
+            navigate(
+                `/login?next=${encodeURIComponent(getListingPath(ad))}`
+            );
+            return;
+        }
+        const product = toCartProduct(ad);
+        dispatch(addItem(product));
+        const existing = cartItems.find((item) => item.id === ad.id);
+        const nextCart = existing
+            ? cartItems.map((item) =>
+                  item.id === ad.id
+                      ? { ...item, quantity: item.quantity + 1 }
+                      : item
+              )
+            : [...cartItems, { ...product, quantity: 1 }];
+        await updateUserCart(
+            currentUser.uid,
+            nextCart.map((item) => ({
+                ...toCartProduct(item),
+                quantity: item.quantity,
+            }))
+        );
+        setCartStatus("נוסף לעגלה");
+        window.setTimeout(() => setCartStatus(""), 2000);
+    };
 
     return (
         <>
@@ -449,6 +488,11 @@ const ItemPage = () => {
                             כרטיס שירות מקצועי — לתיאום פרטים צרו קשר ישירות עם הספק.
                         </p>
                     )}
+                    {isStoreAd && (
+                        <p className="service-note">
+                            מוצר מחנות Petzo — הזמנה ותשלום באתר, משלוח עד הבית.
+                        </p>
+                    )}
                     {ad.source === "catalog" && (
                         <p className="service-note">
                             מודעת דוגמה לתצוגה בלבד — אינה מודעה חיה באתר.
@@ -531,7 +575,7 @@ const ItemPage = () => {
                         </div>
                     )}
 
-                    {ad.source !== "catalog" && (
+                    {ad.source !== "catalog" && !isStoreAd && (
                     <div className="contact-box">
                         <span className="contact-person">
                             <strong>איש קשר:</strong> {ad.contact || 'לא צוין'}
@@ -546,7 +590,26 @@ const ItemPage = () => {
                     )}
 
                     <div className="item-actions">
-                        {ad.source !== "catalog" && whatsappLink && (
+                        {isStoreAd && ad.source !== "catalog" && (
+                            <>
+                                <button
+                                    type="button"
+                                    className="whatsapp-link"
+                                    onClick={handleAddStoreToCart}
+                                >
+                                    <FontAwesomeIcon icon={faCartPlus} />
+                                    {cartStatus || "הוסף לעגלה"}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="share-link"
+                                    onClick={() => navigate("/cart")}
+                                >
+                                    לעגלה
+                                </button>
+                            </>
+                        )}
+                        {ad.source !== "catalog" && !isStoreAd && whatsappLink && (
                             <a
                                 className="whatsapp-link"
                                 href={whatsappLink}
@@ -559,7 +622,7 @@ const ItemPage = () => {
                         )}
                         <button type="button" className="share-link" onClick={handleShare}>
                             <FontAwesomeIcon icon={shareStatus ? faCopy : faShareNodes} />
-                            {shareStatus || (isServiceAd ? "שיתוף שירות" : "שיתוף מודעה")}
+                            {shareStatus || (isServiceAd ? "שיתוף שירות" : isStoreAd ? "שיתוף מוצר" : "שיתוף מודעה")}
                         </button>
                     </div>
 

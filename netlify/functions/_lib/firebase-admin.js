@@ -1,5 +1,6 @@
 const { initializeApp, getApps, cert } = require("firebase-admin/app");
 const { getAuth } = require("firebase-admin/auth");
+const { getFirestore } = require("firebase-admin/firestore");
 
 const parseServiceAccount = () => {
   const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
@@ -14,13 +15,22 @@ const parseServiceAccount = () => {
   return parsed;
 };
 
-const getAdminAuth = () => {
+const ensureAdminApp = () => {
   if (!getApps().length) {
     initializeApp({
       credential: cert(parseServiceAccount()),
     });
   }
+};
+
+const getAdminAuth = () => {
+  ensureAdminApp();
   return getAuth();
+};
+
+const getAdminDb = () => {
+  ensureAdminApp();
+  return getFirestore();
 };
 
 const getSiteUrl = () =>
@@ -46,6 +56,7 @@ const jsonResponse = (statusCode, body) => ({
 
 module.exports = {
   getAdminAuth,
+  getAdminDb,
   getSiteUrl,
   corsHeaders,
   jsonResponse,
