@@ -114,10 +114,21 @@ export const ACCESSORIES_CATEGORY = {
   useExistingPage: true,
 };
 
+export const STORE_CATEGORY = {
+  slug: "store",
+  path: "/our-products",
+  name: "חנות",
+  type: "חנות",
+  image: "/accessories-hero.jpg",
+  subtitle: "הזמנה באתר ומשלוח עד הבית",
+  useExistingPage: true,
+};
+
 export const MARKETPLACE_CATEGORIES = [
   ...PET_CATEGORIES,
   SEEDS_CATEGORY,
   ACCESSORIES_CATEGORY,
+  STORE_CATEGORY,
 ];
 
 const listing = (data) => ({

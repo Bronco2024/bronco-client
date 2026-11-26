@@ -68,8 +68,8 @@ const AllPurchases = () => {
                         onChange={(e) => setSortDirection(e.target.value)}
 
                     >
-                        <option value="desc">הישנות ביותר</option>
-                        <option value="asc">החדשות ביותר</option>
+                        <option value="desc">החדשות ביותר</option>
+                        <option value="asc">הישנות ביותר</option>
                     </select>
                     <ul className="all-purchase-list">
                         {purchases.map((purchase) => (

@@ -3,8 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faBell,
     faCheck,
+    faClipboardList,
     faEyeSlash,
     faPlus,
+    faStore,
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import './Admin.css'
@@ -260,18 +262,38 @@ const Admin = () => {
                 <div className="account-hero-copy">
                     <span className="section-kicker">ניהול האתר</span>
                     <h1>אזור המנהל</h1>
-                    <p>אישור מודעות, מעקב אחרי התראות וניהול ספונסורים במקום אחד.</p>
+                    <p>אישור מודעות, הזמנות חנות, מעקב אחרי התראות וניהול ספונסורים במקום אחד.</p>
                 </div>
-                {activeTab === "sponsors" && (
+                <div className="account-hero-actions">
                     <button
                         type="button"
                         className="account-primary-button"
-                        onClick={() => navigate('/admin/add-sponsor')}
+                        onClick={() => navigate('/admin/all-purchases')}
                     >
-                        <FontAwesomeIcon icon={faPlus} />
-                        הוסף ספונסור
+                        <FontAwesomeIcon icon={faClipboardList} />
+                        הזמנות חנות
                     </button>
-                )}
+                    <button
+                        type="button"
+                        className="account-secondary-button"
+                        onClick={() =>
+                            navigate(`/publish_ad?category=${encodeURIComponent("חנות")}`)
+                        }
+                    >
+                        <FontAwesomeIcon icon={faStore} />
+                        הוסף מוצר לחנות
+                    </button>
+                    {activeTab === "sponsors" && (
+                        <button
+                            type="button"
+                            className="account-primary-button"
+                            onClick={() => navigate('/admin/add-sponsor')}
+                        >
+                            <FontAwesomeIcon icon={faPlus} />
+                            הוסף ספונסור
+                        </button>
+                    )}
+                </div>
             </section>
 
             <section className="account-stats" aria-label="סיכום ניהול">

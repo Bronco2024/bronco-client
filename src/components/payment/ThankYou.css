@@ -1,70 +1,70 @@
-/* Basic page setup */
 .thank-you-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
-    direction: rtl; /* Right-to-left for Hebrew */
-  }
-  
-  .thank-you-content {
-    text-align: center;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
-  }
-  
-  .thank-you-content h1 {
-    font-size: 2.5rem;
-    color: #4CAF50; /* Green color */
-    margin-bottom: 10px;
-  }
-  
-  .thank-you-content p {
-    font-size: 1.2rem;
-    color: #555;
-    margin: 10px 0;
-  }
-  
-  .button-container {
-    margin-top: 20px;
-  }
-  
-  .button-container button {
-    background-color: #4CAF50;
-    color: white;
-    font-size: 1.1rem;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .button-container button:hover {
-    background-color: #45a049;
-  }
-  
-  @media (max-width: 600px) {
-    .thank-you-content {
-      padding: 15px;
-    }
-  
-    .thank-you-content h1 {
-      font-size: 2rem;
-    }
-  
-    .thank-you-content p {
-      font-size: 1rem;
-    }
-  
-    .button-container button {
-      font-size: 1rem;
-      padding: 8px 16px;
-    }
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 32px 16px;
+  background:
+    radial-gradient(circle at 80% 10%, rgba(255, 134, 28, 0.12), transparent 40%),
+    linear-gradient(180deg, #fbf8f4 0%, #ffffff 100%);
+  direction: rtl;
+  color: #173b5e;
+}
+
+.thank-you-content {
+  text-align: center;
+  background: #fff;
+  padding: 36px 28px;
+  border: 1px solid #e4ebe7;
+  max-width: 460px;
+  width: 100%;
+}
+
+.thank-you-icon {
+  font-size: 2.4rem;
+  color: #1f7a4d;
+  margin-bottom: 12px;
+}
+
+.thank-you-content h1 {
+  font-size: clamp(1.8rem, 4vw, 2.3rem);
+  margin: 0 0 10px;
+}
+
+.thank-you-content p {
+  font-size: 1.05rem;
+  color: #4d6478;
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.thank-you-meta,
+.thank-you-total {
+  font-weight: 700 !important;
+  color: #173b5e !important;
+}
+
+.button-container {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.button-container button,
+.thank-you-secondary {
+  background: #173b5e;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.thank-you-secondary {
+  background: #fff4ef;
+  color: #173b5e;
+}

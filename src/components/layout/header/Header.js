@@ -10,9 +10,12 @@ import {
     faHouseUser,
     faGear,
     faHeart,
-    faChevronDown
+    faChevronDown,
+    faShoppingBag,
+    faStore,
 } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useAuth } from '@/context/AuthProvider';
 import useAdminNotifications from '@/hooks/useAdminNotifications';
 import { SITE_SERVICES, MARKETPLACE_CATEGORIES } from '@/data/pets';
@@ -23,6 +26,7 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentUser, loading, logout } = useAuth();
+    const cartQuantity = useSelector((state) => state.cart.totalQuantity);
     const { unreadCount: adminUnreadCount } = useAdminNotifications(
         Boolean(currentUser?.isAdmin)
     );
@@ -212,9 +216,32 @@ const Header = () => {
                     >
                         כל המודעות
                     </NavLink>
+                    <NavLink
+                        to="/our-products"
+                        className={({ isActive }) =>
+                            `navbar-text-link ${isActive ? "active" : ""}`
+                        }
+                    >
+                        <FontAwesomeIcon icon={faStore} />
+                        חנות
+                    </NavLink>
                 </div>
 
                 <div className="navbar-buttons">
+                    <button
+                        className="navbar-button cart-button"
+                        onClick={() =>
+                            navigate(currentUser ? "/cart" : "/login")
+                        }
+                        aria-label="עגלת קניות"
+                    >
+                        <span>עגלה</span>
+                        <FontAwesomeIcon icon={faShoppingBag} />
+                        {cartQuantity > 0 && (
+                            <span className="cart-badge">{cartQuantity}</span>
+                        )}
+                    </button>
+
                     <button
                         className="navbar-button favorites-button"
                         onClick={() => navigate('/favorites')}
@@ -292,6 +319,30 @@ const Header = () => {
 
                                     <button
                                         className="dropdown-item"
+                                        onClick={() => {
+                                            closeMenus();
+                                            navigate('/my-purchases');
+                                        }}
+                                    >
+                                        ההזמנות שלי
+                                        <FontAwesomeIcon icon={faShoppingBag} />
+                                    </button>
+
+                                    {currentUser?.isAdmin && (
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => {
+                                                closeMenus();
+                                                navigate('/admin/all-purchases');
+                                            }}
+                                        >
+                                            הזמנות חנות
+                                            <FontAwesomeIcon icon={faStore} />
+                                        </button>
+                                    )}
+
+                                    <button
+                                        className="dropdown-item"
                                         onClick={handleLogout}
                                     >
                                         התנתק
@@ -330,8 +381,10 @@ const Header = () => {
                 <div className="mobile-menu">
                     <div className="mobile-menu-links">
                         <Link to="/listings" onClick={closeMenus}>כל המודעות</Link>
+                        <Link to="/our-products" onClick={closeMenus}>חנות</Link>
                         <Link to="/adoption" onClick={closeMenus}>אימוץ</Link>
                         <Link to="/favorites" onClick={closeMenus}>מועדפים</Link>
+                        <Link to="/cart" onClick={closeMenus}>עגלה</Link>
                     </div>
                     <p className="mobile-menu-label">קטגוריות</p>
                     <div className="mobile-categories">

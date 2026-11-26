@@ -120,7 +120,20 @@ const PurchaseDetails = () => {
                     <p>שם: {purchase.contactDetails.firstName + ' ' + purchase.contactDetails.lastName}</p>
                     <p>טלפון: {purchase.contactDetails.phone}</p>
                     <p>אימייל: {purchase.email}</p>
-                    <p>כתובת: {purchase.contactDetails.address}</p>
+                    <p>
+                        כתובת:{" "}
+                        {[
+                            purchase.contactDetails.address,
+                            purchase.contactDetails.apartment,
+                            purchase.contactDetails.city,
+                        ]
+                            .filter(Boolean)
+                            .join(", ")}
+                    </p>
+                    {purchase.paymentMethodLabel && (
+                        <p>תשלום: {purchase.paymentMethodLabel}</p>
+                    )}
+                    {purchase.notes && <p>הערות: {purchase.notes}</p>}
                 </div>
             )}
 

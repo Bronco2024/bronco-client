@@ -49,7 +49,16 @@
     color: #ffb36a;
 }
 
-.account-primary-button {
+.account-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.account-primary-button,
+.account-secondary-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -62,6 +71,11 @@
     color: #fff;
     font-weight: 800;
     cursor: pointer;
+}
+
+.account-secondary-button {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.28);
 }
 
 .account-stats {
