@@ -79,6 +79,10 @@ const Cart = () => {
         <div>
           <p className="cart-kicker">הזמנה ומשלוח</p>
           <h1>העגלה שלי</h1>
+          <p className="cart-journey-note">
+            <FontAwesomeIcon icon={faTruck} />
+            כאן מתחילה החוויה: מהעגלה, דרך המשלוח, ועד שהחבילה מגיעה הביתה.
+          </p>
         </div>
         <Link to="/our-products" className="cart-back">
           <FontAwesomeIcon icon={faArrowRight} />

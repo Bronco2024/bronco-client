@@ -141,11 +141,14 @@ const PaymentForm = () => {
     <div className="checkout-page" dir="rtl">
       <div className="checkout-header">
         <div>
-          <p className="checkout-kicker">שלב אחרון</p>
+          <p className="checkout-kicker">מתחילים את החוויה</p>
           <h1>
             <FontAwesomeIcon icon={faTruck} />
-            משלוח ותשלום
+            משלוח עד הבית
           </h1>
+          <p className="checkout-experience-note">
+            ממלאים כתובת, משלמים — ואנחנו מלווים אתכם עד שהחבילה מגיעה לדלת.
+          </p>
         </div>
         <Link to="/cart" className="checkout-back">
           <FontAwesomeIcon icon={faArrowRight} />

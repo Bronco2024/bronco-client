@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckCircle, faCreditCard, faTruck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBoxOpen,
+  faCheckCircle,
+  faCreditCard,
+  faHouseChimney,
+  faTruck,
+  faTruckFast,
+} from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
 import { useAuth } from "@/context/AuthProvider";
 import { clearCart } from "@/redux/cartSlice";
@@ -11,6 +18,7 @@ import {
   ORDER_PAYMENT_METHODS,
 } from "@/helpers/store-orders";
 import { fetchStorePaymentStatus } from "@/helpers/store-payment-client";
+import { PURCHASE_JOURNEY_STEPS } from "@/helpers/purchase-status";
 import "./ThankYou.css";
 
 const ThankYou = () => {
@@ -95,19 +103,20 @@ const ThankYou = () => {
   return (
     <div className="thank-you-container" dir="rtl">
       <div className="thank-you-content">
+        <p className="thank-you-brand">Petzo</p>
         <FontAwesomeIcon icon={faCheckCircle} className="thank-you-icon" />
         <h1>
           {checking
             ? "בודקים את התשלום..."
             : isPaid
-              ? "התשלום התקבל!"
-              : "ההזמנה התקבלה!"}
+              ? "החוויה התחילה!"
+              : "קיבלנו את ההזמנה"}
         </h1>
         <p>
           {isPaid
-            ? "תודה על הרכישה. נתחיל להכין את המשלוח עד הבית."
+            ? "תודה. עכשיו אנחנו אורזים — ותוכלו לעקוב עד שהמשלוח מגיע הביתה."
             : isCod
-              ? "תודה על ההזמנה. נאשר אותה ונודיע לכם כשהמשלוח בדרך אליכם."
+              ? "תודה. נאשר, נארוז, ונעדכן אתכם בכל שלב עד הדלת."
               : "אם סיימתם לשלם, הסטטוס יתעדכן תוך רגעים."}
         </p>
         <p className="thank-you-meta">
@@ -126,9 +135,33 @@ const ThankYou = () => {
           <p className="thank-you-meta">מספר הזמנה: {orderId}</p>
         )}
 
+        <ol className="thank-you-journey" aria-label="מההזמנה עד הבית">
+          {PURCHASE_JOURNEY_STEPS.map((step, index) => (
+            <li key={step.id} className={index === 0 ? "is-active" : ""}>
+              <span>
+                <FontAwesomeIcon
+                  icon={
+                    index === 0
+                      ? faBoxOpen
+                      : index === 1
+                        ? faTruck
+                        : index === 2
+                          ? faTruckFast
+                          : faHouseChimney
+                  }
+                />
+              </span>
+              {step.shortLabel}
+            </li>
+          ))}
+        </ol>
+        <p className="thank-you-journey-note">
+          אפשר לעקוב אחרי ההזמנה בכל רגע — עד שהמשלוח מגיע הביתה.
+        </p>
+
         <div className="button-container">
           <button type="button" onClick={() => navigate("/my-purchases")}>
-            ההזמנות שלי
+            מעקב הזמנות שלי
           </button>
           <Link to="/our-products" className="thank-you-secondary">
             חזרה לחנות
