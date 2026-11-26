@@ -1,5 +1,6 @@
 import React from "react";
 import { AREA_OPTIONS, getCitiesByArea } from "@/data/city-areas";
+import { withCurrentOption } from "@/helpers/select-options";
 
 const CitySelect = ({
   value = "",
@@ -16,7 +17,14 @@ const CitySelect = ({
   areaName = "district",
   enableAreaFilter = false,
 }) => {
-  const cities = getCitiesByArea(areaValue);
+  // If district key is unknown, don't empty the city list — keep the saved city selectable.
+  const citiesForArea = enableAreaFilter && areaValue
+    ? getCitiesByArea(areaValue)
+    : getCitiesByArea("");
+  const cities = withCurrentOption(
+    citiesForArea.length ? citiesForArea : getCitiesByArea(""),
+    value
+  );
 
   return (
     <>

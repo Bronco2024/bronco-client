@@ -23,6 +23,9 @@ import { getServiceByCategory } from '@/data/services-catalog';
 import PublishCategorySelect from '@/components/publish_ad/PublishCategorySelect';
 import { getServicePublishCopy } from '@/helpers/publish-categories';
 import { omitUndefinedFields } from '@/helpers/firestore-safe';
+import { toFirestoreTimestamp } from '@/helpers/firestore-timestamp';
+import { withCurrentOption } from '@/helpers/select-options';
+import { getNewListingAvailableUntil } from '@/helpers/ad-listing-duration';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -33,6 +36,8 @@ const UpdateAd = () => {
     const [newVideo, setNewVideo] = useState(null);
 
     const [showModal, setShowModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState("");
 
     const [formData, setFormData] = useState({
         title: '',
@@ -199,20 +204,24 @@ const UpdateAd = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitError("");
+
         if (phoneValid === false) {
+            setSubmitError("מספר הטלפון אינו תקין");
             return;
         }
 
         const totalPhotos = (formData.photos?.length || 0) + (newPhotos.photos?.length || 0);
         if (totalPhotos === 0) {
             setPhotoError("יש להשאיר לפחות תמונה אחת");
+            setSubmitError("יש להשאיר לפחות תמונה אחת");
             return;
         }
         setPhotoError("");
-        let dataToSubmit;
 
         if (!ad?.id) {
             console.error("Ad ID is missing.");
+            setSubmitError("לא נמצאה מודעה לעדכון. חזרו לפרופיל ונסו שוב.");
             Sentry.captureException(`Ad ID is missing`, {
                 tags: {
                     component: "UpdateAd"
@@ -224,120 +233,126 @@ const UpdateAd = () => {
             return;
         }
 
-        dataToSubmit = {
-            ...formData,
-            createdAt: Timestamp.now(),
-            availableUntil: new Timestamp(formData.availableUntil.seconds, formData.availableUntil.nanoseconds),
-            status: getAdStatusAfterUpdate(currentUser?.isAdmin),
-        }
-
-        if (formData.category === "סוסים" || isPetMarketplaceCategory(formData.category)) {
-            const totalMonths =
-                (Number(formData.ageYears) || 0) * 12 +
-                (Number(formData.ageMonths) || 0);
-
-            dataToSubmit.ageInMonths = totalMonths;
-            delete dataToSubmit.age;
-            dataToSubmit.breed = resolvePetBreed(formData.breed, formData.breedCustom);
-        } else {
-            delete dataToSubmit.breed;
-        }
-        delete dataToSubmit.breedCustom;
-
-        if (!isServiceCategory(formData.category) || !formData.service_animals?.length) {
-            delete dataToSubmit.service_animals;
-        }
-
-        if (isServiceCategory(formData.category)) {
-            dataToSubmit.listingKind = "service";
-        }
-
-        if (formData.forAdoption) {
-            dataToSubmit.forAdoption = true;
-            dataToSubmit.price = "לאימוץ";
-        } else {
-            delete dataToSubmit.forAdoption;
-        }
-
-        dataToSubmit = DeletedAttributesAfterUpdateForm(dataToSubmit);
-        dataToSubmit = omitUndefinedFields(dataToSubmit);
-
-        const adRef = doc(db, "ads", ad.id);
+        setIsSubmitting(true);
 
         try {
+            // Keep original createdAt when present; only refresh availableUntil safely.
+            const existingCreatedAt = toFirestoreTimestamp(
+                formData.createdAt,
+                () => Timestamp.now()
+            );
+            const availableUntil = toFirestoreTimestamp(
+                formData.availableUntil,
+                () => Timestamp.fromDate(getNewListingAvailableUntil())
+            );
+
+            let dataToSubmit = {
+                ...formData,
+                id: ad.id,
+                userId: formData.userId || currentUser?.uid || ad.userId,
+                createdAt: existingCreatedAt,
+                availableUntil,
+                // After any publisher edit (including rejected ads), re-queue for review.
+                status: getAdStatusAfterUpdate(currentUser?.isAdmin),
+                updatedAt: Timestamp.now(),
+            };
+
+            // Drop client-only / admin review fields that must not wipe incorrectly.
+            delete dataToSubmit.breedCustom;
+            delete dataToSubmit.ageYears;
+            delete dataToSubmit.ageMonths;
+
+            if (formData.category === "סוסים" || isPetMarketplaceCategory(formData.category)) {
+                const totalMonths =
+                    (Number(formData.ageYears) || 0) * 12 +
+                    (Number(formData.ageMonths) || 0);
+
+                dataToSubmit.ageInMonths = totalMonths;
+                delete dataToSubmit.age;
+                dataToSubmit.breed = resolvePetBreed(formData.breed, formData.breedCustom);
+            } else {
+                delete dataToSubmit.breed;
+            }
+
+            if (!isServiceCategory(formData.category) || !formData.service_animals?.length) {
+                delete dataToSubmit.service_animals;
+            }
+
+            if (isServiceCategory(formData.category)) {
+                dataToSubmit.listingKind = "service";
+            }
+
+            if (formData.forAdoption) {
+                dataToSubmit.forAdoption = true;
+                dataToSubmit.price = "לאימוץ";
+            } else {
+                delete dataToSubmit.forAdoption;
+            }
+
+            dataToSubmit = DeletedAttributesAfterUpdateForm(dataToSubmit);
+            dataToSubmit = omitUndefinedFields(dataToSubmit);
+
+            const adRef = doc(db, "ads", ad.id);
             await setDoc(adRef, dataToSubmit);
 
             if (dataToSubmit.status === AD_STATUS.PENDING) {
-                await createPendingAdNotification({
-                    adId: ad.id,
-                    ad: {
-                        ...dataToSubmit,
-                        publisherEmail: currentUser?.email || "",
-                    },
-                });
-            }
-        } catch (error) {
-            console.error("Error updating ad:", error);
-            Sentry.captureException(`Error updating ad`, {
-                tags: {
-                    component: "UpdateAd"
-                },
-                extra: {
-                    info: error
-                }
-            });
-        }
-
-        if (newPhotos.photos.length > 0) {
-            const photoURLs = await Promise.all(
-                newPhotos.photos.map(async (photo) => {
-                    const photoRef = ref(storage, `ads/${ad.id}/${uuidv4()}`);
-                    await uploadBytes(photoRef, photo);
-                    return await getDownloadURL(photoRef);
-                })
-            );
-
-            try {
-                await Promise.all(photoURLs.map(photoURL => {
-                    return updateDoc(adRef, {
-                        photos: arrayUnion(photoURL)
+                try {
+                    await createPendingAdNotification({
+                        adId: ad.id,
+                        ad: {
+                            ...dataToSubmit,
+                            publisherEmail: currentUser?.email || "",
+                        },
                     });
-                }));
-                setNewPhotos({ photos: [] })
-
-            } catch (error) {
-                console.error("Error updating ad:", error);
-                Sentry.captureException(`Error updating ad`, {
-                    tags: {
-                        component: "UpdateAd"
-                    },
-                    extra: {
-                        info: error
-                    }
-                });
+                } catch (notifyError) {
+                    // Ad is saved — don't fail the publisher update for notification issues.
+                    console.warn("Pending ad notification failed", notifyError);
+                }
             }
-        }
 
-        if (newVideo) {
-            const videoRef = ref(storage, `ads/${ad.id}/${uuidv4()}`);
-            await uploadBytes(videoRef, newVideo);
-            const videoURL = await getDownloadURL(videoRef);
+            if (newPhotos.photos.length > 0) {
+                const photoURLs = await Promise.all(
+                    newPhotos.photos.map(async (photo) => {
+                        const photoRef = ref(storage, `ads/${ad.id}/${uuidv4()}`);
+                        await uploadBytes(photoRef, photo);
+                        return await getDownloadURL(photoRef);
+                    })
+                );
 
-            try {
+                await Promise.all(photoURLs.map((photoURL) =>
+                    updateDoc(adRef, {
+                        photos: arrayUnion(photoURL),
+                    })
+                ));
+                setNewPhotos({ photos: [] });
+            }
+
+            if (newVideo) {
+                const videoRef = ref(storage, `ads/${ad.id}/${uuidv4()}`);
+                await uploadBytes(videoRef, newVideo);
+                const videoURL = await getDownloadURL(videoRef);
                 await updateDoc(adRef, {
-                    video: videoURL
+                    video: videoURL,
                 });
                 setNewVideo(null);
-            } catch (error) {
-                console.error("Error updating ad video:", error);
-                Sentry.captureException(`Error updating ad video`, {
-                    tags: { component: "UpdateAd" },
-                    extra: { info: error }
-                });
             }
-        }
 
-        setShowModal(true);
+            setShowModal(true);
+        } catch (error) {
+            console.error("Error updating ad:", error);
+            setSubmitError("עדכון המודעה נכשל. בדקו את החיבור ונסו שוב.");
+            Sentry.captureException(error, {
+                tags: {
+                    component: "UpdateAd",
+                },
+                extra: {
+                    adId: ad?.id,
+                    status: formData?.status,
+                },
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const closeModal = () => {
@@ -416,7 +431,7 @@ const UpdateAd = () => {
                             required
                         >
                             <option value="">בחר גזע</option>
-                            {BREEDS.map((breed, index) => (
+                            {withCurrentOption(BREEDS, formData?.breed).map((breed, index) => (
                                 <option key={index} value={breed}>
                                     {breed}
                                 </option>
@@ -582,7 +597,7 @@ const UpdateAd = () => {
                             required
                         >
                             <option value="">בחר סוג בעל חיים</option>
-                            {SEED_ANIMAL_TYPES.map((animalType, index) => (
+                            {withCurrentOption(SEED_ANIMAL_TYPES, formData.seed_animal).map((animalType, index) => (
                                 <option key={index} value={animalType}>
                                     {animalType}
                                 </option>
@@ -600,7 +615,10 @@ const UpdateAd = () => {
                                 required
                             >
                                 <option value="">בחר סוג זרע</option>
-                                {getSeedTypesByAnimal(formData.seed_animal).map((seed, index) => (
+                                {withCurrentOption(
+                                    getSeedTypesByAnimal(formData.seed_animal),
+                                    formData?.seed_type
+                                ).map((seed, index) => (
                                     <option key={index} value={seed}>
                                         {seed}
                                     </option>
@@ -614,7 +632,7 @@ const UpdateAd = () => {
                                 onChange={handleChange}
                                 required
                             >
-                                {SEMEN_TYPES.map((semen, index) => (
+                                {withCurrentOption(SEMEN_TYPES, formData.semen_type).map((semen, index) => (
                                     <option key={index} value={semen}>
                                         {semen}
                                     </option>
@@ -648,7 +666,7 @@ const UpdateAd = () => {
                             required
                         >
                             <option value="">בחר סוג מוצר</option>
-                            {ACCESSORIES_TPYES.map((accessory, index) => (
+                            {withCurrentOption(ACCESSORIES_TPYES, formData.accessory).map((accessory, index) => (
                                 <option key={index} value={accessory}>
                                     {accessory}
                                 </option>
@@ -774,7 +792,7 @@ const UpdateAd = () => {
                 {photoError && <p className="publish-photo-error">{photoError}</p>}
 
                 <div className="current-photos">
-                    {formData.photos.length > 0 && (
+                    {(formData.photos?.length || 0) > 0 && (
                         <div>
                             <h3>תמונות קיימות</h3>
                             <p className="publish-photos-hint">
@@ -800,15 +818,35 @@ const UpdateAd = () => {
                     )}
                 </div>
 
+                {submitError && (
+                    <p className="publish-photo-error" role="alert">
+                        {submitError}
+                    </p>
+                )}
 
-
-                <button type="submit" className="update-button">עדכן מודעה</button>
+                <button
+                    type="submit"
+                    className="update-button"
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? "מעדכן..." : "עדכן מודעה"}
+                </button>
 
             </form>
 
+            {!ad?.id && (
+                <p className="publish-photo-error" role="alert">
+                    לא נמצאה מודעה לעדכון. חזרו לפרופיל ולחצו שוב על &quot;עדכן&quot;.
+                </p>
+            )}
+
             <Modal isVisible={showModal} title="עדכון מודעה" onClose={closeModal}>
                 <div className="modal-content-custom-updatead">
-                    <p>המודעה עודכנה בהצלחה!</p>
+                    <p>
+                        {currentUser?.isAdmin
+                            ? "המודעה עודכנה בהצלחה!"
+                            : "המודעה עודכנה ונשלחה לאישור מחדש."}
+                    </p>
                     <div className="modal-buttons-custom-updatead">
                         <button className="close-button-updatead" onClick={closeModal}>סגור</button>
                     </div>

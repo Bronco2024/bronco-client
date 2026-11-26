@@ -3,6 +3,7 @@ import {
   getPetBreeds,
   isOtherBreedSelection,
 } from "@/data/pet-breeds";
+import { withCurrentOption } from "@/helpers/select-options";
 
 const BreedSelect = ({
   category,
@@ -12,7 +13,7 @@ const BreedSelect = ({
   required = true,
   label = "גזע / סוג",
 }) => {
-  const breeds = getPetBreeds(category);
+  const breeds = withCurrentOption(getPetBreeds(category), breed);
 
   return (
     <>
