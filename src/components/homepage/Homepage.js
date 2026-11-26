@@ -25,6 +25,7 @@ import useSeo from "@/hooks/useSeo";
 import "./Homepage.css";
 
 const SponsorsStrip = lazy(() => import("@/components/homepage/SponsorsStrip"));
+const StoreSpotlight = lazy(() => import("@/components/homepage/StoreSpotlight"));
 
 const HOW_IT_WORKS = [
   {
@@ -120,6 +121,10 @@ function Homepage() {
 
   return (
     <main className="homepage" dir="rtl">
+      <Suspense fallback={null}>
+        <StoreSpotlight />
+      </Suspense>
+
       <section
         className="hero"
         aria-labelledby="hero-heading"
@@ -209,13 +214,16 @@ function Homepage() {
         </div>
 
         <div className="categories-grid">
-          {MARKETPLACE_CATEGORIES.map((category) => (
+          {[
+            ...MARKETPLACE_CATEGORIES.filter((c) => c.slug === "store"),
+            ...MARKETPLACE_CATEGORIES.filter((c) => c.slug !== "store"),
+          ].map((category) => (
             <button
               key={category.slug}
               type="button"
               className={`category-card ${
-                selectedCategory === category.name ? "active" : ""
-              }`}
+                category.slug === "store" ? "category-card--store" : ""
+              } ${selectedCategory === category.name ? "active" : ""}`}
               onClick={() => handleCategoryClick(category)}
             >
               <div className="category-image">

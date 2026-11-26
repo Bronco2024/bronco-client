@@ -16,10 +16,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCartPlus,
+  faCreditCard,
   faMinus,
   faPlus,
+  faShoppingBag,
   faTrash,
-  faTruck,
+  faTruckFast,
 } from "@fortawesome/free-solid-svg-icons";
 import { db } from "@/firebase";
 import { mapApprovedAdsFromSnapshot } from "@/helpers/ad-approval";
@@ -76,7 +78,7 @@ const OurProducts = () => {
   useSeo({
     title: `חנות | ${SITE_NAME}`,
     description:
-      "מוצרים לחיות מחמד עם הזמנה ותשלום באתר, ומשלוח עד הבית.",
+      "חנות Petzo — מוצרים לחיות מחמד, תשלום באתר ומשלוח עד הבית.",
     url: `${SITE_URL}${STORE_CATEGORY.path}`,
   });
 
@@ -146,10 +148,13 @@ const OurProducts = () => {
 
   const persistCart = async (nextItems) => {
     if (!currentUser?.uid) return;
-    await updateUserCart(currentUser.uid, nextItems.map(toCartProduct).map((item, index) => ({
-      ...item,
-      quantity: nextItems[index].quantity,
-    })));
+    await updateUserCart(
+      currentUser.uid,
+      nextItems.map((item) => ({
+        ...toCartProduct(item),
+        quantity: item.quantity,
+      }))
+    );
   };
 
   const requireLogin = () => {
@@ -226,48 +231,91 @@ const OurProducts = () => {
 
   return (
     <div className="store-page" dir="rtl">
-      <section className="store-hero">
-        <div className="store-hero-copy">
-          <p className="store-kicker">{SITE_NAME} Store</p>
-          <h1>חנות מוצרים עד הבית</h1>
-          <p>
-            בחרו מוצרים לחיות המחמד, שלמו באתר (כרטיס / ביט), ואנחנו נדאג למשלוח
-            עד הדלת. אפשר גם לשלם במסירה.
+      <section
+        className="store-hero"
+        style={{ backgroundImage: `url(${STORE_CATEGORY.image})` }}
+        aria-labelledby="store-hero-title"
+      >
+        <div className="store-hero-veil" aria-hidden="true" />
+        <div className="store-hero-inner">
+          <p className="store-hero-brand">
+            <picture>
+              <source srcSet="/petzo-logo-mark.webp" type="image/webp" />
+              <img
+                src="/petzo-logo.jpg"
+                alt=""
+                width={52}
+                height={48}
+                decoding="async"
+              />
+            </picture>
+            <span>{SITE_NAME}</span>
           </p>
-          <div className="store-hero-actions">
-            <span className="store-pill">
-              <FontAwesomeIcon icon={faTruck} />
-              משלוח עד הבית
-            </span>
-            {cartQuantity > 0 && (
-              <Link className="store-cart-link" to="/cart">
-                לעגלה ({cartQuantity})
-              </Link>
-            )}
+
+          <h1 id="store-hero-title">
+            החנות
+            <span>שחיית המחמד שלכם תאהב</span>
+          </h1>
+
+          <p className="store-hero-lead">
+            מוצרים נבחרים, תשלום באתר, משלוח עד הבית.
+          </p>
+
+          <div className="store-hero-cta">
+            <a className="store-hero-primary" href="#store-catalog">
+              לכל המוצרים
+            </a>
+            <Link className="store-hero-cart" to="/cart">
+              <FontAwesomeIcon icon={faShoppingBag} />
+              עגלה{cartQuantity > 0 ? ` (${cartQuantity})` : ""}
+            </Link>
           </div>
+
+          <ul className="store-hero-points">
+            <li>
+              <FontAwesomeIcon icon={faTruckFast} />
+              משלוח עד הדלת
+            </li>
+            <li>
+              <FontAwesomeIcon icon={faCreditCard} />
+              תשלום מאובטח באתר
+            </li>
+          </ul>
         </div>
-        <div
-          className="store-hero-visual"
-          style={{ backgroundImage: `url(${STORE_CATEGORY.image})` }}
-          aria-hidden="true"
-        />
       </section>
 
-      <section className="store-grid-wrap">
+      <section className="store-catalog" id="store-catalog">
+        <div className="store-catalog-head">
+          <div>
+            <p className="store-catalog-kicker">הקולקציה</p>
+            <h2>מוצרים בחנות</h2>
+          </div>
+          {cartQuantity > 0 && (
+            <Link to="/cart" className="store-catalog-cart">
+              לעגלה · {cartQuantity}
+            </Link>
+          )}
+        </div>
+
         {visibleAds.length === 0 ? (
           <div className="store-empty">
-            <h2>עדיין אין מוצרים בחנות</h2>
+            <h3>המדפים מתמלאים</h3>
             <p>
-              ברגע שיתווספו מוצרים תוכלו להוסיף אותם לעגלה ולהזמין משלוח עד הבית.
+              בקרוב תוכלו לקנות כאן מוצרים לחיות המחמד — עם משלוח עד הבית.
             </p>
+            <Link to="/">חזרה לדף הבית</Link>
           </div>
         ) : (
           <div className="store-grid">
-            {visibleAds.map((ad) => {
+            {visibleAds.map((ad, index) => {
               const inCart = cart.find((item) => item.id === ad.id);
               const busy = busyId === ad.id;
               return (
-                <article key={ad.id} className="store-card">
+                <article
+                  key={ad.id}
+                  className="store-card"
+                  style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
+                >
                   <button
                     type="button"
                     className="store-card-media"
@@ -281,6 +329,9 @@ const OurProducts = () => {
                     />
                   </button>
                   <div className="store-card-body">
+                    {ad.accessory && (
+                      <p className="store-card-meta">{ad.accessory}</p>
+                    )}
                     <button
                       type="button"
                       className="store-card-title"
@@ -290,9 +341,6 @@ const OurProducts = () => {
                     >
                       {getProductTitle(ad)}
                     </button>
-                    {ad.accessory && (
-                      <p className="store-card-meta">{ad.accessory}</p>
-                    )}
                     <p className="store-card-price">{formatPrice(ad.price)}</p>
 
                     {inCart ? (
