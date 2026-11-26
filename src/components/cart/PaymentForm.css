@@ -152,10 +152,15 @@
   border: 0;
   border-radius: 12px;
   padding: 13px 16px;
-  background: var(--c-navy);
-  color: #fff;
+  background: var(--c-orange);
+  color: #1a1208;
   font-weight: 800;
   cursor: pointer;
+  box-shadow: 0 8px 18px rgba(255, 134, 28, 0.25);
+}
+
+.checkout-submit:hover:not(:disabled) {
+  background: #ff9a3d;
 }
 
 .checkout-submit:disabled {

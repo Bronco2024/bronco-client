@@ -181,9 +181,14 @@
 }
 
 .cart-primary {
-  background: var(--cart-navy);
-  color: #fff;
+  background: var(--cart-orange);
+  color: #1a1208;
   margin-bottom: 10px;
+  box-shadow: 0 8px 18px rgba(255, 134, 28, 0.25);
+}
+
+.cart-primary:hover {
+  background: #ff9a3d;
 }
 
 .cart-clear {
