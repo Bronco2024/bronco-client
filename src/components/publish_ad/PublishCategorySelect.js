@@ -16,6 +16,11 @@ const PublishCategorySelect = ({
   required = true,
 }) => {
   const groups = getPublishCategoryGroups(isAdmin, { servicesOnly });
+  const knownLabels = new Set(
+    groups.flatMap((group) => group.options.map((option) => option.label))
+  );
+  const orphanCategory =
+    value && !knownLabels.has(value) ? String(value) : "";
 
   return (
     <div className="publish-category-field">
@@ -32,6 +37,9 @@ const PublishCategorySelect = ({
         <option value="">
           {servicesOnly ? "בחרו סוג שירות" : "בחרו סוג מודעה"}
         </option>
+        {orphanCategory && (
+          <option value={orphanCategory}>{orphanCategory}</option>
+        )}
         {groups.map((group) => (
           <optgroup key={group.id} label={group.label}>
             {group.options.map((option) => (
