@@ -115,11 +115,18 @@ const PaymentForm = () => {
     } catch (err) {
       console.error("Error creating store order/payment:", err);
       if (err.code === "grow_not_configured") {
+        setPaymentMethod(ORDER_PAYMENT_METHODS.COD);
         setError(
-          "תשלום באתר עדיין לא הוגדר אצל הספק. אפשר לבחור תשלום במסירה, או להוסיף מפתחות Grow ב-Netlify."
+          "תשלום באתר לא זמין כרגע. בחרו תשלום במסירה והשליחו יגבה במקום."
         );
       } else {
-        setError(err.message || "לא הצלחנו להשלים את ההזמנה. נסו שוב.");
+        const raw = String(err.message || "");
+        // Never surface infra/provider setup text to buyers.
+        if (/netlify|grow|api key|configured/i.test(raw)) {
+          setError("לא הצלחנו לפתוח תשלום באתר. נסו תשלום במסירה, או נסו שוב בעוד רגע.");
+        } else {
+          setError(raw || "לא הצלחנו להשלים את ההזמנה. נסו שוב.");
+        }
       }
     } finally {
       setSubmitting(false);
@@ -270,7 +277,7 @@ const PaymentForm = () => {
                 <strong>
                   <FontAwesomeIcon icon={faCreditCard} /> תשלום באתר
                 </strong>
-                <small>כרטיס אשראי / ביט דרך Grow — מאובטח</small>
+                <small>כרטיס אשראי או ביט — מאובטח</small>
               </span>
             </label>
             <label className="checkout-pay-option">
@@ -302,13 +309,18 @@ const PaymentForm = () => {
         </form>
 
         <aside className="checkout-summary">
-          <h2>סיכום</h2>
-          <ul>
+          <h2>המוצרים בהזמנה</h2>
+          <ul className="checkout-summary-products">
             {items.map((item) => (
               <li key={item.id}>
-                <span>
-                  {item.title} × {item.quantity}
-                </span>
+                <img
+                  src={item.photos?.[0] || require("@/assets/no-image.jpg")}
+                  alt=""
+                />
+                <div>
+                  <span className="checkout-summary-title">{item.title}</span>
+                  <span className="checkout-summary-qty">× {item.quantity}</span>
+                </div>
                 <strong>
                   ₪{(item.price * item.quantity).toLocaleString("he-IL")}
                 </strong>
@@ -316,7 +328,7 @@ const PaymentForm = () => {
             ))}
           </ul>
           <p className="checkout-total">
-            <span>{totalQuantity} פריטים</span>
+            <span>{totalQuantity} מוצרים</span>
             <strong>₪{Number(totalPrice).toLocaleString("he-IL")}</strong>
           </p>
         </aside>
