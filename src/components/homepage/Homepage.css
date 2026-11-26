@@ -368,6 +368,16 @@
   box-shadow: 0 14px 30px rgba(23, 59, 94, 0.13);
 }
 
+.category-card--store {
+  border-color: rgba(255, 134, 28, 0.55);
+  box-shadow: 0 10px 26px rgba(255, 134, 28, 0.14);
+}
+
+.category-card--store .category-name {
+  color: #ff861c;
+  font-weight: 800;
+}
+
 .category-image {
   width: 100%;
   height: 142px;
