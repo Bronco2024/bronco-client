@@ -325,13 +325,13 @@
 }
 
 .store-add {
-  background: var(--store-accent);
-  color: #1a1208;
-  box-shadow: 0 8px 18px rgba(255, 134, 28, 0.22);
+  background: #1e7a43;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(30, 122, 67, 0.22);
 }
 
 .store-add:hover {
-  background: #ff9a3d;
+  background: #249651;
 }
 
 .store-add:disabled,
