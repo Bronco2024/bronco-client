@@ -277,11 +277,17 @@ const Login = () => {
         <div className="login-container">
 
             <div className="auth-brand">
-                <img
-                    className="auth-brand-logo"
-                    src="/petzo-logo.jpg"
-                    alt={SITE_NAME}
-                />
+                <picture>
+                    <source srcSet="/petzo-logo-mark.webp" type="image/webp" />
+                    <img
+                        className="auth-brand-logo"
+                        src="/petzo-logo.jpg"
+                        alt={SITE_NAME}
+                        width={200}
+                        height={186}
+                        decoding="async"
+                    />
+                </picture>
             </div>
 
             <h2 className="login-title">

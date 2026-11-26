@@ -1,7 +1,5 @@
 import './Footer.css';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaw } from "@fortawesome/free-solid-svg-icons";
 import { SITE_SERVICES, MARKETPLACE_CATEGORIES } from '@/data/pets';
 import {
     SITE_NAME,
@@ -16,11 +14,19 @@ const Footer = () => {
             <div className="footer-content">
                 <div className="footer-brand">
                     <div className="footer-logo">
-                        <span className="brand-mark" aria-hidden="true">
-                            <FontAwesomeIcon icon={faPaw} />
-                        </span>
+                        <picture>
+                            <source srcSet="/petzo-logo-mark.webp" type="image/webp" />
+                            <img
+                                className="footer-brand-logo"
+                                src="/petzo-logo.jpg"
+                                alt={SITE_NAME}
+                                width={140}
+                                height={130}
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </picture>
                         <div>
-                            <strong>{SITE_NAME}</strong>
                             <p>המקום שמחבר בין חיות מחמד, אנשים ושירותים במקום אחד.</p>
                         </div>
                     </div>

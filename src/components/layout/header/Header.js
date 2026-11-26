@@ -16,7 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import useAdminNotifications from '@/hooks/useAdminNotifications';
 import { SITE_SERVICES, MARKETPLACE_CATEGORIES } from '@/data/pets';
-import { SITE_NAME, SITE_TAGLINE } from '@/data/site-config';
+import { SITE_NAME } from '@/data/site-config';
 import Loading from '../../loading-screen/Loading';
 
 const Header = () => {
@@ -99,17 +99,18 @@ const Header = () => {
     return (
         <nav className="navbar" ref={headerRef}>
             <div className="navbar-inner">
-                <Link to="/" className="brand-link" onClick={closeMenus}>
-                    <img
-                        className="brand-logo"
-                        src="/petzo-logo.jpg"
-                        alt={SITE_NAME}
-                        width={160}
-                        height={107}
-                    />
-                    <span className="brand-copy brand-copy--compact">
-                        <span className="brand-tagline">{SITE_TAGLINE}</span>
-                    </span>
+                <Link to="/" className="brand-link" onClick={closeMenus} aria-label={SITE_NAME}>
+                    <picture>
+                        <source srcSet="/petzo-logo-mark.webp" type="image/webp" />
+                        <img
+                            className="brand-logo"
+                            src="/petzo-logo.jpg"
+                            alt={SITE_NAME}
+                            width={160}
+                            height={149}
+                            decoding="async"
+                        />
+                    </picture>
                 </Link>
 
                 <div className="navbar-links">
