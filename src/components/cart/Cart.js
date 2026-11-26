@@ -146,15 +146,15 @@ const Cart = () => {
               <strong>{totalQuantity}</strong>
             </p>
             <p>
-              <span>סה״כ לתשלום במסירה</span>
+              <span>סה״כ</span>
               <strong>{formatPrice(totalPrice)}</strong>
             </p>
             <p className="cart-delivery-note">
               <FontAwesomeIcon icon={faTruck} />
-              משלוח עד הבית · תשלום במסירה
+              משלוח עד הבית · תשלום באתר או במסירה
             </p>
             <button type="button" className="cart-primary" onClick={handleCheckout}>
-              המשך למשלוח
+              המשך למשלוח ותשלום
             </button>
             <button type="button" className="cart-clear" onClick={handleClearCart}>
               נקה עגלה

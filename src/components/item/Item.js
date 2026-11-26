@@ -490,7 +490,7 @@ const ItemPage = () => {
                     )}
                     {isStoreAd && (
                         <p className="service-note">
-                            מוצר מחנות Petzo — הזמנה באתר ומשלוח עד הבית, תשלום במסירה.
+                            מוצר מחנות Petzo — הזמנה ותשלום באתר, משלוח עד הבית.
                         </p>
                     )}
                     {ad.source === "catalog" && (

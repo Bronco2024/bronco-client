@@ -5,7 +5,7 @@ import {
 } from "./store-orders";
 
 describe("store orders", () => {
-  test("builds a COD home-delivery order payload", () => {
+  test("builds an online home-delivery order payload by default", () => {
     const payload = buildStoreOrderPayload({
       userId: "u1",
       contactDetails: {
@@ -35,9 +35,11 @@ describe("store orders", () => {
       email: "yossi@example.com",
       totalQuantity: 2,
       totalPrice: 80,
-      paymentMethod: ORDER_PAYMENT_METHODS.COD,
+      paymentMethod: ORDER_PAYMENT_METHODS.ONLINE,
+      paymentStatus: "pending",
+      paymentProvider: "grow",
       fulfillment: "home_delivery",
-      status: ORDER_STATUS.PENDING,
+      status: ORDER_STATUS.AWAITING_PAYMENT,
       notes: "להשאיר אצל השכן",
       contactDetails: {
         firstName: "יוסי",
@@ -48,11 +50,24 @@ describe("store orders", () => {
         apartment: "3",
       },
     });
-    expect(payload.items[0]).toMatchObject({
-      id: "p1",
-      title: "קערה",
-      price: 40,
-      quantity: 2,
+  });
+
+  test("builds a COD order when requested", () => {
+    const payload = buildStoreOrderPayload({
+      userId: "u1",
+      contactDetails: {
+        firstName: "דנה",
+        lastName: "לוי",
+        phone: "0521112233",
+        city: "תל אביב",
+        address: "דיזנגוף 1",
+      },
+      items: [{ id: "p2", title: "רצועה", price: 50, quantity: 1 }],
+      paymentMethod: ORDER_PAYMENT_METHODS.COD,
     });
+
+    expect(payload.paymentMethod).toBe(ORDER_PAYMENT_METHODS.COD);
+    expect(payload.paymentStatus).toBe("cod");
+    expect(payload.status).toBe(ORDER_STATUS.PENDING);
   });
 });

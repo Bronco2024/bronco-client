@@ -84,6 +84,8 @@ const PurchaseDetails = () => {
         switch (status) {
             case 'pending':
                 return 'ממתין לאישור';
+            case 'awaiting_payment':
+                return 'ממתין לתשלום';
             case 'confirmed':
                 return 'מאושר';
             case 'sent':
@@ -104,6 +106,7 @@ const PurchaseDetails = () => {
             <p>סטטוס: 
                 {currentUser?.isAdmin ? (
                     <select value={status} onChange={handleStatusChange}>
+                        <option value="awaiting_payment">ממתין לתשלום</option>
                         <option value="pending">ממתין לאישור</option>
                         <option value="confirmed">מאושר</option>
                         <option value="sent">נשלח</option>

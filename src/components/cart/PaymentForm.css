@@ -92,20 +92,43 @@
   min-height: 90px;
 }
 
-.checkout-payment-box {
+.checkout-payment-methods {
+  margin: 0;
   padding: 14px;
-  background: #f7faf8;
   border: 1px solid var(--c-line);
   border-radius: 12px;
+  background: #f7faf8;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.checkout-payment-box strong {
+.checkout-payment-methods legend {
+  padding: 0 6px;
+  font-weight: 800;
+}
+
+.checkout-pay-option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-weight: 500 !important;
+  cursor: pointer;
+}
+
+.checkout-pay-option input {
+  margin-top: 4px;
+}
+
+.checkout-pay-option strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkout-pay-option small {
   display: block;
-  margin-bottom: 4px;
-}
-
-.checkout-payment-box p {
-  margin: 0;
+  margin-top: 2px;
   color: #5a7184;
   font-weight: 500;
 }

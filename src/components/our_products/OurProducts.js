@@ -76,7 +76,7 @@ const OurProducts = () => {
   useSeo({
     title: `חנות | ${SITE_NAME}`,
     description:
-      "מוצרים לחיות מחמד עם הזמנה באתר ומשלוח עד הבית. תשלום במסירה.",
+      "מוצרים לחיות מחמד עם הזמנה ותשלום באתר, ומשלוח עד הבית.",
     url: `${SITE_URL}${STORE_CATEGORY.path}`,
   });
 
@@ -231,8 +231,8 @@ const OurProducts = () => {
           <p className="store-kicker">{SITE_NAME} Store</p>
           <h1>חנות מוצרים עד הבית</h1>
           <p>
-            בחרו מוצרים לחיות המחמד, הזמינו באתר, ואנחנו נדאג למשלוח עד הדלת.
-            התשלום במסירה.
+            בחרו מוצרים לחיות המחמד, שלמו באתר (כרטיס / ביט), ואנחנו נדאג למשלוח
+            עד הדלת. אפשר גם לשלם במסירה.
           </p>
           <div className="store-hero-actions">
             <span className="store-pill">

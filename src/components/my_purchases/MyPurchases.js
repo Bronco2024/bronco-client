@@ -43,6 +43,8 @@ const MyPurchases = () => {
         switch (status) {
             case 'pending':
                 return 'ממתין לאישור';
+            case 'awaiting_payment':
+                return 'ממתין לתשלום';
             case 'confirmed':
                 return 'מאושר';
             case 'sent':

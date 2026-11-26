@@ -1,8 +1,12 @@
-import React, { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faTruck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRight,
+  faCreditCard,
+  faTruck,
+} from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@/context/AuthProvider";
 import { db } from "@/firebase";
 import { clearCart } from "@/redux/cartSlice";
@@ -12,16 +16,21 @@ import {
   createStoreOrder,
   ORDER_PAYMENT_METHODS,
 } from "@/helpers/store-orders";
+import { startOnlineStorePayment } from "@/helpers/store-payment-client";
 import { PET_LOCATIONS } from "@/data/pets";
 import "./PaymentForm.css";
 
 const PaymentForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const { currentUser } = useAuth();
   const { items, totalQuantity, totalPrice } = useSelector((state) => state.cart);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState(
+    ORDER_PAYMENT_METHODS.ONLINE
+  );
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -38,6 +47,12 @@ const PaymentForm = () => {
     () => [...PET_LOCATIONS].sort((a, b) => a.localeCompare(b, "he")),
     []
   );
+
+  useEffect(() => {
+    if (searchParams.get("cancelled") === "1") {
+      setError("התשלום בוטל. אפשר לנסות שוב או לבחור תשלום במסירה.");
+    }
+  }, [searchParams]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,10 +79,27 @@ const PaymentForm = () => {
         userId: currentUser?.uid,
         contactDetails: formData,
         items,
-        paymentMethod: ORDER_PAYMENT_METHODS.COD,
+        paymentMethod,
         notes: formData.notes,
       });
       const orderId = await createStoreOrder(db, payload);
+
+      if (paymentMethod === ORDER_PAYMENT_METHODS.ONLINE) {
+        const payment = await startOnlineStorePayment(orderId);
+        if (payment.alreadyPaid && payment.redirectUrl) {
+          await updateUserCart(currentUser.uid, []);
+          dispatch(clearCart());
+          window.location.assign(payment.redirectUrl);
+          return;
+        }
+        if (!payment.url) {
+          throw new Error("לא התקבלה כתובת תשלום");
+        }
+        // Keep cart until payment completes — webhook/thank-you clear it.
+        window.location.assign(payment.url);
+        return;
+      }
+
       await updateUserCart(currentUser.uid, []);
       dispatch(clearCart());
       navigate("/order/thank-you", {
@@ -76,13 +108,19 @@ const PaymentForm = () => {
           totalPrice: payload.totalPrice,
           totalQuantity: payload.totalQuantity,
           city: formData.city,
-          paymentMethod: ORDER_PAYMENT_METHODS.COD,
+          paymentMethod,
         },
         replace: true,
       });
     } catch (err) {
-      console.error("Error creating store order:", err);
-      setError("לא הצלחנו לשמור את ההזמנה. נסו שוב.");
+      console.error("Error creating store order/payment:", err);
+      if (err.code === "grow_not_configured") {
+        setError(
+          "תשלום באתר עדיין לא הוגדר אצל הספק. אפשר לבחור תשלום במסירה, או להוסיף מפתחות Grow ב-Netlify."
+        );
+      } else {
+        setError(err.message || "לא הצלחנו להשלים את ההזמנה. נסו שוב.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -106,7 +144,7 @@ const PaymentForm = () => {
           <p className="checkout-kicker">שלב אחרון</p>
           <h1>
             <FontAwesomeIcon icon={faTruck} />
-            פרטי משלוח עד הבית
+            משלוח ותשלום
           </h1>
         </div>
         <Link to="/cart" className="checkout-back">
@@ -215,15 +253,48 @@ const PaymentForm = () => {
             />
           </label>
 
-          <div className="checkout-payment-box">
-            <strong>תשלום במסירה</strong>
-            <p>משלמים במזומן או בביט כשהשליח מגיע. אין חיוב כרטיס באתר כרגע.</p>
-          </div>
+          <fieldset className="checkout-payment-methods">
+            <legend>אמצעי תשלום</legend>
+            <label className="checkout-pay-option">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value={ORDER_PAYMENT_METHODS.ONLINE}
+                checked={paymentMethod === ORDER_PAYMENT_METHODS.ONLINE}
+                onChange={() => setPaymentMethod(ORDER_PAYMENT_METHODS.ONLINE)}
+              />
+              <span>
+                <strong>
+                  <FontAwesomeIcon icon={faCreditCard} /> תשלום באתר
+                </strong>
+                <small>כרטיס אשראי / ביט דרך Grow — מאובטח</small>
+              </span>
+            </label>
+            <label className="checkout-pay-option">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value={ORDER_PAYMENT_METHODS.COD}
+                checked={paymentMethod === ORDER_PAYMENT_METHODS.COD}
+                onChange={() => setPaymentMethod(ORDER_PAYMENT_METHODS.COD)}
+              />
+              <span>
+                <strong>
+                  <FontAwesomeIcon icon={faTruck} /> תשלום במסירה
+                </strong>
+                <small>מזומן או ביט כשהשליח מגיע</small>
+              </span>
+            </label>
+          </fieldset>
 
           {error && <p className="checkout-error">{error}</p>}
 
           <button type="submit" className="checkout-submit" disabled={submitting}>
-            {submitting ? "שולח הזמנה..." : "אישור הזמנה ומשלוח"}
+            {submitting
+              ? "מעבד..."
+              : paymentMethod === ORDER_PAYMENT_METHODS.ONLINE
+                ? "המשך לתשלום מאובטח"
+                : "אישור הזמנה ומשלוח"}
           </button>
         </form>
 

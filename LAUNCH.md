@@ -79,8 +79,17 @@ Site settings → Environment variables → Production:
 - كل `REACT_APP_FIREBASE_*` (نفس قيم Firebase)
 - `REACT_APP_SITE_URL=https://petzo.co.il`
 - `REACT_APP_ADMIN_EMAIL=` (إيميل إشعارات الأدمن)
+- `FIREBASE_SERVICE_ACCOUNT` (JSON لحساب الخدمة — مطلوب لدوال الإيميل والدفع)
+- للدفع في المتجر عبر Grow (Meshulam):
+  - `GROW_USER_ID`
+  - `GROW_PAGE_CODE`
+  - `GROW_API_KEY` (اختياري — لمنصات multi-merchant)
+  - `GROW_ENV=sandbox` للتجربة، أو `live` للإنتاج
+  - `SITE_URL=https://petzo.co.il` (لروابط success/cancel/notify)
 
 بعد أي تغيير → **Redeploy**.
+
+بدون مفاتيح Grow، الدفع **في الموقع** لن يفتح صفحة الدفع؛ يبقى خيار **תשלום במסירה**.
 
 ---
 
