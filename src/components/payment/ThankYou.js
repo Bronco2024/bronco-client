@@ -103,19 +103,20 @@ const ThankYou = () => {
   return (
     <div className="thank-you-container" dir="rtl">
       <div className="thank-you-content">
+        <p className="thank-you-brand">Petzo</p>
         <FontAwesomeIcon icon={faCheckCircle} className="thank-you-icon" />
         <h1>
           {checking
             ? "בודקים את התשלום..."
             : isPaid
-              ? "התשלום התקבל!"
-              : "ההזמנה התקבלה!"}
+              ? "החוויה התחילה!"
+              : "קיבלנו את ההזמנה"}
         </h1>
         <p>
           {isPaid
-            ? "תודה על הרכישה. נתחיל להכין את המשלוח עד הבית."
+            ? "תודה. עכשיו אנחנו אורזים — ותוכלו לעקוב עד שהמשלוח מגיע הביתה."
             : isCod
-              ? "תודה על ההזמנה. נאשר אותה ונודיע לכם כשהמשלוח בדרך אליכם."
+              ? "תודה. נאשר, נארוז, ונעדכן אתכם בכל שלב עד הדלת."
               : "אם סיימתם לשלם, הסטטוס יתעדכן תוך רגעים."}
         </p>
         <p className="thank-you-meta">

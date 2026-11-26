@@ -7,7 +7,9 @@ import {
 
 describe("purchase-status", () => {
   test("labels Hebrew statuses", () => {
-    expect(getPurchaseStatusLabel(PURCHASE_STATUS.PENDING)).toBe("ממתין לאישור");
+    expect(getPurchaseStatusLabel(PURCHASE_STATUS.PENDING)).toBe(
+      "קיבלנו את ההזמנה"
+    );
     expect(getPurchaseStatusLabel(PURCHASE_STATUS.SENT)).toBe("בדרך אליכם");
     expect(getPurchaseStatusLabel(PURCHASE_STATUS.DELIVERED)).toBe("הגיע הביתה");
   });

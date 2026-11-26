@@ -13,6 +13,7 @@ import { db } from "@/firebase";
 import {
   formatPurchaseDate,
   getPurchaseJourneyIndex,
+  getPurchaseJourneyStep,
   getPurchaseStatusHint,
   getPurchaseStatusLabel,
   PURCHASE_JOURNEY_STEPS,
@@ -94,6 +95,7 @@ const PurchaseDetails = () => {
   }
 
   const journeyIndex = getPurchaseJourneyIndex(status);
+  const currentStep = getPurchaseJourneyStep(status);
   const isCancelled = status === PURCHASE_STATUS.CANCEL;
   const contact = purchase.contactDetails || {};
 
@@ -124,9 +126,18 @@ const PurchaseDetails = () => {
       </button>
 
       <section className="buyer-detail-hero">
-        <p className="buyer-orders-kicker">מעקב משלוח</p>
-        <h1>הזמנה #{String(purchase.id).slice(0, 8)}</h1>
+        <div className="buyer-orders-hero-glow" aria-hidden="true" />
+        <p className="buyer-orders-brand">Petzo</p>
+        <p className="buyer-orders-kicker">החוויה של ההזמנה</p>
+        <h1>
+          {currentStep?.storyTitle || getPurchaseStatusLabel(status)}
+        </h1>
         <p className="buyer-detail-meta">
+          {currentStep?.storyBody || getPurchaseStatusHint(status)}
+        </p>
+        <p className="buyer-detail-meta buyer-detail-meta--soft">
+          הזמנה #{String(purchase.id).slice(0, 8)}
+          {" · "}
           {formatPurchaseDate(purchase.purchasedAt)}
           {" · "}
           {purchase.totalQuantity || 0} פריטים
@@ -138,18 +149,17 @@ const PurchaseDetails = () => {
         >
           {getPurchaseStatusLabel(status)}
         </span>
-        <p className="buyer-order-hint">{getPurchaseStatusHint(status)}</p>
       </section>
 
       {!isCancelled ? (
-        <section className="buyer-journey" aria-label="מסלול ההזמנה עד הבית">
+        <section className="buyer-journey" aria-label="מסלול החוויה עד הבית">
           <h2>
             <FontAwesomeIcon icon={faTruckFast} />
-            מההזמנה עד הבית
+            המסע עד הדלת
           </h2>
           <ol className="buyer-journey-steps">
             {PURCHASE_JOURNEY_STEPS.map((step, index) => {
-              const done = index <= journeyIndex;
+              const done = index < journeyIndex;
               const current = index === journeyIndex;
               return (
                 <li
@@ -157,13 +167,15 @@ const PurchaseDetails = () => {
                   className={`${done ? "is-done" : ""} ${current ? "is-current" : ""}`}
                 >
                   <span className="buyer-journey-dot">
-                    {done ? <FontAwesomeIcon icon={faCheck} /> : index + 1}
+                    {done || current ? (
+                      <FontAwesomeIcon icon={faCheck} />
+                    ) : (
+                      index + 1
+                    )}
                   </span>
                   <div>
-                    <strong>{step.label}</strong>
-                    {current && (
-                      <p>{getPurchaseStatusHint(status)}</p>
-                    )}
+                    <strong>{step.storyTitle || step.label}</strong>
+                    <p>{current ? getPurchaseStatusHint(status) : step.storyBody}</p>
                   </div>
                 </li>
               );
@@ -172,7 +184,7 @@ const PurchaseDetails = () => {
           {status === PURCHASE_STATUS.DELIVERED && (
             <p className="buyer-journey-home">
               <FontAwesomeIcon icon={faHouseChimney} />
-              המשלוח סומן כהגיע — מקווים שתהנו!
+              החוויה הושלמה — תודה שקניתם ב־Petzo
             </p>
           )}
         </section>

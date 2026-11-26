@@ -16,22 +16,45 @@
 .buyer-detail-hero {
   position: relative;
   overflow: hidden;
-  padding: 28px 24px 26px;
-  border-radius: 24px;
+  padding: 32px 24px 28px;
+  border-radius: 28px;
   background:
-    radial-gradient(circle at 12% 20%, rgba(255, 134, 28, 0.18), transparent 42%),
-    linear-gradient(145deg, #102a45 0%, #1b4a73 55%, #245178 100%);
+    radial-gradient(circle at 88% 18%, rgba(255, 134, 28, 0.28), transparent 38%),
+    radial-gradient(circle at 12% 80%, rgba(255, 255, 255, 0.08), transparent 40%),
+    linear-gradient(145deg, #0d243c 0%, #173b5e 48%, #1f4f7a 100%);
   color: #fff;
-  box-shadow: 0 18px 40px rgba(23, 59, 94, 0.22);
-  animation: buyer-rise 0.55s ease both;
+  box-shadow: 0 22px 48px rgba(23, 59, 94, 0.28);
+  animation: buyer-rise 0.6s ease both;
+}
+
+.buyer-orders-hero-glow {
+  position: absolute;
+  inset: auto -20% -40% auto;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 134, 28, 0.45), transparent 70%);
+  filter: blur(8px);
+  animation: buyer-glow 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.buyer-orders-brand {
+  margin: 0 0 6px;
+  font-family: var(--font-display, Rubik, Heebo, sans-serif);
+  font-size: clamp(1.7rem, 5vw, 2.35rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  animation: buyer-rise 0.7s ease both;
 }
 
 .buyer-orders-kicker {
   margin: 0 0 8px;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 0.08em;
+  color: rgba(255, 210, 170, 0.92);
   text-transform: uppercase;
 }
 
@@ -41,8 +64,10 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: clamp(1.55rem, 4vw, 2rem);
+  font-family: var(--font-display, Rubik, Heebo, sans-serif);
+  font-size: clamp(1.55rem, 4.4vw, 2.15rem);
   font-weight: 800;
+  line-height: 1.15;
 }
 
 .buyer-orders-lead,
@@ -51,6 +76,11 @@
   max-width: 36rem;
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.88);
+}
+
+.buyer-detail-meta--soft {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.92rem;
 }
 
 .buyer-orders-promises {
@@ -360,6 +390,18 @@
   color: #fff;
 }
 
+.buyer-journey-steps li.is-current {
+  padding: 12px;
+  margin-inline: -8px;
+  border-radius: 16px;
+  background: linear-gradient(90deg, rgba(255, 134, 28, 0.1), transparent);
+}
+
+.buyer-journey-steps li.is-current .buyer-journey-dot {
+  box-shadow: 0 0 0 6px rgba(255, 134, 28, 0.18);
+  animation: buyer-pulse 1.8s ease-in-out infinite;
+}
+
 .buyer-journey-steps strong {
   display: block;
   color: var(--buyer-navy);
@@ -457,6 +499,28 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes buyer-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes buyer-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 6px rgba(255, 134, 28, 0.16);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(255, 134, 28, 0.08);
   }
 }
 

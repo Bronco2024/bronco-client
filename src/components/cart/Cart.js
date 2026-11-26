@@ -81,7 +81,7 @@ const Cart = () => {
           <h1>העגלה שלי</h1>
           <p className="cart-journey-note">
             <FontAwesomeIcon icon={faTruck} />
-            מהעגלה ועד הדלת — אחרי התשלום תוכלו לעקוב אחרי ההזמנה בזמן אמת.
+            כאן מתחילה החוויה: מהעגלה, דרך המשלוח, ועד שהחבילה מגיעה הביתה.
           </p>
         </div>
         <Link to="/our-products" className="cart-back">

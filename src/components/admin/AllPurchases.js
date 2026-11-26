@@ -41,11 +41,11 @@ const AllPurchases = () => {
     const extractStatus = (status) => {
         switch (status) {
             case 'pending':
-                return 'ממתין לאישור';
+                return 'קיבלנו את ההזמנה';
             case 'awaiting_payment':
-                return 'ממתין לתשלום';
+                return 'ממתינים לתשלום';
             case 'confirmed':
-                return 'בהכנה למשלוח';
+                return 'אורזים בשבילכם';
             case 'sent':
                 return 'בדרך אליכם';
             case 'delivered':

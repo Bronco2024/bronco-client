@@ -75,27 +75,28 @@ const MyPurchases = () => {
   return (
     <div className="buyer-orders" dir="rtl">
       <section className="buyer-orders-hero">
-        <p className="buyer-orders-kicker">מהחנות עד הדלת</p>
+        <div className="buyer-orders-hero-glow" aria-hidden="true" />
+        <p className="buyer-orders-brand">Petzo</p>
+        <p className="buyer-orders-kicker">החוויה שלכם</p>
         <h1>
           <FontAwesomeIcon icon={faShoppingBag} />
-          ההזמנות שלי
+          מהקנייה עד הבית
         </h1>
         <p className="buyer-orders-lead">
-          עקבו אחרי כל רכישה — מאישור ההזמנה, דרך המשלוח, ועד שהמוצרים מגיעים
-          הביתה.
+          לא רק סטטוס — מסע קטן וברור: קיבלנו, אורזים, בדרך, והגענו לדלת.
         </p>
         <ul className="buyer-orders-promises">
           <li>
             <FontAwesomeIcon icon={faBoxOpen} />
-            אישור והכנה
+            קיבלנו
           </li>
           <li>
             <FontAwesomeIcon icon={faTruckFast} />
-            משלוח בדרך
+            בדרך
           </li>
           <li>
             <FontAwesomeIcon icon={faHouseChimney} />
-            עד הדלת
+            בבית
           </li>
         </ul>
       </section>
