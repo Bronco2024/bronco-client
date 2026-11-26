@@ -291,7 +291,7 @@
     }
 
     .navbar-buttons {
-        gap: 6px;
+        gap: 8px;
     }
 
     .cart-button span,
@@ -302,11 +302,19 @@
 
     .cart-button,
     .favorites-button,
-    .profile-dropdown-container > .navbar-button {
-        width: 42px;
-        height: 42px;
+    .profile-dropdown-container > .navbar-button,
+    .menu-icon {
+        width: 48px;
+        height: 48px;
         padding: 0;
         justify-content: center;
+        font-size: 1.15rem;
+    }
+
+    .publish-ad-button {
+        min-height: 48px;
+        padding: 10px 14px;
+        font-size: 0.92rem;
     }
 
     .mobile-menu {
@@ -346,17 +354,27 @@
 
 @media screen and (max-width: 640px) {
     .navbar-inner {
-        gap: 8px;
-        padding: 8px 0;
+        gap: 10px;
+        padding: 10px 0;
     }
 
     .navbar-buttons {
-        gap: 4px;
+        gap: 6px;
+    }
+
+    .cart-button,
+    .favorites-button,
+    .profile-dropdown-container > .navbar-button,
+    .menu-icon {
+        width: 46px;
+        height: 46px;
+        font-size: 1.12rem;
     }
 
     .publish-ad-button {
-        width: 42px;
-        height: 42px;
+        width: 46px;
+        height: 46px;
+        min-height: 46px;
         padding: 0;
         justify-content: center;
         gap: 0;
@@ -367,16 +385,16 @@
     }
 
     .publish-ad-button svg {
-        font-size: 1rem;
+        font-size: 1.15rem;
     }
 
     .brand-link {
-        margin-inline-end: 4px;
+        margin-inline-end: 2px;
     }
 
     .brand-logo {
-        height: 40px;
-        max-width: 108px;
+        height: 48px;
+        max-width: 132px;
     }
 
     .brand-text {
@@ -384,7 +402,10 @@
     }
 
     .cart-badge {
-        top: -2px;
-        left: -2px;
+        top: -3px;
+        left: -3px;
+        min-width: 20px;
+        height: 20px;
+        font-size: 0.72rem;
     }
 }
