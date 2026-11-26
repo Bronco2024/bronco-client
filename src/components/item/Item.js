@@ -358,11 +358,11 @@ const ItemPage = () => {
         isServiceCategory(ad.category) || ad.listingKind === "service";
     const isStoreAd = isStoreProduct(ad);
     const showDetails =
-        isPetAd ||
-        ad.category === "סוסים" ||
-        ad.category === "זרע" ||
-        ad.category === "אביזרים" ||
-        ad.category === "חנות";
+        !isStoreAd &&
+        (isPetAd ||
+            ad.category === "סוסים" ||
+            ad.category === "זרע" ||
+            ad.category === "אביזרים");
     const whatsappLink = buildWhatsAppLink({
         phoneNumber: ad.phoneNumber,
         title: getAdTitle(ad),
@@ -399,7 +399,9 @@ const ItemPage = () => {
 
     return (
         <>
-            <div className={`item-page-wrapper ${isServiceAd ? "item-page-wrapper--service" : ""}`}>
+            <div
+                className={`item-page-wrapper${isServiceAd ? " item-page-wrapper--service" : ""}${isStoreAd ? " item-page-wrapper--store" : ""}`}
+            >
                 <div className="item-media">
                     <AliceCarousel
                         ref={carouselRef}
@@ -472,7 +474,7 @@ const ItemPage = () => {
                             )}
                         </div>
 
-                        {ad.location && (
+                        {!isStoreAd && ad.location && (
                             <div className="location">
                                 <span>{ad.location}</span>
                                 <FontAwesomeIcon icon={faLocationDot} />
@@ -489,7 +491,7 @@ const ItemPage = () => {
                         </p>
                     )}
                     {isStoreAd && (
-                        <p className="service-note">
+                        <p className="store-product-note">
                             מוצר מחנות Petzo — הזמנה ותשלום באתר, משלוח עד הבית.
                         </p>
                     )}
@@ -499,6 +501,20 @@ const ItemPage = () => {
                         </p>
                     )}
                     <p className="description">{ad.description}</p>
+
+                    {isStoreAd && (
+                        <div className="store-buy-panel">
+                            {ad.accessory ? (
+                                <p className="store-buy-meta">{ad.accessory}</p>
+                            ) : null}
+                            {formatListingPrice(ad) ? (
+                                <p className="store-buy-price">{formatListingPrice(ad)}</p>
+                            ) : (
+                                <p className="store-buy-price store-buy-price--ask">מחיר בתיאום</p>
+                            )}
+                            <p className="store-buy-ship">משלוח עד הבית · תשלום מאובטח</p>
+                        </div>
+                    )}
 
                     {isServiceAd && (
                         <div className="more-details more-details--service">
@@ -626,7 +642,9 @@ const ItemPage = () => {
                         </button>
                     </div>
 
-                    <p className="date">תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                    {!isStoreAd && (
+                        <p className="date">תאריך פרסום: {FormatDateTimestampToDate(ad.createdAt)}</p>
+                    )}
                 </div>
             </div>
 
@@ -697,7 +715,11 @@ const ItemPage = () => {
             {similarAds.length > 0 && (
                 <div className="related-ads-section">
                     <h2 className="related-ads-title">
-                        {isServiceAd ? "שירותים דומים" : "מודעות דומות"}
+                        {isStoreAd
+                            ? "מוצרים דומים"
+                            : isServiceAd
+                              ? "שירותים דומים"
+                              : "מודעות דומות"}
                     </h2>
                     <div className="related-ads-grid">
                         {similarAds.slice(0, 8).map((item) => (
@@ -714,7 +736,9 @@ const ItemPage = () => {
                                 />
                                 <div className="related-ad-info">
                                     <h4>{getAdTitle(item)}</h4>
-                                    {item.location && <span>{item.location}</span>}
+                                    {!isStoreAd && item.location && (
+                                        <span>{item.location}</span>
+                                    )}
                                     {formatListingPrice(item) && <p>{formatListingPrice(item)}</p>}
                                 </div>
                             </button>

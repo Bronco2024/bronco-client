@@ -25,8 +25,8 @@ exports.handler = async (event) => {
     if (!grow.configured) {
       return jsonResponse(503, {
         error: "grow_not_configured",
-        message:
-          "תשלום באתר עדיין לא הוגדר. הוסיפו GROW_USER_ID ו-GROW_PAGE_CODE ב-Netlify.",
+        // Buyer-facing copy only — never mention hosting/env keys here.
+        message: "תשלום באתר לא זמין כרגע. אפשר לבחור תשלום במסירה.",
       });
     }
 

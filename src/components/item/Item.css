@@ -293,6 +293,58 @@ img.media-element {
     background: #f4faf8;
 }
 
+.store-product-note {
+    margin: 0 0 12px;
+    color: #1e4d3a;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.store-buy-panel {
+    margin: 0 0 22px;
+    padding: 20px 18px;
+    background: linear-gradient(160deg, #f3faf6 0%, #eef6f1 100%);
+    border: 1px solid #d5e8dc;
+    border-radius: 16px;
+}
+
+.store-buy-meta {
+    margin: 0 0 6px;
+    color: #4a6670;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.store-buy-price {
+    margin: 0;
+    color: var(--color-navy);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}
+
+.store-buy-price--ask {
+    color: #64748b;
+    font-size: 1.15rem;
+}
+
+.store-buy-ship {
+    margin: 8px 0 0;
+    color: #5a7184;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.item-page-wrapper--store .whatsapp-link {
+    background: #1e4d3a;
+}
+
+.item-page-wrapper--store .whatsapp-link:hover {
+    background: #163a2c;
+}
+
 .price--ask {
     color: #64748b !important;
     font-size: 1.1rem !important;
