@@ -2,11 +2,13 @@ import React, { lazy, Suspense, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faBagShopping,
   faBriefcase,
   faMagnifyingGlass,
   faPaw,
   faPlus,
   faThLarge,
+  faTruckFast,
 } from "@fortawesome/free-solid-svg-icons";
 import PetCard from "@/components/pets/PetCard";
 import ListingMeta from "@/components/pets/ListingMeta";
@@ -15,6 +17,7 @@ import useMarketplaceAds from "@/hooks/useMarketplaceAds";
 import {
   MARKETPLACE_CATEGORIES,
   SITE_SERVICES,
+  STORE_CATEGORY,
   filterListings,
   isAdoptionListing,
 } from "@/data/pets";
@@ -121,89 +124,118 @@ function Homepage() {
 
   return (
     <main className="homepage" dir="rtl">
-      <Suspense fallback={null}>
-        <StoreSpotlight />
-      </Suspense>
-
       <section
-        className="hero"
+        className="hero hero--combined"
         aria-labelledby="hero-heading"
         style={{ backgroundImage: "url(/hero-pets.jpg)" }}
       >
         <div className="hero-overlay" aria-hidden="true" />
 
-        <div className="hero-inner">
-          <div className="hero-logo">
-            <FontAwesomeIcon icon={faPaw} />
-            <span>{SITE_NAME}</span>
+        <div className="hero-combined">
+          <div className="hero-inner">
+            <div className="hero-logo hero-logo--mark">
+              <picture>
+                <source srcSet="/petzo-logo-mark.webp" type="image/webp" />
+                <img
+                  src="/petzo-logo.jpg"
+                  alt=""
+                  width={40}
+                  height={37}
+                  decoding="async"
+                />
+              </picture>
+              <span>{SITE_NAME}</span>
+            </div>
+
+            <h1 id="hero-heading">
+              כל מה שחיית המחמד
+              <span>שלכם צריכה</span>
+            </h1>
+
+            <p className="hero-lead">
+              מודעות, חנות ומשלוח עד הבית — במקום אחד
+            </p>
+
+            <form className="hero-search" onSubmit={handleSearch}>
+              <div className="hero-search-row">
+                <FontAwesomeIcon icon={faThLarge} className="hero-search-icon" />
+                <select
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
+                >
+                  <option value="">כל הקטגוריות</option>
+                  {MARKETPLACE_CATEGORIES.map((category) => (
+                    <option key={category.slug} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="hero-search-row">
+                <FontAwesomeIcon icon={faBriefcase} className="hero-search-icon" />
+                <select
+                  value={selectedService}
+                  onChange={handleServiceChange}
+                >
+                  <option value="">כל השירותים</option>
+                  {SITE_SERVICES.map((service) => (
+                    <option key={service.path} value={service.path}>
+                      {service.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="hero-search-row">
+                <FontAwesomeIcon
+                  icon={faMagnifyingGlass}
+                  className="hero-search-icon"
+                />
+                <input
+                  type="text"
+                  value={searchText}
+                  onChange={(event) => setSearchText(event.target.value)}
+                  placeholder="חיפוש מוצרים ושירותים..."
+                />
+              </div>
+
+              <button className="hero-search-submit" type="submit">
+                <FontAwesomeIcon icon={faMagnifyingGlass} />
+                <span>חיפוש</span>
+              </button>
+            </form>
+
+            <div className="hero-actions">
+              <button
+                className="hero-store-button"
+                type="button"
+                onClick={() => navigate(STORE_CATEGORY.path)}
+              >
+                <FontAwesomeIcon icon={faBagShopping} />
+                <span>החנות · משלוח עד הבית</span>
+              </button>
+              <button
+                className="hero-publish-button"
+                type="button"
+                onClick={() => navigate("/publish_ad")}
+              >
+                <FontAwesomeIcon icon={faPlus} />
+                <span>פרסם מודעה</span>
+              </button>
+            </div>
+
+            <p className="hero-store-note">
+              <FontAwesomeIcon icon={faTruckFast} />
+              חנות Petzo — תשלום באתר או במסירה
+            </p>
           </div>
-
-          <h1 id="hero-heading">
-            כל מה שחיית המחמד
-            <span>שלכם צריכה</span>
-          </h1>
-
-          <p className="hero-lead">
-            מרקטפלייס חכם לבעלי חיים ואוהבים
-          </p>
-
-          <form className="hero-search" onSubmit={handleSearch}>
-            <div className="hero-search-row">
-              <FontAwesomeIcon icon={faThLarge} className="hero-search-icon" />
-              <select
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-              >
-                <option value="">כל הקטגוריות</option>
-                {MARKETPLACE_CATEGORIES.map((category) => (
-                  <option key={category.slug} value={category.name}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="hero-search-row">
-              <FontAwesomeIcon icon={faBriefcase} className="hero-search-icon" />
-              <select
-                value={selectedService}
-                onChange={handleServiceChange}
-              >
-                <option value="">כל השירותים</option>
-                {SITE_SERVICES.map((service) => (
-                  <option key={service.path} value={service.path}>
-                    {service.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="hero-search-row">
-              <FontAwesomeIcon icon={faMagnifyingGlass} className="hero-search-icon" />
-              <input
-                type="text"
-                value={searchText}
-                onChange={(event) => setSearchText(event.target.value)}
-                placeholder="חיפוש מוצרים ושירותים..."
-              />
-            </div>
-
-            <button className="hero-search-submit" type="submit">
-              <FontAwesomeIcon icon={faMagnifyingGlass} />
-              <span>חיפוש</span>
-            </button>
-          </form>
-
-          <button
-            className="hero-publish-button"
-            type="button"
-            onClick={() => navigate("/publish_ad")}
-          >
-            <FontAwesomeIcon icon={faPlus} />
-            <span>פרסם מודעה</span>
-          </button>
         </div>
       </section>
+
+      <Suspense fallback={null}>
+        <StoreSpotlight variant="rail" />
+      </Suspense>
 
       <section className="categories">
         <div className="section-header">
