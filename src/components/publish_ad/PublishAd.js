@@ -37,6 +37,7 @@ import {
     orderPhotosWithCoverFirst,
     MAX_PUBLISH_PHOTOS,
 } from '@/helpers/publish-photos';
+import { compressImagesForUpload } from '@/helpers/compress-image';
 
 const PublishAd = () => {
     const navigate = useNavigate();
@@ -211,21 +212,28 @@ const PublishAd = () => {
                 formData.photos,
                 coverPhotoIndex
             );
+            const compressedPhotos = await compressImagesForUpload(orderedPhotos);
 
-            const photoURLs = await Promise.all(
-                orderedPhotos.map(async (photo) => {
+            const photoUploadPromise = Promise.all(
+                compressedPhotos.map(async (photo) => {
                     const photoRef = ref(storage, `ads/${adId}/${uuidv4()}`);
                     await uploadBytes(photoRef, photo, metadata);
                     return await getDownloadURL(photoRef);
                 })
             );
 
-            let videoURL = null;
-            if (formData.video) {
-                const videoRef = ref(storage, `ads/${adId}/video.mp4`);
-                await uploadBytes(videoRef, formData.video, metadata);
-                videoURL = await getDownloadURL(videoRef);
-            }
+            const videoUploadPromise = formData.video
+                ? (async () => {
+                    const videoRef = ref(storage, `ads/${adId}/video.mp4`);
+                    await uploadBytes(videoRef, formData.video, metadata);
+                    return await getDownloadURL(videoRef);
+                })()
+                : Promise.resolve(null);
+
+            const [photoURLs, videoURL] = await Promise.all([
+                photoUploadPromise,
+                videoUploadPromise,
+            ]);
 
             const availableUntil = getNewListingAvailableUntil();
 
@@ -288,12 +296,15 @@ const PublishAd = () => {
             await setDoc(doc(db, "ads", adId), adData);
 
             if (adData.status === AD_STATUS.PENDING) {
-                await createPendingAdNotification({
+                // Don't hold the success UI on admin inbox/email latency.
+                void createPendingAdNotification({
                     adId,
                     ad: {
                         ...adData,
                         publisherEmail: currentUser?.email || "",
                     },
+                }).catch((error) => {
+                    console.warn("Pending ad notification failed", error);
                 });
             }
 

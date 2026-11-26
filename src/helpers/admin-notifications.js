@@ -27,6 +27,7 @@ export {
 export const createPendingAdNotification = async ({ adId, ad }) => {
   if (!adId || !ad) return;
 
+  // Fast path for the publisher: only wait on the in-app admin inbox write.
   await addDoc(collection(db, "adminNotifications"), {
     type: ADMIN_NOTIFICATION_TYPES.PENDING_AD,
     adId,
@@ -37,11 +38,10 @@ export const createPendingAdNotification = async ({ adId, ad }) => {
     createdAt: new Date(),
   });
 
-  try {
-    await sendPendingAdEmailToAdmin({ adId, ad });
-  } catch (error) {
+  // Email (EmailJS / FormSubmit) can take seconds — never block publish/update UI.
+  void sendPendingAdEmailToAdmin({ adId, ad }).catch((error) => {
     console.warn("Failed to send pending ad email to admin", error);
-  }
+  });
 };
 
 const markNotificationDocs = async (snapshot) => {

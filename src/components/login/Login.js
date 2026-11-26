@@ -14,7 +14,6 @@ import { auth } from '@/firebase';
 
 import {
     signInWithEmailAndPassword,
-    reload
 } from 'firebase/auth';
 
 import { useAuth } from '@/context/AuthProvider';
@@ -133,12 +132,7 @@ const Login = () => {
                     password
                 );
 
-            /* Reload user information */
-
-            await reload(userCredential.user);
-
-
-            /* Check email verification */
+            /* Check email verification — Auth already has fresh emailVerified. */
 
             if (!userCredential.user.emailVerified) {
 

@@ -2,7 +2,8 @@
 
 import { isSameOriginAuthDomain } from "./firebase-auth-domain";
 
-export const GOOGLE_POPUP_HANG_MS = 25_000;
+/** Fail over to redirect sooner so hung popups don't feel like a frozen login. */
+export const GOOGLE_POPUP_HANG_MS = 12_000;
 
 /** Custom code when Google OAuth cannot run inside an in-app WebView. */
 export const IN_APP_BROWSER_AUTH_CODE = "auth/in-app-browser";
