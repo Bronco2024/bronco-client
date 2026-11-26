@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthProvider';
-import { doc, updateDoc, arrayRemove, arrayUnion, setDoc, Timestamp } from 'firebase/firestore';
+import { doc, updateDoc, arrayRemove, setDoc, Timestamp } from 'firebase/firestore';
 import { db, storage } from '@/firebase';
 import { ref, deleteObject, uploadBytes, getDownloadURL } from 'firebase/storage';
 import './UpdateAd.css'
@@ -26,6 +26,7 @@ import { omitUndefinedFields } from '@/helpers/firestore-safe';
 import { toFirestoreTimestamp } from '@/helpers/firestore-timestamp';
 import { withCurrentOption } from '@/helpers/select-options';
 import { getNewListingAvailableUntil } from '@/helpers/ad-listing-duration';
+import { compressImagesForUpload } from '@/helpers/compress-image';
 
 const UpdateAd = () => {
     const navigate = useNavigate();
@@ -293,48 +294,66 @@ const UpdateAd = () => {
             dataToSubmit = omitUndefinedFields(dataToSubmit);
 
             const adRef = doc(db, "ads", ad.id);
+
+            // Upload new media first (compressed), then one Firestore write for photos.
+            let photoURLs = [];
+            let videoURL = null;
+
+            if (newPhotos.photos.length > 0 || newVideo) {
+                const compressedPhotos = newPhotos.photos.length
+                    ? await compressImagesForUpload(newPhotos.photos)
+                    : [];
+
+                const photoUploadPromise = compressedPhotos.length
+                    ? Promise.all(
+                        compressedPhotos.map(async (photo) => {
+                            const photoRef = ref(storage, `ads/${ad.id}/${uuidv4()}`);
+                            await uploadBytes(photoRef, photo);
+                            return await getDownloadURL(photoRef);
+                        })
+                    )
+                    : Promise.resolve([]);
+
+                const videoUploadPromise = newVideo
+                    ? (async () => {
+                        const videoRef = ref(storage, `ads/${ad.id}/${uuidv4()}`);
+                        await uploadBytes(videoRef, newVideo);
+                        return await getDownloadURL(videoRef);
+                    })()
+                    : Promise.resolve(null);
+
+                [photoURLs, videoURL] = await Promise.all([
+                    photoUploadPromise,
+                    videoUploadPromise,
+                ]);
+            }
+
+            if (photoURLs.length) {
+                dataToSubmit.photos = [
+                    ...(Array.isArray(dataToSubmit.photos) ? dataToSubmit.photos : []),
+                    ...photoURLs,
+                ];
+            }
+            if (videoURL) {
+                dataToSubmit.video = videoURL;
+            }
+
+            dataToSubmit = omitUndefinedFields(dataToSubmit);
             await setDoc(adRef, dataToSubmit);
 
+            if (photoURLs.length) setNewPhotos({ photos: [] });
+            if (videoURL) setNewVideo(null);
+
             if (dataToSubmit.status === AD_STATUS.PENDING) {
-                try {
-                    await createPendingAdNotification({
-                        adId: ad.id,
-                        ad: {
-                            ...dataToSubmit,
-                            publisherEmail: currentUser?.email || "",
-                        },
-                    });
-                } catch (notifyError) {
-                    // Ad is saved — don't fail the publisher update for notification issues.
+                void createPendingAdNotification({
+                    adId: ad.id,
+                    ad: {
+                        ...dataToSubmit,
+                        publisherEmail: currentUser?.email || "",
+                    },
+                }).catch((notifyError) => {
                     console.warn("Pending ad notification failed", notifyError);
-                }
-            }
-
-            if (newPhotos.photos.length > 0) {
-                const photoURLs = await Promise.all(
-                    newPhotos.photos.map(async (photo) => {
-                        const photoRef = ref(storage, `ads/${ad.id}/${uuidv4()}`);
-                        await uploadBytes(photoRef, photo);
-                        return await getDownloadURL(photoRef);
-                    })
-                );
-
-                await Promise.all(photoURLs.map((photoURL) =>
-                    updateDoc(adRef, {
-                        photos: arrayUnion(photoURL),
-                    })
-                ));
-                setNewPhotos({ photos: [] });
-            }
-
-            if (newVideo) {
-                const videoRef = ref(storage, `ads/${ad.id}/${uuidv4()}`);
-                await uploadBytes(videoRef, newVideo);
-                const videoURL = await getDownloadURL(videoRef);
-                await updateDoc(adRef, {
-                    video: videoURL,
                 });
-                setNewVideo(null);
             }
 
             setShowModal(true);

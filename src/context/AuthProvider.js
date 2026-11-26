@@ -39,29 +39,47 @@ export const AuthProvider = ({ children }) => {
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (cancelled) return;
-      setLoading(true);
+
+      if (!user) {
+        setCurrentUser(null);
+        dispatch(clearCart());
+        setLoading(false);
+        return;
+      }
+
+      // Skip forced reload()/getIdToken(true) on every page — that added
+      // multi-second delay. Auth state already carries emailVerified.
+      const signedInWithGoogle = user.providerData?.some(
+        (p) => p.providerId === "google.com"
+      );
+      // Google accounts are trusted; email/password still requires verification.
+      if (!user.emailVerified && !signedInWithGoogle) {
+        setCurrentUser(null);
+        dispatch(clearCart());
+        setLoading(false);
+        return;
+      }
+
+      const siteAdmin = isSiteAdminEmail(user.email);
+      const minimalSession = {
+        uid: user.uid,
+        email: user.email,
+        subscribedUntil: null,
+        numberOfAds: Number.MAX_VALUE,
+        cart: [],
+        isAdmin: siteAdmin,
+      };
+
+      // Unblock ProtectedRoute immediately — hydrate Firestore profile after.
+      setCurrentUser((prev) =>
+        prev?.uid === user.uid ? prev : minimalSession
+      );
+      setLoading(false);
+
       try {
-        if (!user) {
-          setCurrentUser(null);
-          dispatch(clearCart());
-          return;
-        }
-
-        // Skip forced reload()/getIdToken(true) on every page — that added
-        // multi-second delay. Auth state already carries emailVerified.
-        const signedInWithGoogle = user.providerData?.some(
-          (p) => p.providerId === "google.com"
-        );
-        // Google accounts are trusted; email/password still requires verification.
-        if (!user.emailVerified && !signedInWithGoogle) {
-          setCurrentUser(null);
-          dispatch(clearCart());
-          return;
-        }
-
         const userRef = doc(db, 'users', user.uid);
         const snap = await getDoc(userRef);
-        const siteAdmin = isSiteAdminEmail(user.email);
+        if (cancelled) return;
 
         if (!snap.exists()) {
           const defaultProfile = {
@@ -75,14 +93,19 @@ export const AuthProvider = ({ children }) => {
             cart: [],
             isAdmin: siteAdmin,
           };
-          await setDoc(userRef, defaultProfile);
-
+          // Don't block UI on first-time profile create.
+          void setDoc(userRef, defaultProfile).catch((error) => {
+            console.warn("Failed to create user profile", error);
+          });
           setCurrentUser({ uid: user.uid, ...defaultProfile });
           dispatch(loadCart([]));
         } else {
           const data = snap.data();
           if (siteAdmin && !data.isAdmin) {
-            await setDoc(userRef, { isAdmin: true, email: user.email }, { merge: true });
+            void setDoc(userRef, { isAdmin: true, email: user.email }, { merge: true })
+              .catch((error) => {
+                console.warn("Failed to mark site admin", error);
+              });
           }
           const rawCart = data.cart || [];
           const cart = rawCart.map(item => ({
@@ -99,27 +122,9 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (e) {
         console.error("AuthProvider profile load failed", e);
-        // Auth succeeded but profile read/write failed — keep a minimal session
-        // so Google / email login is not stuck as "signed out".
-        const signedInWithGoogle = user?.providerData?.some(
-          (p) => p.providerId === "google.com"
-        );
-        if (user?.emailVerified || signedInWithGoogle) {
-          setCurrentUser({
-            uid: user.uid,
-            email: user.email,
-            subscribedUntil: null,
-            numberOfAds: Number.MAX_VALUE,
-            cart: [],
-            isAdmin: isSiteAdminEmail(user.email),
-          });
-          dispatch(loadCart([]));
-        } else {
-          setCurrentUser(null);
-          dispatch(clearCart());
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
+        // Auth succeeded but profile read/write failed — keep minimal session.
+        setCurrentUser((prev) => prev?.uid === user.uid ? prev : minimalSession);
+        dispatch(loadCart([]));
       }
     });
 
