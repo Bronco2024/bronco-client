@@ -156,6 +156,30 @@ function Homepage() {
               מודעות, חנות ומשלוח עד הבית — במקום אחד
             </p>
 
+            <aside className="hero-store-panel">
+              <div className="hero-store-panel-top">
+                <span className="hero-store-panel-brand">
+                  <FontAwesomeIcon icon={faBagShopping} />
+                  החנות
+                </span>
+                <span className="hero-store-panel-ship">
+                  <FontAwesomeIcon icon={faTruckFast} />
+                  משלוח עד הבית
+                </span>
+              </div>
+              <p className="hero-store-panel-title">
+                מוצרים לחיות מחמד — הזמנה ותשלום באתר
+              </p>
+              <button
+                className="hero-store-button"
+                type="button"
+                onClick={() => navigate(STORE_CATEGORY.path)}
+              >
+                <FontAwesomeIcon icon={faBagShopping} />
+                <span>כניסה לחנות</span>
+              </button>
+            </aside>
+
             <form className="hero-search" onSubmit={handleSearch}>
               <div className="hero-search-row">
                 <FontAwesomeIcon icon={faThLarge} className="hero-search-icon" />
@@ -196,7 +220,7 @@ function Homepage() {
                   type="text"
                   value={searchText}
                   onChange={(event) => setSearchText(event.target.value)}
-                  placeholder="חיפוש מוצרים ושירותים..."
+                  placeholder="חיפוש מודעות ושירותים..."
                 />
               </div>
 
@@ -206,29 +230,14 @@ function Homepage() {
               </button>
             </form>
 
-            <div className="hero-actions">
-              <button
-                className="hero-store-button"
-                type="button"
-                onClick={() => navigate(STORE_CATEGORY.path)}
-              >
-                <FontAwesomeIcon icon={faBagShopping} />
-                <span>החנות · משלוח עד הבית</span>
-              </button>
-              <button
-                className="hero-publish-button"
-                type="button"
-                onClick={() => navigate("/publish_ad")}
-              >
-                <FontAwesomeIcon icon={faPlus} />
-                <span>פרסם מודעה</span>
-              </button>
-            </div>
-
-            <p className="hero-store-note">
-              <FontAwesomeIcon icon={faTruckFast} />
-              חנות Petzo — תשלום באתר או במסירה
-            </p>
+            <button
+              className="hero-publish-button"
+              type="button"
+              onClick={() => navigate("/publish_ad")}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+              <span>פרסם מודעה</span>
+            </button>
           </div>
         </div>
       </section>
