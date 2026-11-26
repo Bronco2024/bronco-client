@@ -44,10 +44,23 @@
     flex-shrink: 0;
 }
 
+.brand-logo {
+    height: 52px;
+    width: auto;
+    max-width: 150px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
+
 .brand-copy {
     display: flex;
     flex-direction: column;
     line-height: 1.15;
+}
+
+.brand-copy--compact .brand-tagline {
+    font-size: 0.72rem;
 }
 
 .brand-text {
@@ -308,6 +321,15 @@
     .publish-ad-button {
         padding: 9px 12px;
         font-size: 0.85rem;
+    }
+
+    .brand-logo {
+        height: 44px;
+        max-width: 120px;
+    }
+
+    .brand-copy--compact {
+        display: none;
     }
 
     .brand-text {

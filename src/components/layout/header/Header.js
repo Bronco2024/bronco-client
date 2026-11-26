@@ -10,7 +10,6 @@ import {
     faHouseUser,
     faGear,
     faHeart,
-    faPaw,
     faChevronDown
 } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useRef, useState } from 'react';
@@ -101,11 +100,14 @@ const Header = () => {
         <nav className="navbar" ref={headerRef}>
             <div className="navbar-inner">
                 <Link to="/" className="brand-link" onClick={closeMenus}>
-                    <span className="brand-mark" aria-hidden="true">
-                        <FontAwesomeIcon icon={faPaw} />
-                    </span>
-                    <span className="brand-copy">
-                        <span className="brand-text">{SITE_NAME}</span>
+                    <img
+                        className="brand-logo"
+                        src="/petzo-logo.jpg"
+                        alt={SITE_NAME}
+                        width={160}
+                        height={107}
+                    />
+                    <span className="brand-copy brand-copy--compact">
                         <span className="brand-tagline">{SITE_TAGLINE}</span>
                     </span>
                 </Link>

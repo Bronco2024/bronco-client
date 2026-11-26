@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import './Register.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faPaw } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { auth } from '@/firebase';
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
@@ -148,10 +148,11 @@ const Register = () => {
     return (
         <div className="register-container">
             <div className="auth-brand">
-                <span className="auth-brand-mark" aria-hidden="true">
-                    <FontAwesomeIcon icon={faPaw} />
-                </span>
-                <span>{SITE_NAME}</span>
+                <img
+                    className="auth-brand-logo"
+                    src="/petzo-logo.jpg"
+                    alt={SITE_NAME}
+                />
             </div>
             <h2 className="register-title">הירשם</h2>
             <InAppBrowserNotice />
