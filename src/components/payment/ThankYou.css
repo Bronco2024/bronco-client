@@ -44,6 +44,49 @@
   color: #173b5e !important;
 }
 
+.thank-you-journey {
+  list-style: none;
+  margin: 22px 0 8px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.thank-you-journey li {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #8a9aab;
+}
+
+.thank-you-journey li span {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef3f7;
+  color: #173b5e;
+}
+
+.thank-you-journey li.is-active {
+  color: #173b5e;
+}
+
+.thank-you-journey li.is-active span {
+  background: #ff861c;
+  color: #fff;
+}
+
+.thank-you-journey-note {
+  font-size: 0.92rem !important;
+  color: #6b7c8f !important;
+}
+
 .button-container {
   margin-top: 24px;
   display: flex;

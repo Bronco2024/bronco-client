@@ -45,9 +45,11 @@ const AllPurchases = () => {
             case 'awaiting_payment':
                 return 'ממתין לתשלום';
             case 'confirmed':
-                return 'מאושר';
+                return 'בהכנה למשלוח';
             case 'sent':
-                return 'נשלח';
+                return 'בדרך אליכם';
+            case 'delivered':
+                return 'הגיע הביתה';
             case 'cancel':
                 return 'בוטל';
             default:
