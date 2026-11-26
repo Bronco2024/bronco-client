@@ -32,4 +32,24 @@ describe("Admin email alerts", () => {
     expect(email.message).toContain("ad-123");
     expect(email.message).toContain("https://petsandbones.web.app/admin");
   });
+
+  test("builds a store-product pending email without city/phone", () => {
+    const email = buildPendingAdEmail({
+      adId: "store-1",
+      origin: "https://petzo.co.il",
+      ad: {
+        title: "קולר כתום",
+        category: "חנות",
+        listingKind: "store",
+        price: "49",
+        accessory: "רצועות וקולרים",
+      },
+    });
+
+    expect(email.subject).toContain("מוצר בחנות");
+    expect(email.message).toContain("קולר כתום");
+    expect(email.message).toContain("רצועות וקולרים");
+    expect(email.message).not.toContain("עיר:");
+    expect(email.message).not.toContain("טלפון:");
+  });
 });

@@ -13,6 +13,10 @@ describe("Admin notifications", () => {
       "לברדור"
     );
     expect(getNotificationTitle({ category: "חתולים" })).toBe("חתולים");
+    expect(
+      getNotificationTitle({ title: "קולר", category: "חנות" })
+    ).toBe("מוצר בחנות: קולר");
+    expect(getNotificationTitle({ category: "חנות" })).toBe("מוצר חדש בחנות");
   });
 
   test("notifies only for pending ads", () => {

@@ -5,6 +5,7 @@ import {
     faCheck,
     faClipboardList,
     faEyeSlash,
+    faPen,
     faPlus,
     faStore,
     faTrash,
@@ -29,6 +30,7 @@ import useAdminNotifications from '@/hooks/useAdminNotifications';
 import ListingCardMedia from '@/components/pets/ListingCardMedia';
 import { extendAdsToThreeMonthDuration } from '@/helpers/ad-listing-duration-migrate';
 import { needsListingDurationExtension } from '@/helpers/ad-listing-duration';
+import { getStoreProductTitle, isStoreListing } from '@/helpers/store-product';
 
 const SPONSOR_LABELS = {
     gold: "זהב",
@@ -118,9 +120,17 @@ const Admin = () => {
     }, [refresh])
 
     const filteredAds = useMemo(() => {
+        if (adStatusFilter === "store") {
+            return ads.filter((ad) => isStoreListing(ad));
+        }
         if (adStatusFilter === "all") return ads;
         return ads.filter((ad) => getAdStatus(ad) === adStatusFilter);
     }, [ads, adStatusFilter]);
+
+    const storeCount = useMemo(
+        () => ads.filter((ad) => isStoreListing(ad)).length,
+        [ads]
+    );
 
     const pendingCount = useMemo(
         () => ads.filter((ad) => isAdPending(ad)).length,
@@ -254,7 +264,9 @@ const Admin = () => {
     }
 
     const getAdCardTitle = (ad) =>
-        ad.title || ad.name || ad.breed || ad.seed_type || ad.accessory || ad.category || "מודעה";
+        isStoreListing(ad)
+            ? getStoreProductTitle(ad)
+            : ad.title || ad.name || ad.breed || ad.seed_type || ad.accessory || ad.category || "מודעה";
 
     return (
         <div className="admin-page" dir="rtl">
@@ -413,6 +425,7 @@ const Admin = () => {
                         <div className="admin-filters">
                             {[
                                 { value: "pending", label: `ממתינות (${pendingCount})` },
+                                { value: "store", label: `חנות (${storeCount})` },
                                 { value: "approved", label: "מאושרות" },
                                 { value: "rejected", label: "נדחות" },
                                 { value: "all", label: "הכל" },
@@ -448,10 +461,16 @@ const Admin = () => {
                                                 <span className={`account-status account-status--${status}`}>
                                                     {AD_STATUS_LABELS[status]}
                                                 </span>
+                                                {isStoreListing(ad) && (
+                                                    <span className="account-status account-status--store">
+                                                        מוצר בחנות
+                                                    </span>
+                                                )}
                                                 <h3>{title}</h3>
                                                 <p className="account-card-meta">
-                                                    {ad.category}
-                                                    {ad.location ? ` · ${ad.location}` : ""}
+                                                    {isStoreListing(ad)
+                                                        ? (ad.accessory ? `חנות · ${ad.accessory}` : "חנות Petzo")
+                                                        : `${ad.category}${ad.location ? ` · ${ad.location}` : ""}`}
                                                 </p>
                                                 {ad.price ? <strong className="account-card-price">₪{ad.price}</strong> : null}
                                             </div>
@@ -494,6 +513,20 @@ const Admin = () => {
                                                     >
                                                         <FontAwesomeIcon icon={faEyeSlash} />
                                                         הסתר
+                                                    </button>
+                                                )}
+                                                {isStoreListing(ad) && (
+                                                    <button
+                                                        type="button"
+                                                        className="account-action account-action--update"
+                                                        onClick={() =>
+                                                            navigate("/profile/update_ad", {
+                                                                state: { ad },
+                                                            })
+                                                        }
+                                                    >
+                                                        <FontAwesomeIcon icon={faPen} />
+                                                        ערוך מוצר
                                                     </button>
                                                 )}
                                                 <button

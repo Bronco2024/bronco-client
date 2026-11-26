@@ -13,6 +13,7 @@ import {
   normalizeMarketplaceAd,
 } from "@/data/pets";
 import { filterApprovedAds } from "@/helpers/ad-approval";
+import { isStoreListing } from "@/helpers/store-product";
 
 export const fetchMarketplaceAds = async ({
   categoryName,
@@ -28,7 +29,12 @@ export const fetchMarketplaceAds = async ({
     constraints.push(where("availableUntil", ">", new Date()));
   }
 
-  constraints.push(orderBy("createdAt", "desc"), limit(limitCount));
+  // Mixed feeds exclude store products — over-fetch a little so recent ads stay full.
+  const queryLimit = !categoryName
+    ? Math.min(limitCount + 12, 80)
+    : limitCount;
+
+  constraints.push(orderBy("createdAt", "desc"), limit(queryLimit));
 
   const snapshot = await getDocs(query(adsRef, ...constraints));
   let ads = snapshot.docs.map((docSnap) =>
@@ -42,9 +48,14 @@ export const fetchMarketplaceAds = async ({
   ads = ads.filter((ad) => !IsDateNowGreaterThanAdDate(ad.availableUntil));
   ads = filterApprovedAds(ads);
 
+  // Store inventory belongs in /our-products — never in מודעות אחרונות / listings.
+  if (categoryName !== "חנות") {
+    ads = ads.filter((ad) => !isStoreListing(ad));
+  }
+
   if (adoptionOnly) {
     ads = ads.filter(isAdoptionListing);
   }
 
-  return ads;
+  return ads.slice(0, limitCount);
 };
