@@ -222,8 +222,21 @@
 }
 
 .account-empty p {
-    margin: 0;
+    margin: 0 0 18px;
     color: var(--color-muted);
+}
+
+.account-empty .account-primary-button {
+    display: inline-flex;
+    margin: 0 auto;
+}
+
+.account-card--store {
+    border-color: rgba(255, 134, 28, 0.28);
+}
+
+.account-card--store .account-card-price {
+    color: #ff861c;
 }
 
 .admin-tabs,
