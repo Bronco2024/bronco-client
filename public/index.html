@@ -50,6 +50,27 @@
   </head>
   <body>
     <noscript>יש להפעיל JavaScript כדי להשתמש באתר Petzo.</noscript>
+    <!-- Netlify Forms: detected at build. Used as order-alert backup when SMTP is unset. -->
+    <form
+      name="store-order"
+      method="POST"
+      data-netlify="true"
+      data-netlify-honeypot="bot-field"
+      hidden
+      aria-hidden="true"
+    >
+      <input type="hidden" name="form-name" value="store-order" />
+      <input name="bot-field" />
+      <input name="orderId" />
+      <input name="buyerEmail" />
+      <input name="buyerName" />
+      <input name="subject" />
+      <input name="totalPrice" />
+      <input name="paymentMethod" />
+      <input name="city" />
+      <textarea name="message"></textarea>
+      <textarea name="buyerMessage"></textarea>
+    </form>
     <div id="root"></div>
   </body>
 </html>

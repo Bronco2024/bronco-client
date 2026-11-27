@@ -5,6 +5,57 @@ import {
   buildBuyerOrderEmail,
 } from "./store-order-emails";
 
+/** Netlify Forms backup — works without SMTP_PASS once form email notify is on. */
+export const sendStoreOrderViaNetlifyForm = async ({
+  orderId,
+  order = {},
+} = {}) => {
+  if (!orderId || typeof window === "undefined") return false;
+
+  const origin = getOrigin();
+  const adminMail = buildAdminOrderEmail({
+    orderId,
+    order,
+    siteUrl: origin || undefined,
+  });
+  const buyerMail = buildBuyerOrderEmail({
+    orderId,
+    order,
+    siteUrl: origin || undefined,
+  });
+  const contact = order.contactDetails || {};
+  const buyerName =
+    [contact.firstName, contact.lastName].filter(Boolean).join(" ").trim() ||
+    SITE_NAME;
+  const buyerEmail = String(order.email || buyerMail.to || "").trim();
+
+  const body = new URLSearchParams({
+    "form-name": "store-order",
+    orderId: String(orderId),
+    buyerEmail,
+    buyerName,
+    subject: adminMail.subject,
+    totalPrice: String(order.totalPrice ?? ""),
+    paymentMethod: String(order.paymentMethod || ""),
+    city: String(contact.city || ""),
+    message: adminMail.message,
+    buyerMessage: buyerMail.message,
+  });
+
+  try {
+    const response = await fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    });
+    // Netlify returns 200 on success; 404 if form not registered yet.
+    return response.ok || response.status === 200;
+  } catch (error) {
+    console.warn("Netlify Forms store-order submit failed", error);
+    return false;
+  }
+};
+
 const EMAILJS_ENDPOINT = "https://api.emailjs.com/api/v1.0/email/send";
 
 const getEmailJsConfig = () => ({
@@ -195,7 +246,18 @@ const postStoreOrderFormSubmit = async ({
 };
 
 export const sendStoreOrderEmailToAdmin = async ({ orderId, order = {} }) => {
-  if (!canSendAdminEmail() || !orderId) return false;
+  if (!orderId) return false;
+
+  // 1) Netlify Forms first — no SMTP / FormSubmit Cloudflare dependency.
+  try {
+    if (await sendStoreOrderViaNetlifyForm({ orderId, order })) {
+      return true;
+    }
+  } catch (error) {
+    console.warn("Netlify Forms store order alert failed", error);
+  }
+
+  if (!canSendAdminEmail()) return false;
 
   const origin = getOrigin();
   const adminMail = buildAdminOrderEmail({
