@@ -17,6 +17,13 @@
   status = 200
   force = true
 
+# Keep the static Netlify Forms endpoint out of the SPA catch-all.
+[[redirects]]
+  from = "/store-order-form.html"
+  to = "/store-order-form.html"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
