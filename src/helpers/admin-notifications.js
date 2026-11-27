@@ -19,6 +19,7 @@ import {
 import {
   sendPendingAdEmailToAdmin,
   sendStoreOrderEmailToAdmin,
+  sendBuyerOrderEmailClient,
 } from "@/helpers/admin-email";
 import { getOrderNotificationTitle } from "@/helpers/store-order-emails";
 
@@ -76,8 +77,16 @@ export const createStoreOrderNotification = async ({ orderId, order = {} }) => {
     createdAt: new Date(),
   });
 
-  void sendStoreOrderEmailToAdmin({ orderId, order }).catch((error) => {
-    console.warn("Failed to send store order email to admin", error);
+  // Admin FormSubmit (+ buyer autoresponse) and optional EmailJS to buyer.
+  void Promise.allSettled([
+    sendStoreOrderEmailToAdmin({ orderId, order }),
+    sendBuyerOrderEmailClient({ orderId, order }),
+  ]).then((results) => {
+    results.forEach((result) => {
+      if (result.status === "rejected") {
+        console.warn("Store order client email failed", result.reason);
+      }
+    });
   });
 };
 

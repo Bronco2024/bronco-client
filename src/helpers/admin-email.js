@@ -1,6 +1,9 @@
 import { ADMIN_EMAIL, SITE_NAME } from "../data/site-config";
 import { getNotificationTitle } from "./admin-notification-helpers";
-import { buildAdminOrderEmail } from "./store-order-emails";
+import {
+  buildAdminOrderEmail,
+  buildBuyerOrderEmail,
+} from "./store-order-emails";
 
 const EMAILJS_ENDPOINT = "https://api.emailjs.com/api/v1.0/email/send";
 
@@ -9,6 +12,34 @@ const getEmailJsConfig = () => ({
   templateId: process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
   publicKey: process.env.REACT_APP_EMAILJS_PUBLIC_KEY,
 });
+
+const getOrigin = () =>
+  typeof window !== "undefined" && window.location?.origin
+    ? window.location.origin
+    : "";
+
+const sendTemplateWithEmailJs = async ({ to, subject, message, extra = {} }) => {
+  const { serviceId, templateId, publicKey } = getEmailJsConfig();
+  if (!serviceId || !templateId || !publicKey || !to) return false;
+
+  const response = await fetch(EMAILJS_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      service_id: serviceId,
+      template_id: templateId,
+      user_id: publicKey,
+      template_params: {
+        to_email: to,
+        subject,
+        message,
+        ...extra,
+      },
+    }),
+  });
+
+  return response.ok;
+};
 
 export const getAdminEmail = () => ADMIN_EMAIL;
 
@@ -54,32 +85,19 @@ export const buildPendingAdEmail = ({ adId, ad = {}, origin = "" } = {}) => {
 };
 
 const sendWithEmailJs = async ({ adId, ad, origin }) => {
-  const { serviceId, templateId, publicKey } = getEmailJsConfig();
-  if (!serviceId || !templateId || !publicKey) return false;
-
   const email = buildPendingAdEmail({ adId, ad, origin });
-
-  const response = await fetch(EMAILJS_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      service_id: serviceId,
-      template_id: templateId,
-      user_id: publicKey,
-      template_params: {
-        to_email: getAdminEmail(),
-        subject: email.subject,
-        message: email.message,
-        ad_id: adId,
-        ad_title: getNotificationTitle(ad),
-        ad_category: ad.category || "",
-        ad_city: ad.location || "",
-        ad_price: String(ad.price || ""),
-      },
-    }),
+  return sendTemplateWithEmailJs({
+    to: getAdminEmail(),
+    subject: email.subject,
+    message: email.message,
+    extra: {
+      ad_id: adId,
+      ad_title: getNotificationTitle(ad),
+      ad_category: ad.category || "",
+      ad_city: ad.location || "",
+      ad_price: String(ad.price || ""),
+    },
   });
-
-  return response.ok;
 };
 
 const sendWithFormSubmit = async ({ adId, ad, origin }) => {
@@ -130,21 +148,33 @@ export const sendPendingAdEmailToAdmin = async ({ adId, ad = {} }) => {
   return sendWithFormSubmit({ adId, ad, origin });
 };
 
-/** Admin new-order alert via FormSubmit (works even when Netlify SMTP is down). */
+/**
+ * Admin new-order alert + buyer confirmation.
+ * FormSubmit delivers to the activated admin inbox; `_autoresponse` goes to the
+ * buyer's `email` field — so the buyer gets a confirmation even when SMTP is down.
+ */
 export const sendStoreOrderEmailToAdmin = async ({ orderId, order = {} }) => {
   if (!canSendAdminEmail() || !orderId) return false;
 
-  const origin =
-    typeof window !== "undefined" && window.location?.origin
-      ? window.location.origin
-      : "";
-  const email = buildAdminOrderEmail({
+  const origin = getOrigin();
+  const adminMail = buildAdminOrderEmail({
+    orderId,
+    order,
+    siteUrl: origin || undefined,
+  });
+  const buyerMail = buildBuyerOrderEmail({
     orderId,
     order,
     siteUrl: origin || undefined,
   });
   const adminEmail = getAdminEmail();
+  const buyerEmail = String(order.email || buyerMail.to || "").trim();
   if (!adminEmail) return false;
+
+  const contact = order.contactDetails || {};
+  const buyerName =
+    [contact.firstName, contact.lastName].filter(Boolean).join(" ").trim() ||
+    SITE_NAME;
 
   const response = await fetch(
     `https://formsubmit.co/ajax/${encodeURIComponent(adminEmail)}`,
@@ -155,16 +185,48 @@ export const sendStoreOrderEmailToAdmin = async ({ orderId, order = {} }) => {
         Accept: "application/json",
       },
       body: JSON.stringify({
-        _subject: email.subject,
+        _subject: adminMail.subject,
         _template: "box",
         _captcha: "false",
-        _replyto: order.email || adminEmail,
-        name: SITE_NAME,
-        email: adminEmail,
-        message: email.message,
+        _replyto: buyerEmail || adminEmail,
+        // Autoresponse is emailed to this address (buyer confirmation).
+        ...(buyerEmail
+          ? {
+              email: buyerEmail,
+              _autoresponse: buyerMail.message,
+            }
+          : { email: adminEmail }),
+        name: buyerName,
+        message: adminMail.message,
       }),
     }
   );
 
   return response.ok;
+};
+
+/** Buyer confirmation via EmailJS (optional) — works for any recipient. */
+export const sendBuyerOrderEmailClient = async ({ orderId, order = {} }) => {
+  const origin = getOrigin();
+  const email = buildBuyerOrderEmail({
+    orderId,
+    order,
+    siteUrl: origin || undefined,
+  });
+  const to = String(email.to || order.email || "").trim();
+  if (!to) return false;
+
+  try {
+    const sent = await sendTemplateWithEmailJs({
+      to,
+      subject: email.subject,
+      message: email.message,
+      extra: { order_id: orderId },
+    });
+    if (sent) return true;
+  } catch (error) {
+    console.warn("EmailJS buyer order email failed", error);
+  }
+
+  return false;
 };

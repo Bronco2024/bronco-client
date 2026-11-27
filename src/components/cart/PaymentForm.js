@@ -106,16 +106,14 @@ const PaymentForm = () => {
 
       await updateUserCart(currentUser.uid, []);
       dispatch(clearCart());
-      // COD: admin inbox+email immediately; Netlify also emails buyer/admin.
-      void createStoreOrderNotification({
-        orderId,
-        order: payload,
-      }).catch((notifyError) => {
-        console.warn("Store order admin notify failed", notifyError);
-      });
-      void notifyStoreOrderEmails(orderId).catch((notifyError) => {
-        console.warn("Store order email notify failed", notifyError);
-      });
+      // COD: wait briefly for buyer+admin emails so navigation does not abort them.
+      await Promise.race([
+        Promise.allSettled([
+          createStoreOrderNotification({ orderId, order: payload }),
+          notifyStoreOrderEmails(orderId),
+        ]),
+        new Promise((resolve) => setTimeout(resolve, 6000)),
+      ]);
       navigate("/order/thank-you", {
         state: {
           orderId,
@@ -123,6 +121,7 @@ const PaymentForm = () => {
           totalQuantity: payload.totalQuantity,
           city: formData.city,
           paymentMethod,
+          email: formData.email,
         },
         replace: true,
       });
