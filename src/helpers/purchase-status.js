@@ -92,6 +92,38 @@ export const getPurchaseJourneyIndex = (status) => {
   return idx >= 0 ? idx : 0;
 };
 
+/** Happy-path flow for admin “הבא” actions. */
+export const PURCHASE_STATUS_FLOW = [
+  PURCHASE_STATUS.AWAITING_PAYMENT,
+  PURCHASE_STATUS.PENDING,
+  PURCHASE_STATUS.CONFIRMED,
+  PURCHASE_STATUS.SENT,
+  PURCHASE_STATUS.DELIVERED,
+];
+
+export const getNextPurchaseStatus = (status) => {
+  const index = PURCHASE_STATUS_FLOW.indexOf(status);
+  if (index < 0 || index >= PURCHASE_STATUS_FLOW.length - 1) return null;
+  return PURCHASE_STATUS_FLOW[index + 1];
+};
+
+export const getNextPurchaseStatusLabel = (status) => {
+  const next = getNextPurchaseStatus(status);
+  return next ? getPurchaseStatusLabel(next) : null;
+};
+
+export const isPurchaseInProgress = (status) =>
+  status === PURCHASE_STATUS.AWAITING_PAYMENT ||
+  status === PURCHASE_STATUS.PENDING ||
+  status === PURCHASE_STATUS.CONFIRMED ||
+  status === PURCHASE_STATUS.SENT;
+
+export const getPurchaseBuyerName = (purchase = {}) => {
+  const contact = purchase.contactDetails || {};
+  const name = [contact.firstName, contact.lastName].filter(Boolean).join(" ").trim();
+  return name || purchase.email || "לקוח";
+};
+
 export const formatPurchaseDate = (purchasedAt) => {
   if (!purchasedAt) return "";
   const date =

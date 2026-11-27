@@ -7,11 +7,13 @@ import {
   faHouseChimney,
   faTruckFast,
 } from "@fortawesome/free-solid-svg-icons";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useAuth } from "@/context/AuthProvider";
 import { db } from "@/firebase";
 import {
   formatPurchaseDate,
+  getNextPurchaseStatus,
+  getNextPurchaseStatusLabel,
   getPurchaseJourneyIndex,
   getPurchaseJourneyStep,
   getPurchaseStatusHint,
@@ -99,11 +101,14 @@ const PurchaseDetails = () => {
   const isCancelled = status === PURCHASE_STATUS.CANCEL;
   const contact = purchase.contactDetails || {};
 
-  const handleStatusChange = async (event) => {
-    const newStatus = event.target.value;
+  const applyStatus = async (newStatus) => {
+    if (!newStatus || newStatus === status) return;
     setSaving(true);
     try {
-      await updateDoc(doc(db, "purchases", purchase.id), { status: newStatus });
+      await updateDoc(doc(db, "purchases", purchase.id), {
+        status: newStatus,
+        statusUpdatedAt: serverTimestamp(),
+      });
       setStatus(newStatus);
       setPurchase((prev) => ({ ...prev, status: newStatus }));
     } catch (error) {
@@ -113,6 +118,13 @@ const PurchaseDetails = () => {
       setSaving(false);
     }
   };
+
+  const handleStatusChange = async (event) => {
+    await applyStatus(event.target.value);
+  };
+
+  const nextStatus = getNextPurchaseStatus(status);
+  const nextStatusLabel = getNextPurchaseStatusLabel(status);
 
   return (
     <div className="buyer-order-detail" dir="rtl">
@@ -198,7 +210,18 @@ const PurchaseDetails = () => {
       {currentUser?.isAdmin && (
         <section className="buyer-admin-panel">
           <h2>ניהול סטטוס (מנהל)</h2>
-          <label htmlFor="purchase-status">עדכון סטטוס ללקוח</label>
+          {nextStatus && (
+            <button
+              type="button"
+              className="buyer-orders-cta"
+              disabled={saving}
+              onClick={() => applyStatus(nextStatus)}
+            >
+              <FontAwesomeIcon icon={faTruckFast} />
+              {saving ? "מעדכן..." : `הבא ללקוח: ${nextStatusLabel}`}
+            </button>
+          )}
+          <label htmlFor="purchase-status">או בחירה ידנית</label>
           <select
             id="purchase-status"
             value={status}

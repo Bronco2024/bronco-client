@@ -1,9 +1,13 @@
 import {
   filterVisibleBuyerPurchases,
-  PURCHASE_STATUS,
+  getNextPurchaseStatus,
+  getNextPurchaseStatusLabel,
+  getPurchaseBuyerName,
   getPurchaseJourneyIndex,
   getPurchaseStatusLabel,
   getPurchaseThumbnails,
+  isPurchaseInProgress,
+  PURCHASE_STATUS,
 } from "./purchase-status";
 
 describe("purchase-status", () => {
@@ -63,5 +67,22 @@ describe("purchase-status", () => {
       },
     ]);
     expect(visible.map((item) => item.id)).toEqual(["cod", "open-other"]);
+  });
+
+  test("advances admin status along the doorstep flow", () => {
+    expect(getNextPurchaseStatus(PURCHASE_STATUS.PENDING)).toBe(
+      PURCHASE_STATUS.CONFIRMED
+    );
+    expect(getNextPurchaseStatusLabel(PURCHASE_STATUS.CONFIRMED)).toBe(
+      "בדרך אליכם"
+    );
+    expect(getNextPurchaseStatus(PURCHASE_STATUS.DELIVERED)).toBeNull();
+    expect(isPurchaseInProgress(PURCHASE_STATUS.SENT)).toBe(true);
+    expect(isPurchaseInProgress(PURCHASE_STATUS.DELIVERED)).toBe(false);
+    expect(
+      getPurchaseBuyerName({
+        contactDetails: { firstName: "רולה", lastName: "ק" },
+      })
+    ).toBe("רולה ק");
   });
 });
