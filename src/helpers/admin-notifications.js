@@ -16,7 +16,11 @@ import {
   getNotificationTitle,
   getOrphanAdminNotifications,
 } from "@/helpers/admin-notification-helpers";
-import { sendPendingAdEmailToAdmin } from "@/helpers/admin-email";
+import {
+  sendPendingAdEmailToAdmin,
+  sendStoreOrderEmailToAdmin,
+} from "@/helpers/admin-email";
+import { getOrderNotificationTitle } from "@/helpers/store-order-emails";
 
 export {
   ADMIN_NOTIFICATION_TYPES,
@@ -43,6 +47,37 @@ export const createPendingAdNotification = async ({ adId, ad }) => {
   // Email (EmailJS / FormSubmit) can take seconds — never block publish/update UI.
   void sendPendingAdEmailToAdmin({ adId, ad }).catch((error) => {
     console.warn("Failed to send pending ad email to admin", error);
+  });
+};
+
+/**
+ * Client-side admin alert for a new store order (inbox + FormSubmit).
+ * Complements Netlify SMTP buyer/admin mail — so admin still sees the order
+ * even when SMTP_PASS is missing. Idempotent per orderId.
+ */
+export const createStoreOrderNotification = async ({ orderId, order = {} }) => {
+  if (!orderId) return;
+
+  const notificationsRef = collection(db, "adminNotifications");
+  const existing = await getDocs(
+    query(notificationsRef, where("orderId", "==", String(orderId)), limit(1))
+  );
+  if (!existing.empty) return;
+
+  await addDoc(notificationsRef, {
+    type: ADMIN_NOTIFICATION_TYPES.STORE_ORDER,
+    orderId: String(orderId),
+    title: getOrderNotificationTitle(order),
+    category: "חנות",
+    location: order.contactDetails?.city || "",
+    totalPrice: Number(order.totalPrice) || 0,
+    paymentMethod: order.paymentMethod || "",
+    read: false,
+    createdAt: new Date(),
+  });
+
+  void sendStoreOrderEmailToAdmin({ orderId, order }).catch((error) => {
+    console.warn("Failed to send store order email to admin", error);
   });
 };
 

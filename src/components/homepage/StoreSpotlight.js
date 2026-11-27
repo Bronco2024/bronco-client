@@ -64,7 +64,23 @@ const StoreSpotlight = () => {
   }, []);
 
   useEffect(() => {
-    loadProducts();
+    // Defer Firestore so hero LCP wins the first network window.
+    let idleId;
+    let timerId;
+    const start = () => {
+      loadProducts();
+    };
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      idleId = window.requestIdleCallback(start, { timeout: 2500 });
+    } else {
+      timerId = window.setTimeout(start, 1200);
+    }
+    return () => {
+      if (idleId != null && typeof window.cancelIdleCallback === "function") {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timerId != null) window.clearTimeout(timerId);
+    };
   }, [loadProducts]);
 
   return (

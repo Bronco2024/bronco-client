@@ -20,6 +20,7 @@ import {
   notifyStoreOrderEmails,
   startOnlineStorePayment,
 } from "@/helpers/store-payment-client";
+import { createStoreOrderNotification } from "@/helpers/admin-notifications";
 import { PET_LOCATIONS } from "@/data/pets";
 import "./PaymentForm.css";
 
@@ -105,7 +106,13 @@ const PaymentForm = () => {
 
       await updateUserCart(currentUser.uid, []);
       dispatch(clearCart());
-      // COD: confirm to buyer + alert admin (non-blocking).
+      // COD: admin inbox+email immediately; Netlify also emails buyer/admin.
+      void createStoreOrderNotification({
+        orderId,
+        order: payload,
+      }).catch((notifyError) => {
+        console.warn("Store order admin notify failed", notifyError);
+      });
       void notifyStoreOrderEmails(orderId).catch((notifyError) => {
         console.warn("Store order email notify failed", notifyError);
       });
@@ -129,7 +136,11 @@ const PaymentForm = () => {
       } else {
         const raw = String(err.message || "");
         // Never surface infra/provider setup text to buyers.
-        if (/netlify|grow|api key|configured/i.test(raw)) {
+        if (
+          /netlify|grow|meshulam|api key|configured|smtp|firebase|service account|forbidden|unauthorized|internal/i.test(
+            raw
+          )
+        ) {
           setError("לא הצלחנו לפתוח תשלום באתר. נסו תשלום במסירה, או נסו שוב בעוד רגע.");
         } else {
           setError(raw || "לא הצלחנו להשלים את ההזמנה. נסו שוב.");
