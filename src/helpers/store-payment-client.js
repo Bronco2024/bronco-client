@@ -42,3 +42,23 @@ export const fetchStorePaymentStatus = async (orderId) => {
   }
   return data;
 };
+
+/** Fire-and-forget: buyer confirmation + admin new-order email/inbox. */
+export const notifyStoreOrderEmails = async (orderId) => {
+  if (!orderId) return { ok: false };
+  const user = auth.currentUser;
+  if (!user) return { ok: false, error: "not_signed_in" };
+  const idToken = await user.getIdToken();
+  const response = await fetch("/.netlify/functions/notify-store-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ idToken, orderId }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(data.message || data.error || "שליחת אישור הזמנה נכשלה");
+    error.code = data.error;
+    throw error;
+  }
+  return data;
+};

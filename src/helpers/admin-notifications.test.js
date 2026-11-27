@@ -3,6 +3,7 @@ import {
   getNotificationTitle,
   shouldNotifyAdminForAd,
   getOrphanAdminNotifications,
+  isStoreOrderNotification,
 } from "./admin-notification-helpers";
 import { AD_STATUS } from "./ad-approval";
 
@@ -25,8 +26,19 @@ describe("Admin notifications", () => {
     expect(shouldNotifyAdminForAd(AD_STATUS.REJECTED)).toBe(false);
   });
 
-  test("uses a stable pending-ad notification type", () => {
+  test("uses stable notification types", () => {
     expect(ADMIN_NOTIFICATION_TYPES.PENDING_AD).toBe("pending_ad");
+    expect(ADMIN_NOTIFICATION_TYPES.STORE_ORDER).toBe("store_order");
+  });
+
+  test("recognizes store order notifications", () => {
+    expect(
+      isStoreOrderNotification({ type: "store_order", orderId: "o1" })
+    ).toBe(true);
+    expect(isStoreOrderNotification({ orderId: "o1" })).toBe(true);
+    expect(isStoreOrderNotification({ adId: "a1", type: "pending_ad" })).toBe(
+      false
+    );
   });
 
   test("treats notifications without a matching ad as orphans", () => {
@@ -34,6 +46,7 @@ describe("Admin notifications", () => {
       [
         { id: "n1", adId: "gone" },
         { id: "n2", adId: "keep" },
+        { id: "n3", type: "store_order", orderId: "ord-1" },
       ],
       [{ id: "keep" }]
     );

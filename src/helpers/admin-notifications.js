@@ -2,6 +2,7 @@ import {
   addDoc,
   collection,
   deleteDoc,
+  doc,
   getDocs,
   limit,
   orderBy,
@@ -22,6 +23,7 @@ export {
   getNotificationTitle,
   shouldNotifyAdminForAd,
   getOrphanAdminNotifications,
+  isStoreOrderNotification,
 } from "@/helpers/admin-notification-helpers";
 
 export const createPendingAdNotification = async ({ adId, ad }) => {
@@ -88,6 +90,35 @@ export const markAdNotificationsRead = async (adId) => {
   );
 
   await Promise.all(updates);
+};
+
+export const markOrderNotificationsRead = async (orderId) => {
+  if (!orderId) return;
+
+  const notificationsRef = collection(db, "adminNotifications");
+  const unreadQuery = query(
+    notificationsRef,
+    where("orderId", "==", orderId),
+    where("read", "==", false)
+  );
+
+  const snapshot = await getDocs(unreadQuery);
+  await Promise.all(
+    snapshot.docs.map((docSnap) =>
+      updateDoc(docSnap.ref, {
+        read: true,
+        readAt: new Date(),
+      })
+    )
+  );
+};
+
+export const markAdminNotificationReadById = async (notificationId) => {
+  if (!notificationId) return;
+  await updateDoc(doc(db, "adminNotifications", notificationId), {
+    read: true,
+    readAt: new Date(),
+  });
 };
 
 export const cleanupOrphanAdminNotifications = async (

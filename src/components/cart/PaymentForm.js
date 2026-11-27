@@ -16,7 +16,10 @@ import {
   createStoreOrder,
   ORDER_PAYMENT_METHODS,
 } from "@/helpers/store-orders";
-import { startOnlineStorePayment } from "@/helpers/store-payment-client";
+import {
+  notifyStoreOrderEmails,
+  startOnlineStorePayment,
+} from "@/helpers/store-payment-client";
 import { PET_LOCATIONS } from "@/data/pets";
 import "./PaymentForm.css";
 
@@ -102,6 +105,10 @@ const PaymentForm = () => {
 
       await updateUserCart(currentUser.uid, []);
       dispatch(clearCart());
+      // COD: confirm to buyer + alert admin (non-blocking).
+      void notifyStoreOrderEmails(orderId).catch((notifyError) => {
+        console.warn("Store order email notify failed", notifyError);
+      });
       navigate("/order/thank-you", {
         state: {
           orderId,
