@@ -36,3 +36,12 @@ Site configuration → Environment variables → Production:
 1. اعمل طلب COD من الموقع  
 2. لازم يوصل ميل للأدمن + تأكيد للشاري  
 3. وكمان يظهر الطلب في `/admin` (صندوق الإشعارات)
+
+## إذا الميل عند المشتري يروح Junk / ספאם
+الكود صار يرسل From مطابق لـ SMTP، عنوان أقصر، وheaders أفضل. كمان:
+
+1. من Gmail المشتري: افتح الميل → **דיווח על לא ספאם / Not spam**  
+2. أضف `petzo.team@gmail.com` لجهات الاتصال  
+3. حل طويل الأمد (أفضل بكثير من Gmail الحر):  
+   إيميل على الدومين `orders@petzo.co.il` (Google Workspace أو Brevo/Resend)  
+   مع SPF + DKIM على `petzo.co.il`
