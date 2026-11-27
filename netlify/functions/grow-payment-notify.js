@@ -88,10 +88,18 @@ exports.handler = async (event) => {
     }
 
     const statusCode = String(payload.statusCode || payload.status || "");
+    const statusText = String(payload.status || "");
+    // Prefer explicit Grow paid signals; do not treat every transactionId as paid
+    // when statusCode clearly indicates failure/cancel.
+    const failedStatus =
+      statusCode === "1" ||
+      statusCode === "3" ||
+      /בוטל|נכשל|failed|cancel/i.test(statusText);
     const paid =
-      statusCode === "2" ||
-      String(payload.status || "").includes("שולם") ||
-      Boolean(payload.transactionId);
+      !failedStatus &&
+      (statusCode === "2" ||
+        statusText.includes("שולם") ||
+        (Boolean(payload.transactionId) && !statusCode));
 
     if (paid) {
       await orderRef.set(

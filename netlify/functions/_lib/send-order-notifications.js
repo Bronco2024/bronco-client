@@ -7,9 +7,35 @@ const {
 } = require("./order-emails");
 const { getSiteUrl } = require("./firebase-admin");
 
+const ensureAdminInbox = async (db, orderId, order) => {
+  const existing = await db
+    .collection("adminNotifications")
+    .where("orderId", "==", String(orderId))
+    .limit(1)
+    .get();
+
+  if (!existing.empty) {
+    return { created: false, skipped: true };
+  }
+
+  await db.collection("adminNotifications").add({
+    type: "store_order",
+    orderId: String(orderId),
+    title: getOrderNotificationTitle(order),
+    category: "חנות",
+    location: order.contactDetails?.city || "",
+    totalPrice: Number(order.totalPrice) || 0,
+    paymentMethod: order.paymentMethod || "",
+    read: false,
+    createdAt: new Date(),
+  });
+  return { created: true };
+};
+
 /**
  * Send buyer confirmation + admin alert for a store order.
- * Idempotent via purchases/{orderId}.orderEmailsSentAt.
+ * Idempotent via purchases/{orderId}.orderEmailsSentAt — only set when
+ * required email channels succeed (inbox alone must not block retries).
  */
 const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) => {
   if (!db || !orderId) {
@@ -17,9 +43,7 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
   }
 
   const orderRef = db.collection("purchases").doc(String(orderId));
-  const orderSnap = orderOverride
-    ? null
-    : await orderRef.get();
+  const orderSnap = orderOverride ? null : await orderRef.get();
   const order = orderOverride || (orderSnap?.exists ? orderSnap.data() : null);
 
   if (!order) {
@@ -27,6 +51,12 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
   }
 
   if (order.orderEmailsSentAt) {
+    // Still ensure inbox exists if an earlier partial run only sent mail.
+    try {
+      await ensureAdminInbox(db, orderId, order);
+    } catch (_error) {
+      // non-blocking
+    }
     return { ok: true, skipped: true, reason: "already_sent" };
   }
 
@@ -40,8 +70,10 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
   });
 
   const results = { buyer: false, admin: false, inbox: false };
+  const buyerNeeded = Boolean(buyer.to);
+  const adminNeeded = Boolean(admin.to);
 
-  if (buyer.to) {
+  if (buyerNeeded) {
     try {
       await sendMail({
         to: buyer.to,
@@ -53,9 +85,11 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
     } catch (error) {
       console.error("buyer order email failed", orderId, error);
     }
+  } else {
+    results.buyer = true; // nothing to send
   }
 
-  if (admin.to) {
+  if (adminNeeded) {
     try {
       await sendMail({
         to: admin.to,
@@ -67,28 +101,19 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
     } catch (error) {
       console.error("admin order email failed", orderId, error);
     }
+  } else {
+    results.admin = true;
   }
 
   try {
-    await db.collection("adminNotifications").add({
-      type: "store_order",
-      orderId: String(orderId),
-      title: getOrderNotificationTitle(order),
-      category: "חנות",
-      location: order.contactDetails?.city || "",
-      totalPrice: Number(order.totalPrice) || 0,
-      paymentMethod: order.paymentMethod || "",
-      read: false,
-      createdAt: new Date(),
-    });
-    results.inbox = true;
+    const inbox = await ensureAdminInbox(db, orderId, order);
+    results.inbox = Boolean(inbox.created || inbox.skipped);
   } catch (error) {
     console.error("admin order inbox notification failed", orderId, error);
   }
 
-  // Mark sent even if one channel failed — avoids inbox spam on retries.
-  // Retry email only when neither mail nor inbox succeeded.
-  if (results.buyer || results.admin || results.inbox) {
+  const emailsDone = results.buyer && results.admin;
+  if (emailsDone) {
     try {
       await orderRef.set(
         {
@@ -106,7 +131,7 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
     }
   }
 
-  return { ok: true, results };
+  return { ok: emailsDone, results, partial: !emailsDone };
 };
 
 module.exports = { sendStoreOrderNotifications };

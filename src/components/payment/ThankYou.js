@@ -21,6 +21,7 @@ import {
   fetchStorePaymentStatus,
   notifyStoreOrderEmails,
 } from "@/helpers/store-payment-client";
+import { createStoreOrderNotification } from "@/helpers/admin-notifications";
 import { PURCHASE_JOURNEY_STEPS } from "@/helpers/purchase-status";
 import "./ThankYou.css";
 
@@ -67,8 +68,20 @@ const ThankYou = () => {
           if (status.totalPrice != null) setTotalPrice(status.totalPrice);
           if (status.paymentStatus === "paid" || paidQuery) {
             await finishPaid();
-            // Backup if Grow webhook emails did not land yet (idempotent).
+            // Backup if Grow webhook notify did not land yet (idempotent).
             void notifyStoreOrderEmails(orderId).catch(() => null);
+            void createStoreOrderNotification({
+              orderId,
+              order: {
+                totalPrice,
+                totalQuantity: orderFromState.totalQuantity,
+                paymentMethod: ORDER_PAYMENT_METHODS.ONLINE,
+                paymentStatus: "paid",
+                contactDetails: { city: orderFromState.city || "" },
+                email: currentUser?.email || "",
+                items: [],
+              },
+            }).catch(() => null);
           }
         } catch (_error) {
           if (!cancelled && paidQuery) {
@@ -79,6 +92,8 @@ const ThankYou = () => {
         }
       } else if (orderFromState.paymentMethod === ORDER_PAYMENT_METHODS.COD) {
         await finishPaid();
+        // Backup if checkout notify failed before navigation.
+        void notifyStoreOrderEmails(orderId).catch(() => null);
       }
 
       if (!cancelled) setChecking(false);

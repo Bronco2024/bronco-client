@@ -1,5 +1,6 @@
 import { ADMIN_EMAIL, SITE_NAME } from "../data/site-config";
 import { getNotificationTitle } from "./admin-notification-helpers";
+import { buildAdminOrderEmail } from "./store-order-emails";
 
 const EMAILJS_ENDPOINT = "https://api.emailjs.com/api/v1.0/email/send";
 
@@ -127,4 +128,43 @@ export const sendPendingAdEmailToAdmin = async ({ adId, ad = {} }) => {
   }
 
   return sendWithFormSubmit({ adId, ad, origin });
+};
+
+/** Admin new-order alert via FormSubmit (works even when Netlify SMTP is down). */
+export const sendStoreOrderEmailToAdmin = async ({ orderId, order = {} }) => {
+  if (!canSendAdminEmail() || !orderId) return false;
+
+  const origin =
+    typeof window !== "undefined" && window.location?.origin
+      ? window.location.origin
+      : "";
+  const email = buildAdminOrderEmail({
+    orderId,
+    order,
+    siteUrl: origin || undefined,
+  });
+  const adminEmail = getAdminEmail();
+  if (!adminEmail) return false;
+
+  const response = await fetch(
+    `https://formsubmit.co/ajax/${encodeURIComponent(adminEmail)}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        _subject: email.subject,
+        _template: "box",
+        _captcha: "false",
+        _replyto: order.email || adminEmail,
+        name: SITE_NAME,
+        email: adminEmail,
+        message: email.message,
+      }),
+    }
+  );
+
+  return response.ok;
 };
