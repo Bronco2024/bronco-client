@@ -13,6 +13,7 @@ const {
 const sendBuyerChannels = async (buyer) => {
   if (!buyer.to) return { ok: true, via: "skipped" };
 
+  let lastError = null;
   try {
     await sendMail({
       to: buyer.to,
@@ -22,10 +23,8 @@ const sendBuyerChannels = async (buyer) => {
     });
     return { ok: true, via: "smtp" };
   } catch (smtpError) {
-    console.error(
-      "buyer SMTP failed, trying EmailJS",
-      smtpError?.message || smtpError
-    );
+    lastError = smtpError?.message || String(smtpError);
+    console.error("buyer SMTP failed, trying EmailJS", lastError);
   }
 
   try {
@@ -38,19 +37,19 @@ const sendBuyerChannels = async (buyer) => {
     ) {
       return { ok: true, via: "emailjs" };
     }
+    lastError = lastError || "emailjs_not_configured_or_rejected";
   } catch (emailJsError) {
-    console.error(
-      "buyer EmailJS failed",
-      emailJsError?.message || emailJsError
-    );
+    lastError = emailJsError?.message || String(emailJsError);
+    console.error("buyer EmailJS failed", lastError);
   }
 
-  return { ok: false, via: null };
+  return { ok: false, via: null, error: lastError };
 };
 
 const sendAdminChannels = async ({ admin, buyer, order }) => {
   if (!admin.to) return { ok: true, via: "skipped" };
 
+  let lastError = null;
   try {
     await sendMail({
       to: admin.to,
@@ -60,10 +59,8 @@ const sendAdminChannels = async ({ admin, buyer, order }) => {
     });
     return { ok: true, via: "smtp" };
   } catch (smtpError) {
-    console.error(
-      "admin SMTP failed, trying FormSubmit",
-      smtpError?.message || smtpError
-    );
+    lastError = smtpError?.message || String(smtpError);
+    console.error("admin SMTP failed, trying FormSubmit", lastError);
   }
 
   const contact = order.contactDetails || {};
@@ -84,11 +81,10 @@ const sendAdminChannels = async ({ admin, buyer, order }) => {
     ) {
       return { ok: true, via: "formsubmit" };
     }
+    lastError = lastError || "formsubmit_rejected";
   } catch (formError) {
-    console.error(
-      "admin FormSubmit failed",
-      formError?.message || formError
-    );
+    lastError = formError?.message || String(formError);
+    console.error("admin FormSubmit failed", lastError);
   }
 
   try {
@@ -101,14 +97,13 @@ const sendAdminChannels = async ({ admin, buyer, order }) => {
     ) {
       return { ok: true, via: "emailjs" };
     }
+    lastError = lastError || "emailjs_not_configured_or_rejected";
   } catch (emailJsError) {
-    console.error(
-      "admin EmailJS failed",
-      emailJsError?.message || emailJsError
-    );
+    lastError = emailJsError?.message || String(emailJsError);
+    console.error("admin EmailJS failed", lastError);
   }
 
-  return { ok: false, via: null };
+  return { ok: false, via: null, error: lastError };
 };
 
 /**
@@ -143,6 +138,9 @@ const deliverOrderEmails = async (orderId, order = {}) => {
     admin: adminResult.ok,
     buyerVia: buyerResult.via,
     adminVia: adminResult.via,
+    buyerError: buyerResult.error || null,
+    adminError: adminResult.error || null,
+    smtpConfigured: Boolean(process.env.SMTP_PASS),
   };
 
   const emailsDone = results.buyer && results.admin;
