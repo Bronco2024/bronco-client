@@ -13,6 +13,8 @@ import { clearCart } from "@/redux/cartSlice";
 import { updateUserCart } from "@/helpers/firebase-helpers";
 import {
   buildStoreOrderPayload,
+  cancelMatchingAwaitingPaymentOrders,
+  cancelStoreOrder,
   createStoreOrder,
   ORDER_PAYMENT_METHODS,
 } from "@/helpers/store-orders";
@@ -78,6 +80,7 @@ const PaymentForm = () => {
     }
 
     setSubmitting(true);
+    let createdOrderId = null;
     try {
       const payload = buildStoreOrderPayload({
         userId: currentUser?.uid,
@@ -87,21 +90,41 @@ const PaymentForm = () => {
         notes: formData.notes,
       });
       const orderId = await createStoreOrder(db, payload);
+      createdOrderId = orderId;
 
       if (paymentMethod === ORDER_PAYMENT_METHODS.ONLINE) {
-        const payment = await startOnlineStorePayment(orderId);
-        if (payment.alreadyPaid && payment.redirectUrl) {
-          await updateUserCart(currentUser.uid, []);
-          dispatch(clearCart());
-          window.location.assign(payment.redirectUrl);
+        try {
+          const payment = await startOnlineStorePayment(orderId);
+          if (payment.alreadyPaid && payment.redirectUrl) {
+            await updateUserCart(currentUser.uid, []);
+            dispatch(clearCart());
+            window.location.assign(payment.redirectUrl);
+            return;
+          }
+          if (!payment.url) {
+            throw new Error("לא התקבלה כתובת תשלום");
+          }
+          // Keep cart until payment completes — webhook/thank-you clear it.
+          window.location.assign(payment.url);
           return;
+        } catch (paymentError) {
+          // Don't leave a ghost "awaiting payment" order next to a later COD order.
+          await cancelStoreOrder(db, orderId, "online_payment_failed").catch(
+            () => null
+          );
+          createdOrderId = null;
+          throw paymentError;
         }
-        if (!payment.url) {
-          throw new Error("לא התקבלה כתובת תשלום");
-        }
-        // Keep cart until payment completes — webhook/thank-you clear it.
-        window.location.assign(payment.url);
-        return;
+      }
+
+      // COD: clear any earlier failed online attempt for the same cart.
+      if (currentUser?.uid) {
+        await cancelMatchingAwaitingPaymentOrders(db, {
+          userId: currentUser.uid,
+          totalPrice: payload.totalPrice,
+          totalQuantity: payload.totalQuantity,
+          exceptOrderId: orderId,
+        }).catch(() => null);
       }
 
       await updateUserCart(currentUser.uid, []);
@@ -127,6 +150,11 @@ const PaymentForm = () => {
       });
     } catch (err) {
       console.error("Error creating store order/payment:", err);
+      if (createdOrderId) {
+        await cancelStoreOrder(db, createdOrderId, "checkout_failed").catch(
+          () => null
+        );
+      }
       if (err.code === "grow_not_configured") {
         setPaymentMethod(ORDER_PAYMENT_METHODS.COD);
         setError(

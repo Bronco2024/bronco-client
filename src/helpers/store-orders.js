@@ -1,4 +1,13 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { toCartProduct, recalculateCartTotals } from "./cart-helpers";
 
 export const ORDER_PAYMENT_METHODS = {
@@ -73,4 +82,86 @@ export const createStoreOrder = async (db, payload) => {
     purchasedAt: serverTimestamp(),
   });
   return docRef.id;
+};
+
+/** Mark an unfinished online checkout as cancelled so it does not look like a second order. */
+export const cancelStoreOrder = async (
+  db,
+  orderId,
+  reason = "payment_abandoned"
+) => {
+  if (!db || !orderId) return;
+  await updateDoc(doc(db, "purchases", String(orderId)), {
+    status: ORDER_STATUS.CANCEL,
+    paymentStatus: "cancelled",
+    cancelledAt: serverTimestamp(),
+    cancelReason: reason,
+  });
+};
+
+/** Match abandoned online checkouts that look like the same cart. */
+export const isMatchingAwaitingPaymentDuplicate = (
+  order = {},
+  { totalPrice, totalQuantity, exceptOrderId = null, orderId = null } = {}
+) => {
+  if (order.status && order.status !== ORDER_STATUS.AWAITING_PAYMENT) {
+    return false;
+  }
+  if (exceptOrderId && orderId && String(orderId) === String(exceptOrderId)) {
+    return false;
+  }
+  return (
+    Number(order.totalPrice) === Number(totalPrice) &&
+    Number(order.totalQuantity) === Number(totalQuantity)
+  );
+};
+
+/**
+ * Cancel leftover awaiting_payment checkouts for the same cart totals.
+ * Happens when Grow fails and the buyer retries with COD.
+ */
+export const cancelMatchingAwaitingPaymentOrders = async (
+  db,
+  { userId, totalPrice, totalQuantity, exceptOrderId = null } = {}
+) => {
+  if (!db || !userId) return [];
+
+  const snap = await getDocs(
+    query(
+      collection(db, "purchases"),
+      where("userId", "==", userId),
+      where("status", "==", ORDER_STATUS.AWAITING_PAYMENT)
+    )
+  );
+
+  const cancelled = [];
+
+  await Promise.all(
+    snap.docs.map(async (docSnap) => {
+      const data = docSnap.data() || {};
+      if (
+        !isMatchingAwaitingPaymentDuplicate(data, {
+          totalPrice,
+          totalQuantity,
+          exceptOrderId,
+          orderId: docSnap.id,
+        })
+      ) {
+        return;
+      }
+      try {
+        await updateDoc(docSnap.ref, {
+          status: ORDER_STATUS.CANCEL,
+          paymentStatus: "cancelled",
+          cancelledAt: serverTimestamp(),
+          cancelReason: "replaced_by_cod",
+        });
+        cancelled.push(docSnap.id);
+      } catch (_error) {
+        // non-blocking
+      }
+    })
+  );
+
+  return cancelled;
 };
