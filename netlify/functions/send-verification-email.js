@@ -52,6 +52,7 @@ exports.handler = async (event) => {
       subject: email.subject,
       html: email.html,
       text: email.text,
+      headers: { "X-Petzo-Mail": "auth-verify" },
     });
 
     return jsonResponse(200, { ok: true });

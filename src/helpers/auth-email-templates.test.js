@@ -10,12 +10,13 @@ describe("Petzo auth email templates", () => {
       link: "https://petzo.co.il/verify-test",
     });
 
-    expect(email.subject).toContain("Petzo");
+    expect(email.subject).toBe("Petzo: אימות האימייל");
     expect(email.subject).not.toContain("Horsehub");
     expect(email.html).toContain("Petzo");
     expect(email.html).toContain("https://petzo.co.il/verify-test");
     expect(email.html).toContain("Bronco");
     expect(email.text).toContain("צוות Petzo");
+    expect(email.text).toContain("petzo.co.il");
   });
 
   test("password reset email is branded Petzo", () => {
@@ -23,9 +24,9 @@ describe("Petzo auth email templates", () => {
       link: "https://petzo.co.il/reset-test",
     });
 
-    expect(email.subject).toContain("איפוס סיסמה");
-    expect(email.subject).toContain("Petzo");
+    expect(email.subject).toBe("Petzo: איפוס סיסמה");
     expect(email.html).toContain("איפוס סיסמה");
     expect(email.html).not.toContain("Horsehub");
+    expect(email.text).toContain("petzo.co.il");
   });
 });

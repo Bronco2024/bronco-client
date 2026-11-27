@@ -1,6 +1,7 @@
-// CommonJS copy of branded Petzo auth email templates for Netlify functions.
+// CommonJS branded Petzo auth email templates for Netlify functions.
 const SITE_NAME = "Petzo";
 const CONTACT_EMAIL = "petzo.team@gmail.com";
+const SITE_URL = "https://petzo.co.il";
 
 const wrapEmail = (title, bodyHtml) => `<!DOCTYPE html>
 <html lang="he" dir="rtl">
@@ -9,14 +10,18 @@ const wrapEmail = (title, bodyHtml) => `<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title}</title>
 </head>
-<body style="margin:0;padding:0;background:#f7faf8;font-family:Arial,Helvetica,sans-serif;">
-  <div style="max-width:560px;margin:24px auto;padding:28px 24px;background:#ffffff;border:1px solid #e2ebe7;border-radius:16px;color:#173b5e;line-height:1.7;direction:rtl;text-align:right;">
-    <div style="margin-bottom:18px;font-size:28px;font-weight:800;color:#0f3d36;">${SITE_NAME}</div>
+<body style="margin:0;padding:0;background:#f4f7f6;font-family:Arial,Helvetica,sans-serif;">
+  <div style="max-width:560px;margin:24px auto;padding:28px 24px;background:#ffffff;border:1px solid #e2ebe7;border-radius:14px;color:#173b5e;line-height:1.7;direction:rtl;text-align:right;">
+    <div style="margin-bottom:6px;font-size:26px;font-weight:800;color:#0f3d36;">${SITE_NAME}</div>
+    <div style="margin-bottom:18px;font-size:13px;color:#64748b;">petzo.co.il</div>
     ${bodyHtml}
     <hr style="border:none;border-top:1px solid #e8f0ed;margin:24px 0;" />
-    <p style="margin:0;color:#64748b;font-size:13px;">
+    <p style="margin:0 0 8px;color:#64748b;font-size:13px;">
       שאלות? כתבו לנו:
       <a href="mailto:${CONTACT_EMAIL}" style="color:#1a5c4f;font-weight:700;">${CONTACT_EMAIL}</a>
+    </p>
+    <p style="margin:0;color:#94a3b8;font-size:12px;">
+      נשלח מ־${SITE_NAME} · <a href="${SITE_URL}" style="color:#64748b;">${SITE_URL}</a>
     </p>
   </div>
 </body>
@@ -34,8 +39,11 @@ const ctaButton = (href, label) =>
   </p>`;
 
 const buildVerificationEmail = ({ displayName = "", link }) => {
-  const greeting = displayName?.trim() ? `שלום ${displayName.trim()},` : "שלום,";
-  const subject = `אימות כתובת האימייל שלך ב-${SITE_NAME}`;
+  const greeting = displayName?.trim()
+    ? `שלום ${displayName.trim()},`
+    : "שלום,";
+  // Short, human subject — helps inbox placement.
+  const subject = `${SITE_NAME}: אימות האימייל`;
   const html = wrapEmail(
     subject,
     `
@@ -44,27 +52,32 @@ const buildVerificationEmail = ({ displayName = "", link }) => {
       <p style="margin:0 0 12px;font-size:16px;">כדי לאמת את כתובת האימייל ולהפעיל את החשבון, לחצו על הכפתור:</p>
       ${ctaButton(link, "אימות כתובת האימייל")}
       <p style="margin:18px 0 0;font-size:14px;color:#64748b;">אם לא ביקשתם לאמת כתובת זו, אפשר להתעלם מהמייל.</p>
-      <p style="margin:18px 0 0;font-size:16px;">תודה,<br/><strong>צוות ${SITE_NAME}</strong></p>
+      <p style="margin:18px 0 0;font-size:16px;">בברכה,<br/><strong>צוות ${SITE_NAME}</strong></p>
     `
   );
   const text = [
     greeting,
     "",
     `ברוכים הבאים ל־${SITE_NAME}.`,
-    "כדי לאמת את כתובת האימייל, היכנסו לקישור:",
+    "כדי לאמת את כתובת האימייל ולהפעיל את החשבון, היכנסו לקישור:",
     link,
     "",
     "אם לא ביקשתם לאמת כתובת זו, אפשר להתעלם מהמייל.",
     "",
-    `תודה, צוות ${SITE_NAME}`,
+    `בברכה,`,
+    `צוות ${SITE_NAME}`,
+    CONTACT_EMAIL,
+    SITE_URL,
   ].join("\n");
 
-  return { subject, html, text };
+  return { subject, html, text, kind: "auth-verify" };
 };
 
 const buildPasswordResetEmail = ({ displayName = "", link }) => {
-  const greeting = displayName?.trim() ? `שלום ${displayName.trim()},` : "שלום,";
-  const subject = `איפוס סיסמה ב-${SITE_NAME}`;
+  const greeting = displayName?.trim()
+    ? `שלום ${displayName.trim()},`
+    : "שלום,";
+  const subject = `${SITE_NAME}: איפוס סיסמה`;
   const html = wrapEmail(
     subject,
     `
@@ -73,7 +86,7 @@ const buildPasswordResetEmail = ({ displayName = "", link }) => {
       <p style="margin:0 0 12px;font-size:16px;">לחצו על הכפתור כדי לבחור סיסמה חדשה:</p>
       ${ctaButton(link, "איפוס סיסמה")}
       <p style="margin:18px 0 0;font-size:14px;color:#64748b;">אם לא ביקשתם איפוס סיסמה, אפשר להתעלם מהמייל.</p>
-      <p style="margin:18px 0 0;font-size:16px;">תודה,<br/><strong>צוות ${SITE_NAME}</strong></p>
+      <p style="margin:18px 0 0;font-size:16px;">בברכה,<br/><strong>צוות ${SITE_NAME}</strong></p>
     `
   );
   const text = [
@@ -85,10 +98,13 @@ const buildPasswordResetEmail = ({ displayName = "", link }) => {
     "",
     "אם לא ביקשתם איפוס סיסמה, אפשר להתעלם מהמייל.",
     "",
-    `תודה, צוות ${SITE_NAME}`,
+    `בברכה,`,
+    `צוות ${SITE_NAME}`,
+    CONTACT_EMAIL,
+    SITE_URL,
   ].join("\n");
 
-  return { subject, html, text };
+  return { subject, html, text, kind: "auth-reset" };
 };
 
 module.exports = {
