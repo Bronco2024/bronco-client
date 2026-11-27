@@ -12,6 +12,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { useAuth } from "@/context/AuthProvider";
 import { db } from "@/firebase";
 import {
+  filterVisibleBuyerPurchases,
   formatPurchaseDate,
   getPurchaseJourneyIndex,
   getPurchaseStatusHint,
@@ -42,10 +43,12 @@ const MyPurchases = () => {
           where("userId", "==", currentUser.uid)
         );
         const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs.map((docSnap) => ({
-          id: docSnap.id,
-          ...docSnap.data(),
-        }));
+        const data = filterVisibleBuyerPurchases(
+          querySnapshot.docs.map((docSnap) => ({
+            id: docSnap.id,
+            ...docSnap.data(),
+          }))
+        );
         data.sort((a, b) => {
           const aSec = a.purchasedAt?.seconds || 0;
           const bSec = b.purchasedAt?.seconds || 0;

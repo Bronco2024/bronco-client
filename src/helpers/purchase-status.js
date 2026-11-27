@@ -111,3 +111,25 @@ export const getPurchaseThumbnails = (purchase = {}, limit = 3) => {
     .filter(Boolean)
     .slice(0, limit);
 };
+
+/**
+ * Hide cancelled checkouts and abandoned online attempts that were replaced
+ * by a real COD/paid order with the same cart totals.
+ */
+export const filterVisibleBuyerPurchases = (purchases = []) => {
+  const active = (purchases || []).filter(
+    (purchase) => purchase.status !== PURCHASE_STATUS.CANCEL
+  );
+
+  return active.filter((purchase) => {
+    if (purchase.status !== PURCHASE_STATUS.AWAITING_PAYMENT) return true;
+    const hasReplacement = active.some(
+      (other) =>
+        other.id !== purchase.id &&
+        other.status !== PURCHASE_STATUS.AWAITING_PAYMENT &&
+        Number(other.totalPrice) === Number(purchase.totalPrice) &&
+        Number(other.totalQuantity) === Number(purchase.totalQuantity)
+    );
+    return !hasReplacement;
+  });
+};

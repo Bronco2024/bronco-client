@@ -1,5 +1,6 @@
 import {
   buildStoreOrderPayload,
+  isMatchingAwaitingPaymentDuplicate,
   ORDER_PAYMENT_METHODS,
   ORDER_STATUS,
 } from "./store-orders";
@@ -69,5 +70,33 @@ describe("store orders", () => {
     expect(payload.paymentMethod).toBe(ORDER_PAYMENT_METHODS.COD);
     expect(payload.paymentStatus).toBe("cod");
     expect(payload.status).toBe(ORDER_STATUS.PENDING);
+  });
+
+  test("detects abandoned online duplicates for the same cart", () => {
+    const openOnline = {
+      status: ORDER_STATUS.AWAITING_PAYMENT,
+      totalPrice: 850,
+      totalQuantity: 6,
+    };
+    expect(
+      isMatchingAwaitingPaymentDuplicate(openOnline, {
+        totalPrice: 850,
+        totalQuantity: 6,
+      })
+    ).toBe(true);
+    expect(
+      isMatchingAwaitingPaymentDuplicate(openOnline, {
+        totalPrice: 850,
+        totalQuantity: 6,
+        exceptOrderId: "keep",
+        orderId: "keep",
+      })
+    ).toBe(false);
+    expect(
+      isMatchingAwaitingPaymentDuplicate(
+        { ...openOnline, totalPrice: 100 },
+        { totalPrice: 850, totalQuantity: 6 }
+      )
+    ).toBe(false);
   });
 });
