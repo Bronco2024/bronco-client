@@ -71,6 +71,8 @@ const OurProducts = () => {
   const [afterThis, setAfterThis] = useState(null);
   const [beforeThis, setBeforeThis] = useState(null);
   const [busyId, setBusyId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const categoryFilter = "חנות";
   const TOTAL_PAGES = Math.ceil(totalAds / ADS_PER_PAGE) || 1;
@@ -101,19 +103,41 @@ const OurProducts = () => {
   }, [categoryFilter]);
 
   const fetchAds = useCallback(async () => {
+    setLoading(true);
+    setLoadError("");
     const collectionRef = collection(db, "ads");
-    const q = query(
-      collectionRef,
-      where("category", "==", categoryFilter),
-      orderBy("createdAt", "desc"),
-      limit(ADS_PER_PAGE)
-    );
-    const querySnapshot = await getDocs(q);
-    const items = mapApprovedAdsFromSnapshot(querySnapshot);
-    setAdList(items);
-    setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1] || null);
-    setBeforeThis(null);
-    setPage(1);
+    const runQuery = async () => {
+      const q = query(
+        collectionRef,
+        where("category", "==", categoryFilter),
+        orderBy("createdAt", "desc"),
+        limit(ADS_PER_PAGE)
+      );
+      return getDocs(q);
+    };
+
+    try {
+      let querySnapshot;
+      try {
+        querySnapshot = await runQuery();
+      } catch (firstError) {
+        // Mobile WebChannel blips — one retry before showing an empty shelf.
+        console.warn("Store products fetch failed, retrying", firstError);
+        await new Promise((resolve) => setTimeout(resolve, 600));
+        querySnapshot = await runQuery();
+      }
+      const items = mapApprovedAdsFromSnapshot(querySnapshot);
+      setAdList(items);
+      setAfterThis(querySnapshot.docs[querySnapshot.docs.length - 1] || null);
+      setBeforeThis(null);
+      setPage(1);
+    } catch (error) {
+      console.error("Store products fetch failed", error);
+      setAdList([]);
+      setLoadError("לא הצלחנו לטעון את המוצרים. בדקו את החיבור ונסו שוב.");
+    } finally {
+      setLoading(false);
+    }
   }, [categoryFilter]);
 
   useEffect(() => {
@@ -236,6 +260,7 @@ const OurProducts = () => {
     }
   };
 
+  // Store inventory should stay visible; only hide clearly expired rows.
   const visibleAds = adList.filter(
     (ad) => !IsDateNowGreaterThanAdDate(ad.availableUntil)
   );
@@ -308,7 +333,20 @@ const OurProducts = () => {
           )}
         </div>
 
-        {visibleAds.length === 0 ? (
+        {loading ? (
+          <div className="store-empty store-empty--loading" role="status">
+            <h3>טוען מוצרים…</h3>
+            <p>רגע, המוצרים בדרך למדף.</p>
+          </div>
+        ) : loadError ? (
+          <div className="store-empty store-empty--error">
+            <h3>לא הצלחנו לטעון את החנות</h3>
+            <p>{loadError}</p>
+            <button type="button" className="store-add" onClick={fetchAds}>
+              נסו שוב
+            </button>
+          </div>
+        ) : visibleAds.length === 0 ? (
           <div className="store-empty">
             <h3>המדפים מתמלאים</h3>
             <p>

@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/react";
 import { isPetMarketplaceCategory } from "@/data/pets";
+import { isListingExpired } from "@/helpers/listing-expiry";
 
 export const FormatDateTimestampToDate = (timestamp) => {
     if (!timestamp) return '';
@@ -17,24 +18,24 @@ export const FormatDateTimestampToDate = (timestamp) => {
     return date.toLocaleDateString('he-IL');
 };
 
+/** True when listing expiry is in the past. Missing/invalid dates stay visible. */
 export const IsDateNowGreaterThanAdDate = (adAvailableUntil) => {
     try {
-        if (!adAvailableUntil) return;
-        const timeOfAd = adAvailableUntil.toDate();
-        const now = new Date();
-        return now.getTime() > timeOfAd.getTime()
+        return isListingExpired(adAvailableUntil);
     } catch (error) {
-        console.error(error)
+        console.error(error);
         Sentry.captureException(`Error IsDateNowGreaterThanAdDate`, {
             tags: {
-                component: "Functions"
+                component: "Functions",
             },
             extra: {
-                info: error
-            }
+                info: error,
+            },
         });
+        // Fail open — never hide inventory because of a date parse glitch.
+        return false;
     }
-}
+};;
 
 export const DeletedAttributesAfterUpdateForm = (data) => {
     let newData = data;
