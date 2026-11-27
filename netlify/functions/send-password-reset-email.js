@@ -47,6 +47,7 @@ exports.handler = async (event) => {
         subject: email.subject,
         html: email.html,
         text: email.text,
+        headers: { "X-Petzo-Mail": "auth-reset" },
       });
     } catch (innerError) {
       if (innerError?.code !== "auth/user-not-found") {

@@ -36,9 +36,11 @@ Site configuration → Environment variables → أضف لـ **Production** (و 
 
 ### 4) تجربة
 1. سجّل حساب جديد
-2. لازم يوصل ميل عنوانه مثل: `אימות כתובת האימייל שלך ב-Petzo`
+2. لازم يوصل ميل عنوانه مثل: `Petzo: אימות האימייל`
 3. المرسل: Petzo / petzo.team@gmail.com
-4. جرّب أيضاً שכחתי סיסמה
+4. جرّب أيضاً שכחתי סיסמה → `Petzo: איפוס סיסמה`
+
+إذا الميل يروح Junk: افتحه → **Not spam / זה לא ספאם** وأضف `petzo.team@gmail.com` للجهات.
 
 ## ملاحظات أمان
 - لا ترفع ملف الـ service account للـ Git
