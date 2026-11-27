@@ -24,7 +24,10 @@ import {
     handleGoogleSignupAndSignIn
 } from '../../helpers/firebase-helpers';
 import { sendSiteEmailVerification } from '../../helpers/auth-email';
-import { getAuthErrorMessage } from '../../helpers/auth-errors';
+import {
+    getAuthErrorMessage,
+    isExpectedAuthError,
+} from '../../helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
 import InAppBrowserNotice, {
     openInSystemBrowser,
@@ -156,26 +159,22 @@ const Login = () => {
 
 
         } catch (error) {
-
-            console.error(
-                'LOGIN FIREBASE ERROR:',
-                error
-            );
-
             setError(getAuthErrorMessage(error?.code));
 
-
-            Sentry.captureException(error, {
-                tags: {
-                    component: 'Login',
-                    method: 'EmailLogin'
-                },
-                extra: {
-                    errorCode: error?.code,
-                    errorMessage: error?.message,
-                    email: cleanEmail
-                }
-            });
+            // Wrong password / unknown email is expected UX — not a production bug.
+            if (!isExpectedAuthError(error)) {
+                console.error('LOGIN FIREBASE ERROR:', error);
+                Sentry.captureException(error, {
+                    tags: {
+                        component: 'Login',
+                        method: 'EmailLogin',
+                    },
+                    extra: {
+                        errorCode: error?.code,
+                        errorMessage: error?.message,
+                    },
+                });
+            }
         }
     };
 
@@ -200,23 +199,18 @@ const Login = () => {
             return;
 
         } catch (error) {
-
-            console.error(
-                'GOOGLE LOGIN ERROR:',
-                error
-            );
-
             setError(getAuthErrorMessage(error?.code, 'שגיאה בחיבור עם Google'));
 
             // Expected in Facebook/Instagram WebViews — open Chrome/Safari instead.
             if (error?.code === IN_APP_BROWSER_AUTH_CODE) {
                 openInSystemBrowser();
-            } else {
+            } else if (!isExpectedAuthError(error)) {
+                console.error('GOOGLE LOGIN ERROR:', error);
                 Sentry.captureException(error, {
                     tags: {
                         component: 'Login',
-                        method: 'GoogleSignin'
-                    }
+                        method: 'GoogleSignin',
+                    },
                 });
             }
             setGoogleLoading(false);
@@ -255,13 +249,20 @@ const Login = () => {
                 'מייל אימות נשלח שוב. בדקו את תיבת הדואר וגם את תיקיית הספאם.'
             );
         } catch (error) {
-            setError(getAuthErrorMessage(error?.code, 'לא הצלחנו לשלוח שוב את מייל האימות. נסו שוב.'));
-            Sentry.captureException(error, {
-                tags: {
-                    component: 'Login',
-                    method: 'ResendVerification'
-                }
-            });
+            setError(
+                getAuthErrorMessage(
+                    error?.code,
+                    'לא הצלחנו לשלוח שוב את מייל האימות. נסו שוב.'
+                )
+            );
+            if (!isExpectedAuthError(error)) {
+                Sentry.captureException(error, {
+                    tags: {
+                        component: 'Login',
+                        method: 'ResendVerification',
+                    },
+                });
+            }
         }
     };
 

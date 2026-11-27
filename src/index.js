@@ -26,7 +26,7 @@ const bootSentry = () => {
   import("@sentry/react")
     .then((Sentry) => {
       import("@/helpers/sentry-noise")
-        .then(({ isFirestoreConnectionNoise }) => {
+        .then(({ isFirestoreConnectionNoise, isExpectedAuthNoise }) => {
           Sentry.init({
             dsn: "https://c5e3bf17fddb68ed25f1fb52b0d0a914@o4509877957689344.ingest.de.sentry.io/4509877959065680",
             sendDefaultPii: true,
@@ -39,9 +39,16 @@ const bootSentry = () => {
               /Can't find variable: EmptyRanges/i,
               /EmptyRanges is not defined/i,
               /^FirebaseError:\s*Connection failed\.?$/i,
+              /auth\/invalid-credential/i,
+              /auth\/wrong-password/i,
+              /auth\/user-not-found/i,
+              /auth\/email-already-in-use/i,
             ],
             beforeSend(event, hint) {
               const error = hint?.originalException;
+              if (isExpectedAuthNoise(error, event)) {
+                return null;
+              }
               const message = String(
                 (error && error.message) ||
                   event?.exception?.values?.[0]?.value ||

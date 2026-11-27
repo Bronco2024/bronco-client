@@ -1,4 +1,30 @@
-import { isFirestoreConnectionNoise } from "./sentry-noise";
+import {
+  isFirestoreConnectionNoise,
+  isExpectedAuthNoise,
+} from "./sentry-noise";
+
+describe("isExpectedAuthNoise", () => {
+  test("filters auth/invalid-credential from Login mistakes", () => {
+    expect(
+      isExpectedAuthNoise(
+        {
+          code: "auth/invalid-credential",
+          message: "Firebase: Error (auth/invalid-credential).",
+        },
+        null
+      )
+    ).toBe(true);
+  });
+
+  test("keeps unexpected auth config errors", () => {
+    expect(
+      isExpectedAuthNoise(
+        { code: "auth/invalid-api-key", message: "bad key" },
+        null
+      )
+    ).toBe(false);
+  });
+});
 
 describe("isFirestoreConnectionNoise", () => {
   test("filters FirebaseError Connection failed from webchannel", () => {

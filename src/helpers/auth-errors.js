@@ -1,5 +1,36 @@
 /** Shared Hebrew messages for Firebase Auth errors (login / register / Google). */
 
+/** User mistakes / expected cancels — show UI copy, do not page Sentry. */
+const EXPECTED_AUTH_ERROR_CODES = new Set([
+  "auth/invalid-credential",
+  "auth/wrong-password",
+  "auth/invalid-email",
+  "auth/user-not-found",
+  "auth/user-disabled",
+  "auth/too-many-requests",
+  "auth/email-already-in-use",
+  "auth/weak-password",
+  "auth/popup-closed-by-user",
+  "auth/cancelled-popup-request",
+  "auth/redirect-cancelled-by-user",
+  "auth/account-exists-with-different-credential",
+  "auth/in-app-browser",
+]);
+
+export const isExpectedAuthError = (errorOrCode) => {
+  const code =
+    typeof errorOrCode === "string"
+      ? errorOrCode
+      : errorOrCode?.code || "";
+  if (EXPECTED_AUTH_ERROR_CODES.has(code)) return true;
+  const message = String(
+    (typeof errorOrCode === "object" && errorOrCode?.message) || ""
+  );
+  return /auth\/invalid-credential|auth\/wrong-password|auth\/user-not-found/i.test(
+    message
+  );
+};
+
 export const getAuthErrorMessage = (errorCode, fallback = "אירעה שגיאה. נסו שוב.") => {
   switch (errorCode) {
     case "auth/invalid-credential":

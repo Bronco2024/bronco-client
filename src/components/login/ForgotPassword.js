@@ -4,7 +4,10 @@ import './ForgotPassword.css'
 import Modal from '@components/utils/modal/Modal';
 import * as Sentry from "@sentry/react";
 import { sendSitePasswordReset } from '@/helpers/auth-email';
-import { getAuthErrorMessage } from '@/helpers/auth-errors';
+import {
+    getAuthErrorMessage,
+    isExpectedAuthError,
+} from '@/helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
 
 const ForgotPassword = () => {
@@ -35,10 +38,12 @@ const ForgotPassword = () => {
             setIsModalVisible(true);
         } catch (err) {
             setError(getAuthErrorMessage(err?.code, 'לא הצלחנו לשלוח קישור לאיפוס סיסמה'));
-            Sentry.captureException(err, {
-                tags: { component: "ForgotPassword" },
-                extra: { info: `${err?.code} - ${err?.message}` },
-            });
+            if (!isExpectedAuthError(err)) {
+                Sentry.captureException(err, {
+                    tags: { component: "ForgotPassword" },
+                    extra: { info: `${err?.code} - ${err?.message}` },
+                });
+            }
         } finally {
             setLoading(false);
         }

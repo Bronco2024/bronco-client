@@ -3,6 +3,18 @@
  * Keep heuristics here so they stay unit-tested.
  */
 
+import { isExpectedAuthError } from "./auth-errors";
+
+export function isExpectedAuthNoise(error, event) {
+  if (isExpectedAuthError(error)) return true;
+  const message = String(
+    (error && error.message) ||
+      event?.exception?.values?.[0]?.value ||
+      ""
+  );
+  return /Firebase:\s*Error\s*\(auth\/invalid-credential\)/i.test(message);
+}
+
 export function isFirestoreConnectionNoise(error, event) {
   const message = String(
     (error && error.message) ||
