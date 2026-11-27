@@ -39,6 +39,7 @@ import {
     getListingShareUrl,
 } from '@/helpers/listing-links';
 import { isStoreProduct, toCartProduct } from '@/helpers/cart-helpers';
+import { showCartAddedToast } from '@/helpers/cart-toast';
 import { updateUserCart } from '@/helpers/firebase-helpers';
 import { loadCart } from '@/redux/cartSlice';
 import { useAuth } from '@/context/AuthProvider';
@@ -401,6 +402,10 @@ const ItemPage = () => {
                 quantity: item.quantity,
             }))
         );
+        showCartAddedToast({
+            title: product.title || getAdTitle(ad),
+            quantity: qty,
+        });
         setCartStatus(qty > 1 ? `נוסף ×${qty}` : "נוסף לעגלה");
         window.setTimeout(() => setCartStatus(""), 2000);
     };
