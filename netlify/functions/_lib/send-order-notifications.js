@@ -6,6 +6,10 @@ const {
   getOrderNotificationTitle,
 } = require("./order-emails");
 const { getSiteUrl } = require("./firebase-admin");
+const {
+  sendViaEmailJs,
+  sendOrderViaFormSubmit,
+} = require("./mail-fallbacks");
 
 const ensureAdminInbox = async (db, orderId, order) => {
   const existing = await db
@@ -32,6 +36,92 @@ const ensureAdminInbox = async (db, orderId, order) => {
   return { created: true };
 };
 
+const sendBuyerChannels = async (buyer) => {
+  if (!buyer.to) return { ok: true, via: "skipped" };
+
+  try {
+    await sendMail({
+      to: buyer.to,
+      subject: buyer.subject,
+      html: buyer.html,
+      text: buyer.text,
+    });
+    return { ok: true, via: "smtp" };
+  } catch (smtpError) {
+    console.error("buyer SMTP failed, trying EmailJS", smtpError?.message || smtpError);
+  }
+
+  try {
+    if (
+      await sendViaEmailJs({
+        to: buyer.to,
+        subject: buyer.subject,
+        message: buyer.text,
+      })
+    ) {
+      return { ok: true, via: "emailjs" };
+    }
+  } catch (emailJsError) {
+    console.error("buyer EmailJS failed", emailJsError?.message || emailJsError);
+  }
+
+  return { ok: false, via: null };
+};
+
+const sendAdminChannels = async ({ admin, buyer, order }) => {
+  if (!admin.to) return { ok: true, via: "skipped" };
+
+  try {
+    await sendMail({
+      to: admin.to,
+      subject: admin.subject,
+      html: admin.html,
+      text: admin.text,
+    });
+    return { ok: true, via: "smtp" };
+  } catch (smtpError) {
+    console.error("admin SMTP failed, trying FormSubmit", smtpError?.message || smtpError);
+  }
+
+  const contact = order.contactDetails || {};
+  const buyerName =
+    [contact.firstName, contact.lastName].filter(Boolean).join(" ").trim() ||
+    "Petzo";
+
+  try {
+    if (
+      await sendOrderViaFormSubmit({
+        adminEmail: admin.to,
+        adminSubject: admin.subject,
+        adminMessage: admin.text,
+        buyerEmail: buyer.to,
+        buyerMessage: buyer.text,
+        buyerName,
+      })
+    ) {
+      return { ok: true, via: "formsubmit" };
+    }
+  } catch (formError) {
+    console.error("admin FormSubmit failed", formError?.message || formError);
+  }
+
+  try {
+    if (
+      await sendViaEmailJs({
+        to: admin.to,
+        subject: admin.subject,
+        message: admin.text,
+      })
+    ) {
+      return { ok: true, via: "emailjs" };
+    }
+  } catch (emailJsError) {
+    console.error("admin EmailJS failed", emailJsError?.message || emailJsError);
+  }
+
+  return { ok: false, via: null };
+};
+
 /**
  * Send buyer confirmation + admin alert for a store order.
  * Idempotent via purchases/{orderId}.orderEmailsSentAt — only set when
@@ -51,7 +141,6 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
   }
 
   if (order.orderEmailsSentAt) {
-    // Still ensure inbox exists if an earlier partial run only sent mail.
     try {
       await ensureAdminInbox(db, orderId, order);
     } catch (_error) {
@@ -69,41 +158,22 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
     adminEmail: ADMIN_EMAIL,
   });
 
-  const results = { buyer: false, admin: false, inbox: false };
-  const buyerNeeded = Boolean(buyer.to);
-  const adminNeeded = Boolean(admin.to);
+  const buyerResult = await sendBuyerChannels(buyer);
+  const adminResult = await sendAdminChannels({ admin, buyer, order });
 
-  if (buyerNeeded) {
-    try {
-      await sendMail({
-        to: buyer.to,
-        subject: buyer.subject,
-        html: buyer.html,
-        text: buyer.text,
-      });
-      results.buyer = true;
-    } catch (error) {
-      console.error("buyer order email failed", orderId, error);
-    }
-  } else {
-    results.buyer = true; // nothing to send
+  // FormSubmit to admin also emails the buyer via `_autoresponse`.
+  if (!buyerResult.ok && adminResult.via === "formsubmit" && buyer.to) {
+    buyerResult.ok = true;
+    buyerResult.via = "formsubmit_autoresponse";
   }
 
-  if (adminNeeded) {
-    try {
-      await sendMail({
-        to: admin.to,
-        subject: admin.subject,
-        html: admin.html,
-        text: admin.text,
-      });
-      results.admin = true;
-    } catch (error) {
-      console.error("admin order email failed", orderId, error);
-    }
-  } else {
-    results.admin = true;
-  }
+  const results = {
+    buyer: buyerResult.ok,
+    admin: adminResult.ok,
+    inbox: false,
+    buyerVia: buyerResult.via,
+    adminVia: adminResult.via,
+  };
 
   try {
     const inbox = await ensureAdminInbox(db, orderId, order);
@@ -122,6 +192,8 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
             buyer: results.buyer,
             admin: results.admin,
             inbox: results.inbox,
+            buyerVia: results.buyerVia || null,
+            adminVia: results.adminVia || null,
           },
         },
         { merge: true }

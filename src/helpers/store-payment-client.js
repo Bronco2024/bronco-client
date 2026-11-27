@@ -43,7 +43,7 @@ export const fetchStorePaymentStatus = async (orderId) => {
   return data;
 };
 
-/** Fire-and-forget: buyer confirmation + admin new-order email/inbox. */
+/** Buyer confirmation + admin new-order email/inbox via Netlify. */
 export const notifyStoreOrderEmails = async (orderId) => {
   if (!orderId) return { ok: false };
   const user = auth.currentUser;
@@ -52,6 +52,8 @@ export const notifyStoreOrderEmails = async (orderId) => {
   const response = await fetch("/.netlify/functions/notify-store-order", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    // Keepalive so a fast thank-you navigation does not abort the request.
+    keepalive: true,
     body: JSON.stringify({ idToken, orderId }),
   });
   const data = await response.json().catch(() => ({}));

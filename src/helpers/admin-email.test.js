@@ -3,7 +3,9 @@ import {
   buildPendingAdEmail,
   canSendAdminEmail,
   getAdminEmail,
+  sendBuyerOrderEmailClient,
 } from "./admin-email";
+import { buildBuyerOrderEmail } from "./store-order-emails";
 
 describe("Admin email alerts", () => {
   test("uses the site contact email by default", () => {
@@ -51,5 +53,27 @@ describe("Admin email alerts", () => {
     expect(email.message).toContain("רצועות וקולרים");
     expect(email.message).not.toContain("עיר:");
     expect(email.message).not.toContain("טלפון:");
+  });
+
+  test("buyer confirmation targets the order email", () => {
+    const email = buildBuyerOrderEmail({
+      orderId: "o1",
+      order: {
+        email: "buyer@example.com",
+        totalPrice: 50,
+        items: [{ title: "קולר", price: 50, quantity: 1 }],
+      },
+    });
+    expect(email.to).toBe("buyer@example.com");
+    expect(email.subject).toContain("אישור הזמנה");
+  });
+
+  test("buyer EmailJS helper no-ops without config", async () => {
+    await expect(
+      sendBuyerOrderEmailClient({
+        orderId: "o1",
+        order: { email: "buyer@example.com", items: [] },
+      })
+    ).resolves.toBe(false);
   });
 });
