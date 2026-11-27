@@ -29,6 +29,7 @@ import { ADS_PER_PAGE } from "@components/utils/constants/Constants";
 import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Functions";
 import { getListingPath } from "@/helpers/listing-links";
 import { toCartProduct } from "@/helpers/cart-helpers";
+import { showCartAddedToast } from "@/helpers/cart-toast";
 import { updateUserCart } from "@/helpers/firebase-helpers";
 import {
   addItem,
@@ -214,6 +215,10 @@ const OurProducts = () => {
           )
         : [...cart, { ...product, quantity: 1 }];
       await persistCart(nextCart);
+      showCartAddedToast({
+        title: product.title || getProductTitle(ad),
+        quantity: 1,
+      });
     } finally {
       setBusyId(null);
     }
