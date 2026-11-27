@@ -4,6 +4,7 @@ import {
   canSendAdminEmail,
   getAdminEmail,
   sendBuyerOrderEmailClient,
+  sendStoreOrderViaNetlifyForm,
 } from "./admin-email";
 import { buildBuyerOrderEmail } from "./store-order-emails";
 
@@ -75,5 +76,35 @@ describe("Admin email alerts", () => {
         order: { email: "buyer@example.com", items: [] },
       })
     ).resolves.toBe(false);
+  });
+
+  test("Netlify Forms order helper posts form-name store-order", async () => {
+    const fetchMock = jest.fn().mockResolvedValue({ ok: true, status: 200 });
+    global.fetch = fetchMock;
+
+    await expect(
+      sendStoreOrderViaNetlifyForm({
+        orderId: "ord-9",
+        order: {
+          email: "buyer@example.com",
+          totalPrice: 40,
+          paymentMethod: "cod",
+          contactDetails: { firstName: "A", city: "חיפה" },
+          items: [{ title: "קערת מים", price: 40, quantity: 1 }],
+        },
+      })
+    ).resolves.toBe(true);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/",
+      expect.objectContaining({
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      })
+    );
+    const body = fetchMock.mock.calls[0][1].body;
+    expect(String(body)).toContain("form-name=store-order");
+    expect(String(body)).toContain("ord-9");
+    expect(String(body)).toContain("buyer%40example.com");
   });
 });
