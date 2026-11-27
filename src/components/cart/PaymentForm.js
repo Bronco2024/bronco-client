@@ -129,13 +129,13 @@ const PaymentForm = () => {
 
       await updateUserCart(currentUser.uid, []);
       dispatch(clearCart());
-      // COD: wait briefly for buyer+admin emails so navigation does not abort them.
+      // COD: wait for buyer+admin emails so navigation does not abort them.
       await Promise.race([
         Promise.allSettled([
           createStoreOrderNotification({ orderId, order: payload }),
-          notifyStoreOrderEmails(orderId),
+          notifyStoreOrderEmails(orderId, payload),
         ]),
-        new Promise((resolve) => setTimeout(resolve, 6000)),
+        new Promise((resolve) => setTimeout(resolve, 12000)),
       ]);
       navigate("/order/thank-you", {
         state: {
@@ -145,6 +145,8 @@ const PaymentForm = () => {
           city: formData.city,
           paymentMethod,
           email: formData.email,
+          items: payload.items,
+          contactDetails: payload.contactDetails,
         },
         replace: true,
       });

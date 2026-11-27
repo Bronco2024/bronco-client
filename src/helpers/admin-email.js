@@ -153,6 +153,47 @@ export const sendPendingAdEmailToAdmin = async ({ adId, ad = {} }) => {
  * FormSubmit delivers to the activated admin inbox; `_autoresponse` goes to the
  * buyer's `email` field — so the buyer gets a confirmation even when SMTP is down.
  */
+const postStoreOrderFormSubmit = async ({
+  targetEmail,
+  adminMail,
+  buyerMail,
+  buyerEmail,
+  buyerName,
+}) => {
+  const response = await fetch(
+    `https://formsubmit.co/ajax/${encodeURIComponent(targetEmail)}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        _subject: adminMail.subject,
+        _template: "box",
+        _captcha: "false",
+        _replyto: buyerEmail || targetEmail,
+        // Autoresponse is emailed to this address (buyer confirmation).
+        ...(buyerEmail
+          ? {
+              email: buyerEmail,
+              _autoresponse: buyerMail.message,
+            }
+          : { email: targetEmail }),
+        name: buyerName,
+        message: adminMail.message,
+      }),
+    }
+  );
+
+  if (!response.ok) return false;
+  const payload = await response.json().catch(() => ({}));
+  // FormSubmit returns { success: "..." } on AJAX; Cloudflare HTML is not ok JSON.
+  if (payload && typeof payload === "object" && payload.success) return true;
+  // Some responses are empty 200 — treat as sent.
+  return response.status >= 200 && response.status < 300;
+};
+
 export const sendStoreOrderEmailToAdmin = async ({ orderId, order = {} }) => {
   if (!canSendAdminEmail() || !orderId) return false;
 
@@ -176,33 +217,30 @@ export const sendStoreOrderEmailToAdmin = async ({ orderId, order = {} }) => {
     [contact.firstName, contact.lastName].filter(Boolean).join(" ").trim() ||
     SITE_NAME;
 
-  const response = await fetch(
-    `https://formsubmit.co/ajax/${encodeURIComponent(adminEmail)}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        _subject: adminMail.subject,
-        _template: "box",
-        _captcha: "false",
-        _replyto: buyerEmail || adminEmail,
-        // Autoresponse is emailed to this address (buyer confirmation).
-        ...(buyerEmail
-          ? {
-              email: buyerEmail,
-              _autoresponse: buyerMail.message,
-            }
-          : { email: adminEmail }),
-        name: buyerName,
-        message: adminMail.message,
-      }),
-    }
-  );
+  const attempt = () =>
+    postStoreOrderFormSubmit({
+      targetEmail: adminEmail,
+      adminMail,
+      buyerMail,
+      buyerEmail,
+      buyerName,
+    });
 
-  return response.ok;
+  try {
+    if (await attempt()) return true;
+  } catch (error) {
+    console.warn("FormSubmit store order email failed once", error);
+  }
+
+  // Short retry — checkout navigation used to abort the first attempt.
+  await new Promise((resolve) => setTimeout(resolve, 700));
+  try {
+    if (await attempt()) return true;
+  } catch (error) {
+    console.warn("FormSubmit store order email retry failed", error);
+  }
+
+  return false;
 };
 
 /** Buyer confirmation via EmailJS (optional) — works for any recipient. */

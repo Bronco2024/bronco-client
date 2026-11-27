@@ -80,6 +80,7 @@ Site settings → Environment variables → Production:
 - `REACT_APP_SITE_URL=https://petzo.co.il`
 - `REACT_APP_ADMIN_EMAIL=` (إيميل إشعارات الأدمن)
 - `FIREBASE_SERVICE_ACCOUNT` (JSON لحساب الخدمة — مطلوب لدوال الإيميل والدفع)
+- `SMTP_USER=petzo.team@gmail.com` + **`SMTP_PASS`** (Gmail App Password) — إيميل تأكيد للزبون + تنبيه أدمن عند طلب جديد
 - للدفع في المتجر عبر Grow (Meshulam):
   - `GROW_USER_ID`
   - `GROW_PAGE_CODE`
