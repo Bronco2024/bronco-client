@@ -10,7 +10,10 @@ import Modal from '@components/utils/modal/Modal';
 import * as Sentry from "@sentry/react";
 import { handleGoogleSignupAndSignIn } from '../../helpers/firebase-helpers';
 import { sendSiteEmailVerification } from '../../helpers/auth-email';
-import { getAuthErrorMessage } from '../../helpers/auth-errors';
+import {
+    getAuthErrorMessage,
+    isExpectedAuthError,
+} from '../../helpers/auth-errors';
 import { SITE_NAME } from '@/data/site-config';
 import InAppBrowserNotice, {
     openInSystemBrowser,
@@ -102,7 +105,7 @@ const Register = () => {
             setShowModal(true);
         } catch (error) {
             setError(getAuthErrorMessage(error?.code, "שגיאה לא צפויה, נסה שוב"));
-            if (error?.code !== "auth/email-already-in-use") {
+            if (!isExpectedAuthError(error)) {
                 Sentry.captureException(error, {
                     tags: { component: "Register" },
                     extra: { info: `${error?.code} - ${error?.message}` },
@@ -136,9 +139,9 @@ const Register = () => {
             setError(getAuthErrorMessage(error?.code, "שגיאה בהרשמה עם Google"));
             if (error?.code === IN_APP_BROWSER_AUTH_CODE) {
                 openInSystemBrowser();
-            } else {
+            } else if (!isExpectedAuthError(error)) {
                 Sentry.captureException(error, {
-                    tags: { component: "Register", method: "GoogleSignup" }
+                    tags: { component: "Register", method: "GoogleSignup" },
                 });
             }
             setGoogleLoading(false);
