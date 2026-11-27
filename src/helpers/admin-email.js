@@ -42,18 +42,26 @@ export const sendStoreOrderViaNetlifyForm = async ({
     buyerMessage: buyerMail.message,
   });
 
-  try {
-    const response = await fetch("/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body,
-    });
-    // Netlify returns 200 on success; 404 if form not registered yet.
-    return response.ok || response.status === 200;
-  } catch (error) {
-    console.warn("Netlify Forms store-order submit failed", error);
-    return false;
+  const endpoints = ["/store-order-form.html", "/"];
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body,
+      });
+      // Netlify returns 200 on success; 404 if form not registered yet.
+      if (response.ok || response.status === 200) {
+        return true;
+      }
+    } catch (error) {
+      console.warn(
+        `Netlify Forms store-order submit failed via ${endpoint}`,
+        error
+      );
+    }
   }
+  return false;
 };
 
 const EMAILJS_ENDPOINT = "https://api.emailjs.com/api/v1.0/email/send";

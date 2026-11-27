@@ -50,14 +50,17 @@
   </head>
   <body>
     <noscript>יש להפעיל JavaScript כדי להשתמש באתר Petzo.</noscript>
-    <!-- Netlify Forms: detected at build. Used as order-alert backup when SMTP is unset. -->
+    <!-- Netlify Forms mirror (also registered via /store-order-form.html). -->
     <form
       name="store-order"
       method="POST"
+      action="/store-order-form.html"
+      netlify
       data-netlify="true"
-      data-netlify-honeypot="bot-field"
-      hidden
+      netlify-honeypot="bot-field"
+      style="display: none"
       aria-hidden="true"
+      tabindex="-1"
     >
       <input type="hidden" name="form-name" value="store-order" />
       <input name="bot-field" />

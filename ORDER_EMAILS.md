@@ -10,10 +10,14 @@
 
 ### أ) إشعار فوري بدون SMTP (Forms)
 1. افتح [Netlify](https://app.netlify.com) → موقع **petbones**  
-2. بعد ما ينشر آخر deploy: **Forms** → لازم تشوف فورم اسمه `store-order`  
-3. **Form notifications** → **Add notification** → **Email notification**  
-4. إلى: `bronco.estd2024@gmail.com` (أو إيميل الأدمن)  
-5. اختياري: Autoresponse على حقل `buyerEmail` بنص تأكيد الطلب
+2. **Site configuration → Forms** — تأكد إن Form detection شغال  
+3. بعد آخر deploy: **Forms** → لازم تشوف فورم `store-order`  
+   (صفحة التسجيل: `https://petzo.co.il/store-order-form.html`)  
+4. **Form notifications** → **Add notification** → **Email notification**  
+5. إلى: `bronco.estd2024@gmail.com` (أو إيميل الأدمن)  
+6. اختياري: Autoresponse على حقل `buyerEmail` بنص تأكيد الطلب  
+
+إذا Forms فاضي بعد الـ deploy: Site configuration → Build & deploy → Forms → فعّل detection وعمل **Clear cache and deploy**.
 
 ### ب) SMTP ثابت (موصى فيه للإطلاق)
 Site configuration → Environment variables → Production:

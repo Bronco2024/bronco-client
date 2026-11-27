@@ -4,5 +4,8 @@ https://www.petzo.co.il/*  https://petzo.co.il/:splat  301!
 # Firebase Auth handler (must be before SPA catch-all — otherwise Google login breaks)
 /__/auth/*  https://bronco-65aaf.firebaseapp.com/__/auth/:splat  200
 
+# Static Netlify Forms endpoint (must stay above SPA catch-all)
+/store-order-form.html  /store-order-form.html  200!
+
 # SPA
 /*    /index.html   200

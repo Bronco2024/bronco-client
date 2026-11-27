@@ -96,7 +96,7 @@ describe("Admin email alerts", () => {
     ).resolves.toBe(true);
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "/",
+      "/store-order-form.html",
       expect.objectContaining({
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
