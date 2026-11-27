@@ -24,8 +24,16 @@ import {
     getAdStatus,
     isAdPending,
 } from '@/helpers/ad-approval';
-import { markAdNotificationsRead, dismissAdminNotificationsForAd, cleanupOrphanAdminNotifications } from '@/helpers/admin-notifications';
-import { getOrphanAdminNotifications } from '@/helpers/admin-notification-helpers';
+import {
+    markAdNotificationsRead,
+    markOrderNotificationsRead,
+    dismissAdminNotificationsForAd,
+    cleanupOrphanAdminNotifications,
+} from '@/helpers/admin-notifications';
+import {
+    getOrphanAdminNotifications,
+    isStoreOrderNotification,
+} from '@/helpers/admin-notification-helpers';
 import useAdminNotifications from '@/hooks/useAdminNotifications';
 import ListingCardMedia from '@/components/pets/ListingCardMedia';
 import { extendAdsToThreeMonthDuration } from '@/helpers/ad-listing-duration-migrate';
@@ -341,12 +349,19 @@ const Admin = () => {
                         <FontAwesomeIcon icon={faBell} />
                         התראות חדשות ({visibleNotificationCount})
                     </h2>
-                    {visibleNotifications.map((notification) => (
+                    {visibleNotifications.map((notification) => {
+                        const isOrder = isStoreOrderNotification(notification);
+                        return (
                         <button
                             key={notification.id}
                             type="button"
                             className="admin-notification-item"
                             onClick={() => {
+                                if (isOrder) {
+                                    markOrderNotificationsRead(notification.orderId).catch(() => null);
+                                    navigate("/admin/all-purchases");
+                                    return;
+                                }
                                 setActiveTab("ads");
                                 setAdStatusFilter("pending");
                                 const matchedAd = ads.find((ad) => ad.id === notification.adId);
@@ -360,9 +375,12 @@ const Admin = () => {
                             <strong>{notification.title}</strong>
                             <span>{notification.category}</span>
                             {notification.location && <span>{notification.location}</span>}
-                            <span className="admin-notification-cta">ממתין לאישור</span>
+                            <span className="admin-notification-cta">
+                                {isOrder ? "הזמנה חדשה · לניהול" : "ממתין לאישור"}
+                            </span>
                         </button>
-                    ))}
+                        );
+                    })}
                 </section>
             )}
 

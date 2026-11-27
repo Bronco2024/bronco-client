@@ -2,7 +2,12 @@ import { AD_STATUS } from "./ad-approval";
 
 export const ADMIN_NOTIFICATION_TYPES = {
   PENDING_AD: "pending_ad",
+  STORE_ORDER: "store_order",
 };
+
+export const isStoreOrderNotification = (notification = {}) =>
+  notification.type === ADMIN_NOTIFICATION_TYPES.STORE_ORDER ||
+  Boolean(notification.orderId && !notification.adId);
 
 export const getNotificationTitle = (ad = {}) => {
   const title =
@@ -24,7 +29,8 @@ export const shouldNotifyAdminForAd = (status) => status === AD_STATUS.PENDING;
 
 export const getOrphanAdminNotifications = (notifications = [], ads = []) => {
   const existingIds = new Set(ads.map((ad) => ad.id).filter(Boolean));
-  return notifications.filter(
-    (notification) => notification.adId && !existingIds.has(notification.adId)
-  );
+  return notifications.filter((notification) => {
+    if (isStoreOrderNotification(notification)) return false;
+    return notification.adId && !existingIds.has(notification.adId);
+  });
 };

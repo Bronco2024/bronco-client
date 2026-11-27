@@ -1,6 +1,7 @@
 const querystring = require("querystring");
 const { getAdminDb, jsonResponse } = require("./_lib/firebase-admin");
 const { approveGrowTransaction, getGrowConfig } = require("./_lib/grow");
+const { sendStoreOrderNotifications } = require("./_lib/send-order-notifications");
 
 const parseBody = (event) => {
   const raw = event.body || "";
@@ -108,6 +109,18 @@ exports.handler = async (event) => {
         },
         { merge: true }
       );
+
+      // Buyer confirmation + admin new-order alert (email + inbox).
+      try {
+        const fresh = await orderRef.get();
+        await sendStoreOrderNotifications(
+          db,
+          orderId,
+          fresh.exists ? fresh.data() : null
+        );
+      } catch (notifyError) {
+        console.error("order emails after grow notify failed", orderId, notifyError);
+      }
     }
 
     try {

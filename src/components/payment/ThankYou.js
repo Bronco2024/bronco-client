@@ -17,7 +17,10 @@ import {
   ORDER_PAYMENT_LABELS,
   ORDER_PAYMENT_METHODS,
 } from "@/helpers/store-orders";
-import { fetchStorePaymentStatus } from "@/helpers/store-payment-client";
+import {
+  fetchStorePaymentStatus,
+  notifyStoreOrderEmails,
+} from "@/helpers/store-payment-client";
 import { PURCHASE_JOURNEY_STEPS } from "@/helpers/purchase-status";
 import "./ThankYou.css";
 
@@ -64,11 +67,14 @@ const ThankYou = () => {
           if (status.totalPrice != null) setTotalPrice(status.totalPrice);
           if (status.paymentStatus === "paid" || paidQuery) {
             await finishPaid();
+            // Backup if Grow webhook emails did not land yet (idempotent).
+            void notifyStoreOrderEmails(orderId).catch(() => null);
           }
         } catch (_error) {
           if (!cancelled && paidQuery) {
             setPaymentStatus("paid");
             await finishPaid();
+            void notifyStoreOrderEmails(orderId).catch(() => null);
           }
         }
       } else if (orderFromState.paymentMethod === ORDER_PAYMENT_METHODS.COD) {
