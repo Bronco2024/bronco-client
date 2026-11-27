@@ -37,29 +37,43 @@ export const buildBuyerOrderEmail = ({ orderId, order = {}, siteUrl = SITE_URL }
     order.paymentMethod ||
     "";
   const origin = String(siteUrl || SITE_URL).replace(/\/$/, "");
-  const subject = `${SITE_NAME}: אישור הזמנה ${orderId || ""}`.trim();
+  const shortId = String(orderId || "").slice(0, 8);
+  const subject = shortId
+    ? `${SITE_NAME}: אישור הזמנה #${shortId}`
+    : `${SITE_NAME}: אישור הזמנה`;
+  const contact = order.contactDetails || {};
+  const buyerName = [contact.firstName, contact.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  const greeting = buyerName ? `שלום ${buyerName},` : "שלום,";
 
   const message = [
-    "תודה על ההזמנה ב־Petzo!",
+    greeting,
+    "",
+    "תודה שהזמנתם ב־Petzo.",
+    "קיבלנו את ההזמנה שלכם ונעדכן אתכם בכל שלב עד המשלוח.",
     "",
     `מספר הזמנה: ${orderId || ""}`,
     payment ? `אמצעי תשלום: ${payment}` : null,
-    `סה״כ: ${formatMoney(order.totalPrice)}`,
-    `פריטים: ${order.totalQuantity || items.length || 0}`,
+    `סה״כ לתשלום: ${formatMoney(order.totalPrice)}`,
+    `מספר פריטים: ${order.totalQuantity || items.length || 0}`,
     "",
-    "המוצרים:",
+    "פירוט המוצרים:",
     ...(items.length ? items : ["• אין פירוט פריטים"]),
     "",
     "פרטי משלוח:",
     ...contactBlock(order),
     order.notes ? `הערות: ${order.notes}` : null,
     "",
-    "זהו אישור הזמנה. חשבונית מס תישלח בנפרד אם נדרש לפי התקנון.",
+    "זהו אישור הזמנה בלבד. חשבונית מס תישלח בנפרד אם נדרש.",
     "",
-    `מעקב הזמנות: ${origin}/my-purchases`,
+    `למעקב אחרי ההזמנה: ${origin}/my-purchases`,
     "",
+    "בברכה,",
     `צוות ${SITE_NAME}`,
     CONTACT_EMAIL,
+    SITE_URL,
   ]
     .filter((line) => line !== null && line !== undefined)
     .join("\n");
@@ -81,7 +95,10 @@ export const buildAdminOrderEmail = ({
     order.paymentMethod ||
     "";
   const origin = String(siteUrl || SITE_URL).replace(/\/$/, "");
-  const subject = `${SITE_NAME}: הזמנה חדשה בחנות — ${orderId || ""}`.trim();
+  const shortId = String(orderId || "").slice(0, 8);
+  const subject = shortId
+    ? `${SITE_NAME}: הזמנה חדשה #${shortId}`
+    : `${SITE_NAME}: הזמנה חדשה בחנות`;
 
   const message = [
     "התקבלה הזמנה חדשה בחנות Petzo.",

@@ -36,7 +36,8 @@ describe("store order emails", () => {
 
     expect(email.to).toBe("buyer@example.com");
     expect(email.subject).toContain("אישור הזמנה");
-    expect(email.subject).toContain("ord-1");
+    expect(email.subject).toContain("#ord-1");
+    expect(email.message).toContain("שלום דני כהן");
     expect(email.message).toContain("קולר");
     expect(email.message).toContain("קערה");
     expect(email.message).toContain("תשלום במסירה");
