@@ -1,15 +1,7 @@
-const { sendMail } = require("./mail");
 const {
-  ADMIN_EMAIL,
-  buildBuyerOrderEmail,
-  buildAdminOrderEmail,
   getOrderNotificationTitle,
 } = require("./order-emails");
-const { getSiteUrl } = require("./firebase-admin");
-const {
-  sendViaEmailJs,
-  sendOrderViaFormSubmit,
-} = require("./mail-fallbacks");
+const { deliverOrderEmails } = require("./deliver-order-emails");
 
 const ensureAdminInbox = async (db, orderId, order) => {
   const existing = await db
@@ -34,92 +26,6 @@ const ensureAdminInbox = async (db, orderId, order) => {
     createdAt: new Date(),
   });
   return { created: true };
-};
-
-const sendBuyerChannels = async (buyer) => {
-  if (!buyer.to) return { ok: true, via: "skipped" };
-
-  try {
-    await sendMail({
-      to: buyer.to,
-      subject: buyer.subject,
-      html: buyer.html,
-      text: buyer.text,
-    });
-    return { ok: true, via: "smtp" };
-  } catch (smtpError) {
-    console.error("buyer SMTP failed, trying EmailJS", smtpError?.message || smtpError);
-  }
-
-  try {
-    if (
-      await sendViaEmailJs({
-        to: buyer.to,
-        subject: buyer.subject,
-        message: buyer.text,
-      })
-    ) {
-      return { ok: true, via: "emailjs" };
-    }
-  } catch (emailJsError) {
-    console.error("buyer EmailJS failed", emailJsError?.message || emailJsError);
-  }
-
-  return { ok: false, via: null };
-};
-
-const sendAdminChannels = async ({ admin, buyer, order }) => {
-  if (!admin.to) return { ok: true, via: "skipped" };
-
-  try {
-    await sendMail({
-      to: admin.to,
-      subject: admin.subject,
-      html: admin.html,
-      text: admin.text,
-    });
-    return { ok: true, via: "smtp" };
-  } catch (smtpError) {
-    console.error("admin SMTP failed, trying FormSubmit", smtpError?.message || smtpError);
-  }
-
-  const contact = order.contactDetails || {};
-  const buyerName =
-    [contact.firstName, contact.lastName].filter(Boolean).join(" ").trim() ||
-    "Petzo";
-
-  try {
-    if (
-      await sendOrderViaFormSubmit({
-        adminEmail: admin.to,
-        adminSubject: admin.subject,
-        adminMessage: admin.text,
-        buyerEmail: buyer.to,
-        buyerMessage: buyer.text,
-        buyerName,
-      })
-    ) {
-      return { ok: true, via: "formsubmit" };
-    }
-  } catch (formError) {
-    console.error("admin FormSubmit failed", formError?.message || formError);
-  }
-
-  try {
-    if (
-      await sendViaEmailJs({
-        to: admin.to,
-        subject: admin.subject,
-        message: admin.text,
-      })
-    ) {
-      return { ok: true, via: "emailjs" };
-    }
-  } catch (emailJsError) {
-    console.error("admin EmailJS failed", emailJsError?.message || emailJsError);
-  }
-
-  return { ok: false, via: null };
 };
 
 /**
@@ -149,30 +55,14 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
     return { ok: true, skipped: true, reason: "already_sent" };
   }
 
-  const siteUrl = getSiteUrl();
-  const buyer = buildBuyerOrderEmail({ orderId, order, siteUrl });
-  const admin = buildAdminOrderEmail({
-    orderId,
-    order,
-    siteUrl,
-    adminEmail: ADMIN_EMAIL,
-  });
-
-  const buyerResult = await sendBuyerChannels(buyer);
-  const adminResult = await sendAdminChannels({ admin, buyer, order });
-
-  // FormSubmit to admin also emails the buyer via `_autoresponse`.
-  if (!buyerResult.ok && adminResult.via === "formsubmit" && buyer.to) {
-    buyerResult.ok = true;
-    buyerResult.via = "formsubmit_autoresponse";
-  }
+  const delivered = await deliverOrderEmails(orderId, order);
 
   const results = {
-    buyer: buyerResult.ok,
-    admin: adminResult.ok,
+    buyer: Boolean(delivered.results?.buyer),
+    admin: Boolean(delivered.results?.admin),
     inbox: false,
-    buyerVia: buyerResult.via,
-    adminVia: adminResult.via,
+    buyerVia: delivered.results?.buyerVia || null,
+    adminVia: delivered.results?.adminVia || null,
   };
 
   try {
@@ -206,4 +96,4 @@ const sendStoreOrderNotifications = async (db, orderId, orderOverride = null) =>
   return { ok: emailsDone, results, partial: !emailsDone };
 };
 
-module.exports = { sendStoreOrderNotifications };
+module.exports = { sendStoreOrderNotifications, ensureAdminInbox };

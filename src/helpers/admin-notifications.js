@@ -23,6 +23,17 @@ import {
 } from "@/helpers/admin-email";
 import { getOrderNotificationTitle } from "@/helpers/store-order-emails";
 
+const markClientOrderEmails = async (orderId, meta) => {
+  try {
+    await updateDoc(doc(db, "purchases", String(orderId)), {
+      orderEmailsClientAt: new Date(),
+      orderEmailsClientMeta: meta,
+    });
+  } catch (error) {
+    console.warn("Failed to mark client order emails", error);
+  }
+};
+
 export {
   ADMIN_NOTIFICATION_TYPES,
   getNotificationTitle,
@@ -55,39 +66,59 @@ export const createPendingAdNotification = async ({ adId, ad }) => {
  * Client-side admin alert for a new store order (inbox + FormSubmit).
  * Complements Netlify SMTP buyer/admin mail — so admin still sees the order
  * even when SMTP_PASS is missing. Idempotent per orderId.
+ * Awaits email sends so checkout navigation does not abort them.
  */
 export const createStoreOrderNotification = async ({ orderId, order = {} }) => {
-  if (!orderId) return;
+  if (!orderId) return { inbox: false, adminSent: false, buyerSent: false };
 
   const notificationsRef = collection(db, "adminNotifications");
   const existing = await getDocs(
     query(notificationsRef, where("orderId", "==", String(orderId)), limit(1))
   );
-  if (!existing.empty) return;
 
-  await addDoc(notificationsRef, {
-    type: ADMIN_NOTIFICATION_TYPES.STORE_ORDER,
-    orderId: String(orderId),
-    title: getOrderNotificationTitle(order),
-    category: "חנות",
-    location: order.contactDetails?.city || "",
-    totalPrice: Number(order.totalPrice) || 0,
-    paymentMethod: order.paymentMethod || "",
-    read: false,
-    createdAt: new Date(),
-  });
+  let inbox = !existing.empty;
+  if (!inbox) {
+    await addDoc(notificationsRef, {
+      type: ADMIN_NOTIFICATION_TYPES.STORE_ORDER,
+      orderId: String(orderId),
+      title: getOrderNotificationTitle(order),
+      category: "חנות",
+      location: order.contactDetails?.city || "",
+      totalPrice: Number(order.totalPrice) || 0,
+      paymentMethod: order.paymentMethod || "",
+      read: false,
+      createdAt: new Date(),
+    });
+    inbox = true;
+  }
 
-  // Admin FormSubmit (+ buyer autoresponse) and optional EmailJS to buyer.
-  void Promise.allSettled([
+  // Await both channels — fire-and-forget was aborted on thank-you navigation.
+  const [adminResult, buyerResult] = await Promise.allSettled([
     sendStoreOrderEmailToAdmin({ orderId, order }),
     sendBuyerOrderEmailClient({ orderId, order }),
-  ]).then((results) => {
-    results.forEach((result) => {
-      if (result.status === "rejected") {
-        console.warn("Store order client email failed", result.reason);
-      }
+  ]);
+
+  const adminSent =
+    adminResult.status === "fulfilled" && Boolean(adminResult.value);
+  const buyerSent =
+    buyerResult.status === "fulfilled" && Boolean(buyerResult.value);
+
+  if (adminResult.status === "rejected") {
+    console.warn("Store order admin email failed", adminResult.reason);
+  }
+  if (buyerResult.status === "rejected") {
+    console.warn("Store order buyer email failed", buyerResult.reason);
+  }
+
+  if (adminSent || buyerSent) {
+    await markClientOrderEmails(orderId, {
+      admin: adminSent,
+      buyer: buyerSent,
+      via: "client_formsubmit_emailjs",
     });
-  });
+  }
+
+  return { inbox, adminSent, buyerSent };
 };
 
 const markNotificationDocs = async (snapshot) => {

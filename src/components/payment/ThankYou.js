@@ -68,32 +68,66 @@ const ThankYou = () => {
           if (status.totalPrice != null) setTotalPrice(status.totalPrice);
           if (status.paymentStatus === "paid" || paidQuery) {
             await finishPaid();
-            // Backup if Grow webhook notify did not land yet (idempotent).
-            void notifyStoreOrderEmails(orderId).catch(() => null);
-            void createStoreOrderNotification({
-              orderId,
-              order: {
-                totalPrice,
-                totalQuantity: orderFromState.totalQuantity,
-                paymentMethod: ORDER_PAYMENT_METHODS.ONLINE,
-                paymentStatus: "paid",
-                contactDetails: { city: orderFromState.city || "" },
-                email: currentUser?.email || "",
-                items: [],
+            const paidOrder = {
+              totalPrice:
+                status.totalPrice != null ? status.totalPrice : totalPrice,
+              totalQuantity: orderFromState.totalQuantity,
+              paymentMethod: ORDER_PAYMENT_METHODS.ONLINE,
+              paymentStatus: "paid",
+              contactDetails: orderFromState.contactDetails || {
+                city: orderFromState.city || "",
               },
-            }).catch(() => null);
+              email: orderFromState.email || currentUser?.email || "",
+              items: orderFromState.items || [],
+            };
+            // Backup if Grow webhook notify did not land yet (idempotent).
+            await Promise.allSettled([
+              notifyStoreOrderEmails(orderId, paidOrder),
+              createStoreOrderNotification({
+                orderId,
+                order: paidOrder,
+              }),
+            ]);
           }
         } catch (_error) {
           if (!cancelled && paidQuery) {
             setPaymentStatus("paid");
             await finishPaid();
-            void notifyStoreOrderEmails(orderId).catch(() => null);
+            const paidOrder = {
+              totalPrice,
+              totalQuantity: orderFromState.totalQuantity,
+              paymentMethod: ORDER_PAYMENT_METHODS.ONLINE,
+              paymentStatus: "paid",
+              contactDetails: orderFromState.contactDetails || {
+                city: orderFromState.city || "",
+              },
+              email: orderFromState.email || currentUser?.email || "",
+              items: orderFromState.items || [],
+            };
+            await Promise.allSettled([
+              notifyStoreOrderEmails(orderId, paidOrder),
+              createStoreOrderNotification({ orderId, order: paidOrder }),
+            ]);
           }
         }
       } else if (orderFromState.paymentMethod === ORDER_PAYMENT_METHODS.COD) {
         await finishPaid();
         // Backup if checkout notify failed before navigation.
-        void notifyStoreOrderEmails(orderId).catch(() => null);
+        const codOrder = {
+          totalPrice: orderFromState.totalPrice,
+          totalQuantity: orderFromState.totalQuantity,
+          paymentMethod: ORDER_PAYMENT_METHODS.COD,
+          paymentStatus: "cod",
+          contactDetails: orderFromState.contactDetails || {
+            city: orderFromState.city || "",
+          },
+          email: orderFromState.email || currentUser?.email || "",
+          items: orderFromState.items || [],
+        };
+        await Promise.allSettled([
+          notifyStoreOrderEmails(orderId, codOrder),
+          createStoreOrderNotification({ orderId, order: codOrder }),
+        ]);
       }
 
       if (!cancelled) setChecking(false);

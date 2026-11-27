@@ -73,7 +73,11 @@ const sendOrderViaFormSubmit = async ({
     }
   );
 
-  return response.ok;
+  if (!response.ok) return false;
+  const contentType = String(response.headers.get("content-type") || "");
+  // Cloudflare challenge pages are HTML — treat as failure so SMTP/EmailJS retry.
+  if (contentType.includes("text/html")) return false;
+  return true;
 };
 
 module.exports = { sendViaEmailJs, sendOrderViaFormSubmit };
