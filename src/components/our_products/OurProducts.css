@@ -224,9 +224,21 @@
   color: var(--store-muted);
 }
 
-.store-empty a {
+.store-empty a,
+.store-empty .store-add {
   color: var(--store-navy);
   font-weight: 800;
+}
+
+.store-empty .store-add {
+  display: inline-flex;
+  margin-inline: auto;
+}
+
+.store-empty--loading {
+  border-style: solid;
+  border-color: transparent;
+  background: linear-gradient(180deg, #fff 0%, #f7fafc 100%);
 }
 
 .store-grid {
