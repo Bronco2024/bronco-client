@@ -25,10 +25,13 @@ const CitySelect = ({
     enableAreaFilter && areaValue
       ? getCitiesByArea(areaValue)
       : getCitiesByArea("");
-  const cities = withCurrentOption(
-    citiesForArea.length ? citiesForArea : getCitiesByArea(""),
-    value
-  );
+  const baseCities = citiesForArea.length ? citiesForArea : getCitiesByArea("");
+  // For the native <select> fallback, keep a saved value selectable even if
+  // missing from the area list. For searchable mode, never inject free-typed
+  // query text as a fake city suggestion.
+  const cities = searchable
+    ? baseCities
+    : withCurrentOption(baseCities, value);
 
   const [query, setQuery] = useState(value || "");
   const [open, setOpen] = useState(false);
