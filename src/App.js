@@ -443,11 +443,9 @@ function App() {
         path="/cart"
         element={
           <Suspense fallback={<Loading />}>
-            <ProtectedRoute>
-              <Layout>
-                <Cart />
-              </Layout>
-            </ProtectedRoute>
+            <Layout>
+              <Cart />
+            </Layout>
           </Suspense>
         }
       />
@@ -456,11 +454,9 @@ function App() {
         path="/cart/checkout"
         element={
           <Suspense fallback={<Loading />}>
-            <ProtectedRoute>
-              <Layout>
-                <PaymentForm />
-              </Layout>
-            </ProtectedRoute>
+            <Layout>
+              <PaymentForm />
+            </Layout>
           </Suspense>
         }
       />
@@ -474,11 +470,9 @@ function App() {
         path="/order/thank-you"
         element={
           <Suspense fallback={<Loading />}>
-            <ProtectedRoute>
-              <Layout>
-                <ThankYou />
-              </Layout>
-            </ProtectedRoute>
+            <Layout>
+              <ThankYou />
+            </Layout>
           </Suspense>
         }
       />

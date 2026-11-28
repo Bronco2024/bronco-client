@@ -1,0 +1,43 @@
+.city-select {
+  position: relative;
+}
+
+.city-select-list {
+  position: absolute;
+  z-index: 30;
+  right: 0;
+  left: 0;
+  top: calc(100% - 2px);
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  max-height: 240px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #d5e4df;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(23, 59, 94, 0.12);
+}
+
+.city-select-list button {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: right;
+  padding: 10px 14px;
+  font: inherit;
+  color: #173b5e;
+  cursor: pointer;
+}
+
+.city-select-list button:hover,
+.city-select-list button:focus {
+  background: #f3f8f6;
+}
+
+.city-select-empty {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  color: #6b7f8f;
+}

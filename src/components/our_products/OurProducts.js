@@ -30,6 +30,7 @@ import { IsDateNowGreaterThanAdDate } from "@components/utils/constants/Function
 import { getListingPath } from "@/helpers/listing-links";
 import { toCartProduct } from "@/helpers/cart-helpers";
 import { showCartAddedToast } from "@/helpers/cart-toast";
+import { saveGuestCart } from "@/helpers/guest-cart";
 import { updateUserCart } from "@/helpers/firebase-helpers";
 import {
   addItem,
@@ -183,6 +184,7 @@ const OurProducts = () => {
   };
 
   const persistCart = async (nextItems) => {
+    saveGuestCart(nextItems);
     if (!currentUser?.uid) return;
     await updateUserCart(
       currentUser.uid,
@@ -190,18 +192,10 @@ const OurProducts = () => {
         ...toCartProduct(item),
         quantity: item.quantity,
       }))
-    );
-  };
-
-  const requireLogin = () => {
-    navigate(`/login?next=${encodeURIComponent(STORE_CATEGORY.path)}`);
+    ).catch(() => null);
   };
 
   const handleAddToCart = async (ad) => {
-    if (!currentUser) {
-      requireLogin();
-      return;
-    }
     setBusyId(ad.id);
     try {
       const product = toCartProduct(ad);
@@ -225,7 +219,6 @@ const OurProducts = () => {
   };
 
   const handleDecrease = async (ad) => {
-    if (!currentUser) return;
     setBusyId(ad.id);
     try {
       dispatch(decreaseQuantity(ad.id));
@@ -241,7 +234,6 @@ const OurProducts = () => {
   };
 
   const handleIncrease = async (ad) => {
-    if (!currentUser) return;
     setBusyId(ad.id);
     try {
       dispatch(increaseQuantity(ad.id));
@@ -255,7 +247,6 @@ const OurProducts = () => {
   };
 
   const handleRemove = async (ad) => {
-    if (!currentUser) return;
     setBusyId(ad.id);
     try {
       dispatch(removeItem(ad.id));

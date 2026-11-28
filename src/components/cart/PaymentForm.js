@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +11,9 @@ import { useAuth } from "@/context/AuthProvider";
 import { db } from "@/firebase";
 import { clearCart } from "@/redux/cartSlice";
 import { updateUserCart } from "@/helpers/firebase-helpers";
+import { ensureCheckoutUser } from "@/helpers/checkout-auth";
+import { clearGuestCart } from "@/helpers/guest-cart";
+import { normalizeCityQuery } from "@/helpers/city-search";
 import {
   buildStoreOrderPayload,
   cancelMatchingAwaitingPaymentOrders,
@@ -24,7 +27,18 @@ import {
 } from "@/helpers/store-payment-client";
 import { createStoreOrderNotification } from "@/helpers/admin-notifications";
 import { PET_LOCATIONS } from "@/data/pets";
+import CitySelect from "@/components/pets/CitySelect";
 import "./PaymentForm.css";
+
+const resolveCity = (value = "") => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (PET_LOCATIONS.includes(raw)) return raw;
+  const needle = normalizeCityQuery(raw);
+  return (
+    PET_LOCATIONS.find((city) => normalizeCityQuery(city) === needle) || ""
+  );
+};
 
 const PaymentForm = () => {
   const navigate = useNavigate();
@@ -35,7 +49,7 @@ const PaymentForm = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState(
-    ORDER_PAYMENT_METHODS.ONLINE
+    ORDER_PAYMENT_METHODS.COD
   );
 
   const [formData, setFormData] = useState({
@@ -49,10 +63,11 @@ const PaymentForm = () => {
     notes: "",
   });
 
-  const cities = useMemo(
-    () => [...PET_LOCATIONS].sort((a, b) => a.localeCompare(b, "he")),
-    []
-  );
+  useEffect(() => {
+    if (currentUser?.email && !formData.email) {
+      setFormData((prev) => ({ ...prev, email: currentUser.email }));
+    }
+  }, [currentUser?.email, formData.email]);
 
   useEffect(() => {
     if (searchParams.get("cancelled") === "1") {
@@ -74,17 +89,33 @@ const PaymentForm = () => {
       return;
     }
 
-    if (!formData.city.trim() || !formData.address.trim()) {
-      setError("נא למלא עיר וכתובת למשלוח.");
+    if (!formData.address.trim()) {
+      setError("נא למלא כתובת למשלוח.");
+      return;
+    }
+
+    const resolvedCity = resolveCity(formData.city);
+    if (!resolvedCity) {
+      setError("נא לבחור עיר מהרשימה (אפשר לחפש לפי שם).");
+      return;
+    }
+
+    if (!String(formData.email || "").includes("@")) {
+      setError("נא למלא אימייל לקבלת אישור ההזמנה.");
       return;
     }
 
     setSubmitting(true);
     let createdOrderId = null;
     try {
+      // Guests: silent anonymous Firebase session (no registration form).
+      const checkoutUser = await ensureCheckoutUser().catch(() => null);
+      const buyerUid = checkoutUser?.uid || currentUser?.uid || null;
+      const contactDetails = { ...formData, city: resolvedCity };
+
       const payload = buildStoreOrderPayload({
-        userId: currentUser?.uid,
-        contactDetails: formData,
+        userId: buyerUid,
+        contactDetails,
         items,
         paymentMethod,
         notes: formData.notes,
@@ -96,7 +127,10 @@ const PaymentForm = () => {
         try {
           const payment = await startOnlineStorePayment(orderId);
           if (payment.alreadyPaid && payment.redirectUrl) {
-            await updateUserCart(currentUser.uid, []);
+            if (buyerUid) {
+              await updateUserCart(buyerUid, []).catch(() => null);
+            }
+            clearGuestCart();
             dispatch(clearCart());
             window.location.assign(payment.redirectUrl);
             return;
@@ -118,16 +152,17 @@ const PaymentForm = () => {
       }
 
       // COD: clear any earlier failed online attempt for the same cart.
-      if (currentUser?.uid) {
+      if (buyerUid) {
         await cancelMatchingAwaitingPaymentOrders(db, {
-          userId: currentUser.uid,
+          userId: buyerUid,
           totalPrice: payload.totalPrice,
           totalQuantity: payload.totalQuantity,
           exceptOrderId: orderId,
         }).catch(() => null);
+        await updateUserCart(buyerUid, []).catch(() => null);
       }
 
-      await updateUserCart(currentUser.uid, []);
+      clearGuestCart();
       dispatch(clearCart());
       // COD: wait for buyer+admin emails so navigation does not abort them.
       await Promise.race([
@@ -142,7 +177,7 @@ const PaymentForm = () => {
           orderId,
           totalPrice: payload.totalPrice,
           totalQuantity: payload.totalQuantity,
-          city: formData.city,
+          city: resolvedCity,
           paymentMethod,
           email: formData.email,
           items: payload.items,
@@ -260,22 +295,16 @@ const PaymentForm = () => {
             </label>
           </div>
 
-          <label>
-            עיר
-            <select
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              required
-            >
-              <option value="">בחרו עיר</option>
-              {cities.map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
-          </label>
+          <CitySelect
+            id="checkout-city"
+            name="city"
+            label="עיר / יישוב"
+            value={formData.city}
+            onChange={handleChange}
+            required
+            emptyLabel="הקלידו לחיפוש עיר או יישוב…"
+            searchable
+          />
 
           <label>
             רחוב ומספר בית

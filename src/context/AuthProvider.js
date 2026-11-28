@@ -6,6 +6,12 @@ import { clearCart, loadCart } from '@/redux/cartSlice';
 import { useDispatch } from 'react-redux';
 import { isSiteAdminEmail } from '@/helpers/site-admin';
 import { stashGoogleRedirectError } from '@/helpers/google-auth-strategy';
+import {
+  clearGuestCart,
+  loadGuestCart,
+  mergeCartItems,
+  saveGuestCart,
+} from '@/helpers/guest-cart';
 
 const AuthContext = createContext();
 
@@ -42,7 +48,8 @@ export const AuthProvider = ({ children }) => {
 
       if (!user) {
         setCurrentUser(null);
-        dispatch(clearCart());
+        // Keep shopping without an account — restore guest cart from localStorage.
+        dispatch(loadCart(loadGuestCart()));
         setLoading(false);
         return;
       }
@@ -52,10 +59,11 @@ export const AuthProvider = ({ children }) => {
       const signedInWithGoogle = user.providerData?.some(
         (p) => p.providerId === "google.com"
       );
-      // Google accounts are trusted; email/password still requires verification.
-      if (!user.emailVerified && !signedInWithGoogle) {
+      const isAnonymous = Boolean(user.isAnonymous);
+      // Google + anonymous checkout are trusted; email/password still requires verification.
+      if (!user.emailVerified && !signedInWithGoogle && !isAnonymous) {
         setCurrentUser(null);
-        dispatch(clearCart());
+        dispatch(loadCart(loadGuestCart()));
         setLoading(false);
         return;
       }
@@ -63,11 +71,12 @@ export const AuthProvider = ({ children }) => {
       const siteAdmin = isSiteAdminEmail(user.email);
       const minimalSession = {
         uid: user.uid,
-        email: user.email,
+        email: user.email || null,
         subscribedUntil: null,
         numberOfAds: Number.MAX_VALUE,
         cart: [],
         isAdmin: siteAdmin,
+        isAnonymous,
       };
 
       // Unblock ProtectedRoute immediately — hydrate Firestore profile after.
@@ -82,23 +91,26 @@ export const AuthProvider = ({ children }) => {
         if (cancelled) return;
 
         if (!snap.exists()) {
+          const guestCart = loadGuestCart();
           const defaultProfile = {
-            email: user.email,
+            email: user.email || null,
             subscribedUntil: null,
             /**
              * PAYMENTS
              * Change to 1 when payments return
              */
             numberOfAds: Number.MAX_VALUE,
-            cart: [],
+            cart: guestCart,
             isAdmin: siteAdmin,
+            isAnonymous,
           };
           // Don't block UI on first-time profile create.
           void setDoc(userRef, defaultProfile).catch((error) => {
             console.warn("Failed to create user profile", error);
           });
+          if (!isAnonymous) clearGuestCart();
           setCurrentUser({ uid: user.uid, ...defaultProfile });
-          dispatch(loadCart([]));
+          dispatch(loadCart(guestCart));
         } else {
           const data = snap.data();
           if (siteAdmin && !data.isAdmin) {
@@ -108,15 +120,22 @@ export const AuthProvider = ({ children }) => {
               });
           }
           const rawCart = data.cart || [];
-          const cart = rawCart.map(item => ({
+          const savedCart = rawCart.map(item => ({
             ...item,
             availableUntil: item.availableUntil?.toDate?.() || null,
             createdAt: item.createdAt?.toDate?.() || null,
           }));
+          // Merge any guest cart the buyer built before signing in.
+          const cart = isAnonymous
+            ? mergeCartItems(savedCart, loadGuestCart())
+            : mergeCartItems(loadGuestCart(), savedCart);
+          if (!isAnonymous) clearGuestCart();
+          else saveGuestCart(cart);
           setCurrentUser({
             uid: user.uid,
             ...data,
             isAdmin: Boolean(data.isAdmin) || siteAdmin,
+            isAnonymous,
           });
           dispatch(loadCart(cart));
         }
@@ -137,6 +156,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     await signOut(auth);
     setCurrentUser(null);
+    clearGuestCart();
     dispatch(clearCart());
   };
 

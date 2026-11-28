@@ -6,16 +6,20 @@ describe("israel cities and north area", () => {
     expect(ISRAEL_CITIES).toEqual(
       expect.arrayContaining([
         "סחנין",
+        "סח'נין",
         "עראבה",
-        "דיר חנא",
+        "דייר חנא",
         "מג'ד אל-כרום",
         "קצרין",
         "מטולה",
         "שלומי",
-        "תמרה",
+        "טמרה",
         "בית שאן",
+        "רהט",
+        "אבו גוש",
       ])
     );
+    expect(ISRAEL_CITIES.length).toBeGreaterThan(1000);
   });
 
   test("north area lists Sakhnin and expanded Galilee cities", () => {
@@ -26,7 +30,7 @@ describe("israel cities and north area", () => {
         "נצרת",
         "שפרעם",
         "עראבה",
-        "תמרה",
+        "טמרה",
         "בית שאן",
         "קצרין",
       ])

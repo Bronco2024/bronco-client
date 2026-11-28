@@ -11,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@/context/AuthProvider";
 import { updateUserCart } from "@/helpers/firebase-helpers";
+import { saveGuestCart } from "@/helpers/guest-cart";
 import { toCartProduct } from "@/helpers/cart-helpers";
 import {
   clearCart,
@@ -30,6 +31,7 @@ const Cart = () => {
   const { currentUser } = useAuth();
 
   const persist = async (nextItems) => {
+    saveGuestCart(nextItems);
     if (!currentUser?.uid) return;
     await updateUserCart(
       currentUser.uid,
@@ -37,7 +39,7 @@ const Cart = () => {
         ...toCartProduct(item),
         quantity: item.quantity,
       }))
-    );
+    ).catch(() => null);
   };
 
   const handleRemoveItem = async (itemId) => {
