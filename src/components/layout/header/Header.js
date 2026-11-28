@@ -230,9 +230,7 @@ const Header = () => {
                 <div className="navbar-buttons">
                     <button
                         className="navbar-button cart-button"
-                        onClick={() =>
-                            navigate(currentUser ? "/cart" : "/login")
-                        }
+                        onClick={() => navigate("/cart")}
                         aria-label={`עגלת קניות${cartQuantity > 0 ? `, ${cartQuantity} פריטים` : ""}`}
                     >
                         <span className="navbar-btn-label">עגלה</span>

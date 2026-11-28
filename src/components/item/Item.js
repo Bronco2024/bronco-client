@@ -40,6 +40,7 @@ import {
 } from '@/helpers/listing-links';
 import { isStoreProduct, toCartProduct } from '@/helpers/cart-helpers';
 import { showCartAddedToast } from '@/helpers/cart-toast';
+import { saveGuestCart } from '@/helpers/guest-cart';
 import { updateUserCart } from '@/helpers/firebase-helpers';
 import { loadCart } from '@/redux/cartSlice';
 import { useAuth } from '@/context/AuthProvider';
@@ -378,12 +379,6 @@ const ItemPage = () => {
     });
 
     const handleAddStoreToCart = async () => {
-        if (!currentUser) {
-            navigate(
-                `/login?next=${encodeURIComponent(getListingPath(ad))}`
-            );
-            return;
-        }
         const qty = Math.max(1, Number(storeQty) || 1);
         const product = toCartProduct(ad);
         const existing = cartItems.find((item) => item.id === ad.id);
@@ -395,13 +390,16 @@ const ItemPage = () => {
               )
             : [...cartItems, { ...product, quantity: qty }];
         dispatch(loadCart(nextCart));
-        await updateUserCart(
-            currentUser.uid,
-            nextCart.map((item) => ({
-                ...toCartProduct(item),
-                quantity: item.quantity,
-            }))
-        );
+        saveGuestCart(nextCart);
+        if (currentUser?.uid) {
+            await updateUserCart(
+                currentUser.uid,
+                nextCart.map((item) => ({
+                    ...toCartProduct(item),
+                    quantity: item.quantity,
+                }))
+            ).catch(() => null);
+        }
         showCartAddedToast({
             title: product.title || getAdTitle(ad),
             quantity: qty,
